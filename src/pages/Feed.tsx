@@ -12,6 +12,7 @@ import { ChatBubble } from '@/components/ChatBubble';
 import { SacredSoundscape } from '@/components/SacredSoundscape';
 import { ParallaxBackground } from '@/components/ParallaxBackground';
 import { formatDistanceToNow } from 'date-fns';
+import sacredShifterLogo from '@/assets/sacred-shifter-logo.png';
 
 interface SacredPost {
   id: string;
@@ -110,13 +111,20 @@ const Feed = () => {
       <div className="sticky top-0 z-10 bg-background/20 backdrop-blur-md border-b border-white/10">
         <div className="max-w-2xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-                Sacred Feed
-              </h1>
-              <p className="text-sm text-muted-foreground">
-                The Resonance Field Is Open
-              </p>
+            <div className="flex items-center space-x-4">
+              <img 
+                src={sacredShifterLogo} 
+                alt="Sacred Shifter" 
+                className="h-12 w-auto filter invert brightness-0 contrast-100 opacity-90 hover:opacity-100 transition-opacity duration-300"
+              />
+              <div>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                  Sacred Feed
+                </h1>
+                <p className="text-sm text-muted-foreground">
+                  The Resonance Field Is Open
+                </p>
+              </div>
             </div>
             <Button 
               onClick={() => setShowCreateModal(true)}
