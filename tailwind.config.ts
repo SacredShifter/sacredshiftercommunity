@@ -18,6 +18,11 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				'sacred': ['Syne', 'system-ui', 'sans-serif'],
+				'body': ['Inter', 'system-ui', 'sans-serif'],
+				'codex': ['Crimson Text', 'serif'],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -61,7 +66,14 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				// Sacred Shifter Frequency Colors
+				truth: 'hsl(var(--truth))',
+				resonance: 'hsl(var(--resonance))',
+				alignment: 'hsl(var(--alignment))',
+				purpose: 'hsl(var(--purpose))',
+				silence: 'hsl(var(--silence))',
+				pulse: 'hsl(var(--pulse))'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
