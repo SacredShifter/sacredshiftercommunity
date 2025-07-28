@@ -157,8 +157,7 @@ All colors MUST be HSL.
       200% 200%,
       100% 100%;
     animation: 
-      cosmic-spectrum-dance 25s ease-in-out infinite,
-      field-breathing 12s ease-in-out infinite;
+      cosmic-spectrum-dance 30s ease-in-out infinite;
     overflow-x: hidden;
     min-height: 100vh;
   }
@@ -208,6 +207,8 @@ All colors MUST be HSL.
     position: relative;
     z-index: 1;
     min-height: 100vh;
+    transform: translateZ(0);
+    will-change: auto;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -304,20 +305,12 @@ All colors MUST be HSL.
     background-position: 0% 0%, 10% 10%, 20% 20%, 30% 30%, 40% 40%, 50% 50%, 0% 0%, 0% 0%;
     filter: hue-rotate(0deg) saturate(1);
   }
-  25% {
-    background-position: 8% 12%, 18% 8%, 28% 32%, 38% 28%, 48% 52%, 58% 48%, 12% 15%, 0% 0%;
-    filter: hue-rotate(90deg) saturate(1.1);
-  }
   50% {
-    background-position: 15% 25%, 25% 15%, 35% 45%, 45% 35%, 55% 65%, 65% 55%, 25% 30%, 0% 0%;
-    filter: hue-rotate(180deg) saturate(1.2);
-  }
-  75% {
-    background-position: 22% 38%, 32% 22%, 42% 58%, 52% 42%, 62% 78%, 72% 62%, 38% 45%, 0% 0%;
-    filter: hue-rotate(270deg) saturate(1.1);
+    background-position: 10% 15%, 20% 10%, 30% 25%, 40% 20%, 50% 35%, 60% 30%, 15% 20%, 0% 0%;
+    filter: hue-rotate(180deg) saturate(1.05);
   }
   100% {
-    background-position: 30% 50%, 40% 30%, 50% 70%, 60% 50%, 70% 90%, 80% 70%, 50% 60%, 0% 0%;
+    background-position: 20% 30%, 30% 20%, 40% 50%, 50% 40%, 60% 70%, 70% 60%, 30% 40%, 0% 0%;
     filter: hue-rotate(360deg) saturate(1);
   }
 }
