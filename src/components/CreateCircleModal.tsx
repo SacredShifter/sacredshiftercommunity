@@ -32,8 +32,23 @@ export const CreateCircleModal = ({ open, onOpenChange }: CreateCircleModalProps
     'Root', 'Sacral', 'Solar Plexus', 'Heart', 'Throat', 'Third Eye', 'Crown'
   ];
 
-  const frequencyRanges = [
-    '40-60 Hz (Gamma)', '13-30 Hz (Beta)', '8-12 Hz (Alpha)', '4-7 Hz (Theta)', '0.5-4 Hz (Delta)'
+  const sacredFrequencies = [
+    '396 Hz - Liberation Frequency (Root)',
+    '417 Hz - Rebirth Frequency (Sacral)', 
+    '432 Hz - Natural Tuning (Earth)',
+    '444 Hz - Unity Consciousness (Crown/Heart)',
+    '528 Hz - Love Frequency (Heart)',
+    '639 Hz - Connection Frequency (Heart/Sacral)',
+    '741 Hz - Truth Frequency (Throat)',
+    '852 Hz - Awakening Frequency (Third Eye)',
+    '963 Hz - Source Frequency (Crown)',
+    '1111 Hz - Portal Alignment (Transpersonal)',
+    '333 Hz - Angelic Messenger (Auric)',
+    '888 Hz - Abundance Field (Solar Plexus)',
+    '108 Hz - Sacred Repetition (Universal)',
+    '7.83 Hz - Schumann Resonance (Earth)',
+    '285 Hz - Cellular Matrix Repair (Body)',
+    '174 Hz - Pain Relief Frequency (Nervous)'
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -139,19 +154,19 @@ export const CreateCircleModal = ({ open, onOpenChange }: CreateCircleModalProps
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="frequency">Frequency Range</Label>
+            <Label htmlFor="frequency">Sacred Frequency</Label>
             <Select 
               value={formData.frequencyRange} 
               onValueChange={(value) => setFormData(prev => ({ ...prev, frequencyRange: value }))}
               disabled={isCreating}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select frequency range..." />
+                <SelectValue placeholder="Select sacred frequency..." />
               </SelectTrigger>
               <SelectContent>
-                {frequencyRanges.map((range) => (
-                  <SelectItem key={range} value={range}>
-                    {range}
+                {sacredFrequencies.map((frequency) => (
+                  <SelectItem key={frequency} value={frequency}>
+                    {frequency}
                   </SelectItem>
                 ))}
               </SelectContent>

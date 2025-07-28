@@ -9,6 +9,8 @@ import { useToast } from '@/hooks/use-toast';
 import { Plus, Heart, MessageCircle, Share2, MoreHorizontal } from 'lucide-react';
 import CreatePostModal from '@/components/CreatePostModal';
 import { ChatBubble } from '@/components/ChatBubble';
+import { SacredSoundscape } from '@/components/SacredSoundscape';
+import { ParallaxBackground } from '@/components/ParallaxBackground';
 import { formatDistanceToNow } from 'date-fns';
 
 interface SacredPost {
@@ -103,6 +105,7 @@ const Feed = () => {
 
   return (
     <div className="min-h-screen">
+      <ParallaxBackground />
       {/* Header */}
       <div className="sticky top-0 z-10 bg-background/20 backdrop-blur-md border-b border-white/10">
         <div className="max-w-2xl mx-auto px-4 py-4">
@@ -112,12 +115,12 @@ const Feed = () => {
                 Sacred Feed
               </h1>
               <p className="text-sm text-muted-foreground">
-                The collective consciousness awakens
+                The Resonance Field Is Open
               </p>
             </div>
             <Button 
               onClick={() => setShowCreateModal(true)}
-              className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
+              className="sacred-button bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
             >
               <Plus className="h-4 w-4 mr-2" />
               Share to Feed
@@ -132,7 +135,7 @@ const Feed = () => {
           <Card className="text-center py-12">
             <CardContent>
               <div className="space-y-4">
-                <div className="text-4xl">🌸</div>
+                <div className="text-4xl flower-of-life-bloom">🌸</div>
                 <h3 className="text-lg font-semibold">Your Sacred Feed Awaits</h3>
                 <p className="text-muted-foreground">
                   Begin sharing your journey and connecting with the collective consciousness.
@@ -152,7 +155,7 @@ const Feed = () => {
             const sourceModule = getSourceModuleDisplay(post.source_module);
             
             return (
-              <Card key={post.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+              <Card key={post.id} className="post-card overflow-hidden hover:shadow-lg transition-all duration-300 hover:shadow-primary/20">
                 <CardHeader className="pb-3">
                   <div className="flex items-start space-x-3">
                     <Avatar className="h-10 w-10">
@@ -217,15 +220,15 @@ const Feed = () => {
 
                   {/* Action Buttons */}
                   <div className="flex items-center space-x-6 pt-2 border-t">
-                    <Button variant="ghost" size="sm" className="flex items-center space-x-2 text-muted-foreground hover:text-primary">
+                    <Button variant="ghost" size="sm" className="action-button flex items-center space-x-2 text-muted-foreground hover:text-primary">
                       <Heart className="h-4 w-4" />
                       <span className="text-xs">Resonate {post.like_count > 0 && `(${post.like_count})`}</span>
                     </Button>
-                    <Button variant="ghost" size="sm" className="flex items-center space-x-2 text-muted-foreground hover:text-primary">
+                    <Button variant="ghost" size="sm" className="action-button flex items-center space-x-2 text-muted-foreground hover:text-primary">
                       <MessageCircle className="h-4 w-4" />
                       <span className="text-xs">Reflect {post.comment_count > 0 && `(${post.comment_count})`}</span>
                     </Button>
-                    <Button variant="ghost" size="sm" className="flex items-center space-x-2 text-muted-foreground hover:text-primary">
+                    <Button variant="ghost" size="sm" className="action-button flex items-center space-x-2 text-muted-foreground hover:text-primary">
                       <Share2 className="h-4 w-4" />
                       <span className="text-xs">Share</span>
                     </Button>
@@ -239,6 +242,9 @@ const Feed = () => {
 
       {/* Chat Bubble */}
       <ChatBubble />
+
+      {/* Sacred Soundscape */}
+      <SacredSoundscape />
 
       <CreatePostModal 
         open={showCreateModal}

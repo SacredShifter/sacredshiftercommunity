@@ -405,6 +405,165 @@ All colors MUST be HSL.
   }
 }
 
+/* Sacred Interaction Effects */
+.post-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.post-card::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: radial-gradient(circle, hsl(var(--primary) / 0.15) 0%, transparent 70%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.post-card:hover::before {
+  width: 400px;
+  height: 400px;
+  animation: sacred-ripple 2s ease-out;
+}
+
+.sacred-button {
+  position: relative;
+  overflow: hidden;
+}
+
+.sacred-button::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: radial-gradient(circle, hsl(var(--primary-foreground) / 0.2) 0%, transparent 70%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.5s ease;
+  pointer-events: none;
+}
+
+.sacred-button:hover::after {
+  width: 300px;
+  height: 300px;
+}
+
+/* Flower of Life Welcome Animation */
+@keyframes flower-bloom {
+  0% {
+    transform: scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  30% {
+    transform: scale(0.3) rotate(108deg);
+    opacity: 0.4;
+  }
+  60% {
+    transform: scale(0.7) rotate(216deg);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1) rotate(360deg);
+    opacity: 1;
+  }
+}
+
+.flower-of-life-bloom {
+  animation: flower-bloom 4s ease-out;
+}
+
+/* Sacred Ripple Animation */
+@keyframes sacred-ripple {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0.8;
+  }
+  30% {
+    opacity: 0.6;
+  }
+  70% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0;
+  }
+}
+
+/* Parallax Grid Effect */
+.cosmic-grid-parallax {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.cosmic-grid-layer {
+  will-change: transform;
+  transition: transform 0.1s ease-out;
+}
+
+/* Sacred Button Enhanced Effects */
+.sacred-button:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 
+    0 8px 25px hsl(var(--primary) / 0.4),
+    0 0 30px hsl(var(--primary) / 0.3),
+    inset 0 0 15px hsl(var(--primary) / 0.1);
+}
+
+/* Post Card Enhanced Hover */
+.post-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 
+    0 10px 40px hsl(var(--primary) / 0.2),
+    0 0 60px hsl(var(--primary) / 0.1),
+    inset 0 0 20px hsl(var(--background) / 0.5);
+}
+
+/* Sacred Resonance Effect for Action Buttons */
+.action-button {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.action-button:hover {
+  transform: scale(1.05);
+  color: hsl(var(--primary));
+}
+
+.action-button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at center, hsl(var(--primary) / 0.1) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.action-button:hover::before {
+  opacity: 1;
+  animation: sacred-pulse 1.5s ease infinite;
+}
+
+@keyframes sacred-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.2;
+  }
+}
+
 /* Performance optimizations */
 body, body::before, body::after {
   will-change: transform, opacity, filter, background-position;
