@@ -134,43 +134,66 @@ export const SacredSoundscape = () => {
   return (
     <div className="fixed bottom-20 left-4 z-50 sacred-frequency-selector">
       <div className="relative">
-        {/* Frequency Selection Menu */}
+        {/* Sacred Frequency Fan */}
         {showFrequencies && (
-          <div className="absolute bottom-16 left-0 w-80 bg-background/95 backdrop-blur-md border border-primary/30 rounded-2xl shadow-2xl z-50 p-4 max-h-96 overflow-y-auto">
-            <h3 className="text-sm font-semibold text-primary mb-3 text-center">Sacred Frequencies</h3>
-            <div className="grid gap-2">
-              {sacredFrequencies.map((freq) => (
+          <div className="absolute bottom-16 left-0">
+            {sacredFrequencies.map((freq, index) => {
+              const angle = (index * 360) / sacredFrequencies.length;
+              const radius = 120;
+              const x = Math.cos((angle - 90) * (Math.PI / 180)) * radius;
+              const y = Math.sin((angle - 90) * (Math.PI / 180)) * radius;
+              
+              return (
                 <button
                   key={freq.hz}
                   onClick={() => selectFrequency(freq)}
-                  className={`w-full text-left p-3 rounded-xl border transition-all duration-300 hover:scale-105 ${
+                  className={`absolute w-16 h-16 rounded-full border-2 transition-all duration-500 hover:scale-125 transform ${
                     selectedFrequency.hz === freq.hz 
-                      ? 'border-primary bg-primary/10 shadow-lg' 
-                      : 'border-border hover:border-primary/50 bg-card/50'
+                      ? 'border-primary bg-primary/20 shadow-2xl scale-110' 
+                      : 'border-border bg-background/80 hover:border-primary/50'
                   }`}
                   style={{
-                    boxShadow: selectedFrequency.hz === freq.hz ? `0 0 20px ${freq.color}30` : undefined
+                    left: `${x + 60}px`,
+                    bottom: `${-y + 60}px`,
+                    backgroundColor: selectedFrequency.hz === freq.hz ? `${freq.color}20` : undefined,
+                    borderColor: freq.color,
+                    boxShadow: selectedFrequency.hz === freq.hz ? `0 0 30px ${freq.color}60` : `0 0 10px ${freq.color}30`,
+                    animationDelay: `${index * 50}ms`,
+                    animation: showFrequencies ? 'sacred-fan-appear 0.6s ease-out forwards' : undefined
                   }}
+                  title={`${freq.hz}Hz ${freq.name} - ${freq.purpose}`}
                 >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="font-medium text-sm" style={{ color: freq.color }}>
-                        {freq.hz}Hz - {freq.name}
-                      </div>
-                      <div className="text-xs text-muted-foreground mt-1">
-                        {freq.purpose}
-                      </div>
-                      <div className="text-xs opacity-60 mt-1">
-                        {freq.chakra}
-                      </div>
+                  <div className="flex flex-col items-center justify-center h-full text-xs">
+                    <div className="font-bold" style={{ color: freq.color }}>
+                      {freq.hz < 100 ? freq.hz : Math.round(freq.hz)}
                     </div>
-                    <Waves 
-                      className="h-4 w-4 ml-2 opacity-60" 
-                      style={{ color: freq.color }}
-                    />
+                    <div className="text-[8px] opacity-80 leading-none">Hz</div>
                   </div>
                 </button>
-              ))}
+              );
+            })}
+            
+            {/* Center connection lines */}
+            <div className="absolute bottom-[60px] left-[60px] w-1 h-1">
+              {sacredFrequencies.map((_, index) => {
+                const angle = (index * 360) / sacredFrequencies.length;
+                const radius = 120;
+                
+                return (
+                  <div
+                    key={index}
+                    className="absolute w-px bg-gradient-to-r from-primary/30 to-transparent origin-left"
+                    style={{
+                      height: '2px',
+                      width: `${radius}px`,
+                      transform: `rotate(${angle - 90}deg)`,
+                      transformOrigin: '0 50%',
+                      animation: showFrequencies ? `sacred-line-draw 0.8s ease-out ${index * 30}ms forwards` : undefined,
+                      opacity: 0
+                    }}
+                  />
+                );
+              })}
             </div>
           </div>
         )}
