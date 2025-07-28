@@ -9,6 +9,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { useDirectMessages } from '@/hooks/useDirectMessages';
 import { useSacredCircles } from '@/hooks/useSacredCircles';
+import { CreateCircleModal } from '@/components/CreateCircleModal';
 
 interface ChatBubbleProps {
   className?: string;
@@ -20,6 +21,7 @@ export const ChatBubble = ({ className }: ChatBubbleProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeView, setActiveView] = useState<ChatView>('conversations');
   const [searchQuery, setSearchQuery] = useState('');
+  const [showCreateCircle, setShowCreateCircle] = useState(false);
 
   const { conversations, loading: dmLoading } = useDirectMessages();
   const { circles, loading: circlesLoading } = useSacredCircles();
@@ -241,6 +243,7 @@ export const ChatBubble = ({ className }: ChatBubbleProps) => {
                   variant="outline" 
                   className="w-full justify-start gap-2 border-dashed hover:bg-accent/50"
                   size="sm"
+                  onClick={() => setShowCreateCircle(true)}
                 >
                   <Plus className="h-4 w-4" />
                   Create Sacred Circle
@@ -258,6 +261,11 @@ export const ChatBubble = ({ className }: ChatBubbleProps) => {
           </ScrollArea>
         </Card>
       )}
+
+      <CreateCircleModal 
+        open={showCreateCircle} 
+        onOpenChange={setShowCreateCircle} 
+      />
     </div>
   );
 };
