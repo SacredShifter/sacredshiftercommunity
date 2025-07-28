@@ -10,7 +10,7 @@ import { Plus, Heart, MessageCircle, Share2, MoreHorizontal } from 'lucide-react
 import CreatePostModal from '@/components/CreatePostModal';
 import { formatDistanceToNow } from 'date-fns';
 
-interface CodexEntry {
+interface SacredPost {
   id: string;
   user_id: string;
   content: string;
@@ -19,6 +19,8 @@ interface CodexEntry {
   circle_ids: string[];
   source_module: string;
   tags: string[];
+  like_count: number;
+  comment_count: number;
   created_at: string;
   updated_at: string;
   profiles?: {
@@ -30,16 +32,16 @@ interface CodexEntry {
 const Feed = () => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [entries, setEntries] = useState<CodexEntry[]>([]);
+  const [posts, setPosts] = useState<SacredPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
 
-  const fetchEntries = async () => {
+  const fetchPosts = async () => {
     try {
       setLoading(true);
       
       const { data, error } = await supabase
-        .from('codex_entries')
+        .from('sacred_posts')
         .select(`
           *,
           profiles (
@@ -51,7 +53,7 @@ const Feed = () => {
         .limit(50);
 
       if (error) throw error;
-      setEntries(data || []);
+      setPosts((data || []) as SacredPost[]);
     } catch (error: any) {
       toast({
         title: "Error loading feed",
@@ -65,7 +67,7 @@ const Feed = () => {
 
   useEffect(() => {
     if (user) {
-      fetchEntries();
+      fetchPosts();
     }
   }, [user]);
 
@@ -86,7 +88,7 @@ const Feed = () => {
   };
 
   const handlePostCreated = () => {
-    fetchEntries();
+    fetchPosts();
     setShowCreateModal(false);
   };
 
@@ -125,7 +127,7 @@ const Feed = () => {
 
       {/* Feed Content */}
       <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
-        {entries.length === 0 ? (
+        {posts.length === 0 ? (
           <Card className="text-center py-12">
             <CardContent>
               <div className="space-y-4">
@@ -145,17 +147,17 @@ const Feed = () => {
             </CardContent>
           </Card>
         ) : (
-          entries.map((entry) => {
-            const sourceModule = getSourceModuleDisplay(entry.source_module);
+          posts.map((post) => {
+            const sourceModule = getSourceModuleDisplay(post.source_module);
             
             return (
-              <Card key={entry.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+              <Card key={post.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                 <CardHeader className="pb-3">
                   <div className="flex items-start space-x-3">
                     <Avatar className="h-10 w-10">
-                      <AvatarImage src={entry.profiles?.avatar_url} />
+                      <AvatarImage src={post.profiles?.avatar_url} />
                       <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10">
-                        {getInitials(entry.profiles?.display_name)}
+                        {getInitials(post.profiles?.display_name)}
                       </AvatarFallback>
                     </Avatar>
                     
@@ -163,10 +165,10 @@ const Feed = () => {
                       <div className="flex items-center justify-between">
                         <div className="space-y-1">
                           <p className="font-semibold text-sm">
-                            {entry.profiles?.display_name || 'Sacred Seeker'}
+                            {post.profiles?.display_name || 'Sacred Seeker'}
                           </p>
                           <div className="flex items-center space-x-2 text-xs text-muted-foreground">
-                            <span>{formatDistanceToNow(new Date(entry.created_at))} ago</span>
+                            <span>{formatDistanceToNow(new Date(post.created_at))} ago</span>
                             <span>•</span>
                             <Badge 
                               variant="outline" 
@@ -175,11 +177,11 @@ const Feed = () => {
                             >
                               {sourceModule.name}
                             </Badge>
-                            {entry.visibility !== 'public' && (
+                            {post.visibility !== 'public' && (
                               <>
                                 <span>•</span>
                                 <Badge variant="secondary" className="text-xs">
-                                  {entry.visibility === 'circle' ? 'Circle' : 'Private'}
+                                  {post.visibility === 'circle' ? 'Circle' : 'Private'}
                                 </Badge>
                               </>
                             )}
@@ -194,17 +196,17 @@ const Feed = () => {
                 </CardHeader>
 
                 <CardContent className="pt-0">
-                  {entry.title && (
-                    <h3 className="font-semibold text-lg mb-2">{entry.title}</h3>
+                  {post.title && (
+                    <h3 className="font-semibold text-lg mb-2">{post.title}</h3>
                   )}
                   
                   <div className="prose prose-sm max-w-none text-foreground mb-4">
-                    <p className="whitespace-pre-wrap">{entry.content}</p>
+                    <p className="whitespace-pre-wrap">{post.content}</p>
                   </div>
 
-                  {entry.tags.length > 0 && (
+                  {post.tags.length > 0 && (
                     <div className="flex flex-wrap gap-1 mb-4">
-                      {entry.tags.map((tag, index) => (
+                      {post.tags.map((tag, index) => (
                         <Badge key={index} variant="secondary" className="text-xs">
                           #{tag}
                         </Badge>
@@ -216,11 +218,11 @@ const Feed = () => {
                   <div className="flex items-center space-x-6 pt-2 border-t">
                     <Button variant="ghost" size="sm" className="flex items-center space-x-2 text-muted-foreground hover:text-primary">
                       <Heart className="h-4 w-4" />
-                      <span className="text-xs">Resonate</span>
+                      <span className="text-xs">Resonate {post.like_count > 0 && `(${post.like_count})`}</span>
                     </Button>
                     <Button variant="ghost" size="sm" className="flex items-center space-x-2 text-muted-foreground hover:text-primary">
                       <MessageCircle className="h-4 w-4" />
-                      <span className="text-xs">Reflect</span>
+                      <span className="text-xs">Reflect {post.comment_count > 0 && `(${post.comment_count})`}</span>
                     </Button>
                     <Button variant="ghost" size="sm" className="flex items-center space-x-2 text-muted-foreground hover:text-primary">
                       <Share2 className="h-4 w-4" />

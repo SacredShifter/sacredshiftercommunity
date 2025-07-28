@@ -1,9 +1,12 @@
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useNavigate } from "react-router-dom";
+import { Rss, User, LogOut } from "lucide-react";
 
 const Index = () => {
   const { user, signOut } = useAuth();
+  const navigate = useNavigate();
 
   const handleSignOut = async () => {
     await signOut();
@@ -42,13 +45,24 @@ const Index = () => {
             </ul>
           </div>
           
-          <Button 
-            onClick={handleSignOut}
-            variant="outline" 
-            className="w-full"
-          >
-            Sign Out
-          </Button>
+          <div className="space-y-3">
+            <Button 
+              onClick={() => navigate('/feed')}
+              className="w-full bg-gradient-to-r from-primary to-primary/80"
+            >
+              <Rss className="h-4 w-4 mr-2" />
+              Enter Sacred Feed
+            </Button>
+            
+            <Button 
+              onClick={handleSignOut}
+              variant="outline" 
+              className="w-full"
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              Sign Out
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </div>

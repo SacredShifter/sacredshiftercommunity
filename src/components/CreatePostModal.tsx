@@ -103,7 +103,7 @@ const CreatePostModal = ({ open, onOpenChange, onPostCreated }: CreatePostModalP
       };
 
       const { error } = await supabase
-        .from('codex_entries')
+        .from('sacred_posts')
         .insert([entryData]);
 
       if (error) throw error;
