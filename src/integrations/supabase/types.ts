@@ -11250,6 +11250,14 @@ export type Database = {
         Args: { material_id: string }
         Returns: undefined
       }
+      is_group_member: {
+        Args: { group_id: string; user_id: string }
+        Returns: boolean
+      }
+      is_group_private: {
+        Args: { group_id: string }
+        Returns: boolean
+      }
       is_mirror_theme_unlocked: {
         Args: { user_id_param: string; theme_id_param: string }
         Returns: boolean
@@ -12577,6 +12585,13 @@ export type Database = {
       }
       use_generation_credit: {
         Args: { user_id: string; credit_cost?: number }
+        Returns: boolean
+      }
+      user_has_role: {
+        Args: {
+          user_id: string
+          role_name: Database["public"]["Enums"]["app_role"]
+        }
         Returns: boolean
       }
     }
