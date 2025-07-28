@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { Plus, Heart, MessageCircle, Share2, MoreHorizontal } from 'lucide-react';
 import CreatePostModal from '@/components/CreatePostModal';
+import { ChatBubble } from '@/components/ChatBubble';
 import { formatDistanceToNow } from 'date-fns';
 
 interface SacredPost {
@@ -235,6 +236,9 @@ const Feed = () => {
           })
         )}
       </div>
+
+      {/* Chat Bubble */}
+      <ChatBubble />
 
       <CreatePostModal 
         open={showCreateModal}
