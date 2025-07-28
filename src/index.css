@@ -176,9 +176,10 @@ All colors MUST be HSL.
 
 @layer components {
   .sacred-card {
-    @apply bg-card/[0.03] border border-white/[0.05] rounded-2xl backdrop-blur-[8px] p-6;
-    @apply shadow-[0_0_10px_hsl(var(--primary)/0.1)] transition-shadow duration-300;
-    @apply hover:shadow-[0_0_20px_hsl(var(--primary)/0.25)];
+    @apply bg-card/[0.08] border border-white/[0.08] rounded-2xl backdrop-blur-[12px] p-6;
+    @apply shadow-[0_0_15px_hsl(var(--primary)/0.15)] transition-shadow duration-300;
+    @apply hover:shadow-[0_0_25px_hsl(var(--primary)/0.3)];
+    @apply hover:bg-card/[0.12];
   }
 
   .sacred-button {
