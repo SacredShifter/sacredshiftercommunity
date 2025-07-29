@@ -48,6 +48,7 @@ export const StartDirectMessageModal: React.FC<StartDirectMessageModalProps> = (
         .from('profiles')
         .select('id, display_name, avatar_url, bio')
         .neq('id', user.id)
+        .not('display_name', 'is', null) // Only show users with display names
         .order('display_name', { ascending: true })
         .limit(50);
 
@@ -58,7 +59,19 @@ export const StartDirectMessageModal: React.FC<StartDirectMessageModalProps> = (
       const { data, error } = await query;
 
       if (error) throw error;
-      setUsers(data || []);
+      
+      // Filter out any remaining null display names and deduplicate
+      const uniqueUsers = (data || [])
+        .filter(user => user.display_name && user.display_name.trim())
+        .reduce((acc: UserProfile[], current) => {
+          const exists = acc.find(user => user.id === current.id);
+          if (!exists) {
+            acc.push(current);
+          }
+          return acc;
+        }, []);
+      
+      setUsers(uniqueUsers);
     } catch (error) {
       console.error('Error fetching users:', error);
       toast({

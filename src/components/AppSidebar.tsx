@@ -1,6 +1,8 @@
 import { Link, useLocation } from "react-router-dom";
 import { Home, Users, User, Rss, Settings, LogOut, BookOpen, Video, Database, Archive, Scroll, Heart } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Sidebar,
   SidebarContent,
@@ -39,8 +41,55 @@ export function AppSidebar() {
   const { user, signOut } = useAuth();
   const currentPath = location.pathname;
   const isCollapsed = state === "collapsed";
+  const [userProfile, setUserProfile] = useState<{ display_name?: string; avatar_url?: string } | null>(null);
 
   const isActive = (path: string) => currentPath === path;
+
+  // Fetch user profile
+  const fetchProfile = async () => {
+    if (!user) return;
+    
+    try {
+      const { data } = await supabase
+        .from('profiles')
+        .select('display_name, avatar_url')
+        .eq('id', user.id)
+        .single();
+      
+      setUserProfile(data);
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProfile();
+  }, [user]);
+
+  // Subscribe to profile changes
+  useEffect(() => {
+    if (!user) return;
+
+    const channel = supabase
+      .channel('profile-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'profiles',
+          filter: `id=eq.${user.id}`
+        },
+        () => {
+          fetchProfile();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user]);
 
   const handleSignOut = async () => {
     try {
@@ -50,7 +99,10 @@ export function AppSidebar() {
     }
   };
 
-  const getInitials = (email?: string) => {
+  const getInitials = (displayName?: string, email?: string) => {
+    if (displayName) {
+      return displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+    }
     if (email) {
       return email.slice(0, 2).toUpperCase();
     }
@@ -236,13 +288,15 @@ export function AppSidebar() {
           <div className="mt-auto p-4 border-t">
             <div className="flex items-center space-x-3">
               <Avatar className="w-8 h-8">
-                <AvatarImage src="" />
+                <AvatarImage src={userProfile?.avatar_url || ""} />
                 <AvatarFallback className="text-xs bg-primary/10 text-primary">
-                  {getInitials(user.email)}
+                  {getInitials(userProfile?.display_name, user.email)}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">{user.email}</p>
+                <p className="text-sm font-medium truncate">
+                  {userProfile?.display_name || user.email?.split('@')[0] || 'Sacred Seeker'}
+                </p>
                 <p className="text-xs text-muted-foreground">Sacred Seeker</p>
               </div>
             </div>
