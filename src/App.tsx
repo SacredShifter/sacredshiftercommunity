@@ -35,7 +35,7 @@ const App = () => {
                       <ParallaxBackground />
                       <AppSidebar />
                       <SidebarInset>
-                        <header className="h-12 flex items-center border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4">
+                        <header className="h-12 flex items-center border-b backdrop-blur supports-[backdrop-filter]:bg-background/10 px-4">
                           <SidebarTrigger className="mr-4" />
                           <div className="flex items-center">
                             <img 
@@ -45,7 +45,7 @@ const App = () => {
                             />
                           </div>
                         </header>
-                        <div className="flex-1 overflow-auto p-4">
+                        <div className="flex-1 overflow-auto p-4 bg-transparent">
                           <Routes>
                             <Route path="/" element={<Index />} />
                             <Route path="/feed" element={<Feed />} />
