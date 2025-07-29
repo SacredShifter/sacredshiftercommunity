@@ -891,6 +891,20 @@ export type Database = {
             referencedRelation: "circle_groups"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "circle_group_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "circle_group_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_user_data_summary"
+            referencedColumns: ["user_id"]
+          },
         ]
       }
       circle_groups: {
@@ -930,7 +944,22 @@ export type Database = {
           name?: string
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "circle_groups_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "circle_groups_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "v_user_data_summary"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       circle_post_comments: {
         Row: {
@@ -1071,6 +1100,20 @@ export type Database = {
           visibility?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "circle_posts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "circle_posts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_user_data_summary"
+            referencedColumns: ["user_id"]
+          },
           {
             foreignKeyName: "fk_circle_posts_profile_id"
             columns: ["user_id"]
@@ -6965,7 +7008,22 @@ export type Database = {
           user_id?: string
           visibility?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "sacred_posts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sacred_posts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_user_data_summary"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       sacred_rituals: {
         Row: {
