@@ -56,13 +56,47 @@ export const useSacredCircles = () => {
     if (!user) return;
 
     try {
-      const { data, error } = await supabase
+      // First fetch all circles
+      const { data: circlesData, error: circlesError } = await supabase
         .from('circle_groups')
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      setCircles(data || []);
+      if (circlesError) throw circlesError;
+
+      // Then fetch memberships for current user
+      const { data: memberships, error: membershipError } = await supabase
+        .from('circle_group_members')
+        .select('group_id')
+        .eq('user_id', user.id);
+
+      if (membershipError) throw membershipError;
+
+      // Get member counts for each circle
+      const { data: allMembers, error: countError } = await supabase
+        .from('circle_group_members')
+        .select('group_id');
+
+      if (countError) throw countError;
+
+      // Calculate member counts
+      const memberCounts: Record<string, number> = {};
+      if (allMembers) {
+        for (const member of allMembers) {
+          memberCounts[member.group_id] = (memberCounts[member.group_id] || 0) + 1;
+        }
+      }
+
+      // Process circles with membership and count data
+      const userMemberships = new Set(memberships?.map(m => m.group_id) || []);
+      
+      const processedCircles = (circlesData || []).map(circle => ({
+        ...circle,
+        is_member: userMemberships.has(circle.id),
+        member_count: memberCounts?.[circle.id] || 0
+      }));
+
+      setCircles(processedCircles);
     } catch (err) {
       console.error('Error fetching circles:', err);
       setError('Failed to load Sacred Circles');
@@ -139,6 +173,12 @@ export const useSacredCircles = () => {
           user_id: user.id,
           role: 'member'
         });
+
+      // If it's a duplicate key error, the user is already a member
+      if (error && error.code === '23505') {
+        console.log('User is already a member of this circle');
+        return; // Silent success - they're already in
+      }
 
       if (error) throw error;
       
