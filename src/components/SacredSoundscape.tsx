@@ -224,7 +224,7 @@ export const SacredSoundscape = () => {
         )}
         {/* Sacred Frequency Fan */}
         {showFrequencies && (
-          <div className="absolute bottom-16 left-0">
+          <div className="absolute top-16 left-0">
             {sacredFrequencies.map((freq, index) => {
               const angle = (index * 360) / sacredFrequencies.length;
               const radius = 120;
@@ -242,7 +242,7 @@ export const SacredSoundscape = () => {
                   }`}
                   style={{
                     left: `${x + 60}px`,
-                    bottom: `${-y + 60}px`,
+                    top: `${y + 60}px`,
                     backgroundColor: selectedFrequency.hz === freq.hz ? `${freq.color}20` : undefined,
                     borderColor: freq.color,
                     boxShadow: selectedFrequency.hz === freq.hz ? `0 0 30px ${freq.color}60` : `0 0 10px ${freq.color}30`,
@@ -262,7 +262,7 @@ export const SacredSoundscape = () => {
             })}
             
             {/* Center connection lines */}
-            <div className="absolute bottom-[60px] left-[60px] w-1 h-1">
+            <div className="absolute top-[60px] left-[60px] w-1 h-1">
               {sacredFrequencies.map((_, index) => {
                 const angle = (index * 360) / sacredFrequencies.length;
                 const radius = 120;
