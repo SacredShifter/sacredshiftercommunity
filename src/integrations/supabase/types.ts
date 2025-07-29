@@ -10736,6 +10736,42 @@ export type Database = {
         }
         Relationships: []
       }
+      user_video_metadata: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_favorite: boolean | null
+          is_watch_later: boolean | null
+          last_watched_at: string | null
+          updated_at: string | null
+          user_id: string
+          video_id: string
+          watched_duration: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_favorite?: boolean | null
+          is_watch_later?: boolean | null
+          last_watched_at?: string | null
+          updated_at?: string | null
+          user_id: string
+          video_id: string
+          watched_duration?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_favorite?: boolean | null
+          is_watch_later?: boolean | null
+          last_watched_at?: string | null
+          updated_at?: string | null
+          user_id?: string
+          video_id?: string
+          watched_duration?: number | null
+        }
+        Relationships: []
+      }
       users: {
         Row: {
           avatar_url: string | null
@@ -10814,6 +10850,27 @@ export type Database = {
           updated_at?: string | null
           user_id?: string
           visibility?: string | null
+        }
+        Relationships: []
+      }
+      video_tags: {
+        Row: {
+          created_at: string | null
+          id: string
+          tag: string
+          video_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          tag: string
+          video_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          tag?: string
+          video_id?: string
         }
         Relationships: []
       }

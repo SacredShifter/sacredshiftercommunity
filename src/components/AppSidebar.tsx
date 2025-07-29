@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Users, User, Rss, Settings, LogOut, BookOpen } from "lucide-react";
+import { Home, Users, User, Rss, Settings, LogOut, BookOpen, Video } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import {
   Sidebar,
@@ -19,6 +19,7 @@ const navItems = [
   { title: "Feed", url: "/feed", icon: Rss },
   { title: "Circles", url: "/circles", icon: Users },
   { title: "Journal", url: "/journal", icon: BookOpen },
+  { title: "Video Library", url: "/videos", icon: Video },
   { title: "Profile", url: "/profile", icon: User },
 ];
 
