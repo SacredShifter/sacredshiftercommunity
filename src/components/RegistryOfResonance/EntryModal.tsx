@@ -95,7 +95,7 @@ export function EntryModal({ entry, open, onClose }: EntryModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] p-0 overflow-hidden flex flex-col">
+      <DialogContent className="max-w-4xl h-[90vh] p-0 overflow-hidden flex flex-col">
         <div className="relative flex flex-col h-full">
           {/* Header with gradient background */}
           <div className="relative bg-gradient-to-r from-primary/10 via-purple-500/10 to-blue-500/10 p-6 border-b flex-shrink-0">
