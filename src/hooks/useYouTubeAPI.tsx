@@ -1,10 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { YouTubeVideo, YouTubePlaylist, YouTubeChannel, YouTubeSearchResponse } from '@/types/youtube';
+import { supabase } from '@/integrations/supabase/client';
 
-// Note: In production, this should be handled by an edge function to keep the API key secure
-const YOUTUBE_API_KEY = 'YOUR_YOUTUBE_API_KEY'; // This will need to be configured as a secret
 const SACRED_SHIFTER_CHANNEL_ID = 'UC9rEGKXKlKHdZ-QCTeAsD7g';
-const YOUTUBE_API_BASE = 'https://www.googleapis.com/youtube/v3';
 
 export const useYouTubeAPI = () => {
   const [loading, setLoading] = useState(false);
@@ -26,17 +24,19 @@ export const useYouTubeAPI = () => {
   };
 
   const makeYouTubeRequest = async (endpoint: string, params: Record<string, string>) => {
-    const url = new URL(`${YOUTUBE_API_BASE}/${endpoint}`);
-    Object.entries({ ...params, key: YOUTUBE_API_KEY }).forEach(([key, value]) => {
-      url.searchParams.append(key, value);
+    const { data, error } = await supabase.functions.invoke('youtube-api', {
+      body: { endpoint, params }
     });
 
-    const response = await fetch(url.toString());
-    if (!response.ok) {
-      throw new Error(`YouTube API error: ${response.statusText}`);
+    if (error) {
+      throw new Error(error.message || 'Failed to fetch YouTube data');
     }
-    
-    return response.json();
+
+    if (data.error) {
+      throw new Error(data.error);
+    }
+
+    return data;
   };
 
   const getChannelInfo = useCallback(async (): Promise<YouTubeChannel | null> => {
