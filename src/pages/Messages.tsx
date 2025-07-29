@@ -47,23 +47,19 @@ export default function Messages() {
   const shouldShowChatInterface = selectedConversationId !== null;
 
   const scrollToBottom = () => {
-    if (messagesEndRef.current) {
-      const scrollArea = messagesEndRef.current.closest('[data-radix-scroll-area-viewport]');
-      if (scrollArea) {
-        scrollArea.scrollTop = scrollArea.scrollHeight;
-      }
-    }
+    // Temporarily disabled to stop screen jumping
+    console.log('scrollToBottom called - disabled to prevent jumping');
   };
 
-  // Only scroll when new messages are added, not on re-renders
-  useEffect(() => {
-    if (messages.length > 0) {
-      const timer = setTimeout(() => {
-        scrollToBottom();
-      }, 100);
-      return () => clearTimeout(timer);
-    }
-  }, [messages.length]); // Only depend on length, not the entire messages array
+  // Temporarily disabled auto-scroll to prevent screen jumping
+  // useEffect(() => {
+  //   if (messages.length > 0) {
+  //     const timer = setTimeout(() => {
+  //       scrollToBottom();
+  //     }, 100);
+  //     return () => clearTimeout(timer);
+  //   }
+  // }, [messages.length]);
 
   const handleSendMessage = async () => {
     if (!selectedConversationId || !newMessage.trim()) return;
