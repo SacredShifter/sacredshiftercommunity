@@ -14,10 +14,10 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-transparent">
       {/* Main Content */}
       <div className="flex items-center justify-center min-h-screen p-4">
-        <Card className="w-full max-w-2xl mx-auto">
+        <Card className="w-full max-w-2xl mx-auto bg-background/80 backdrop-blur-sm border-primary/20">
           <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
               <img 
