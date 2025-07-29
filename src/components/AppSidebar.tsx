@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Users, User, Rss, Settings, LogOut, BookOpen, Video, Database, Archive, Scroll } from "lucide-react";
+import { Home, Users, User, Rss, Settings, LogOut, BookOpen, Video, Database, Archive, Scroll, Heart } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import {
   Sidebar,
@@ -184,6 +184,20 @@ export function AppSidebar() {
           <SidebarGroupLabel>Account</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
+              <SidebarMenuItem>
+                <TooltipWrapper 
+                  content="Support Sacred Shifter - Fuel the Frequency with donations and premium modules" 
+                  side="right"
+                  disabled={!isCollapsed}
+                >
+                  <SidebarMenuButton asChild>
+                    <Link to="/support">
+                      <Heart className="mr-2 h-4 w-4" />
+                      {!isCollapsed && <span>Support Sacred Shifter</span>}
+                    </Link>
+                  </SidebarMenuButton>
+                </TooltipWrapper>
+              </SidebarMenuItem>
               <SidebarMenuItem>
                 <TooltipWrapper 
                   content={HelpTooltips.settings} 
