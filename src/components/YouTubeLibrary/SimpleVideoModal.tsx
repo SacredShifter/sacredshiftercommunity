@@ -56,6 +56,8 @@ export const SimpleVideoModal: React.FC<VideoPlayerModalProps> = ({
     if (isOpen) {
       document.addEventListener('mousedown', handleClickOutside);
       console.log('Simple modal opened - no scroll lock applied');
+      // Reset reflection modal state when video modal opens
+      setShowReflectionModal(false);
     }
 
     return () => {
