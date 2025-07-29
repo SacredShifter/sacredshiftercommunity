@@ -110,7 +110,7 @@ export function AppSidebar() {
   };
 
   return (
-    <Sidebar className={isCollapsed ? "w-16" : "w-64"} collapsible="icon">
+    <Sidebar className={isCollapsed ? "w-16" : "w-64"} collapsible="icon" data-tour="navigation-sidebar">
       <SidebarContent>
         {/* Core Navigation */}
         <SidebarGroup>
@@ -131,7 +131,7 @@ export function AppSidebar() {
                         isActive={isItemActive}
                         className={isItemActive ? "bg-primary/10 text-primary font-medium" : ""}
                       >
-                        <Link to={item.url}>
+                        <Link to={item.url} data-tour={`nav-${item.title.toLowerCase()}`}>
                           <item.icon className="mr-2 h-4 w-4" />
                           {!isCollapsed && <span>{item.title}</span>}
                         </Link>
@@ -163,7 +163,7 @@ export function AppSidebar() {
                         isActive={isItemActive}
                         className={isItemActive ? "bg-primary/10 text-primary font-medium" : ""}
                       >
-                        <Link to={item.url}>
+                        <Link to={item.url} data-tour={`nav-${item.title.toLowerCase().replace(' ', '-')}`}>
                           <item.icon className="mr-2 h-4 w-4" />
                           {!isCollapsed && <span>{item.title}</span>}
                         </Link>
@@ -195,7 +195,7 @@ export function AppSidebar() {
                         isActive={isItemActive}
                         className={isItemActive ? "bg-primary/10 text-primary font-medium" : ""}
                       >
-                        <Link to={item.url}>
+                        <Link to={item.url} data-tour="nav-video-library">
                           <item.icon className="mr-2 h-4 w-4" />
                           {!isCollapsed && <span>{item.title}</span>}
                         </Link>
@@ -285,7 +285,7 @@ export function AppSidebar() {
 
         {/* User Info */}
         {user && !isCollapsed && (
-          <div className="mt-auto p-4 border-t">
+          <div className="mt-auto p-4 border-t" data-tour="profile-section">
             <div className="flex items-center space-x-3">
               <Avatar className="w-8 h-8">
                 <AvatarImage src={userProfile?.avatar_url || ""} />

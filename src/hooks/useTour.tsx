@@ -15,7 +15,7 @@ interface TourStep {
   styles?: any;
 }
 
-interface TourConfig {
+export interface TourConfig {
   id: string;
   steps: TourStep[];
   continuous?: boolean;

@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useTourContext } from "@/components/TourProvider";
+import { LANDING_PAGE_TOUR } from "@/configs/tours";
 import { 
   Home, Users, User, Rss, Settings, LogOut, BookOpen, Video, 
   Database, Archive, Scroll, Heart, Sparkles, Crown, Zap 
@@ -12,6 +14,7 @@ import {
 const Index = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const { startTour, isTourCompleted } = useTourContext();
   const [showWelcome, setShowWelcome] = useState(false);
   const [isFirstVisit, setIsFirstVisit] = useState(false);
 
@@ -43,6 +46,17 @@ const Index = () => {
 
     checkFirstVisit();
   }, [user]);
+
+  // Auto-start tour for first-time users
+  useEffect(() => {
+    if (user && !isTourCompleted('landing-page-tour') && !showWelcome) {
+      // Small delay to ensure elements are rendered
+      const timer = setTimeout(() => {
+        startTour(LANDING_PAGE_TOUR);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [user, showWelcome, isTourCompleted, startTour]);
 
   const sacredSections = [
     {
@@ -188,6 +202,7 @@ const Index = () => {
                   src="/src/assets/sacred-shifter-logo.png" 
                   alt="Sacred Shifter" 
                   className="h-24 w-auto filter invert brightness-0 contrast-100 opacity-90"
+                  data-tour="sacred-shifter-logo"
                 />
                 <div className="absolute -inset-2 bg-gradient-to-r from-primary/20 to-primary/10 rounded-full blur-xl animate-pulse" />
               </div>
@@ -202,7 +217,10 @@ const Index = () => {
           </div>
 
           {/* Sacred Shiftery Tiles */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+          <div 
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8"
+            data-tour="frequency-tiles"
+          >
             {sacredSections.map((section, index) => (
               <Card 
                 key={section.path}
