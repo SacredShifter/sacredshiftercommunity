@@ -20,15 +20,17 @@ interface SacredPost {
   id: string;
   user_id: string;
   content: string;
-  title?: string;
-  visibility: 'public' | 'circle' | 'private';
-  circle_ids: string[];
-  source_module: string;
-  tags: string[];
-  like_count: number;
-  comment_count: number;
+  chakra_tag?: string;
   frequency?: number;
   tone?: string;
+  visibility: 'circle' | 'private';
+  has_image?: boolean;
+  image_url?: string;
+  has_audio?: boolean;
+  audio_url?: string;
+  is_anonymous?: boolean;
+  shared_with?: string[];
+  auto_delete_at?: string;
   created_at: string;
   updated_at: string;
   profiles?: {
@@ -50,7 +52,7 @@ const Feed = () => {
       setLoading(true);
       
       const { data, error } = await supabase
-        .from('sacred_posts')
+        .from('circle_posts')
         .select(`
           *,
           profiles (
@@ -175,7 +177,7 @@ const Feed = () => {
           </Card>
         ) : (
           posts.map((post) => {
-            const sourceModule = getSourceModuleDisplay(post.source_module);
+            const sourceModule = getSourceModuleDisplay('manual');
             
             return (
               <Card key={post.id} className="post-card overflow-hidden hover:shadow-lg transition-all duration-300 hover:shadow-primary/20">
@@ -204,11 +206,11 @@ const Feed = () => {
                             >
                               {sourceModule.name}
                             </Badge>
-                            {post.visibility !== 'public' && (
+                            {post.visibility === 'private' && (
                               <>
                                 <span>•</span>
                                 <Badge variant="secondary" className="text-xs">
-                                  {post.visibility === 'circle' ? 'Circle' : 'Private'}
+                                  Private
                                 </Badge>
                               </>
                             )}
@@ -220,10 +222,6 @@ const Feed = () => {
                 </CardHeader>
 
                 <CardContent className="pt-0">
-                  {post.title && (
-                    <h3 className="font-semibold text-lg mb-2">{post.title}</h3>
-                  )}
-                  
                   <div className="prose prose-sm max-w-none text-foreground mb-4">
                     <p className="whitespace-pre-wrap">{post.content}</p>
                   </div>
@@ -245,21 +243,11 @@ const Feed = () => {
                     </div>
                   )}
 
-                  {post.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mb-4">
-                      {post.tags.map((tag, index) => (
-                        <Badge key={index} variant="secondary" className="text-xs">
-                          #{tag}
-                        </Badge>
-                      ))}
-                    </div>
-                  )}
-
                   {/* Interactive Post Buttons */}
                   <PostInteractionButtons
                     postId={post.id}
-                    initialLikeCount={post.like_count}
-                    initialCommentCount={post.comment_count}
+                    initialLikeCount={0}
+                    initialCommentCount={0}
                     postUserId={post.user_id}
                     currentUserId={user?.id}
                   />
