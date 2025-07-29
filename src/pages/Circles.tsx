@@ -34,16 +34,11 @@ const Circles = () => {
   const [activeFilter, setActiveFilter] = useState('all');
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [selectedCircle, setSelectedCircle] = useState<string | null>(null);
-  const [joinedCircleIds, setJoinedCircleIds] = useState<Set<string>>(new Set());
 
-  // Get joined circle IDs - for now we'll use a simpler approach
-  useEffect(() => {
-    if (circles && user) {
-      // This will be populated from the useSacredCircles hook
-      // For now, we'll manage this state locally through join/leave actions
-      setJoinedCircleIds(new Set());
-    }
-  }, [circles, user]);
+  // Get joined circle IDs from the actual circles data
+  const joinedCircleIds = new Set(
+    circles?.filter(circle => circle.is_member).map(circle => circle.id) || []
+  );
 
   // Filter circles based on search and filter options
   const filteredCircles = circles?.filter(circle => {
@@ -70,18 +65,12 @@ const Circles = () => {
     try {
       if (joinedCircleIds.has(circleId)) {
         await leaveCircle(circleId);
-        setJoinedCircleIds(prev => {
-          const newSet = new Set(prev);
-          newSet.delete(circleId);
-          return newSet;
-        });
         toast({
           title: "Left Sacred Circle",
           description: "You have successfully left the circle.",
         });
       } else {
         await joinCircle(circleId);
-        setJoinedCircleIds(prev => new Set(prev).add(circleId));
         toast({
           title: "Joined Sacred Circle",
           description: "Welcome to the circle! You can now participate in discussions.",
