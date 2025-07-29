@@ -22,7 +22,6 @@ const coreNavItems = [
   { title: "Home", url: "/", icon: Home, tooltip: HelpTooltips.home },
   { title: "Feed", url: "/feed", icon: Rss, tooltip: HelpTooltips.feed },
   { title: "Messages", url: "/messages", icon: MessageCircle, tooltip: "Direct Messages - Connect with other Sacred Shifters privately" },
-  { title: "Profile", url: "/profile", icon: User, tooltip: HelpTooltips.profile },
 ];
 
 const sacredToolsItems = [
@@ -237,6 +236,24 @@ export function AppSidebar() {
           <SidebarGroupLabel>Account</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
+              <SidebarMenuItem>
+                <TooltipWrapper 
+                  content={HelpTooltips.profile} 
+                  side="right"
+                  disabled={!isCollapsed}
+                >
+                  <SidebarMenuButton 
+                    asChild
+                    isActive={isActive("/profile")}
+                    className={isActive("/profile") ? "bg-primary/10 text-primary font-medium" : ""}
+                  >
+                    <Link to="/profile">
+                      <User className="mr-2 h-4 w-4" />
+                      {!isCollapsed && <span>Profile</span>}
+                    </Link>
+                  </SidebarMenuButton>
+                </TooltipWrapper>
+              </SidebarMenuItem>
               <SidebarMenuItem>
                 <TooltipWrapper 
                   content="Support Sacred Shifter - Fuel the Frequency with donations and premium modules" 
