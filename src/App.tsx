@@ -8,6 +8,8 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { ParallaxBackground } from "@/components/ParallaxBackground";
+import { ChatBubble } from "@/components/ChatBubble";
+import { SacredSoundscape } from "@/components/SacredSoundscape";
 import Index from "./pages/Index";
 import Feed from "./pages/Feed";
 import Circles from "./pages/Circles";
@@ -56,6 +58,10 @@ const App = () => {
                           </Routes>
                         </div>
                       </SidebarInset>
+                      
+                      {/* Persistent Global Components */}
+                      <ChatBubble className="fixed bottom-4 right-4 z-50" />
+                      <SacredSoundscape />
                     </div>
                   </SidebarProvider>
                 </ProtectedRoute>

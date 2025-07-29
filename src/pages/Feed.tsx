@@ -286,11 +286,6 @@ const Feed = () => {
         )}
       </div>
 
-      {/* Chat Bubble */}
-      <ChatBubble />
-
-      {/* Sacred Soundscape */}
-      <SacredSoundscape />
 
       <CreatePostModal 
         open={showCreateModal}
