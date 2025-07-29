@@ -7,6 +7,8 @@ import { AuthProvider } from "@/hooks/useAuth";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Feed from "./pages/Feed";
+import Circles from "./pages/Circles";
+import Profile from "./pages/Profile";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -32,6 +34,16 @@ const App = () => {
               <Route path="/feed" element={
                 <ProtectedRoute>
                   <Feed />
+                </ProtectedRoute>
+              } />
+              <Route path="/circles" element={
+                <ProtectedRoute>
+                  <Circles />
+                </ProtectedRoute>
+              } />
+              <Route path="/profile" element={
+                <ProtectedRoute>
+                  <Profile />
                 </ProtectedRoute>
               } />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

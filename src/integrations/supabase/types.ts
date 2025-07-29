@@ -1013,6 +1013,13 @@ export type Database = {
             referencedRelation: "circle_posts"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "circle_post_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "circle_posts_with_profiles"
+            referencedColumns: ["id"]
+          },
         ]
       }
       circle_post_likes: {
@@ -1042,6 +1049,13 @@ export type Database = {
             referencedRelation: "circle_posts"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "circle_post_likes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "circle_posts_with_profiles"
+            referencedColumns: ["id"]
+          },
         ]
       }
       circle_posts: {
@@ -1052,12 +1066,16 @@ export type Database = {
           content: string
           created_at: string | null
           frequency: number | null
+          group_id: string | null
           has_audio: boolean | null
           has_image: boolean | null
           id: string
           image_url: string | null
           is_anonymous: boolean | null
           shared_with: string[] | null
+          source_module: string | null
+          tags: string[] | null
+          title: string | null
           tone: string | null
           updated_at: string | null
           user_id: string
@@ -1070,12 +1088,16 @@ export type Database = {
           content: string
           created_at?: string | null
           frequency?: number | null
+          group_id?: string | null
           has_audio?: boolean | null
           has_image?: boolean | null
           id?: string
           image_url?: string | null
           is_anonymous?: boolean | null
           shared_with?: string[] | null
+          source_module?: string | null
+          tags?: string[] | null
+          title?: string | null
           tone?: string | null
           updated_at?: string | null
           user_id: string
@@ -1088,18 +1110,29 @@ export type Database = {
           content?: string
           created_at?: string | null
           frequency?: number | null
+          group_id?: string | null
           has_audio?: boolean | null
           has_image?: boolean | null
           id?: string
           image_url?: string | null
           is_anonymous?: boolean | null
           shared_with?: string[] | null
+          source_module?: string | null
+          tags?: string[] | null
+          title?: string | null
           tone?: string | null
           updated_at?: string | null
           user_id?: string
           visibility?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "circle_posts_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "circle_groups"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "circle_posts_user_id_fkey"
             columns: ["user_id"]
@@ -10539,6 +10572,70 @@ export type Database = {
           count: number | null
         }
         Relationships: []
+      }
+      circle_posts_with_profiles: {
+        Row: {
+          audio_url: string | null
+          auto_delete_at: string | null
+          avatar_url: string | null
+          chakra_tag: string | null
+          circle_name: string | null
+          content: string | null
+          created_at: string | null
+          display_name: string | null
+          frequency: number | null
+          group_id: string | null
+          has_audio: boolean | null
+          has_image: boolean | null
+          id: string | null
+          image_url: string | null
+          is_anonymous: boolean | null
+          shared_with: string[] | null
+          source_module: string | null
+          tags: string[] | null
+          title: string | null
+          tone: string | null
+          updated_at: string | null
+          user_id: string | null
+          visibility: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "circle_posts_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "circle_groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "circle_posts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "circle_posts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_user_data_summary"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "fk_circle_posts_profile_id"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_circle_posts_profile_id"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_user_data_summary"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       geography_columns: {
         Row: {

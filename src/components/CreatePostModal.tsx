@@ -118,9 +118,23 @@ const CreatePostModal = ({ open, onOpenChange, onPostCreated }: CreatePostModalP
         tone: selectedFrequency ? `${selectedFrequency.hz}Hz ${selectedFrequency.name}` : null
       };
 
+      // Prepare data for circle_posts table
+      const postData = {
+        user_id: user.id,
+        title: title.trim() || null,
+        content: content.trim(),
+        group_id: visibility === 'circle' && selectedCircles.length > 0 ? selectedCircles[0] : null,
+        visibility,
+        source_module: sourceModule,
+        tags,
+        frequency: selectedFrequency?.hz || null,
+        tone: selectedFrequency ? `${selectedFrequency.hz}Hz ${selectedFrequency.name}` : null,
+        chakra_tag: null, // Can be set later if needed
+      };
+
       const { error } = await supabase
-        .from('sacred_posts')
-        .insert([entryData]);
+        .from('circle_posts')
+        .insert([postData]);
 
       if (error) throw error;
 
