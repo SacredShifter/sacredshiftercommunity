@@ -53,13 +53,7 @@ const Feed = () => {
       
       const { data, error } = await supabase
         .from('circle_posts')
-        .select(`
-          *,
-          profiles (
-            display_name,
-            avatar_url
-          )
-        `)
+        .select('*')
         .order('created_at', { ascending: false })
         .limit(50);
 
