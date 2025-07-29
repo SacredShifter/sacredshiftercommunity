@@ -21,9 +21,13 @@ const VideoLibrary: React.FC = () => {
             transition={{ duration: 0.6 }}
             className="text-center mb-8"
           >
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent mb-4">
-              Sacred Shifter Video Library
-            </h1>
+            <div className="flex justify-center mb-4">
+              <img 
+                src="/src/assets/sacred-shifter-logo.png" 
+                alt="Sacred Shifter" 
+                className="h-16 w-auto"
+              />
+            </div>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Immerse yourself in our collection of transformative content. 
               Explore guided journeys, resonance science, and consciousness-expanding videos.

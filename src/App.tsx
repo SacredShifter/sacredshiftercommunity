@@ -63,9 +63,11 @@ const App = () => {
                         </div>
                       </SidebarInset>
                       
-                      {/* Persistent Global Components */}
-                      <ChatBubble className="fixed bottom-4 right-4 z-50" />
-                      <SacredSoundscape />
+                      {/* Floating Control Center - Top Right */}
+                      <div className="fixed top-4 right-4 z-50 flex flex-col gap-2">
+                        <ChatBubble />
+                        <SacredSoundscape />
+                      </div>
                     </div>
                   </SidebarProvider>
                 </ProtectedRoute>
