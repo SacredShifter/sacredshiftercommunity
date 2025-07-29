@@ -168,7 +168,8 @@ const Profile = () => {
   }
 
   return (
-    <div className="container mx-auto p-6 max-w-2xl">
+    <div className="h-full overflow-y-auto">
+      <div className="container mx-auto p-6 max-w-2xl pb-32">
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -339,6 +340,7 @@ const Profile = () => {
             </div>
           </CardContent>
         </Card>
+      </div>
       </div>
     </div>
   );

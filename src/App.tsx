@@ -49,21 +49,21 @@ const App = () => {
                 <Route path="/*" element={
                   <ProtectedRoute>
                     <SidebarProvider>
-                      <div className="min-h-screen flex w-full">
-                        <AppSidebar />
-                        <SidebarInset className="flex-1 flex flex-col">
-                          <header className="h-12 flex items-center border-b border-border/30 backdrop-blur-md bg-background/20 px-4 shrink-0">
-                            <SidebarTrigger className="mr-4" />
-                            <div className="flex items-center">
-                              <img 
-                                src="https://mikltjgbvxrxndtszorb.supabase.co/storage/v1/object/public/sacred-assets/uploads/Logo-MainSacredShifter-removebg-preview%20(1).png" 
-                                alt="Sacred Shifter" 
-                                className="h-8 w-auto filter invert brightness-0 contrast-100 opacity-90"
-                              />
-                            </div>
-                          </header>
-                          <main className="flex-1 min-h-0">
-                            <div className="h-full overflow-auto">
+                       <div className="h-screen flex w-full">
+                         <AppSidebar />
+                         <SidebarInset className="flex-1 flex flex-col h-full">
+                           <header className="h-12 flex items-center border-b border-border/30 backdrop-blur-md bg-background/20 px-4 shrink-0">
+                             <SidebarTrigger className="mr-4" />
+                             <div className="flex items-center">
+                               <img 
+                                 src="https://mikltjgbvxrxndtszorb.supabase.co/storage/v1/object/public/sacred-assets/uploads/Logo-MainSacredShifter-removebg-preview%20(1).png" 
+                                 alt="Sacred Shifter" 
+                                 className="h-8 w-auto filter invert brightness-0 contrast-100 opacity-90"
+                               />
+                             </div>
+                           </header>
+                           <main className="flex-1 overflow-hidden">
+                             <div className="h-full overflow-y-auto">
                               <Routes>
                                 <Route path="/" element={<Index />} />
                                 <Route path="/feed" element={<Feed />} />
