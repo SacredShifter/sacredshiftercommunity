@@ -46,7 +46,21 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
   };
 
   useEffect(() => {
-    console.log('Modal state changed:', { isOpen, video: video?.title });
+    console.log('Modal state changed:', { 
+      isOpen, 
+      video: video?.title,
+      bodyOverflow: document.body.style.overflow,
+      bodyClasses: document.body.className
+    });
+    
+    if (isOpen) {
+      console.log('Modal opened - checking body scroll lock');
+      console.log('Body styles:', {
+        overflow: getComputedStyle(document.body).overflow,
+        position: getComputedStyle(document.body).position,
+        pointerEvents: getComputedStyle(document.body).pointerEvents
+      });
+    }
   }, [isOpen, video]);
 
   if (!video) return null;

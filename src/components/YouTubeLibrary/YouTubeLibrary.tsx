@@ -11,7 +11,7 @@ import { useVideoMetadata } from '@/hooks/useVideoMetadata';
 import { YouTubeVideo, YouTubeChannel } from '@/types/youtube';
 import { ChannelHeader } from './ChannelHeader';
 import { VideoGrid } from './VideoGrid';
-import { VideoPlayerModal } from './VideoPlayerModal';
+import { SimpleVideoModal } from './SimpleVideoModal';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -211,7 +211,7 @@ export const YouTubeLibrary: React.FC = () => {
       />
 
       {/* Video Player Modal */}
-      <VideoPlayerModal
+      <SimpleVideoModal
         video={selectedVideo}
         isOpen={isPlayerOpen}
         onClose={handleClosePlayer}
