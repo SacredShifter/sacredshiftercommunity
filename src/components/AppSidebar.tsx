@@ -22,13 +22,13 @@ const navItems = [
 ];
 
 export function AppSidebar() {
-  const { collapsed } = useSidebar();
+  const { state } = useSidebar();
   const location = useLocation();
   const { user, signOut } = useAuth();
   const currentPath = location.pathname;
+  const isCollapsed = state === "collapsed";
 
   const isActive = (path: string) => currentPath === path;
-  const isExpanded = navItems.some((i) => isActive(i.url));
 
   const handleSignOut = async () => {
     try {
@@ -46,10 +46,10 @@ export function AppSidebar() {
   };
 
   return (
-    <Sidebar className={collapsed ? "w-16" : "w-64"} collapsible>
+    <Sidebar className={isCollapsed ? "w-16" : "w-64"} collapsible="icon">
       <SidebarContent>
         {/* Main Navigation */}
-        <SidebarGroup open={isExpanded}>
+        <SidebarGroup>
           <SidebarGroupLabel>Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -64,7 +64,7 @@ export function AppSidebar() {
                     >
                       <Link to={item.url}>
                         <item.icon className="mr-2 h-4 w-4" />
-                        {!collapsed && <span>{item.title}</span>}
+                        {!isCollapsed && <span>{item.title}</span>}
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -83,7 +83,7 @@ export function AppSidebar() {
                 <SidebarMenuButton asChild>
                   <Link to="/settings">
                     <Settings className="mr-2 h-4 w-4" />
-                    {!collapsed && <span>Settings</span>}
+                    {!isCollapsed && <span>Settings</span>}
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -93,7 +93,7 @@ export function AppSidebar() {
                   className="hover:bg-destructive/10 hover:text-destructive"
                 >
                   <LogOut className="mr-2 h-4 w-4" />
-                  {!collapsed && <span>Sign Out</span>}
+                  {!isCollapsed && <span>Sign Out</span>}
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
@@ -101,7 +101,7 @@ export function AppSidebar() {
         </SidebarGroup>
 
         {/* User Info */}
-        {user && !collapsed && (
+        {user && !isCollapsed && (
           <div className="mt-auto p-4 border-t">
             <div className="flex items-center space-x-3">
               <Avatar className="w-8 h-8">
