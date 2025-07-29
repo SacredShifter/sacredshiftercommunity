@@ -82,9 +82,9 @@ const Auth = () => {
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center mb-4">
             <img 
-              src="src/assets/sacred-shifter-logo.png" 
+              src="/src/assets/sacred-shifter-logo.png" 
               alt="Sacred Shifter" 
-              className="h-24 w-auto invert"
+              className="h-48 w-auto invert"
             />
           </div>
           <CardDescription>
