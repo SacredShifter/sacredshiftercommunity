@@ -11,6 +11,7 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { ParallaxBackground } from "@/components/ParallaxBackground";
 import { ChatBubble } from "@/components/ChatBubble";
 import { AIChatBubble } from "@/components/AIChatBubble";
+import BreathOfSource from "@/components/BreathOfSource";
 import { SacredSoundscape } from "@/components/SacredSoundscape";
 
 import Index from "./pages/Index";
@@ -89,6 +90,9 @@ const App = () => {
                         <div className="fixed bottom-20 right-4 z-50">
                           <AIChatBubble />
                         </div>
+                        
+                        {/* Breath of Source - Global Breathing Component */}
+                        <BreathOfSource />
                         
                       </div>
                     </SidebarProvider>
