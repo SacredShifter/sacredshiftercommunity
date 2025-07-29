@@ -169,8 +169,8 @@ export const DirectMessageInterface: React.FC<DirectMessageInterfaceProps> = ({
             {getInitials(recipientName)}
           </AvatarFallback>
         </Avatar>
-        <div>
-          <h3 className="font-semibold text-sm">{recipientName}</h3>
+        <div className="flex-1 min-w-0">
+          <h3 className="font-semibold text-sm truncate">{recipientName}</h3>
           <p className="text-xs text-muted-foreground">Sacred Seeker</p>
         </div>
       </div>
