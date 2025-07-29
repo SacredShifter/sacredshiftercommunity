@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { RealtimeChannel } from '@supabase/supabase-js';
 
@@ -18,10 +18,21 @@ export const useRealtimeSubscription = ({
   onPayload
 }: UseRealtimeSubscriptionOptions) => {
   const channelRef = useRef<RealtimeChannel | null>(null);
+  const payloadHandlerRef = useRef(onPayload);
+
+  // Update the handler ref when onPayload changes
+  useEffect(() => {
+    payloadHandlerRef.current = onPayload;
+  }, [onPayload]);
+
+  // Stable callback that uses the ref
+  const stableOnPayload = useCallback((payload: any) => {
+    payloadHandlerRef.current?.(payload);
+  }, []);
 
   useEffect(() => {
     // Create unique channel name
-    const channelName = `realtime-${table}-${Date.now()}`;
+    const channelName = `realtime-${table}-${Math.random().toString(36).substr(2, 9)}`;
     
     console.log(`Setting up realtime subscription for ${table}`, {
       event,
@@ -45,7 +56,7 @@ export const useRealtimeSubscription = ({
 
     channel.on('postgres_changes', config, (payload) => {
       console.log(`Realtime update for ${table}:`, payload);
-      onPayload?.(payload);
+      stableOnPayload(payload);
     });
 
     // Subscribe to channel
@@ -63,7 +74,7 @@ export const useRealtimeSubscription = ({
         channelRef.current = null;
       }
     };
-  }, [table, event, filter, schema, onPayload]);
+  }, [table, event, filter, schema, stableOnPayload]);
 
   return channelRef.current;
 };

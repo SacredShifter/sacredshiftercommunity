@@ -173,11 +173,15 @@ export const useDirectMessages = (conversationUserId?: string) => {
   useEffect(() => {
     if (user) {
       fetchConversations();
-      if (conversationUserId) {
-        fetchMessages(conversationUserId);
-      }
     }
-  }, [user, conversationUserId, fetchConversations, fetchMessages]);
+  }, [user, fetchConversations]);
+
+  // Separate effect for fetching messages when conversation changes
+  useEffect(() => {
+    if (user && conversationUserId) {
+      fetchMessages(conversationUserId);
+    }
+  }, [user, conversationUserId, fetchMessages]);
 
   return {
     messages,

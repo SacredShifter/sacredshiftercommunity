@@ -12,6 +12,10 @@ import { Separator } from '@/components/ui/separator';
 import { Search, Send, Smile, Image, Mic, Phone, Video, MoreHorizontal, ArrowLeft } from 'lucide-react';
 import { formatDistance } from 'date-fns';
 import { StartDirectMessageModal } from '@/components/StartDirectMessageModal';
+import { EmojiPicker } from '@/components/EmojiPicker';
+import { VoiceRecorder } from '@/components/VoiceRecorder';
+import { ImageUploader } from '@/components/ImageUploader';
+import { CallButtons } from '@/components/CallButtons';
 import { toast } from 'sonner';
 
 export default function Messages() {
@@ -90,9 +94,48 @@ export default function Messages() {
   };
 
   const handleUserSelect = async (userId: string) => {
+    console.log('Selecting user:', userId);
     setSelectedConversationId(userId);
-    await fetchMessages(userId);
     setShowStartMessageModal(false);
+    
+    // Clear current messages and fetch new ones
+    await fetchMessages(userId);
+  };
+
+  // Handlers for new functionality
+  const handleEmojiSelect = (emoji: string) => {
+    setNewMessage(prev => prev + emoji);
+    if (textareaRef.current) {
+      textareaRef.current.focus();
+    }
+  };
+
+  const handleVoiceRecording = async (audioBlob: Blob) => {
+    try {
+      // Convert audio blob to base64 for sending
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const base64Audio = (reader.result as string).split(',')[1];
+        // For now, we'll show a success message
+        // In the future, this could be sent as an audio message
+        toast.success('Voice message recorded! (Feature coming soon)');
+        console.log('Voice recording received:', base64Audio);
+      };
+      reader.readAsDataURL(audioBlob);
+    } catch (error) {
+      toast.error('Failed to process voice recording');
+    }
+  };
+
+  const handleImageSelect = async (file: File) => {
+    try {
+      // For now, we'll show a success message
+      // In the future, this could upload the image and send as a message
+      toast.success('Image selected! (Upload feature coming soon)');
+      console.log('Image selected:', file.name, file.size);
+    } catch (error) {
+      toast.error('Failed to process image');
+    }
   };
 
   // Auto-resize textarea
@@ -178,12 +221,12 @@ export default function Messages() {
                       <Avatar className="w-12 h-12">
                         <AvatarImage src="" />
                         <AvatarFallback className="bg-primary/10 text-primary">
-                          {getInitials(`User ${otherUserId}`)}
+                          {getInitials('Sacred Seeker')}
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
-                          <p className="font-medium truncate">User {otherUserId.slice(0, 8)}</p>
+                          <p className="font-medium truncate">Sacred Seeker</p>
                           {conversation.last_message_at && (
                             <span className="text-xs text-muted-foreground">
                               {formatTime(conversation.last_message_at)}
@@ -191,7 +234,7 @@ export default function Messages() {
                           )}
                         </div>
                         <p className="text-sm text-muted-foreground truncate">
-                          No messages yet...
+                          {messages.length > 0 ? messages[messages.length - 1].content : 'Start a conversation...'}
                         </p>
                       </div>
                     </div>
@@ -221,22 +264,20 @@ export default function Messages() {
                 <Avatar className="w-10 h-10">
                   <AvatarImage src="" />
                   <AvatarFallback className="bg-primary/10 text-primary">
-                    {getInitials(`User ${selectedConversationId}`)}
+                    {getInitials('Sacred Seeker')}
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <h3 className="font-medium">User {selectedConversationId.slice(0, 8)}</h3>
+                  <h3 className="font-medium">Sacred Seeker</h3>
                   <p className="text-sm text-muted-foreground">Online</p>
                 </div>
               </div>
               
               <div className="flex items-center space-x-2">
-                <Button variant="ghost" size="sm">
-                  <Phone className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="sm">
-                  <Video className="h-4 w-4" />
-                </Button>
+                <CallButtons 
+                  userId={selectedConversationId} 
+                  userName={`User ${selectedConversationId.slice(0, 8)}`} 
+                />
                 <Button variant="ghost" size="sm">
                   <MoreHorizontal className="h-4 w-4" />
                 </Button>
@@ -299,15 +340,9 @@ export default function Messages() {
             <div className="flex items-end space-x-3">
               <div className="flex-1">
                 <div className="flex items-center space-x-2 mb-2">
-                  <Button variant="ghost" size="sm" className="text-muted-foreground">
-                    <Image className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm" className="text-muted-foreground">
-                    <Mic className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm" className="text-muted-foreground">
-                    <Smile className="h-4 w-4" />
-                  </Button>
+                  <ImageUploader onImageSelect={handleImageSelect} />
+                  <VoiceRecorder onRecordingComplete={handleVoiceRecording} />
+                  <EmojiPicker onEmojiSelect={handleEmojiSelect} />
                 </div>
                 <Textarea
                   ref={textareaRef}
