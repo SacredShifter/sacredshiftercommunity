@@ -9,20 +9,28 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { useDirectMessages } from '@/hooks/useDirectMessages';
 import { useSacredCircles } from '@/hooks/useSacredCircles';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 import { CreateCircleModal } from '@/components/CreateCircleModal';
+import { StartDirectMessageModal } from '@/components/StartDirectMessageModal';
+import { DirectMessageInterface } from '@/components/DirectMessageInterface';
 
 interface ChatBubbleProps {
   className?: string;
 }
 
-type ChatView = 'conversations' | 'circles' | 'new-message';
+type ChatView = 'conversations' | 'circles' | 'new-message' | 'dm-chat';
 
 export const ChatBubble = ({ className }: ChatBubbleProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeView, setActiveView] = useState<ChatView>('conversations');
   const [searchQuery, setSearchQuery] = useState('');
   const [showCreateCircle, setShowCreateCircle] = useState(false);
+  const [showStartDM, setShowStartDM] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [selectedUserProfile, setSelectedUserProfile] = useState<{ name?: string; avatar?: string } | null>(null);
 
+  const { user } = useAuth();
   const { conversations, loading: dmLoading } = useDirectMessages();
   const { circles, loading: circlesLoading } = useSacredCircles();
 
@@ -43,6 +51,45 @@ export const ChatBubble = ({ className }: ChatBubbleProps) => {
     if (diffInHours < 1) return 'now';
     if (diffInHours < 24) return `${Math.floor(diffInHours)}h`;
     return date.toLocaleDateString();
+  };
+
+  const handleUserSelect = async (userId: string) => {
+    // Fetch user profile data to pass to DM interface
+    try {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('display_name, avatar_url')
+        .eq('id', userId)
+        .single();
+
+      setSelectedUserId(userId);
+      setSelectedUserProfile({
+        name: profile?.display_name,
+        avatar: profile?.avatar_url
+      });
+      setActiveView('dm-chat');
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+    }
+  };
+
+  const handleConversationClick = (conversation: any) => {
+    const otherParticipantId = conversation.participant_1_id === user?.id 
+      ? conversation.participant_2_id 
+      : conversation.participant_1_id;
+    
+    setSelectedUserId(otherParticipantId);
+    setSelectedUserProfile({
+      name: conversation.other_participant?.display_name,
+      avatar: conversation.other_participant?.avatar_url
+    });
+    setActiveView('dm-chat');
+  };
+
+  const handleBackToConversations = () => {
+    setActiveView('conversations');
+    setSelectedUserId(null);
+    setSelectedUserProfile(null);
   };
 
   const filteredConversations = conversations.filter(conv =>
@@ -159,6 +206,7 @@ export const ChatBubble = ({ className }: ChatBubbleProps) => {
                   filteredConversations.map((conversation) => (
                     <div
                       key={conversation.id}
+                      onClick={() => handleConversationClick(conversation)}
                       className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent/50 transition-colors cursor-pointer group"
                     >
                       <div className="relative">
@@ -235,6 +283,7 @@ export const ChatBubble = ({ className }: ChatBubbleProps) => {
                 <Button 
                   className="w-full justify-start gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
                   size="sm"
+                  onClick={() => setShowStartDM(true)}
                 >
                   <MessageCircle className="h-4 w-4" />
                   Start Direct Message
@@ -258,6 +307,18 @@ export const ChatBubble = ({ className }: ChatBubbleProps) => {
                 </Button>
               </div>
             )}
+
+            {activeView === 'dm-chat' && selectedUserId && selectedUserProfile && (
+              <div className="h-full">
+                <DirectMessageInterface
+                  recipientId={selectedUserId}
+                  recipientName={selectedUserProfile.name}
+                  recipientAvatar={selectedUserProfile.avatar}
+                  onClose={handleBackToConversations}
+                  className="h-full"
+                />
+              </div>
+            )}
           </ScrollArea>
         </Card>
       )}
@@ -265,6 +326,12 @@ export const ChatBubble = ({ className }: ChatBubbleProps) => {
       <CreateCircleModal 
         open={showCreateCircle} 
         onOpenChange={setShowCreateCircle} 
+      />
+
+      <StartDirectMessageModal
+        isOpen={showStartDM}
+        onClose={() => setShowStartDM(false)}
+        onUserSelect={handleUserSelect}
       />
     </div>
   );
