@@ -174,7 +174,7 @@ export default function Messages() {
   }
 
   return (
-    <div className="h-screen flex bg-background/95 backdrop-blur-md">
+    <div className="h-screen flex bg-background/20 backdrop-blur-sm">
       {/* Conversations Sidebar */}
       <div className={`${selectedConversationId ? 'hidden lg:flex' : 'flex'} w-full lg:w-80 border-r border-border/30 flex-col`}>
         {/* Header */}
@@ -198,7 +198,7 @@ export default function Messages() {
               placeholder="Search conversations..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-background/50"
+              className="pl-10 bg-background/20"
             />
           </div>
         </div>
@@ -224,7 +224,7 @@ export default function Messages() {
                   <Card
                     key={conversation.id}
                     className={`p-3 mb-2 cursor-pointer transition-all hover:bg-accent/50 ${
-                      isSelected ? 'bg-primary/10 border-primary/20' : 'bg-background/95'
+                      isSelected ? 'bg-primary/10 border-primary/20' : 'bg-background/10'
                     }`}
                     onClick={() => handleConversationSelect(conversation)}
                   >
@@ -261,7 +261,7 @@ export default function Messages() {
       {shouldShowChatInterface ? (
         <div className="flex-1 flex flex-col">
           {/* Chat Header */}
-          <div className="p-4 border-b border-border/30 bg-background/95">
+          <div className="p-4 border-b border-border/30 bg-background/20">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <Button
@@ -347,7 +347,7 @@ export default function Messages() {
           </ScrollArea>
 
           {/* Message Input */}
-          <div className="p-4 border-t border-border/30 bg-background/95">
+          <div className="p-4 border-t border-border/30 bg-background/20">
             <div className="flex items-end space-x-3">
               <div className="flex-1">
                 <div className="flex items-center space-x-2 mb-2">
@@ -361,7 +361,7 @@ export default function Messages() {
                   value={newMessage}
                   onChange={handleTextareaChange}
                   onKeyPress={handleKeyPress}
-                  className="min-h-[40px] max-h-[120px] resize-none bg-background/70"
+                  className="min-h-[40px] max-h-[120px] resize-none bg-background/20"
                   style={{ height: 'auto' }}
                 />
               </div>
