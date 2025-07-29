@@ -27,7 +27,7 @@ export const AIChatBubble = ({ className }: AIChatBubbleProps) => {
     {
       id: '1',
       role: 'assistant',
-      content: "🌟 Welcome, sacred seeker! I'm your AI guide for consciousness exploration. I can help you with spiritual insights, dream interpretation, reflection on your registry entries, and guidance on your transformation journey. How may I assist you today?",
+      content: "🌟 Welcome, sacred seeker! I'm Aura, your AI consciousness guide. I can help you with spiritual insights, dream interpretation, reflection on your registry entries, and guidance on your transformation journey. How may I assist you today?",
       timestamp: new Date()
     }
   ]);
@@ -128,7 +128,7 @@ export const AIChatBubble = ({ className }: AIChatBubbleProps) => {
     <div className={cn("relative", className)}>
       {/* AI Chat Bubble */}
       {!isOpen && (
-        <TooltipWrapper content="Open AI spiritual guide - get insights, interpretations, and guidance on your consciousness journey">
+        <TooltipWrapper content="Open Aura - get insights, interpretations, and guidance on your consciousness journey">
           <Button
             onClick={() => setIsOpen(true)}
             size="lg"
@@ -163,8 +163,8 @@ export const AIChatBubble = ({ className }: AIChatBubbleProps) => {
                     <div className="absolute -top-1 -right-1 h-3 w-3 bg-green-400 rounded-full border border-white"></div>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-foreground">Sacred AI Guide</h3>
-                    <p className="text-xs text-muted-foreground">Consciousness & Spirituality Assistant</p>
+                    <h3 className="font-semibold text-foreground">Aura</h3>
+                    <p className="text-xs text-foreground/80">Consciousness & Spirituality Assistant</p>
                   </div>
                 </div>
                 <Button
