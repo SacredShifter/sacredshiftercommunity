@@ -77,14 +77,14 @@ const Auth = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted p-4">
-      <Card className="w-full max-w-md mx-auto">
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <Card className="w-full max-w-md mx-auto bg-background/80 backdrop-blur-sm">
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center mb-4">
             <img 
               src="src/assets/sacred-shifter-logo.png" 
               alt="Sacred Shifter" 
-              className="h-12 w-auto"
+              className="h-24 w-auto invert"
             />
           </div>
           <CardDescription>
