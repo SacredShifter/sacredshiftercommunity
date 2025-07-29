@@ -15,6 +15,10 @@ serve(async (req) => {
 
   try {
     const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
+    console.log('OpenAI API Key status:', OPENAI_API_KEY ? 'Present' : 'Missing');
+    console.log('API Key length:', OPENAI_API_KEY ? OPENAI_API_KEY.length : 0);
+    console.log('API Key starts with sk-:', OPENAI_API_KEY ? OPENAI_API_KEY.startsWith('sk-') : false);
+    
     if (!OPENAI_API_KEY) {
       throw new Error('OpenAI API key not configured');
     }
