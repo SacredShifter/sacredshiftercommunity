@@ -25,7 +25,7 @@ const VideoLibrary: React.FC = () => {
               <img 
                 src="/src/assets/sacred-shifter-logo.png" 
                 alt="Sacred Shifter" 
-                className="h-16 w-auto"
+                className="h-16 w-auto filter invert brightness-0 contrast-100 opacity-90"
               />
             </div>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">

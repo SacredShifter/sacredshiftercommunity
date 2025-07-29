@@ -54,7 +54,7 @@ export const ChatBubble = ({ className }: ChatBubbleProps) => {
   );
 
   return (
-    <div className={cn("fixed bottom-6 right-6 z-50", className)}>
+    <div className={cn("relative", className)}>
       {/* Chat Bubble */}
       {!isOpen && (
         <Button
