@@ -51,7 +51,7 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
     <AnimatePresence>
       {isOpen && (
         <Dialog open={isOpen} onOpenChange={onClose}>
-          <DialogContent className="max-w-6xl w-full max-h-[90vh] p-0 overflow-hidden bg-background/95 backdrop-blur-md border-border/30 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+          <DialogContent className="max-w-6xl w-full max-h-[90vh] p-0 overflow-hidden bg-background/95 backdrop-blur-md border-border/30" aria-describedby="video-description">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -172,7 +172,7 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
                   {/* Video Description */}
                   <div className="flex-1 p-4 overflow-y-auto">
                     <h4 className="font-medium mb-2">Description</h4>
-                    <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed">
+                    <p id="video-description" className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed">
                       {video.description || 'No description available.'}
                     </p>
                   </div>
