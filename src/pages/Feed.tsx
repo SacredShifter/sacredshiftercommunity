@@ -15,7 +15,7 @@ import { PostInteractionButtons } from '@/components/PostInteractionButtons';
 import { CircleDiscoveryPanel } from '@/components/CircleDiscoveryPanel';
 import { formatDistanceToNow } from 'date-fns';
 import { CommentSection } from '@/components/CommentSection';
-import sacredShifterLogo from '@/assets/sacred-shifter-logo.png';
+const sacredShifterLogo = 'https://mikltjgbvxrxndtszorb.supabase.co/storage/v1/object/public/sacred-assets/uploads/Logo-MainSacredShifter-removebg-preview%20(1).png';
 
 interface SacredPost {
   id: string;

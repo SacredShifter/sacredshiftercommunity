@@ -137,7 +137,7 @@ const Index = () => {
             <div className="flex justify-center">
               <div className="relative">
                 <img 
-                  src="/src/assets/sacred-shifter-logo.png" 
+                  src="https://mikltjgbvxrxndtszorb.supabase.co/storage/v1/object/public/sacred-assets/uploads/Logo-MainSacredShifter-removebg-preview%20(1).png" 
                   alt="Sacred Shifter" 
                   className="h-20 w-auto filter invert brightness-0 contrast-100 opacity-90"
                 />
@@ -199,7 +199,7 @@ const Index = () => {
             <div className="flex justify-center mb-6">
               <div className="relative">
                 <img 
-                  src="/src/assets/sacred-shifter-logo.png" 
+                  src="https://mikltjgbvxrxndtszorb.supabase.co/storage/v1/object/public/sacred-assets/uploads/Logo-MainSacredShifter-removebg-preview%20(1).png" 
                   alt="Sacred Shifter" 
                   className="h-24 w-auto filter invert brightness-0 contrast-100 opacity-90"
                   data-tour="sacred-shifter-logo"
