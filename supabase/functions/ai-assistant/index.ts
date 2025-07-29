@@ -168,7 +168,7 @@ Always respond with love, wisdom, and profound insight while remaining practical
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'gpt-4.1-2025-04-14',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt }
@@ -179,6 +179,8 @@ Always respond with love, wisdom, and profound insight while remaining practical
     });
 
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error('OpenAI API Error:', { status: response.status, statusText: response.statusText, body: errorText });
       throw new Error(`OpenAI API error: ${response.statusText}`);
     }
 
@@ -195,7 +197,7 @@ Always respond with love, wisdom, and profound insight while remaining practical
         response_data: {
           user_query,
           assistant_response: assistantMessage,
-          model: 'gpt-4o-mini',
+          model: 'gpt-4.1-2025-04-14',
           timestamp: new Date().toISOString()
         }
       });
