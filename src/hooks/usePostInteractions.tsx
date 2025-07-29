@@ -24,7 +24,7 @@ export const usePostInteractions = () => {
 
       // Check if user already liked this post
       const { data: existingLike, error: checkError } = await supabase
-        .from('sacred_post_likes')
+        .from('circle_post_likes')
         .select('id')
         .eq('post_id', postId)
         .eq('user_id', user.id)
@@ -37,7 +37,7 @@ export const usePostInteractions = () => {
       if (existingLike) {
         // Unlike the post
         const { error: deleteError } = await supabase
-          .from('sacred_post_likes')
+          .from('circle_post_likes')
           .delete()
           .eq('post_id', postId)
           .eq('user_id', user.id);
@@ -47,7 +47,7 @@ export const usePostInteractions = () => {
       } else {
         // Like the post
         const { error: insertError } = await supabase
-          .from('sacred_post_likes')
+          .from('circle_post_likes')
           .insert({
             post_id: postId,
             user_id: user.id
@@ -84,7 +84,7 @@ export const usePostInteractions = () => {
       setLoading(true);
 
       const { data, error } = await supabase
-        .from('sacred_post_comments')
+        .from('circle_post_comments')
         .insert({
           post_id: postId,
           user_id: user.id,
@@ -137,18 +137,18 @@ export const usePostInteractions = () => {
     try {
       const [likesResult, commentsResult] = await Promise.all([
         supabase
-          .from('sacred_post_likes')
+          .from('circle_post_likes')
           .select('user_id', { count: 'exact' })
           .eq('post_id', postId),
         supabase
-          .from('sacred_post_comments')
+          .from('circle_post_comments')
           .select('id', { count: 'exact' })
           .eq('post_id', postId)
       ]);
 
       const userHasLiked = user ? 
         (await supabase
-          .from('sacred_post_likes')
+          .from('circle_post_likes')
           .select('id')
           .eq('post_id', postId)
           .eq('user_id', user.id)

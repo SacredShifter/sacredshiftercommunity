@@ -35,7 +35,7 @@ export const CommentSection = ({ postId, onCommentAdded }: CommentSectionProps) 
       setLoadingComments(true);
       try {
         const { data, error } = await supabase
-          .from('sacred_post_comments')
+          .from('circle_post_comments')
           .select('*')
           .eq('post_id', postId)
           .order('created_at', { ascending: true });
@@ -61,14 +61,14 @@ export const CommentSection = ({ postId, onCommentAdded }: CommentSectionProps) 
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'sacred_post_comments',
+          table: 'circle_post_comments',
           filter: `post_id=eq.${postId}`
         },
         (payload) => {
           // Fetch the full comment with profile data
           const fetchNewComment = async () => {
             const { data, error } = await supabase
-              .from('sacred_post_comments')
+              .from('circle_post_comments')
               .select('*')
               .eq('id', payload.new.id)
               .single();
