@@ -64,9 +64,9 @@ const App = () => {
                       </SidebarInset>
                       
                       {/* Floating Control Center - Top Right */}
-                      <div className="fixed top-4 right-4 z-50 flex flex-col gap-2">
-                        <ChatBubble />
+                      <div className="fixed top-4 right-4 z-50 flex items-center gap-3">
                         <SacredSoundscape />
+                        <ChatBubble />
                       </div>
                     </div>
                   </SidebarProvider>

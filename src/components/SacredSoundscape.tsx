@@ -184,7 +184,7 @@ export const SacredSoundscape = () => {
   }, []);
 
   return (
-    <div className="fixed bottom-4 left-16 z-50 sacred-frequency-selector">
+    <div className="relative sacred-frequency-selector">
       <div className="relative"
            style={{
              filter: isPlaying || isBackgroundPlaying ? `drop-shadow(0 0 20px ${selectedFrequency.color}80)` : undefined
