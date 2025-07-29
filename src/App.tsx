@@ -15,6 +15,7 @@ import { SacredSoundscape } from "@/components/SacredSoundscape";
 
 import Index from "./pages/Index";
 import Feed from "./pages/Feed";
+import Messages from "./pages/Messages";
 import Circles from "./pages/Circles";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
@@ -64,6 +65,7 @@ const App = () => {
                             <Routes>
                               <Route path="/" element={<Index />} />
                               <Route path="/feed" element={<Feed />} />
+                              <Route path="/messages" element={<Messages />} />
                               <Route path="/circles" element={<Circles />} />
                               <Route path="/journal" element={<Journal />} />
                               <Route path="/videos" element={<VideoLibrary />} />
@@ -81,7 +83,6 @@ const App = () => {
                         {/* Floating Control Center - Top Right */}
                         <div className="fixed top-4 right-4 z-50 flex items-center gap-3">
                           <SacredSoundscape />
-                          <ChatBubble />
                         </div>
                         
                         {/* AI Assistant - Bottom Right */}

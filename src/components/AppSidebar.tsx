@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Users, User, Rss, Settings, LogOut, BookOpen, Video, Database, Archive, Scroll, Heart } from "lucide-react";
+import { Home, Users, User, Rss, Settings, LogOut, BookOpen, Video, Database, Archive, Scroll, Heart, MessageCircle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -21,6 +21,7 @@ import { HelpTooltips } from "@/components/HelpSystem/ContextualHelp";
 const coreNavItems = [
   { title: "Home", url: "/", icon: Home, tooltip: HelpTooltips.home },
   { title: "Feed", url: "/feed", icon: Rss, tooltip: HelpTooltips.feed },
+  { title: "Messages", url: "/messages", icon: MessageCircle, tooltip: "Direct Messages - Connect with other Sacred Shifters privately" },
   { title: "Profile", url: "/profile", icon: User, tooltip: HelpTooltips.profile },
 ];
 
