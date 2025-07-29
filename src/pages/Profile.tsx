@@ -149,17 +149,15 @@ const Profile = () => {
 
   if (loading) {
     return (
-      <div className="container mx-auto p-6">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-        </div>
+      <div className="h-full flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
   }
 
   if (!profile) {
     return (
-      <div className="container mx-auto p-6">
+      <div className="h-full flex items-center justify-center">
         <div className="text-center text-destructive">
           Failed to load profile
         </div>
@@ -168,9 +166,8 @@ const Profile = () => {
   }
 
   return (
-    <div className="h-full overflow-y-auto">
-      <div className="container mx-auto p-6 max-w-2xl pb-32">
-      <div className="space-y-6">
+    <div className="h-full p-6">
+      <div className="max-w-2xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
@@ -340,7 +337,6 @@ const Profile = () => {
             </div>
           </CardContent>
         </Card>
-      </div>
       </div>
     </div>
   );
