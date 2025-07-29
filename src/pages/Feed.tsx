@@ -126,8 +126,7 @@ const Feed = () => {
   }
 
   return (
-    <div className="min-h-screen">
-      <ParallaxBackground />
+    <div className="h-full">
       {/* Header */}
       <div className="sticky top-0 z-10 bg-background/20 backdrop-blur-md border-b border-white/10">
         <div className="max-w-2xl mx-auto px-4 py-4">
@@ -169,7 +168,7 @@ const Feed = () => {
       </div>
 
       {/* Feed Content */}
-      <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
+      <div className="max-w-2xl mx-auto px-4 py-6 space-y-6 pb-32">
         {posts.length === 0 ? (
           <Card className="text-center py-12">
             <CardContent>

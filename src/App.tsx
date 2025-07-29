@@ -49,10 +49,10 @@ const App = () => {
                 <Route path="/*" element={
                   <ProtectedRoute>
                     <SidebarProvider>
-                      <div className="min-h-screen flex w-full relative">
+                      <div className="min-h-screen flex w-full">
                         <AppSidebar />
-                        <SidebarInset>
-                          <header className="h-12 flex items-center border-b border-border/30 backdrop-blur-md bg-background/20 px-4">
+                        <SidebarInset className="flex-1">
+                          <header className="h-12 flex items-center border-b border-border/30 backdrop-blur-md bg-background/20 px-4 shrink-0">
                             <SidebarTrigger className="mr-4" />
                             <div className="flex items-center">
                               <img 
@@ -62,23 +62,25 @@ const App = () => {
                               />
                             </div>
                           </header>
-                          <div className="flex-1 overflow-auto p-4 bg-transparent">
-                            <Routes>
-                              <Route path="/" element={<Index />} />
-                              <Route path="/feed" element={<Feed />} />
-                              <Route path="/messages" element={<Messages />} />
-                              <Route path="/circles" element={<Circles />} />
-                              <Route path="/journal" element={<Journal />} />
-                              <Route path="/videos" element={<VideoLibrary />} />
-                              <Route path="/registry" element={<Registry />} />
-                              <Route path="/codex" element={<Codex />} />
-                              <Route path="/guidebook" element={<Guidebook />} />
-                              <Route path="/support" element={<Support />} />
-                              <Route path="/profile" element={<Profile />} />
-                              <Route path="/settings" element={<Settings />} />
-                              <Route path="*" element={<NotFound />} />
-                            </Routes>
-                          </div>
+                          <main className="flex-1 overflow-auto">
+                            <div className="h-full">
+                              <Routes>
+                                <Route path="/" element={<Index />} />
+                                <Route path="/feed" element={<Feed />} />
+                                <Route path="/messages" element={<Messages />} />
+                                <Route path="/circles" element={<Circles />} />
+                                <Route path="/journal" element={<Journal />} />
+                                <Route path="/videos" element={<VideoLibrary />} />
+                                <Route path="/registry" element={<Registry />} />
+                                <Route path="/codex" element={<Codex />} />
+                                <Route path="/guidebook" element={<Guidebook />} />
+                                <Route path="/support" element={<Support />} />
+                                <Route path="/profile" element={<Profile />} />
+                                <Route path="/settings" element={<Settings />} />
+                                <Route path="*" element={<NotFound />} />
+                              </Routes>
+                            </div>
+                          </main>
                         </SidebarInset>
                         
                         {/* Floating Control Center - Top Right */}
