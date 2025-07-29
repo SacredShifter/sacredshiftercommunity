@@ -212,9 +212,9 @@ const CreatePostModal = ({ open, onOpenChange, onPostCreated }: CreatePostModalP
               Sacred Frequency (Optional)
             </Label>
             <Select 
-              value={selectedFrequency?.hz.toString() || ''} 
+              value={selectedFrequency?.hz.toString() || 'none'} 
               onValueChange={(value) => {
-                if (value) {
+                if (value && value !== 'none') {
                   const freq = sacredFrequencies.find(f => f.hz.toString() === value);
                   setSelectedFrequency(freq || null);
                 } else {
@@ -226,7 +226,7 @@ const CreatePostModal = ({ open, onOpenChange, onPostCreated }: CreatePostModalP
                 <SelectValue placeholder="Infuse your message with a sacred frequency..." />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">No frequency</SelectItem>
+                <SelectItem value="none">No frequency</SelectItem>
                 {sacredFrequencies.map((freq) => (
                   <SelectItem key={freq.hz} value={freq.hz.toString()}>
                     <div className="flex items-center gap-2">
