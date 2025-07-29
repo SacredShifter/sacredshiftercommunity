@@ -11390,6 +11390,10 @@ export type Database = {
         Args: { material_id: string }
         Returns: undefined
       }
+      is_circle_group_member: {
+        Args: { group_id: string; user_id: string }
+        Returns: boolean
+      }
       is_group_member: {
         Args: { group_id: string; user_id: string }
         Returns: boolean
