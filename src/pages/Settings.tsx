@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
 import { Trash2, Download, Shield, Eye, Bell } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 const Settings = () => {
   const { user } = useAuth();
@@ -18,89 +19,236 @@ const Settings = () => {
   const [marketingConsent, setMarketingConsent] = useState(false);
   const [profileVisibility, setProfileVisibility] = useState(true);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  
-  // Load settings from localStorage on mount
+  const [dataRetentionPreference, setDataRetentionPreference] = useState<'minimal' | 'standard' | 'extended'>('standard');
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  // Load settings from Supabase on mount
   useEffect(() => {
-    const savedSettings = localStorage.getItem('privacySettings');
-    if (savedSettings) {
-      const settings = JSON.parse(savedSettings);
-      setAnalyticsConsent(settings.analyticsConsent || false);
-      setMarketingConsent(settings.marketingConsent || false);
-      setProfileVisibility(settings.profileVisibility !== false);
-      setNotificationsEnabled(settings.notificationsEnabled !== false);
+    loadPrivacySettings();
+  }, [user]);
+
+  const loadPrivacySettings = async () => {
+    if (!user) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('user_privacy_settings')
+        .select('*')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (error && error.code !== 'PGRST116') {
+        console.error('Error loading privacy settings:', error);
+        toast({
+          title: "Error Loading Settings",
+          description: "Failed to load your privacy settings.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (data) {
+        setAnalyticsConsent(data.analytics_consent);
+        setMarketingConsent(data.marketing_consent);
+        setProfileVisibility(data.profile_visibility);
+        setNotificationsEnabled(data.notifications_enabled);
+        setDataRetentionPreference((data.data_retention_preference as 'minimal' | 'standard' | 'extended') || 'standard');
+      }
+    } catch (error) {
+      console.error('Unexpected error loading settings:', error);
+    } finally {
+      setLoading(false);
     }
-  }, []);
-
-  // Save settings to localStorage
-  const savePrivacySettings = () => {
-    const settings = {
-      analyticsConsent,
-      marketingConsent,
-      profileVisibility,
-      notificationsEnabled,
-      lastUpdated: new Date().toISOString()
-    };
-    
-    localStorage.setItem('privacySettings', JSON.stringify(settings));
-    
-    toast({
-      title: "Privacy Settings Updated",
-      description: "Your privacy preferences have been saved.",
-    });
   };
 
-  const handleDataExport = () => {
-    // Create export data
-    const exportData = {
-      user: {
-        email: user?.email,
-        id: user?.id
-      },
-      privacySettings: JSON.parse(localStorage.getItem('privacySettings') || '{}'),
-      exportDate: new Date().toISOString()
-    };
+  // Save settings to Supabase using the secure function
+  const savePrivacySettings = async () => {
+    if (!user) return;
+    
+    setSaving(true);
+    try {
+      const { error } = await supabase.rpc('update_privacy_settings', {
+        p_analytics_consent: analyticsConsent,
+        p_marketing_consent: marketingConsent,
+        p_profile_visibility: profileVisibility,
+        p_notifications_enabled: notificationsEnabled,
+        p_data_retention_preference: dataRetentionPreference
+      });
 
-    // Create and download file
-    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `sacred-shifter-data-${new Date().toISOString().split('T')[0]}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+      if (error) {
+        console.error('Error saving privacy settings:', error);
+        toast({
+          title: "Error Saving Settings",
+          description: "Failed to save your privacy settings. Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
 
-    toast({
-      title: "Data Exported",
-      description: "Your personal data has been downloaded.",
-    });
+      // Sync with localStorage for offline access
+      const settings = {
+        analyticsConsent,
+        marketingConsent,
+        profileVisibility,
+        notificationsEnabled,
+        dataRetentionPreference,
+        lastUpdated: new Date().toISOString()
+      };
+      localStorage.setItem('privacySettings', JSON.stringify(settings));
+
+      toast({
+        title: "Privacy Settings Updated",
+        description: "Your privacy preferences have been saved securely.",
+      });
+    } catch (error) {
+      console.error('Unexpected error saving settings:', error);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const handleDataDeletion = () => {
-    if (window.confirm('Are you sure you want to request deletion of all your personal data? This action cannot be undone.')) {
-      // Clear local storage
-      localStorage.removeItem('privacySettings');
-      localStorage.removeItem('profileData');
-      
+  const handleDataExport = async () => {
+    if (!user) return;
+
+    try {
+      // Create data export request
+      const { error: requestError } = await supabase
+        .from('data_access_requests')
+        .insert({
+          user_id: user.id,
+          request_type: 'export',
+          request_details: {
+            requested_data: ['privacy_settings', 'consent_history', 'profiles'],
+            format: 'json'
+          }
+        });
+
+      if (requestError) {
+        console.error('Error creating export request:', requestError);
+        toast({
+          title: "Error",
+          description: "Failed to create data export request.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // For now, create a basic export file with current settings
+      // In production, this would be handled by a background job
+      const { data: settingsData } = await supabase
+        .from('user_privacy_settings')
+        .select('*')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      const { data: consentHistory } = await supabase
+        .from('privacy_consent_history')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      const exportData = {
+        user: {
+          email: user.email,
+          id: user.id
+        },
+        privacySettings: settingsData,
+        consentHistory: consentHistory || [],
+        exportDate: new Date().toISOString(),
+        exportRequestId: crypto.randomUUID()
+      };
+
+      // Create and download file
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `sacred-shifter-data-export-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      toast({
+        title: "Data Export Complete",
+        description: "Your personal data has been exported and downloaded. A formal export request has been logged for compliance.",
+      });
+    } catch (error) {
+      console.error('Error exporting data:', error);
+      toast({
+        title: "Export Error",
+        description: "Failed to export your data. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDataDeletion = async () => {
+    if (!user) return;
+
+    const confirmed = window.confirm(
+      'Are you sure you want to request deletion of all your personal data? This action cannot be undone and will be processed within 30 days as required by Australian Privacy Act.'
+    );
+
+    if (!confirmed) return;
+
+    try {
+      const { error } = await supabase
+        .from('data_access_requests')
+        .insert({
+          user_id: user.id,
+          request_type: 'deletion',
+          request_details: {
+            deletion_scope: 'all_personal_data',
+            reason: 'user_requested',
+            confirmation_provided: true
+          }
+        });
+
+      if (error) {
+        console.error('Error creating deletion request:', error);
+        toast({
+          title: "Error",
+          description: "Failed to submit data deletion request.",
+          variant: "destructive",
+        });
+        return;
+      }
+
       toast({
         title: "Data Deletion Requested",
-        description: "Your request has been logged. Personal data will be removed within 30 days as required by Australian Privacy Act.",
+        description: "Your deletion request has been submitted and logged. Personal data will be removed within 30 days as required by the Australian Privacy Act. You will receive email confirmation.",
         variant: "destructive"
       });
 
-      // Log the deletion request
-      const deletionRequest = {
-        userId: user?.id,
-        email: user?.email,
-        requestDate: new Date().toISOString(),
-        type: 'data_deletion_request'
-      };
-      
-      // Store deletion request locally until processed
-      localStorage.setItem('dataDeletionRequest', JSON.stringify(deletionRequest));
+      // Clear local storage immediately
+      localStorage.removeItem('privacySettings');
+      localStorage.removeItem('profileData');
+    } catch (error) {
+      console.error('Error submitting deletion request:', error);
+      toast({
+        title: "Request Error",
+        description: "Failed to submit deletion request. Please contact support.",
+        variant: "destructive",
+      });
     }
   };
+
+  if (loading) {
+    return (
+      <div className="container mx-auto p-6 space-y-6">
+        <div className="flex items-center justify-center min-h-[200px]">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto p-6 space-y-6">
@@ -181,11 +329,32 @@ const Settings = () => {
             />
           </div>
 
-          <div className="pt-4">
-            <Button onClick={savePrivacySettings} className="w-full">
-              Save Privacy Settings
-            </Button>
-          </div>
+            <div className="flex items-center justify-between space-x-4">
+              <div className="flex-1">
+                <Label htmlFor="retention" className="text-base">Data Retention</Label>
+                <p className="text-sm text-muted-foreground">Choose how long to keep your data</p>
+              </div>
+              <select 
+                id="retention"
+                value={dataRetentionPreference}
+                onChange={(e) => setDataRetentionPreference(e.target.value as 'minimal' | 'standard' | 'extended')}
+                className="px-3 py-1 border rounded-md bg-background"
+              >
+                <option value="minimal">Minimal (1 year)</option>
+                <option value="standard">Standard (3 years)</option>
+                <option value="extended">Extended (7 years)</option>
+              </select>
+            </div>
+
+            <div className="pt-4">
+              <Button 
+                onClick={savePrivacySettings} 
+                className="w-full"
+                disabled={saving}
+              >
+                {saving ? "Saving..." : "Save Privacy Settings"}
+              </Button>
+            </div>
         </CardContent>
       </Card>
 

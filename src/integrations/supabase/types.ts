@@ -1875,6 +1875,42 @@ export type Database = {
         }
         Relationships: []
       }
+      data_access_log: {
+        Row: {
+          access_purpose: string | null
+          access_type: string
+          accessed_by: string | null
+          created_at: string | null
+          data_accessed: string
+          id: string
+          ip_address: unknown | null
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          access_purpose?: string | null
+          access_type: string
+          accessed_by?: string | null
+          created_at?: string | null
+          data_accessed: string
+          id?: string
+          ip_address?: unknown | null
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          access_purpose?: string | null
+          access_type?: string
+          accessed_by?: string | null
+          created_at?: string | null
+          data_accessed?: string
+          id?: string
+          ip_address?: unknown | null
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       data_access_logs: {
         Row: {
           access_time: string
@@ -1904,6 +1940,51 @@ export type Database = {
           id?: string
           ip_address?: string | null
           operation?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      data_access_requests: {
+        Row: {
+          admin_notes: string | null
+          completed_at: string | null
+          file_path: string | null
+          id: string
+          ip_address: unknown | null
+          processed_at: string | null
+          request_details: Json | null
+          request_type: string
+          status: string
+          submitted_at: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          completed_at?: string | null
+          file_path?: string | null
+          id?: string
+          ip_address?: unknown | null
+          processed_at?: string | null
+          request_details?: Json | null
+          request_type: string
+          status?: string
+          submitted_at?: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          completed_at?: string | null
+          file_path?: string | null
+          id?: string
+          ip_address?: unknown | null
+          processed_at?: string | null
+          request_details?: Json | null
+          request_type?: string
+          status?: string
+          submitted_at?: string
+          user_agent?: string | null
           user_id?: string
         }
         Relationships: []
@@ -5410,6 +5491,111 @@ export type Database = {
         }
         Relationships: []
       }
+      privacy_consent_history: {
+        Row: {
+          consent_method: string | null
+          consent_type: string
+          created_at: string
+          id: string
+          ip_address: unknown | null
+          new_value: boolean
+          previous_value: boolean | null
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          consent_method?: string | null
+          consent_type: string
+          created_at?: string
+          id?: string
+          ip_address?: unknown | null
+          new_value: boolean
+          previous_value?: boolean | null
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          consent_method?: string | null
+          consent_type?: string
+          created_at?: string
+          id?: string
+          ip_address?: unknown | null
+          new_value?: boolean
+          previous_value?: boolean | null
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      privacy_consents: {
+        Row: {
+          consent_date: string
+          consent_given: boolean
+          consent_type: string
+          created_at: string | null
+          id: string
+          ip_address: unknown | null
+          legal_basis: string | null
+          purpose: string | null
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          consent_date?: string
+          consent_given: boolean
+          consent_type: string
+          created_at?: string | null
+          id?: string
+          ip_address?: unknown | null
+          legal_basis?: string | null
+          purpose?: string | null
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          consent_date?: string
+          consent_given?: boolean
+          consent_type?: string
+          created_at?: string | null
+          id?: string
+          ip_address?: unknown | null
+          legal_basis?: string | null
+          purpose?: string | null
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      privacy_notice_acknowledgments: {
+        Row: {
+          acknowledged_at: string
+          id: string
+          ip_address: unknown | null
+          notice_type: string
+          notice_version: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          acknowledged_at?: string
+          id?: string
+          ip_address?: unknown | null
+          notice_type: string
+          notice_version: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          acknowledged_at?: string
+          id?: string
+          ip_address?: unknown | null
+          notice_type?: string
+          notice_version?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       privacy_preferences: {
         Row: {
           analytics_opt_in: boolean | null
@@ -5514,11 +5700,21 @@ export type Database = {
       }
       profiles: {
         Row: {
+          account_deletion_requested: boolean | null
+          account_deletion_scheduled_date: string | null
           ascension_title: string | null
           astrology_preferences: Json | null
           avatar_url: string | null
           badges: string[] | null
           bio: string | null
+          birth_city: string | null
+          birth_country: string | null
+          birth_date: string | null
+          birth_latitude: number | null
+          birth_location: string | null
+          birth_longitude: number | null
+          birth_state: string | null
+          birth_time: string | null
           chakra_highlight: string | null
           created_at: string | null
           data_retention_preference: string | null
@@ -5535,20 +5731,40 @@ export type Database = {
           light_level: number | null
           light_points: number | null
           lightbearer_level: number | null
+          lineage_ancestral: string | null
+          lineage_cultural: string[] | null
+          lineage_indigenous: string | null
+          lineage_spiritual: string[] | null
           onboarding_completed: boolean | null
           online_status: boolean | null
           primary_intention: string | null
+          privacy_analytics_consent: boolean | null
+          privacy_data_sharing_consent: boolean | null
+          privacy_last_updated: string | null
+          privacy_marketing_consent: boolean | null
+          privacy_notification_consent: boolean | null
           role: string | null
           soul_alignment: string | null
+          timezone: string | null
           transit_notifications: boolean | null
           updated_at: string | null
         }
         Insert: {
+          account_deletion_requested?: boolean | null
+          account_deletion_scheduled_date?: string | null
           ascension_title?: string | null
           astrology_preferences?: Json | null
           avatar_url?: string | null
           badges?: string[] | null
           bio?: string | null
+          birth_city?: string | null
+          birth_country?: string | null
+          birth_date?: string | null
+          birth_latitude?: number | null
+          birth_location?: string | null
+          birth_longitude?: number | null
+          birth_state?: string | null
+          birth_time?: string | null
           chakra_highlight?: string | null
           created_at?: string | null
           data_retention_preference?: string | null
@@ -5565,20 +5781,40 @@ export type Database = {
           light_level?: number | null
           light_points?: number | null
           lightbearer_level?: number | null
+          lineage_ancestral?: string | null
+          lineage_cultural?: string[] | null
+          lineage_indigenous?: string | null
+          lineage_spiritual?: string[] | null
           onboarding_completed?: boolean | null
           online_status?: boolean | null
           primary_intention?: string | null
+          privacy_analytics_consent?: boolean | null
+          privacy_data_sharing_consent?: boolean | null
+          privacy_last_updated?: string | null
+          privacy_marketing_consent?: boolean | null
+          privacy_notification_consent?: boolean | null
           role?: string | null
           soul_alignment?: string | null
+          timezone?: string | null
           transit_notifications?: boolean | null
           updated_at?: string | null
         }
         Update: {
+          account_deletion_requested?: boolean | null
+          account_deletion_scheduled_date?: string | null
           ascension_title?: string | null
           astrology_preferences?: Json | null
           avatar_url?: string | null
           badges?: string[] | null
           bio?: string | null
+          birth_city?: string | null
+          birth_country?: string | null
+          birth_date?: string | null
+          birth_latitude?: number | null
+          birth_location?: string | null
+          birth_longitude?: number | null
+          birth_state?: string | null
+          birth_time?: string | null
           chakra_highlight?: string | null
           created_at?: string | null
           data_retention_preference?: string | null
@@ -5595,11 +5831,21 @@ export type Database = {
           light_level?: number | null
           light_points?: number | null
           lightbearer_level?: number | null
+          lineage_ancestral?: string | null
+          lineage_cultural?: string[] | null
+          lineage_indigenous?: string | null
+          lineage_spiritual?: string[] | null
           onboarding_completed?: boolean | null
           online_status?: boolean | null
           primary_intention?: string | null
+          privacy_analytics_consent?: boolean | null
+          privacy_data_sharing_consent?: boolean | null
+          privacy_last_updated?: string | null
+          privacy_marketing_consent?: boolean | null
+          privacy_notification_consent?: boolean | null
           role?: string | null
           soul_alignment?: string | null
+          timezone?: string | null
           transit_notifications?: boolean | null
           updated_at?: string | null
         }
@@ -9900,6 +10146,42 @@ export type Database = {
           },
         ]
       }
+      user_privacy_settings: {
+        Row: {
+          analytics_consent: boolean
+          created_at: string
+          data_retention_preference: string | null
+          id: string
+          marketing_consent: boolean
+          notifications_enabled: boolean
+          profile_visibility: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          analytics_consent?: boolean
+          created_at?: string
+          data_retention_preference?: string | null
+          id?: string
+          marketing_consent?: boolean
+          notifications_enabled?: boolean
+          profile_visibility?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          analytics_consent?: boolean
+          created_at?: string
+          data_retention_preference?: string | null
+          id?: string
+          marketing_consent?: boolean
+          notifications_enabled?: boolean
+          profile_visibility?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_progress: {
         Row: {
           completed_at: string | null
@@ -11517,6 +11799,25 @@ export type Database = {
         Args: { "": unknown }
         Returns: Json
       }
+      log_data_access: {
+        Args:
+          | {
+              p_user_id: string
+              p_access_type: string
+              p_data_accessed: string
+              p_access_purpose?: string
+              p_accessed_by?: string
+            }
+          | {
+              p_user_id: string
+              p_access_type: string
+              p_table_name: string
+              p_record_id?: string
+              p_purpose?: string
+              p_legal_basis?: string
+            }
+        Returns: undefined
+      }
       log_user_activity: {
         Args: { user_id_param: string; activity_type_param: string }
         Returns: undefined
@@ -12819,6 +13120,16 @@ export type Database = {
       update_last_read_time: {
         Args: { thread_id_param: string; user_id_param: string }
         Returns: undefined
+      }
+      update_privacy_settings: {
+        Args: {
+          p_analytics_consent: boolean
+          p_marketing_consent: boolean
+          p_profile_visibility: boolean
+          p_notifications_enabled: boolean
+          p_data_retention_preference?: string
+        }
+        Returns: string
       }
       updategeometrysrid: {
         Args: {
