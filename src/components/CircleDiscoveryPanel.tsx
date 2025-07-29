@@ -74,8 +74,8 @@ export const CircleDiscoveryPanel = ({ open, onOpenChange }: CircleDiscoveryPane
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden p-0">
-          <div className="bg-gradient-to-br from-background/95 to-muted/50 backdrop-blur-xl border border-white/10">
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden p-0 bg-black/20 backdrop-blur-2xl border border-white/10">
+          <div className="bg-gradient-to-br from-white/5 to-white/2 backdrop-blur-xl border border-white/10 rounded-lg">
             <DialogHeader className="p-6 border-b border-white/10">
               <div className="flex items-center justify-between">
                 <div>
