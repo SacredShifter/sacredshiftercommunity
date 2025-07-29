@@ -193,9 +193,6 @@ const Index = () => {
               </div>
             </div>
             
-            <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
-              Sacred Shifter
-            </h1>
             <p className="text-xl text-muted-foreground mb-2">
               Your consciousness transformation toolkit
             </p>
