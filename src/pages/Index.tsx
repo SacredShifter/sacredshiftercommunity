@@ -192,8 +192,8 @@ const Index = () => {
     <>
       <WelcomeModal />
       
-      <div className="min-h-screen bg-transparent">
-        <div className="container mx-auto px-4 py-8">
+      <div className="h-full p-6">
+        <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="text-center mb-12">
             <div className="flex justify-center mb-6">

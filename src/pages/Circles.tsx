@@ -119,7 +119,8 @@ const Circles = () => {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <div className="h-full p-6">
+      <div className="max-w-7xl mx-auto space-y-6">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
@@ -318,6 +319,7 @@ const Circles = () => {
         open={createModalOpen}
         onOpenChange={setCreateModalOpen}
       />
+      </div>
     </div>
   );
 };

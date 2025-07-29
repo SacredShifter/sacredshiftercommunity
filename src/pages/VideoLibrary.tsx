@@ -5,16 +5,13 @@ import { YouTubeLibrary } from '@/components/YouTubeLibrary/YouTubeLibrary';
 
 const VideoLibrary: React.FC = () => {
   return (
-    <div className="min-h-screen relative">
-      <ParallaxBackground />
-      
+    <div className="h-full p-6">
+      <div className="max-w-7xl mx-auto">
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
-        className="relative z-10"
       >
-        <div className="container mx-auto px-4 py-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -35,8 +32,8 @@ const VideoLibrary: React.FC = () => {
           </motion.div>
           
           <YouTubeLibrary />
-        </div>
       </motion.div>
+      </div>
     </div>
   );
 };

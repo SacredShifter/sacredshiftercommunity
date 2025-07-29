@@ -251,7 +251,8 @@ const Settings = () => {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <div className="h-full p-6">
+      <div className="max-w-4xl mx-auto space-y-6">
       <div className="flex items-center space-x-4 mb-6">
         <Shield className="h-8 w-8 text-primary" />
         <div>
@@ -431,6 +432,7 @@ const Settings = () => {
           </div>
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 };
