@@ -342,45 +342,27 @@ export const MirrorJournal: React.FC<MirrorJournalProps> = ({ className }) => {
           )}
         </AnimatePresence>
 
-        {/* Enhanced Action Buttons */}
+        {/* Enhanced Action Buttons - Always Visible */}
         {!isCreating && !editingId && entries.length > 0 && (
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            className="fixed bottom-4 right-4 z-50 space-y-3 max-w-[90vw]"
-          >
+          <div className="fixed bottom-2 right-2 z-50 flex flex-col gap-2">
             {/* Dream Analysis Button */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.1 }}
+            <Button
+              onClick={() => setShowDreamAnalyzer(true)}
+              size="sm"
+              className="h-10 px-3 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 shadow-lg transition-all duration-200"
             >
-              <Button
-                onClick={() => setShowDreamAnalyzer(true)}
-                size="sm"
-                className="h-10 px-3 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-200 group text-xs"
-              >
-                <Brain className="w-4 h-4 mr-1" />
-                <span className="font-medium hidden sm:inline">Analyze Dream</span>
-                <span className="font-medium sm:hidden">Dream</span>
-              </Button>
-            </motion.div>
+              <Brain className="w-4 h-4 mr-1" />
+              <span className="text-xs font-medium hidden sm:inline">Dream</span>
+            </Button>
             
             {/* Regular Journal Entry Button */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 }}
+            <Button
+              onClick={handleCreateNew}
+              className="h-12 w-12 rounded-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg transition-all duration-200"
             >
-              <Button
-                onClick={handleCreateNew}
-                size="lg"
-                className="h-12 w-12 rounded-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg hover:shadow-xl transition-all duration-200"
-              >
-                <Plus className="w-5 h-5" />
-              </Button>
-            </motion.div>
-          </motion.div>
+              <Plus className="w-5 h-5" />
+            </Button>
+          </div>
         )}
 
         {/* Entries List */}
