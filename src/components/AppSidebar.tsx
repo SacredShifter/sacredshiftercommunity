@@ -215,14 +215,14 @@ export function AppSidebar() {
             <SidebarMenu>
               <SidebarMenuItem>
                 <TooltipWrapper 
-                  content="Sacred Shifter Guidebook - Ancient wisdom for modern transformation" 
+                  content="Guidebook - Ancient wisdom for modern transformation" 
                   side="right"
                   disabled={!isCollapsed}
                 >
                   <SidebarMenuButton asChild>
                     <Link to="/guidebook">
                       <Scroll className="mr-2 h-4 w-4" />
-                      {!isCollapsed && <span>Sacred Shifter Guidebook</span>}
+                      {!isCollapsed && <span>Guidebook</span>}
                     </Link>
                   </SidebarMenuButton>
                 </TooltipWrapper>
@@ -245,7 +245,7 @@ export function AppSidebar() {
                   <SidebarMenuButton asChild>
                     <Link to="/support">
                       <Heart className="mr-2 h-4 w-4" />
-                      {!isCollapsed && <span>Support Sacred Shifter</span>}
+                      {!isCollapsed && <span>Support the Shift</span>}
                     </Link>
                   </SidebarMenuButton>
                 </TooltipWrapper>
