@@ -95,10 +95,10 @@ export function EntryModal({ entry, open, onClose }: EntryModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] p-0 overflow-hidden">
-        <div className="relative">
+      <DialogContent className="max-w-4xl max-h-[90vh] p-0 overflow-hidden flex flex-col">
+        <div className="relative flex flex-col h-full">
           {/* Header with gradient background */}
-          <div className="relative bg-gradient-to-r from-primary/10 via-purple-500/10 to-blue-500/10 p-6 border-b">
+          <div className="relative bg-gradient-to-r from-primary/10 via-purple-500/10 to-blue-500/10 p-6 border-b flex-shrink-0">
             {entry.is_verified && (
               <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-purple-500/20" />
             )}
@@ -218,7 +218,7 @@ export function EntryModal({ entry, open, onClose }: EntryModalProps) {
           </div>
 
           {/* Content */}
-          <ScrollArea className="max-h-[60vh] p-6">
+          <ScrollArea className="flex-1 p-6">
             <div className="space-y-6">
               {/* Main Content */}
               <motion.div
