@@ -1,0 +1,123 @@
+import { Link, useLocation } from "react-router-dom";
+import { Home, Users, User, Rss, Settings, LogOut } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  useSidebar,
+} from "@/components/ui/sidebar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
+const navItems = [
+  { title: "Home", url: "/", icon: Home },
+  { title: "Feed", url: "/feed", icon: Rss },
+  { title: "Circles", url: "/circles", icon: Users },
+  { title: "Profile", url: "/profile", icon: User },
+];
+
+export function AppSidebar() {
+  const { collapsed } = useSidebar();
+  const location = useLocation();
+  const { user, signOut } = useAuth();
+  const currentPath = location.pathname;
+
+  const isActive = (path: string) => currentPath === path;
+  const isExpanded = navItems.some((i) => isActive(i.url));
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
+
+  const getInitials = (email?: string) => {
+    if (email) {
+      return email.slice(0, 2).toUpperCase();
+    }
+    return 'SS';
+  };
+
+  return (
+    <Sidebar className={collapsed ? "w-16" : "w-64"} collapsible>
+      <SidebarContent>
+        {/* Main Navigation */}
+        <SidebarGroup open={isExpanded}>
+          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {navItems.map((item) => {
+                const isItemActive = isActive(item.url);
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton 
+                      asChild
+                      isActive={isItemActive}
+                      className={isItemActive ? "bg-primary/10 text-primary font-medium" : ""}
+                    >
+                      <Link to={item.url}>
+                        <item.icon className="mr-2 h-4 w-4" />
+                        {!collapsed && <span>{item.title}</span>}
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Account Section */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Account</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to="/settings">
+                    <Settings className="mr-2 h-4 w-4" />
+                    {!collapsed && <span>Settings</span>}
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton 
+                  onClick={handleSignOut}
+                  className="hover:bg-destructive/10 hover:text-destructive"
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  {!collapsed && <span>Sign Out</span>}
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* User Info */}
+        {user && !collapsed && (
+          <div className="mt-auto p-4 border-t">
+            <div className="flex items-center space-x-3">
+              <Avatar className="w-8 h-8">
+                <AvatarImage src="" />
+                <AvatarFallback className="text-xs bg-primary/10 text-primary">
+                  {getInitials(user.email)}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium truncate">{user.email}</p>
+                <p className="text-xs text-muted-foreground">Sacred Seeker</p>
+              </div>
+            </div>
+          </div>
+        )}
+      </SidebarContent>
+    </Sidebar>
+  );
+}
