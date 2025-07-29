@@ -11,7 +11,7 @@ import { ParallaxBackground } from "@/components/ParallaxBackground";
 import { ChatBubble } from "@/components/ChatBubble";
 import { AIChatBubble } from "@/components/AIChatBubble";
 import { SacredSoundscape } from "@/components/SacredSoundscape";
-import { HelpModal } from "@/components/HelpSystem/HelpModal";
+
 import Index from "./pages/Index";
 import Feed from "./pages/Feed";
 import Circles from "./pages/Circles";
@@ -21,6 +21,7 @@ import Journal from "./pages/Journal";
 import VideoLibrary from "./pages/VideoLibrary";
 import Registry from "./pages/Registry";
 import Codex from "./pages/Codex";
+import Guidebook from "./pages/Guidebook";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -62,6 +63,7 @@ const App = () => {
                             <Route path="/videos" element={<VideoLibrary />} />
                             <Route path="/registry" element={<Registry />} />
                             <Route path="/codex" element={<Codex />} />
+                            <Route path="/guidebook" element={<Guidebook />} />
                             <Route path="/profile" element={<Profile />} />
                             <Route path="/settings" element={<Settings />} />
                             <Route path="*" element={<NotFound />} />
@@ -80,8 +82,6 @@ const App = () => {
                         <AIChatBubble />
                       </div>
                       
-                      {/* Help System */}
-                      <HelpModal />
                     </div>
                   </SidebarProvider>
                 </ProtectedRoute>

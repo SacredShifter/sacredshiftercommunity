@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Users, User, Rss, Settings, LogOut, BookOpen, Video, Database, Archive } from "lucide-react";
+import { Home, Users, User, Rss, Settings, LogOut, BookOpen, Video, Database, Archive, Scroll } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import {
   Sidebar,
@@ -82,6 +82,29 @@ export function AppSidebar() {
                   </SidebarMenuItem>
                 );
               })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Guidebook Section */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Knowledge</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <TooltipWrapper 
+                  content="Sacred Shifter Guidebook - Ancient wisdom for modern transformation" 
+                  side="right"
+                  disabled={!isCollapsed}
+                >
+                  <SidebarMenuButton asChild>
+                    <Link to="/guidebook">
+                      <Scroll className="mr-2 h-4 w-4" />
+                      {!isCollapsed && <span>Sacred Shifter Guidebook</span>}
+                    </Link>
+                  </SidebarMenuButton>
+                </TooltipWrapper>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

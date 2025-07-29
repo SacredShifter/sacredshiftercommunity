@@ -342,39 +342,36 @@ export const MirrorJournal: React.FC<MirrorJournalProps> = ({ className }) => {
           )}
         </AnimatePresence>
 
-        {/* Clean Action Menu */}
-        {!isCreating && !editingId && entries.length > 0 && (
-          <div className="fixed bottom-4 right-4 z-50">
-            {/* Main Add Button */}
-            <div className="relative group">
-              <Button
-                onClick={handleCreateNew}
-                className="h-12 w-12 rounded-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg transition-all duration-200"
-              >
-                <Plus className="w-5 h-5" />
-              </Button>
-              
-              {/* Dream Analysis Button - appears on hover */}
-              <div className="absolute bottom-full right-0 mb-2 opacity-0 group-hover:opacity-100 transition-all duration-200 transform group-hover:translate-y-0 translate-y-2">
-                <Button
-                  onClick={() => setShowDreamAnalyzer(true)}
-                  size="sm"
-                  className="h-10 px-3 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 shadow-lg whitespace-nowrap"
-                >
-                  <Brain className="w-4 h-4 mr-2" />
-                  <span className="text-xs font-medium">Analyze Dream</span>
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Entries List */}
+        {/* Entries List with Add Button */}
         {entries.length > 0 && (
           <div className="space-y-4">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <BookOpen className="w-4 h-4" />
-              {entries.length} {entries.length === 1 ? 'entry' : 'entries'}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <BookOpen className="w-4 h-4" />
+                {entries.length} {entries.length === 1 ? 'entry' : 'entries'}
+              </div>
+              
+              {/* Add Entry Button - positioned above entries */}
+              {!isCreating && !editingId && (
+                <div className="flex gap-2">
+                  <Button
+                    onClick={() => setShowDreamAnalyzer(true)}
+                    size="sm"
+                    variant="outline"
+                    className="h-8 px-3 rounded-full border-purple-200 text-purple-600 hover:bg-purple-50"
+                  >
+                    <Brain className="w-4 h-4 mr-1" />
+                    <span className="text-xs">Dream</span>
+                  </Button>
+                  <Button
+                    onClick={handleCreateNew}
+                    size="sm"
+                    className="h-8 w-8 rounded-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </Button>
+                </div>
+              )}
             </div>
             
             <ScrollArea className="h-[600px]">

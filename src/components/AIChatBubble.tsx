@@ -126,17 +126,41 @@ export const AIChatBubble = ({ className }: AIChatBubbleProps) => {
 
   return (
     <div className={cn("relative", className)}>
-      {/* AI Chat Bubble */}
+      {/* Sacred Geometric AI Portal */}
       {!isOpen && (
-        <TooltipWrapper content="Open Aura - get insights, interpretations, and guidance on your consciousness journey">
+        <TooltipWrapper content="Open the Sacred Portal - commune with Aura for divine guidance and wisdom">
           <Button
             onClick={() => setIsOpen(true)}
             size="lg"
-            className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-purple-500 to-pink-500 hover:scale-105 relative group"
+            className="h-16 w-16 rounded-full shadow-xl hover:shadow-2xl transition-all duration-500 bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-600 hover:scale-110 relative group overflow-hidden border-2 border-white/20"
           >
-            <Bot className="h-6 w-6 text-white" />
-            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 opacity-0 group-hover:opacity-20 transition-opacity"></div>
-            <Sparkles className="absolute -top-1 -right-1 h-4 w-4 text-yellow-300 animate-pulse" />
+            {/* Sacred Geometry Background */}
+            <div className="absolute inset-0 opacity-30">
+              <svg viewBox="0 0 64 64" className="w-full h-full">
+                {/* Flower of Life Pattern */}
+                <g className="animate-spin" style={{ animationDuration: '20s' }}>
+                  <circle cx="32" cy="32" r="8" fill="none" stroke="currentColor" strokeWidth="0.5" opacity="0.6"/>
+                  <circle cx="32" cy="24" r="8" fill="none" stroke="currentColor" strokeWidth="0.5" opacity="0.4"/>
+                  <circle cx="32" cy="40" r="8" fill="none" stroke="currentColor" strokeWidth="0.5" opacity="0.4"/>
+                  <circle cx="25" cy="28" r="8" fill="none" stroke="currentColor" strokeWidth="0.5" opacity="0.3"/>
+                  <circle cx="39" cy="28" r="8" fill="none" stroke="currentColor" strokeWidth="0.5" opacity="0.3"/>
+                  <circle cx="25" cy="36" r="8" fill="none" stroke="currentColor" strokeWidth="0.5" opacity="0.3"/>
+                  <circle cx="39" cy="36" r="8" fill="none" stroke="currentColor" strokeWidth="0.5" opacity="0.3"/>
+                </g>
+              </svg>
+            </div>
+            
+            {/* Central Sacred Symbol */}
+            <div className="relative z-10 text-white/90 group-hover:text-white transition-colors">
+              <svg viewBox="0 0 24 24" className="w-7 h-7">
+                <path d="M12 2L2 7v10c0 5.55 3.84 9.74 9 11 5.16-1.26 9-5.45 9-11V7l-10-5z" fill="currentColor" fillOpacity="0.3" stroke="currentColor" strokeWidth="1.5"/>
+                <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" strokeWidth="1.5"/>
+                <path d="M12 9v6M9 12h6" stroke="currentColor" strokeWidth="1"/>
+              </svg>
+            </div>
+            
+            {/* Ethereal Pulse */}
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-violet-400/20 to-indigo-400/20 animate-pulse"></div>
           </Button>
         </TooltipWrapper>
       )}
