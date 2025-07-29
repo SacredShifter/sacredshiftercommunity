@@ -177,7 +177,7 @@ const Profile = () => {
               Your Profile
             </h1>
             <p className="text-muted-foreground mt-1">
-              Manage your Sacred Shifter identity
+              Manage your profile and sacred journey
             </p>
           </div>
           

@@ -31,16 +31,18 @@ const App = () => {
                   <SidebarProvider>
                     <div className="min-h-screen flex w-full">
                       <AppSidebar />
-                      <div className="flex-1 flex flex-col">
-                        <header className="h-12 flex items-center border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-                          <SidebarTrigger className="ml-2" />
-                          <div className="ml-4">
-                            <h1 className="text-lg font-semibold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-                              Sacred Shifter
-                            </h1>
+                      <main className="flex-1 overflow-auto">
+                        <header className="h-12 flex items-center border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4">
+                          <SidebarTrigger className="mr-4" />
+                          <div className="flex items-center">
+                            <img 
+                              src="/src/assets/sacred-shifter-logo.png" 
+                              alt="Sacred Shifter" 
+                              className="h-8 w-auto filter invert brightness-0 contrast-100 opacity-90"
+                            />
                           </div>
                         </header>
-                        <main className="flex-1 overflow-auto">
+                        <div className="p-4">
                           <Routes>
                             <Route path="/" element={<Index />} />
                             <Route path="/feed" element={<Feed />} />
@@ -48,8 +50,8 @@ const App = () => {
                             <Route path="/profile" element={<Profile />} />
                             <Route path="*" element={<NotFound />} />
                           </Routes>
-                        </main>
-                      </div>
+                        </div>
+                      </main>
                     </div>
                   </SidebarProvider>
                 </ProtectedRoute>

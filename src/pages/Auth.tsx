@@ -80,9 +80,13 @@ const Auth = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted p-4">
       <Card className="w-full max-w-md mx-auto">
         <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-            Sacred Shifter
-          </CardTitle>
+          <div className="flex justify-center mb-4">
+            <img 
+              src="/src/assets/sacred-shifter-logo.png" 
+              alt="Sacred Shifter" 
+              className="h-12 w-auto filter invert brightness-0 contrast-100 opacity-90"
+            />
+          </div>
           <CardDescription>
             Transform your consciousness through sacred technology
           </CardDescription>

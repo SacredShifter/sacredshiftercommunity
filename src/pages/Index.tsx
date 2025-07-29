@@ -24,9 +24,13 @@ const Index = () => {
       <div className="ml-72 min-h-screen flex items-center justify-center p-4">
         <Card className="w-full max-w-2xl mx-auto">
           <CardHeader className="text-center">
-            <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-              Sacred Shifter
-            </CardTitle>
+            <div className="flex justify-center mb-4">
+              <img 
+                src="/src/assets/sacred-shifter-logo.png" 
+                alt="Sacred Shifter" 
+                className="h-16 w-auto filter invert brightness-0 contrast-100 opacity-90"
+              />
+            </div>
             <CardDescription className="text-lg">
               Welcome to your consciousness transformation journey
             </CardDescription>
@@ -42,7 +46,7 @@ const Index = () => {
             
             <div className="text-center space-y-2">
               <p className="text-sm text-muted-foreground">
-                Your spiritual journey begins here. Sacred Shifter provides tools for:
+                Your spiritual journey begins here. This platform provides tools for:
               </p>
               <ul className="text-sm space-y-1 text-left max-w-md mx-auto">
                 <li>• Consciousness expansion through sacred circles</li>
