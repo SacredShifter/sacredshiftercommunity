@@ -289,25 +289,6 @@ export const AIChatBubble = ({ className }: AIChatBubbleProps) => {
                     </div>
                   </ScrollArea>
 
-                  {/* Quick Prompts */}
-                  {messages.length <= 1 && (
-                    <div className="px-4 pb-2">
-                      <p className="text-xs text-muted-foreground mb-2">Quick prompts:</p>
-                      <div className="flex flex-wrap gap-1">
-                        {quickPrompts.slice(0, 3).map((prompt, index) => (
-                          <Button
-                            key={index}
-                            variant="outline"
-                            size="sm"
-                            className="text-xs h-6 px-2"
-                            onClick={() => handleQuickPrompt(prompt)}
-                          >
-                            {prompt}
-                          </Button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
 
                   {/* Input */}
                   <div className="p-4 border-t bg-background/50">
@@ -329,9 +310,6 @@ export const AIChatBubble = ({ className }: AIChatBubbleProps) => {
                         <Send className="h-4 w-4" />
                       </Button>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-2 text-center">
-                      Press Enter to send • Your sacred guide for consciousness exploration
-                    </p>
                   </div>
                 </>
               )}
