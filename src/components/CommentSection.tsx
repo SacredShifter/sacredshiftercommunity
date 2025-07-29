@@ -15,10 +15,6 @@ interface Comment {
   content: string;
   created_at: string;
   user_id: string;
-  profiles?: {
-    display_name?: string;
-    avatar_url?: string;
-  };
 }
 
 interface CommentSectionProps {
@@ -40,13 +36,7 @@ export const CommentSection = ({ postId, onCommentAdded }: CommentSectionProps) 
       try {
         const { data, error } = await supabase
           .from('sacred_post_comments')
-          .select(`
-            *,
-            profiles (
-              display_name,
-              avatar_url
-            )
-          `)
+          .select('*')
           .eq('post_id', postId)
           .order('created_at', { ascending: true });
 
@@ -79,13 +69,7 @@ export const CommentSection = ({ postId, onCommentAdded }: CommentSectionProps) 
           const fetchNewComment = async () => {
             const { data, error } = await supabase
               .from('sacred_post_comments')
-              .select(`
-                *,
-                profiles (
-                  display_name,
-                  avatar_url
-                )
-              `)
+              .select('*')
               .eq('id', payload.new.id)
               .single();
 
@@ -131,9 +115,9 @@ export const CommentSection = ({ postId, onCommentAdded }: CommentSectionProps) 
             {comments.map((comment) => (
               <div key={comment.id} className="flex space-x-3">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src={comment.profiles?.avatar_url} />
+                  <AvatarImage src="" />
                   <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10 text-xs">
-                    {getInitials(comment.profiles?.display_name)}
+                    SS
                   </AvatarFallback>
                 </Avatar>
                 
@@ -141,7 +125,7 @@ export const CommentSection = ({ postId, onCommentAdded }: CommentSectionProps) 
                   <div className="bg-muted/30 rounded-lg p-3">
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-sm font-medium">
-                        {comment.profiles?.display_name || 'Sacred Seeker'}
+                        Sacred Seeker
                       </span>
                       <Badge variant="outline" className="text-xs">
                         {formatDistanceToNow(new Date(comment.created_at))} ago

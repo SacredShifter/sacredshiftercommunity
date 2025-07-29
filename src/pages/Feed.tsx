@@ -6,11 +6,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Heart, MessageCircle, Share2, MoreHorizontal } from 'lucide-react';
+import { Plus, Circle, MoreHorizontal } from 'lucide-react';
 import CreatePostModal from '@/components/CreatePostModal';
 import { ChatBubble } from '@/components/ChatBubble';
 import { SacredSoundscape } from '@/components/SacredSoundscape';
 import { ParallaxBackground } from '@/components/ParallaxBackground';
+import { PostInteractionButtons } from '@/components/PostInteractionButtons';
+import { CircleDiscoveryPanel } from '@/components/CircleDiscoveryPanel';
 import { formatDistanceToNow } from 'date-fns';
 import sacredShifterLogo from '@/assets/sacred-shifter-logo.png';
 
@@ -41,6 +43,7 @@ const Feed = () => {
   const [posts, setPosts] = useState<SacredPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showCircleDiscovery, setShowCircleDiscovery] = useState(false);
 
   const fetchPosts = async () => {
     try {
@@ -128,13 +131,23 @@ const Feed = () => {
                 </p>
               </div>
             </div>
-            <Button 
-              onClick={() => setShowCreateModal(true)}
-              className="sacred-button bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Share to Feed
-            </Button>
+            <div className="flex space-x-2">
+              <Button
+                onClick={() => setShowCircleDiscovery(true)}
+                variant="outline"
+                className="border-primary/20 hover:bg-primary/10"
+              >
+                <Circle className="h-4 w-4 mr-2" />
+                Circles
+              </Button>
+              <Button 
+                onClick={() => setShowCreateModal(true)}
+                className="sacred-button bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Share to Feed
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -245,21 +258,14 @@ const Feed = () => {
                     </div>
                   )}
 
-                  {/* Action Buttons */}
-                  <div className="flex items-center space-x-6 pt-2 border-t">
-                    <Button variant="ghost" size="sm" className="action-button flex items-center space-x-2 text-muted-foreground hover:text-primary">
-                      <Heart className="h-4 w-4" />
-                      <span className="text-xs">Resonate {post.like_count > 0 && `(${post.like_count})`}</span>
-                    </Button>
-                    <Button variant="ghost" size="sm" className="action-button flex items-center space-x-2 text-muted-foreground hover:text-primary">
-                      <MessageCircle className="h-4 w-4" />
-                      <span className="text-xs">Reflect {post.comment_count > 0 && `(${post.comment_count})`}</span>
-                    </Button>
-                    <Button variant="ghost" size="sm" className="action-button flex items-center space-x-2 text-muted-foreground hover:text-primary">
-                      <Share2 className="h-4 w-4" />
-                      <span className="text-xs">Share</span>
-                    </Button>
-                  </div>
+                  {/* Interactive Post Buttons */}
+                  <PostInteractionButtons
+                    postId={post.id}
+                    initialLikeCount={post.like_count}
+                    initialCommentCount={post.comment_count}
+                    postUserId={post.user_id}
+                    currentUserId={user?.id}
+                  />
                 </CardContent>
               </Card>
             );
@@ -277,6 +283,11 @@ const Feed = () => {
         open={showCreateModal}
         onOpenChange={setShowCreateModal}
         onPostCreated={handlePostCreated}
+      />
+
+      <CircleDiscoveryPanel
+        open={showCircleDiscovery}
+        onOpenChange={setShowCircleDiscovery}
       />
     </div>
   );
