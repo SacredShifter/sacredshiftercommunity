@@ -51,9 +51,37 @@ export const ParallaxBackground = () => {
   return (
     <div 
       ref={parallaxRef}
-      className="fixed inset-0 pointer-events-none cosmic-grid-parallax"
+      className="fixed inset-0 pointer-events-none"
       style={{ zIndex: -1 }}
     >
+      {/* Base Cosmic Portal Background */}
+      <div className="absolute inset-0" style={{
+        background: `
+          radial-gradient(circle at 50% 50%, 
+            hsl(300 100% 60% / 0.3) 0%, 
+            hsl(240 100% 50% / 0.2) 20%, 
+            transparent 40%),
+          radial-gradient(circle at 50% 50%, 
+            transparent 15%, 
+            hsl(180 100% 50% / 0.1) 16%, 
+            transparent 17%),
+          radial-gradient(circle at 50% 50%, 
+            transparent 25%, 
+            hsl(120 100% 40% / 0.08) 26%, 
+            transparent 27%),
+          radial-gradient(circle at 50% 50%, 
+            transparent 35%, 
+            hsl(60 100% 50% / 0.06) 36%, 
+            transparent 37%),
+          radial-gradient(ellipse at center, 
+            hsl(257 65% 15%) 0%, 
+            hsl(250 70% 12%) 50%, 
+            hsl(240 80% 8%) 100%)
+        `,
+        backgroundAttachment: 'fixed',
+        backgroundSize: '100% 100%'
+      }} />
+      
       {/* Layer 1 - Fastest */}
       <div 
         ref={layer1Ref}
