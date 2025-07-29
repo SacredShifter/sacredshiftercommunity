@@ -35,7 +35,7 @@ const App = () => {
                       <ParallaxBackground />
                       <AppSidebar />
                       <SidebarInset>
-                        <header className="h-12 flex items-center border-b backdrop-blur supports-[backdrop-filter]:bg-background/10 px-4">
+                        <header className="h-12 flex items-center border-b border-border/30 backdrop-blur-md bg-background/20 px-4">
                           <SidebarTrigger className="mr-4" />
                           <div className="flex items-center">
                             <img 
