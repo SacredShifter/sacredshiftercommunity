@@ -14,13 +14,9 @@ serve(async (req) => {
   }
 
   try {
-    const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
-    console.log('OpenAI API Key status:', OPENAI_API_KEY ? 'Present' : 'Missing');
-    console.log('API Key length:', OPENAI_API_KEY ? OPENAI_API_KEY.length : 0);
-    console.log('API Key starts with sk-:', OPENAI_API_KEY ? OPENAI_API_KEY.startsWith('sk-') : false);
-    
-    if (!OPENAI_API_KEY) {
-      throw new Error('OpenAI API key not configured');
+    const OPENROUTER_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
+    if (!OPENROUTER_API_KEY) {
+      throw new Error('OpenRouter API key not configured');
     }
 
     // Initialize Supabase client
@@ -164,15 +160,17 @@ Always respond with love, wisdom, and profound insight while remaining practical
         break;
     }
 
-    // Call OpenAI API
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    // Call OpenRouter API
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
+        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
         'Content-Type': 'application/json',
+        'HTTP-Referer': 'https://sacred-shifter.com',
+        'X-Title': 'Sacred Shifter'
       },
       body: JSON.stringify({
-        model: 'gpt-4.1-2025-04-14',
+        model: 'openai/gpt-4.1-nano',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt }
@@ -201,7 +199,7 @@ Always respond with love, wisdom, and profound insight while remaining practical
         response_data: {
           user_query,
           assistant_response: assistantMessage,
-          model: 'gpt-4.1-2025-04-14',
+          model: 'openai/gpt-4.1-nano',
           timestamp: new Date().toISOString()
         }
       });
