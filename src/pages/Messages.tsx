@@ -50,9 +50,15 @@ export default function Messages() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  // Only scroll when new messages are added, not on re-renders
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    if (messages.length > 0) {
+      const timer = setTimeout(() => {
+        scrollToBottom();
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [messages.length]); // Only depend on length, not the entire messages array
 
   const handleSendMessage = async () => {
     if (!selectedConversationId || !newMessage.trim()) return;
@@ -286,7 +292,7 @@ export default function Messages() {
           </div>
 
           {/* Messages */}
-          <ScrollArea className="flex-1 p-4">
+          <ScrollArea className="flex-1 p-4" style={{ height: 'calc(100vh - 200px)' }}>
             {messages.length === 0 ? (
               <div className="text-center py-8">
                 <p className="text-muted-foreground">No messages yet. Start the conversation!</p>
