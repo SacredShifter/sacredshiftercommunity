@@ -342,26 +342,30 @@ export const MirrorJournal: React.FC<MirrorJournalProps> = ({ className }) => {
           )}
         </AnimatePresence>
 
-        {/* Enhanced Action Buttons - Always Visible */}
+        {/* Clean Action Menu */}
         {!isCreating && !editingId && entries.length > 0 && (
-          <div className="fixed bottom-2 right-2 z-50 flex flex-col gap-2">
-            {/* Dream Analysis Button */}
-            <Button
-              onClick={() => setShowDreamAnalyzer(true)}
-              size="sm"
-              className="h-10 px-3 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 shadow-lg transition-all duration-200"
-            >
-              <Brain className="w-4 h-4 mr-1" />
-              <span className="text-xs font-medium hidden sm:inline">Dream</span>
-            </Button>
-            
-            {/* Regular Journal Entry Button */}
-            <Button
-              onClick={handleCreateNew}
-              className="h-12 w-12 rounded-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg transition-all duration-200"
-            >
-              <Plus className="w-5 h-5" />
-            </Button>
+          <div className="fixed bottom-4 right-4 z-50">
+            {/* Main Add Button */}
+            <div className="relative group">
+              <Button
+                onClick={handleCreateNew}
+                className="h-12 w-12 rounded-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg transition-all duration-200"
+              >
+                <Plus className="w-5 h-5" />
+              </Button>
+              
+              {/* Dream Analysis Button - appears on hover */}
+              <div className="absolute bottom-full right-0 mb-2 opacity-0 group-hover:opacity-100 transition-all duration-200 transform group-hover:translate-y-0 translate-y-2">
+                <Button
+                  onClick={() => setShowDreamAnalyzer(true)}
+                  size="sm"
+                  className="h-10 px-3 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 shadow-lg whitespace-nowrap"
+                >
+                  <Brain className="w-4 h-4 mr-2" />
+                  <span className="text-xs font-medium">Analyze Dream</span>
+                </Button>
+              </div>
+            </div>
           </div>
         )}
 
