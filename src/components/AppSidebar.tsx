@@ -16,15 +16,21 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { TooltipWrapper } from "@/components/HelpSystem/TooltipWrapper";
 import { HelpTooltips } from "@/components/HelpSystem/ContextualHelp";
 
-const navItems = [
+const coreNavItems = [
   { title: "Home", url: "/", icon: Home, tooltip: HelpTooltips.home },
   { title: "Feed", url: "/feed", icon: Rss, tooltip: HelpTooltips.feed },
-  { title: "Circles", url: "/circles", icon: Users, tooltip: HelpTooltips.circles },
-  { title: "Journal", url: "/journal", icon: BookOpen, tooltip: HelpTooltips.journal },
-  { title: "Video Library", url: "/videos", icon: Video, tooltip: HelpTooltips.videos },
-  { title: "Registry", url: "/registry", icon: Database, tooltip: HelpTooltips.registry },
-  { title: "Personal Codex", url: "/codex", icon: Archive, tooltip: HelpTooltips.codex },
   { title: "Profile", url: "/profile", icon: User, tooltip: HelpTooltips.profile },
+];
+
+const sacredToolsItems = [
+  { title: "Journal", url: "/journal", icon: BookOpen, tooltip: HelpTooltips.journal },
+  { title: "Circles", url: "/circles", icon: Users, tooltip: HelpTooltips.circles },
+  { title: "Resonance Register", url: "/registry", icon: Database, tooltip: HelpTooltips.registry },
+  { title: "Personal Codex", url: "/codex", icon: Archive, tooltip: HelpTooltips.codex },
+];
+
+const mediaItems = [
+  { title: "YouTube", url: "/videos", icon: Video, tooltip: HelpTooltips.videos },
 ];
 
 export function AppSidebar() {
@@ -54,12 +60,76 @@ export function AppSidebar() {
   return (
     <Sidebar className={isCollapsed ? "w-16" : "w-64"} collapsible="icon">
       <SidebarContent>
-        {/* Main Navigation */}
+        {/* Core Navigation */}
         <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+          <SidebarGroupLabel>Core Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {navItems.map((item) => {
+              {coreNavItems.map((item) => {
+                const isItemActive = isActive(item.url);
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <TooltipWrapper 
+                      content={item.tooltip} 
+                      side="right"
+                      disabled={!isCollapsed}
+                    >
+                      <SidebarMenuButton 
+                        asChild
+                        isActive={isItemActive}
+                        className={isItemActive ? "bg-primary/10 text-primary font-medium" : ""}
+                      >
+                        <Link to={item.url}>
+                          <item.icon className="mr-2 h-4 w-4" />
+                          {!isCollapsed && <span>{item.title}</span>}
+                        </Link>
+                      </SidebarMenuButton>
+                    </TooltipWrapper>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Sacred Tools */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Sacred Tools</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {sacredToolsItems.map((item) => {
+                const isItemActive = isActive(item.url);
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <TooltipWrapper 
+                      content={item.tooltip} 
+                      side="right"
+                      disabled={!isCollapsed}
+                    >
+                      <SidebarMenuButton 
+                        asChild
+                        isActive={isItemActive}
+                        className={isItemActive ? "bg-primary/10 text-primary font-medium" : ""}
+                      >
+                        <Link to={item.url}>
+                          <item.icon className="mr-2 h-4 w-4" />
+                          {!isCollapsed && <span>{item.title}</span>}
+                        </Link>
+                      </SidebarMenuButton>
+                    </TooltipWrapper>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Media */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Media</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {mediaItems.map((item) => {
                 const isItemActive = isActive(item.url);
                 return (
                   <SidebarMenuItem key={item.title}>
