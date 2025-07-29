@@ -101,10 +101,10 @@ export const DirectMessageInterface: React.FC<DirectMessageInterfaceProps> = ({
     };
   }, [user, recipientId, toast]);
 
-  // Scroll to bottom when messages change
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  // Disabled auto-scroll to prevent screen jumping
+  // useEffect(() => {
+  //   messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  // }, [messages]);
 
   const sendMessage = async () => {
     if (!newMessage.trim() || !user || isLoading) return;
