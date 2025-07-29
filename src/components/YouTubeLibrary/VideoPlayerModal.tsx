@@ -51,7 +51,7 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
     <AnimatePresence>
       {isOpen && (
         <Dialog open={isOpen} onOpenChange={onClose}>
-          <DialogContent className="max-w-6xl w-full h-[90vh] p-0 overflow-hidden bg-background/95 backdrop-blur-md border-border/30">
+          <DialogContent className="max-w-6xl w-full max-h-[90vh] p-0 overflow-hidden bg-background/95 backdrop-blur-md border-border/30 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
