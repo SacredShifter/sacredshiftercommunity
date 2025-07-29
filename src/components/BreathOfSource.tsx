@@ -83,8 +83,100 @@ const BreathOfSource: React.FC = () => {
   const { toast } = useToast();
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const sessionStartRef = useRef<number | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const currentToneRef = useRef<{ oscillator: OscillatorNode; gainNode: GainNode } | null>(null);
 
   const activePreset = currentPreset.id === 'custom' ? customPreset : currentPreset;
+
+  // Initialize audio context
+  const initializeAudio = () => {
+    if (!audioContextRef.current) {
+      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+    }
+    return audioContextRef.current;
+  };
+
+  // Create breathing tones
+  const playBreathingTone = (phase: BreathPhase) => {
+    if (!soundEnabled) return;
+    
+    try {
+      const audioContext = initializeAudio();
+      
+      // Stop any current tone
+      if (currentToneRef.current) {
+        currentToneRef.current.gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.1);
+        currentToneRef.current.oscillator.stop(audioContext.currentTime + 0.1);
+        currentToneRef.current = null;
+      }
+
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      // Set frequency based on phase
+      let frequency: number;
+      let duration = getPhaseDuration(phase) / 1000;
+      
+      switch (phase) {
+        case 'inhale':
+          frequency = 220; // A3 - rising tone
+          break;
+        case 'hold1':
+          frequency = 294; // D4 - stable tone
+          break;
+        case 'exhale':
+          frequency = 174; // F3 - falling tone
+          break;
+        case 'hold2':
+          frequency = 196; // G3 - gentle pause
+          break;
+        default:
+          frequency = 220;
+      }
+      
+      oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+      oscillator.type = 'sine';
+      
+      // Gentle volume envelope
+      gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.1, audioContext.currentTime + 0.3);
+      
+      if (phase === 'inhale') {
+        // Rising frequency for inhale
+        oscillator.frequency.exponentialRampToValueAtTime(frequency * 1.5, audioContext.currentTime + duration);
+      } else if (phase === 'exhale') {
+        // Falling frequency for exhale
+        oscillator.frequency.exponentialRampToValueAtTime(frequency * 0.7, audioContext.currentTime + duration);
+      }
+      
+      // Fade out at the end
+      gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration - 0.3);
+      
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + duration);
+      
+      currentToneRef.current = { oscillator, gainNode };
+      
+    } catch (error) {
+      console.log('Audio playback not available:', error);
+    }
+  };
+
+  // Cleanup audio
+  const stopAudio = () => {
+    if (currentToneRef.current) {
+      try {
+        currentToneRef.current.gainNode.gain.exponentialRampToValueAtTime(0.001, audioContextRef.current!.currentTime + 0.1);
+        currentToneRef.current.oscillator.stop(audioContextRef.current!.currentTime + 0.1);
+      } catch (error) {
+        // Oscillator might already be stopped
+      }
+      currentToneRef.current = null;
+    }
+  };
 
   // Phase progression logic
   const getNextPhase = (phase: BreathPhase): BreathPhase => {
@@ -134,10 +226,8 @@ const BreathOfSource: React.FC = () => {
       
       setTimeRemaining(duration);
       
-      // Play sound if enabled
-      if (soundEnabled && phase === 'inhale') {
-        // Subtle audio feedback could be added here
-      }
+      // Play breathing tone for current phase
+      playBreathingTone(phase);
       
       // Countdown timer
       let remainingTime = duration;
@@ -167,6 +257,7 @@ const BreathOfSource: React.FC = () => {
   // Stop breathing session
   const stopBreathing = () => {
     setIsActive(false);
+    stopAudio();
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
@@ -189,8 +280,12 @@ const BreathOfSource: React.FC = () => {
   // Cleanup on unmount
   useEffect(() => {
     return () => {
+      stopAudio();
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
+      }
+      if (audioContextRef.current) {
+        audioContextRef.current.close();
       }
     };
   }, []);
