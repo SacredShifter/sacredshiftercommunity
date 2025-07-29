@@ -3,7 +3,7 @@ import { YouTubeVideo, YouTubePlaylist, YouTubeChannel, YouTubeSearchResponse } 
 
 // Note: In production, this should be handled by an edge function to keep the API key secure
 const YOUTUBE_API_KEY = 'YOUR_YOUTUBE_API_KEY'; // This will need to be configured as a secret
-const SACRED_SHIFTER_CHANNEL_ID = 'YOUR_CHANNEL_ID'; // Replace with actual channel ID
+const SACRED_SHIFTER_CHANNEL_ID = 'UC9rEGKXKlKHdZ-QCTeAsD7g';
 const YOUTUBE_API_BASE = 'https://www.googleapis.com/youtube/v3';
 
 export const useYouTubeAPI = () => {
