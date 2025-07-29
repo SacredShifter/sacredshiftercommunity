@@ -91,7 +91,8 @@ export const DirectMessageInterface = ({
     }
   };
 
-  const getInitials = (name: string) => {
+  const getInitials = (name: string | null | undefined) => {
+    if (!name) return 'U'; // Return 'U' for Unknown if name is null/undefined
     return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
   };
 
