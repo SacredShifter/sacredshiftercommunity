@@ -591,6 +591,33 @@ All colors MUST be HSL.
   }
 }
 
+/* Sacred Frequency Enhancement Animations */
+@keyframes sacred-aura-pulse {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(2);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(2.5);
+  }
+}
+
+@keyframes sacred-trail-flow {
+  0% {
+    opacity: 0;
+    height: 0px;
+  }
+  50% {
+    opacity: 0.8;
+    height: 80px;
+  }
+  100% {
+    opacity: 0;
+    height: 100px;
+  }
+}
+
 /* Performance optimizations */
 body, body::before, body::after {
   will-change: transform, opacity, filter, background-position;

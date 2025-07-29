@@ -33,11 +33,14 @@ export const SacredSoundscape = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [showFrequencies, setShowFrequencies] = useState(false);
   const [selectedFrequency, setSelectedFrequency] = useState<SacredFrequency>(sacredFrequencies[4]); // Default to 528 Hz Love
+  const [isBackgroundPlaying, setIsBackgroundPlaying] = useState(false);
   const audioContextRef = useRef<AudioContext | null>(null);
   const oscillatorRef = useRef<OscillatorNode | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
+  const backgroundOscillatorRef = useRef<OscillatorNode | null>(null);
+  const backgroundGainRef = useRef<GainNode | null>(null);
 
-  const createSacredTone = async (frequency: number) => {
+  const createSacredTone = async (frequency: number, volume: number = 0.015) => {
     try {
       if (!audioContextRef.current) {
         audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
@@ -54,13 +57,10 @@ export const SacredSoundscape = () => {
       
       oscillator.frequency.value = frequency;
       oscillator.type = 'sine';
-      gainNode.gain.value = 0.015;
+      gainNode.gain.value = volume;
       
       oscillator.connect(gainNode);
       gainNode.connect(audioContext.destination);
-      
-      oscillatorRef.current = oscillator;
-      gainNodeRef.current = gainNode;
       
       oscillator.start();
       
@@ -69,6 +69,16 @@ export const SacredSoundscape = () => {
       console.warn('Sacred soundscape not available:', error);
       return null;
     }
+  };
+
+  const createBackgroundTone = async (frequency: number) => {
+    const result = await createSacredTone(frequency, 0.008); // Very low volume for background
+    if (result) {
+      backgroundOscillatorRef.current = result.oscillator;
+      backgroundGainRef.current = result.gainNode;
+      return result;
+    }
+    return null;
   };
 
   const stopSacredTone = () => {
@@ -85,6 +95,20 @@ export const SacredSoundscape = () => {
     }
   };
 
+  const stopBackgroundTone = () => {
+    if (backgroundOscillatorRef.current) {
+      try {
+        backgroundOscillatorRef.current.stop();
+        backgroundOscillatorRef.current.disconnect();
+      } catch (error) {}
+      backgroundOscillatorRef.current = null;
+    }
+    if (backgroundGainRef.current) {
+      backgroundGainRef.current.disconnect();
+      backgroundGainRef.current = null;
+    }
+  };
+
   const toggleSacredSound = async () => {
     if (isPlaying) {
       stopSacredTone();
@@ -92,25 +116,48 @@ export const SacredSoundscape = () => {
     } else {
       const result = await createSacredTone(selectedFrequency.hz);
       if (result) {
+        oscillatorRef.current = result.oscillator;
+        gainNodeRef.current = result.gainNode;
         setIsPlaying(true);
+      }
+    }
+  };
+
+  const toggleBackgroundTone = async () => {
+    if (isBackgroundPlaying) {
+      stopBackgroundTone();
+      setIsBackgroundPlaying(false);
+    } else {
+      const result = await createBackgroundTone(selectedFrequency.hz);
+      if (result) {
+        setIsBackgroundPlaying(true);
       }
     }
   };
 
   const selectFrequency = async (frequency: SacredFrequency) => {
     const wasPlaying = isPlaying;
+    const wasBackgroundPlaying = isBackgroundPlaying;
     setSelectedFrequency(frequency);
     setShowFrequencies(false);
     
     if (wasPlaying) {
-      // Stop current tone
       stopSacredTone();
-      // Immediately start new frequency
       const result = await createSacredTone(frequency.hz);
-      if (!result) {
+      if (result) {
+        oscillatorRef.current = result.oscillator;
+        gainNodeRef.current = result.gainNode;
+      } else {
         setIsPlaying(false);
       }
-      // Keep playing state true since we're switching frequencies
+    }
+    
+    if (wasBackgroundPlaying) {
+      stopBackgroundTone();
+      const result = await createBackgroundTone(frequency.hz);
+      if (!result) {
+        setIsBackgroundPlaying(false);
+      }
     }
   };
 
@@ -129,6 +176,7 @@ export const SacredSoundscape = () => {
   useEffect(() => {
     return () => {
       stopSacredTone();
+      stopBackgroundTone();
       if (audioContextRef.current) {
         audioContextRef.current.close();
       }
@@ -137,7 +185,43 @@ export const SacredSoundscape = () => {
 
   return (
     <div className="fixed bottom-20 left-4 z-50 sacred-frequency-selector">
-      <div className="relative">
+      <div className="relative"
+           style={{
+             filter: isPlaying || isBackgroundPlaying ? `drop-shadow(0 0 20px ${selectedFrequency.color}80)` : undefined
+           }}>
+        {/* Animated Tone Aura */}
+        {(isPlaying || isBackgroundPlaying) && (
+          <div 
+            className="absolute inset-0 rounded-full animate-pulse"
+            style={{
+              background: `radial-gradient(circle, ${selectedFrequency.color}30 0%, ${selectedFrequency.color}10 50%, transparent 100%)`,
+              animation: 'sacred-aura-pulse 2s ease-in-out infinite',
+              transform: 'scale(2)',
+              zIndex: -1
+            }}
+          />
+        )}
+        
+        {/* Frequency Trails */}
+        {(isPlaying || isBackgroundPlaying) && (
+          <div className="absolute inset-0 pointer-events-none">
+            {[...Array(8)].map((_, i) => (
+              <div
+                key={i}
+                className="absolute w-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-60"
+                style={{
+                  height: '100px',
+                  left: '50%',
+                  top: '50%',
+                  transformOrigin: '50% 0%',
+                  transform: `translate(-50%, -50%) rotate(${i * 45}deg)`,
+                  color: selectedFrequency.color,
+                  animation: `sacred-trail-flow 3s linear infinite ${i * 0.2}s`
+                }}
+              />
+            ))}
+          </div>
+        )}
         {/* Sacred Frequency Fan */}
         {showFrequencies && (
           <div className="absolute bottom-16 left-0">
@@ -202,7 +286,7 @@ export const SacredSoundscape = () => {
           </div>
         )}
 
-        {/* Main Sound Button */}
+        {/* Main Control Buttons */}
         <div className="flex items-center space-x-2">
           <Button
             onClick={toggleSacredSound}
@@ -226,6 +310,16 @@ export const SacredSoundscape = () => {
             title="Select Sacred Frequency"
           >
             <Waves className="h-4 w-4 text-primary" />
+          </Button>
+
+          <Button
+            onClick={toggleBackgroundTone}
+            variant="outline"
+            size="sm"
+            className={`sacred-button bg-background/20 backdrop-blur-sm border-primary/30 hover:border-primary/60 ${isBackgroundPlaying ? 'bg-primary/20' : ''}`}
+            title={isBackgroundPlaying ? "Stop Background Tone" : "Start Background Tone (while typing)"}
+          >
+            🎧
           </Button>
         </div>
 

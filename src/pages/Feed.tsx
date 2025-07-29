@@ -25,6 +25,8 @@ interface SacredPost {
   tags: string[];
   like_count: number;
   comment_count: number;
+  frequency?: number;
+  tone?: string;
   created_at: string;
   updated_at: string;
   profiles?: {
@@ -215,6 +217,23 @@ const Feed = () => {
                   <div className="prose prose-sm max-w-none text-foreground mb-4">
                     <p className="whitespace-pre-wrap">{post.content}</p>
                   </div>
+
+                  {/* Frequency Badge */}
+                  {post.tone && (
+                    <div className="mb-4">
+                      <Badge 
+                        variant="outline" 
+                        className="border-2 bg-primary/5"
+                        style={{ 
+                          borderColor: 'hsl(var(--primary))',
+                          color: 'hsl(var(--primary))',
+                          boxShadow: '0 0 15px hsl(var(--primary) / 0.3)'
+                        }}
+                      >
+                        🎵 {post.tone}
+                      </Badge>
+                    </div>
+                  )}
 
                   {post.tags.length > 0 && (
                     <div className="flex flex-wrap gap-1 mb-4">

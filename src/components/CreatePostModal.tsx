@@ -9,7 +9,20 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { X, Globe, Users, Lock, Sparkles } from 'lucide-react';
+import { X, Globe, Users, Lock, Sparkles, Waves } from 'lucide-react';
+
+const sacredFrequencies = [
+  { hz: 396, name: 'Liberation', color: 'hsl(0, 84%, 60%)' },
+  { hz: 417, name: 'Rebirth', color: 'hsl(24, 100%, 50%)' },
+  { hz: 432, name: 'Natural Tuning', color: 'hsl(120, 61%, 34%)' },
+  { hz: 444, name: 'Unity Consciousness', color: 'hsl(280, 100%, 70%)' },
+  { hz: 528, name: 'Love Frequency', color: 'hsl(120, 100%, 50%)' },
+  { hz: 639, name: 'Connection', color: 'hsl(60, 100%, 50%)' },
+  { hz: 741, name: 'Truth', color: 'hsl(200, 100%, 50%)' },
+  { hz: 852, name: 'Awakening', color: 'hsl(240, 100%, 70%)' },
+  { hz: 963, name: 'Source', color: 'hsl(300, 100%, 80%)' },
+  { hz: 1111, name: 'Portal Alignment', color: 'hsl(320, 100%, 60%)' },
+];
 
 interface CreatePostModalProps {
   open: boolean;
@@ -35,6 +48,7 @@ const CreatePostModal = ({ open, onOpenChange, onPostCreated }: CreatePostModalP
   const [tags, setTags] = useState<string[]>([]);
   const [currentTag, setCurrentTag] = useState('');
   const [sourceModule, setSourceModule] = useState('manual');
+  const [selectedFrequency, setSelectedFrequency] = useState<typeof sacredFrequencies[0] | null>(null);
 
   const fetchUserCircles = async () => {
     try {
@@ -100,6 +114,8 @@ const CreatePostModal = ({ open, onOpenChange, onPostCreated }: CreatePostModalP
         circle_ids: visibility === 'circle' ? selectedCircles : [],
         source_module: sourceModule,
         tags,
+        frequency: selectedFrequency?.hz || null,
+        tone: selectedFrequency ? `${selectedFrequency.hz}Hz ${selectedFrequency.name}` : null
       };
 
       const { error } = await supabase
@@ -110,7 +126,7 @@ const CreatePostModal = ({ open, onOpenChange, onPostCreated }: CreatePostModalP
 
       toast({
         title: "Sacred wisdom shared! ✨",
-        description: `Your post has been ${visibility === 'public' ? 'shared with the world' : visibility === 'circle' ? 'shared with your circles' : 'saved privately'}.`,
+        description: `Your ${selectedFrequency ? `${selectedFrequency.hz}Hz frequency-infused ` : ''}post has been ${visibility === 'public' ? 'shared with the world' : visibility === 'circle' ? 'shared with your circles' : 'saved privately'}.`,
       });
 
       // Reset form
@@ -120,6 +136,7 @@ const CreatePostModal = ({ open, onOpenChange, onPostCreated }: CreatePostModalP
       setSelectedCircles([]);
       setTags([]);
       setSourceModule('manual');
+      setSelectedFrequency(null);
       
       onPostCreated();
     } catch (error: any) {
@@ -153,7 +170,7 @@ const CreatePostModal = ({ open, onOpenChange, onPostCreated }: CreatePostModalP
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2">
             <Sparkles className="h-5 w-5 text-primary" />
@@ -186,6 +203,57 @@ const CreatePostModal = ({ open, onOpenChange, onPostCreated }: CreatePostModalP
               className="border-primary/20 focus:border-primary resize-none"
               required
             />
+          </div>
+
+          {/* Sacred Frequency Selection */}
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <Waves className="h-4 w-4 text-primary" />
+              Sacred Frequency (Optional)
+            </Label>
+            <Select 
+              value={selectedFrequency?.hz.toString() || ''} 
+              onValueChange={(value) => {
+                if (value) {
+                  const freq = sacredFrequencies.find(f => f.hz.toString() === value);
+                  setSelectedFrequency(freq || null);
+                } else {
+                  setSelectedFrequency(null);
+                }
+              }}
+            >
+              <SelectTrigger className="border-primary/20">
+                <SelectValue placeholder="Infuse your message with a sacred frequency..." />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">No frequency</SelectItem>
+                {sacredFrequencies.map((freq) => (
+                  <SelectItem key={freq.hz} value={freq.hz.toString()}>
+                    <div className="flex items-center gap-2">
+                      <div 
+                        className="w-3 h-3 rounded-full" 
+                        style={{ backgroundColor: freq.color }}
+                      />
+                      {freq.hz}Hz - {freq.name}
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            
+            {selectedFrequency && (
+              <Badge 
+                variant="outline" 
+                className="mt-2 border-2"
+                style={{ 
+                  borderColor: selectedFrequency.color,
+                  color: selectedFrequency.color,
+                  boxShadow: `0 0 10px ${selectedFrequency.color}30`
+                }}
+              >
+                🎵 {selectedFrequency.hz}Hz {selectedFrequency.name}
+              </Badge>
+            )}
           </div>
 
           {/* Source Module */}
