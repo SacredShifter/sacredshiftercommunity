@@ -7,6 +7,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
+import { ParallaxBackground } from "@/components/ParallaxBackground";
 import Index from "./pages/Index";
 import Feed from "./pages/Feed";
 import Circles from "./pages/Circles";
@@ -30,7 +31,8 @@ const App = () => {
               <Route path="/*" element={
                 <ProtectedRoute>
                   <SidebarProvider>
-                    <div className="min-h-screen flex w-full">
+                    <div className="min-h-screen flex w-full relative">
+                      <ParallaxBackground />
                       <AppSidebar />
                       <SidebarInset>
                         <header className="h-12 flex items-center border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4">
