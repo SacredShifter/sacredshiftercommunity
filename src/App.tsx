@@ -9,6 +9,7 @@ import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/s
 import { AppSidebar } from "@/components/AppSidebar";
 import { ParallaxBackground } from "@/components/ParallaxBackground";
 import { ChatBubble } from "@/components/ChatBubble";
+import { AIChatBubble } from "@/components/AIChatBubble";
 import { SacredSoundscape } from "@/components/SacredSoundscape";
 import { HelpModal } from "@/components/HelpSystem/HelpModal";
 import Index from "./pages/Index";
@@ -72,6 +73,11 @@ const App = () => {
                       <div className="fixed top-4 right-4 z-50 flex items-center gap-3">
                         <SacredSoundscape />
                         <ChatBubble />
+                      </div>
+                      
+                      {/* AI Assistant - Bottom Right */}
+                      <div className="fixed bottom-20 right-4 z-50">
+                        <AIChatBubble />
                       </div>
                       
                       {/* Help System */}
