@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { VideoPlayerModalProps } from '@/types/youtube';
+import { VideoReflectionModal } from './VideoReflectionModal';
 import { cn } from '@/lib/utils';
 
 export const SimpleVideoModal: React.FC<VideoPlayerModalProps> = ({
@@ -16,6 +17,7 @@ export const SimpleVideoModal: React.FC<VideoPlayerModalProps> = ({
 }) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
+  const [showReflectionModal, setShowReflectionModal] = useState(false);
 
   // YouTube embed URL with clean parameters
   const embedUrl = video ? 
@@ -174,6 +176,7 @@ export const SimpleVideoModal: React.FC<VideoPlayerModalProps> = ({
                   <Button
                     variant="outline"
                     size="sm"
+                    onClick={() => setShowReflectionModal(true)}
                     className="w-full justify-start text-left"
                   >
                     <BookOpen className="h-4 w-4 mr-2" />
@@ -212,6 +215,15 @@ export const SimpleVideoModal: React.FC<VideoPlayerModalProps> = ({
           </div>
         </div>
       </div>
+      
+      {/* Video Reflection Modal */}
+      {showReflectionModal && (
+        <VideoReflectionModal
+          video={video}
+          isOpen={showReflectionModal}
+          onClose={() => setShowReflectionModal(false)}
+        />
+      )}
     </div>
   );
 };
