@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Circle, MoreHorizontal } from 'lucide-react';
+import { Plus, Circle } from 'lucide-react';
 import CreatePostModal from '@/components/CreatePostModal';
 import { ChatBubble } from '@/components/ChatBubble';
 import { SacredSoundscape } from '@/components/SacredSoundscape';
@@ -214,9 +214,6 @@ const Feed = () => {
                             )}
                           </div>
                         </div>
-                        <Button variant="ghost" size="sm">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
                       </div>
                     </div>
                   </div>
