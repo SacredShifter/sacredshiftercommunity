@@ -14,6 +14,7 @@ import { ParallaxBackground } from '@/components/ParallaxBackground';
 import { PostInteractionButtons } from '@/components/PostInteractionButtons';
 import { CircleDiscoveryPanel } from '@/components/CircleDiscoveryPanel';
 import { formatDistanceToNow } from 'date-fns';
+import { CommentSection } from '@/components/CommentSection';
 import sacredShifterLogo from '@/assets/sacred-shifter-logo.png';
 
 interface SacredPost {
@@ -33,6 +34,12 @@ interface SacredPost {
   auto_delete_at?: string;
   created_at: string;
   updated_at: string;
+  circle_group_members?: {
+    circle_groups: {
+      name: string;
+      chakra_focus?: string;
+    };
+  }[];
   profiles?: {
     display_name?: string;
     avatar_url?: string;
@@ -90,6 +97,19 @@ const Feed = () => {
   const getInitials = (name?: string) => {
     if (!name) return 'SS';
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
+  };
+
+  const getChakraColor = (chakra?: string) => {
+    const colors: Record<string, string> = {
+      'Root': 'hsl(0, 84%, 60%)',
+      'Sacral': 'hsl(25, 95%, 53%)', 
+      'Solar Plexus': 'hsl(60, 100%, 50%)',
+      'Heart': 'hsl(120, 61%, 50%)',
+      'Throat': 'hsl(195, 100%, 50%)',
+      'Third Eye': 'hsl(240, 100%, 50%)',
+      'Crown': 'hsl(280, 100%, 50%)',
+    };
+    return colors[chakra || ''] || 'hsl(var(--primary))';
   };
 
   const handlePostCreated = () => {
@@ -174,62 +194,73 @@ const Feed = () => {
             const sourceModule = getSourceModuleDisplay('manual');
             
             return (
-              <Card key={post.id} className="post-card overflow-hidden hover:shadow-lg transition-all duration-300 hover:shadow-primary/20">
-                <CardHeader className="pb-3">
-                  <div className="flex items-start space-x-3">
-                    <Avatar className="h-10 w-10">
+              <Card key={post.id} className="post-card overflow-hidden hover:shadow-md transition-all duration-200 hover:shadow-primary/10">
+                <CardHeader className="pb-2 pt-3">
+                  <div className="flex items-start space-x-2">
+                    <Avatar className="h-8 w-8">
                       <AvatarImage src={post.profiles?.avatar_url} />
-                      <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10">
+                      <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10 text-xs">
                         {getInitials(post.profiles?.display_name)}
                       </AvatarFallback>
                     </Avatar>
                     
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-1">
-                          <p className="font-semibold text-sm">
-                            {post.profiles?.display_name || 'Sacred Seeker'}
-                          </p>
-                          <div className="flex items-center space-x-2 text-xs text-muted-foreground">
-                            <span>{formatDistanceToNow(new Date(post.created_at))} ago</span>
-                            <span>•</span>
-                            <Badge 
-                              variant="outline" 
-                              style={{ borderColor: sourceModule.color, color: sourceModule.color }}
-                              className="text-xs"
-                            >
-                              {sourceModule.name}
-                            </Badge>
-                            {post.visibility === 'private' && (
-                              <>
-                                <span>•</span>
-                                <Badge variant="secondary" className="text-xs">
-                                  Private
-                                </Badge>
-                              </>
-                            )}
-                          </div>
-                        </div>
+                      <div className="flex items-center space-x-2">
+                        <p className="font-medium text-sm">
+                          {post.profiles?.display_name || 'Sacred Seeker'}
+                        </p>
+                        <span className="text-xs text-muted-foreground">•</span>
+                        <span className="text-xs text-muted-foreground">
+                          {formatDistanceToNow(new Date(post.created_at))} ago
+                        </span>
+                      </div>
+                      
+                      <div className="flex items-center space-x-2 mt-1">
+                        {/* Circle Badge - placeholder for now */}
+                        <Badge variant="secondary" className="text-xs bg-primary/10 text-primary border-primary/20">
+                          📍 Sacred Circle
+                        </Badge>
+                        
+                        {/* Chakra Tag */}
+                        {post.chakra_tag && (
+                          <Badge 
+                            variant="outline" 
+                            style={{ 
+                              borderColor: getChakraColor(post.chakra_tag),
+                              color: getChakraColor(post.chakra_tag)
+                            }}
+                            className="text-xs"
+                          >
+                            {post.chakra_tag}
+                          </Badge>
+                        )}
+                        
+                        {/* Privacy */}
+                        {post.visibility === 'private' && (
+                          <Badge variant="secondary" className="text-xs">
+                            Private
+                          </Badge>
+                        )}
                       </div>
                     </div>
                   </div>
                 </CardHeader>
 
-                <CardContent className="pt-0">
-                  <div className="prose prose-sm max-w-none text-foreground mb-4">
-                    <p className="whitespace-pre-wrap">{post.content}</p>
+                <CardContent className="pt-0 pb-3">
+                  <div className="prose prose-sm max-w-none text-foreground mb-3">
+                    <p className="whitespace-pre-wrap text-sm leading-relaxed">{post.content}</p>
                   </div>
 
                   {/* Frequency Badge */}
                   {post.tone && (
-                    <div className="mb-4">
+                    <div className="mb-3">
                       <Badge 
                         variant="outline" 
-                        className="border-2 bg-primary/5"
+                        className="border-2 bg-primary/5 text-xs"
                         style={{ 
                           borderColor: 'hsl(var(--primary))',
                           color: 'hsl(var(--primary))',
-                          boxShadow: '0 0 15px hsl(var(--primary) / 0.3)'
+                          boxShadow: '0 0 10px hsl(var(--primary) / 0.2)'
                         }}
                       >
                         🎵 {post.tone}
@@ -245,6 +276,9 @@ const Feed = () => {
                     postUserId={post.user_id}
                     currentUserId={user?.id}
                   />
+
+                  {/* Collapsible Comments Section */}
+                  <CommentSection postId={post.id} />
                 </CardContent>
               </Card>
             );

@@ -8,7 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { usePostInteractions } from '@/hooks/usePostInteractions';
 import { formatDistanceToNow } from 'date-fns';
-import { Send } from 'lucide-react';
+import { Send, ChevronDown, ChevronUp, MessageCircle } from 'lucide-react';
 
 interface Comment {
   id: string;
@@ -28,6 +28,7 @@ export const CommentSection = ({ postId, onCommentAdded }: CommentSectionProps) 
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
   const [loadingComments, setLoadingComments] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   // Fetch comments for this post
   useEffect(() => {
@@ -103,86 +104,112 @@ export const CommentSection = ({ postId, onCommentAdded }: CommentSectionProps) 
   };
 
   return (
-    <div className="border-t border-white/10 pt-4 space-y-4">
-      {/* Comments List */}
-      {loadingComments ? (
-        <div className="flex justify-center py-4">
-          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
-        </div>
-      ) : comments.length > 0 ? (
-        <ScrollArea className="max-h-60">
-          <div className="space-y-3 pr-4">
-            {comments.map((comment) => (
-              <div key={comment.id} className="flex space-x-3">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src="" />
-                  <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10 text-xs">
-                    SS
-                  </AvatarFallback>
-                </Avatar>
-                
-                <div className="flex-1 min-w-0">
-                  <div className="bg-muted/30 rounded-lg p-3">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-medium">
-                        Sacred Seeker
-                      </span>
-                      <Badge variant="outline" className="text-xs">
-                        {formatDistanceToNow(new Date(comment.created_at))} ago
-                      </Badge>
+    <div className="border-t border-white/10 mt-3">
+      {/* Toggle Button */}
+      <div className="pt-2 pb-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="w-full justify-between text-xs text-muted-foreground hover:text-foreground"
+        >
+          <div className="flex items-center space-x-2">
+            <MessageCircle className="h-3 w-3" />
+            <span>
+              {comments.length === 0 
+                ? 'No reflections yet' 
+                : `${comments.length} reflection${comments.length === 1 ? '' : 's'}`
+              }
+            </span>
+          </div>
+          {isExpanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+        </Button>
+      </div>
+
+      {/* Collapsible Content */}
+      {isExpanded && (
+        <div className="pt-2 space-y-4">
+          {/* Comments List */}
+          {loadingComments ? (
+            <div className="flex justify-center py-4">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+            </div>
+          ) : comments.length > 0 ? (
+            <ScrollArea className="max-h-48">
+              <div className="space-y-2 pr-4">
+                {comments.map((comment) => (
+                  <div key={comment.id} className="flex space-x-2">
+                    <Avatar className="h-6 w-6">
+                      <AvatarImage src="" />
+                      <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10 text-xs">
+                        SS
+                      </AvatarFallback>
+                    </Avatar>
+                    
+                    <div className="flex-1 min-w-0">
+                      <div className="bg-muted/30 rounded-lg p-2">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-xs font-medium">
+                            Sacred Seeker
+                          </span>
+                          <Badge variant="outline" className="text-xs px-1 py-0">
+                            {formatDistanceToNow(new Date(comment.created_at))} ago
+                          </Badge>
+                        </div>
+                        <p className="text-xs text-foreground/90 whitespace-pre-wrap leading-relaxed">
+                          {comment.content}
+                        </p>
+                      </div>
                     </div>
-                    <p className="text-sm text-foreground/90 whitespace-pre-wrap">
-                      {comment.content}
-                    </p>
                   </div>
+                ))}
+              </div>
+            </ScrollArea>
+          ) : (
+            <div className="text-center py-4 text-muted-foreground">
+              <p className="text-xs">No reflections yet. Be the first to share your insights.</p>
+            </div>
+          )}
+
+          {/* Add Comment Form */}
+          {user && (
+            <div className="flex space-x-2">
+              <Avatar className="h-6 w-6">
+                <AvatarImage src={user.user_metadata?.avatar_url} />
+                <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10 text-xs">
+                  {getInitials(user.user_metadata?.display_name)}
+                </AvatarFallback>
+              </Avatar>
+              
+              <div className="flex-1 space-y-2">
+                <Textarea
+                  placeholder="Share your reflection..."
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  className="min-h-[60px] resize-none text-xs"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+                      handleSubmitComment();
+                    }
+                  }}
+                />
+                <div className="flex justify-between items-center">
+                  <p className="text-xs text-muted-foreground">
+                    Cmd/Ctrl + Enter to send
+                  </p>
+                  <Button
+                    onClick={handleSubmitComment}
+                    disabled={!newComment.trim() || loading}
+                    size="sm"
+                    className="bg-gradient-to-r from-primary to-primary/80 h-6 text-xs"
+                  >
+                    <Send className="h-2 w-2 mr-1" />
+                    Reflect
+                  </Button>
                 </div>
               </div>
-            ))}
-          </div>
-        </ScrollArea>
-      ) : (
-        <div className="text-center py-6 text-muted-foreground">
-          <p className="text-sm">No reflections yet. Be the first to share your insights.</p>
-        </div>
-      )}
-
-      {/* Add Comment Form */}
-      {user && (
-        <div className="flex space-x-3">
-          <Avatar className="h-8 w-8">
-            <AvatarImage src={user.user_metadata?.avatar_url} />
-            <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10 text-xs">
-              {getInitials(user.user_metadata?.display_name)}
-            </AvatarFallback>
-          </Avatar>
-          
-          <div className="flex-1 space-y-2">
-            <Textarea
-              placeholder="Share your reflection..."
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              className="min-h-[80px] resize-none"
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
-                  handleSubmitComment();
-                }
-              }}
-            />
-            <div className="flex justify-between items-center">
-              <p className="text-xs text-muted-foreground">
-                Cmd/Ctrl + Enter to send
-              </p>
-              <Button
-                onClick={handleSubmitComment}
-                disabled={!newComment.trim() || loading}
-                size="sm"
-                className="bg-gradient-to-r from-primary to-primary/80"
-              >
-                <Send className="h-3 w-3 mr-1" />
-                Reflect
-              </Button>
             </div>
-          </div>
+          )}
         </div>
       )}
     </div>
