@@ -44,8 +44,8 @@ export const useTour = () => {
           .eq('id', user.id)
           .single();
 
-        if (profile?.tour_progress) {
-          setCompletedTours(profile.tour_progress as string[]);
+        if (profile && (profile as any).tour_progress) {
+          setCompletedTours((profile as any).tour_progress as string[]);
         }
       } catch (error) {
         console.error('Error loading tour progress:', error);
@@ -65,7 +65,7 @@ export const useTour = () => {
     try {
       await supabase
         .from('profiles')
-        .update({ tour_progress: updatedTours })
+        .update({ tour_progress: updatedTours } as any)
         .eq('id', user.id);
     } catch (error) {
       console.error('Error saving tour progress:', error);
@@ -115,7 +115,7 @@ export const useTour = () => {
     try {
       await supabase
         .from('profiles')
-        .update({ tour_progress: [] })
+        .update({ tour_progress: [] } as any)
         .eq('id', user.id);
     } catch (error) {
       console.error('Error resetting tour progress:', error);
