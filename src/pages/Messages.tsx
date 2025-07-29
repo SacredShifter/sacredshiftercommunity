@@ -47,7 +47,12 @@ export default function Messages() {
   const shouldShowChatInterface = selectedConversationId !== null;
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesEndRef.current) {
+      const scrollArea = messagesEndRef.current.closest('[data-radix-scroll-area-viewport]');
+      if (scrollArea) {
+        scrollArea.scrollTop = scrollArea.scrollHeight;
+      }
+    }
   };
 
   // Only scroll when new messages are added, not on re-renders
