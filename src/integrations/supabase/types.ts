@@ -5882,6 +5882,7 @@ export type Database = {
           role: string | null
           soul_alignment: string | null
           timezone: string | null
+          tour_progress: string[] | null
           transit_notifications: boolean | null
           updated_at: string | null
         }
@@ -5933,6 +5934,7 @@ export type Database = {
           role?: string | null
           soul_alignment?: string | null
           timezone?: string | null
+          tour_progress?: string[] | null
           transit_notifications?: boolean | null
           updated_at?: string | null
         }
@@ -5984,6 +5986,7 @@ export type Database = {
           role?: string | null
           soul_alignment?: string | null
           timezone?: string | null
+          tour_progress?: string[] | null
           transit_notifications?: boolean | null
           updated_at?: string | null
         }
