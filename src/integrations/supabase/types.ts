@@ -6971,11 +6971,13 @@ export type Database = {
           comment_count: number | null
           content: string
           created_at: string
+          frequency: number | null
           id: string
           like_count: number | null
           source_module: string
           tags: string[] | null
           title: string | null
+          tone: string | null
           updated_at: string
           user_id: string
           visibility: string
@@ -6985,11 +6987,13 @@ export type Database = {
           comment_count?: number | null
           content: string
           created_at?: string
+          frequency?: number | null
           id?: string
           like_count?: number | null
           source_module?: string
           tags?: string[] | null
           title?: string | null
+          tone?: string | null
           updated_at?: string
           user_id: string
           visibility?: string
@@ -6999,11 +7003,13 @@ export type Database = {
           comment_count?: number | null
           content?: string
           created_at?: string
+          frequency?: number | null
           id?: string
           like_count?: number | null
           source_module?: string
           tags?: string[] | null
           title?: string | null
+          tone?: string | null
           updated_at?: string
           user_id?: string
           visibility?: string
