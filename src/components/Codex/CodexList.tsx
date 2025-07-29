@@ -21,8 +21,8 @@ const SOURCE_MODULES = [
 export function CodexList() {
   const { entries, loading, createEntry, updateEntry, deleteEntry } = useCodex();
   const [searchQuery, setSearchQuery] = useState('');
-  const [typeFilter, setTypeFilter] = useState('');
-  const [sourceFilter, setSourceFilter] = useState('');
+  const [typeFilter, setTypeFilter] = useState('all');
+  const [sourceFilter, setSourceFilter] = useState('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [viewMode, setViewMode] = useState<'grid' | 'timeline'>('grid');
@@ -34,8 +34,8 @@ export function CodexList() {
         entry.content?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         entry.resonance_tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
       
-      const matchesType = !typeFilter || entry.type === typeFilter;
-      const matchesSource = !sourceFilter || entry.source_module === sourceFilter;
+      const matchesType = !typeFilter || typeFilter === 'all' || entry.type === typeFilter;
+      const matchesSource = !sourceFilter || sourceFilter === 'all' || entry.source_module === sourceFilter;
       
       return matchesSearch && matchesType && matchesSource;
     });
@@ -61,8 +61,8 @@ export function CodexList() {
 
   const clearFilters = () => {
     setSearchQuery('');
-    setTypeFilter('');
-    setSourceFilter('');
+    setTypeFilter('all');
+    setSourceFilter('all');
   };
 
   if (loading) {
@@ -141,7 +141,7 @@ export function CodexList() {
                 <SelectValue placeholder="Entry Type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Types</SelectItem>
+                <SelectItem value="all">All Types</SelectItem>
                 {ENTRY_TYPES.map(type => (
                   <SelectItem key={type} value={type}>{type}</SelectItem>
                 ))}
@@ -153,14 +153,14 @@ export function CodexList() {
                 <SelectValue placeholder="Source Module" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Sources</SelectItem>
+                <SelectItem value="all">All Sources</SelectItem>
                 {SOURCE_MODULES.map(source => (
                   <SelectItem key={source} value={source}>{source}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
             
-            {(searchQuery || typeFilter || sourceFilter) && (
+            {(searchQuery || typeFilter !== 'all' || sourceFilter !== 'all') && (
               <Button variant="outline" onClick={clearFilters}>
                 <Filter className="h-4 w-4 mr-2" />
                 Clear
@@ -175,8 +175,8 @@ export function CodexList() {
               {filteredEntries.length} of {entries.length} entries
             </Badge>
             {searchQuery && <Badge variant="outline">Search: "{searchQuery}"</Badge>}
-            {typeFilter && <Badge variant="outline">Type: {typeFilter}</Badge>}
-            {sourceFilter && <Badge variant="outline">Source: {sourceFilter}</Badge>}
+            {typeFilter !== 'all' && <Badge variant="outline">Type: {typeFilter}</Badge>}
+            {sourceFilter !== 'all' && <Badge variant="outline">Source: {sourceFilter}</Badge>}
           </div>
         )}
       </motion.div>
