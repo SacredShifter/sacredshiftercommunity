@@ -186,7 +186,7 @@ ${latentPatterns.map(pattern => `• ${pattern}`).join('\n')}
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
-        className="w-full max-w-2xl max-h-[85vh] overflow-hidden"
+        className="w-full max-w-2xl max-h-[95vh]"
       >
         <Card className="bg-background/95 backdrop-blur-md border border-purple-200/50 shadow-2xl">
           <CardHeader className="bg-gradient-to-r from-purple-50/50 to-indigo-50/50 dark:from-purple-950/50 dark:to-indigo-950/50 border-b">
@@ -219,7 +219,7 @@ ${latentPatterns.map(pattern => `• ${pattern}`).join('\n')}
           </CardHeader>
 
           <CardContent className="p-6">
-            <ScrollArea className="max-h-[50vh] overflow-hidden">
+            <ScrollArea className="h-[65vh]">
               <AnimatePresence mode="wait">
                 {/* Step 1: Dream Entry */}
                 {currentStep === 'dream' && (
