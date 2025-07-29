@@ -14,14 +14,9 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted">
-      {/* Navigation Sidebar */}
-      <div className="fixed left-4 top-4 bottom-4 w-64 z-20 bg-background/95 backdrop-blur-md rounded-xl border border-border/50 p-4 shadow-2xl">
-        <Navigation />
-      </div>
-      
+    <div className="min-h-screen">
       {/* Main Content */}
-      <div className="ml-72 min-h-screen flex items-center justify-center p-4">
+      <div className="flex items-center justify-center min-h-screen p-4">
         <Card className="w-full max-w-2xl mx-auto">
           <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
