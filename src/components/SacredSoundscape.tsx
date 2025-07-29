@@ -98,15 +98,19 @@ export const SacredSoundscape = () => {
   };
 
   const selectFrequency = async (frequency: SacredFrequency) => {
+    const wasPlaying = isPlaying;
     setSelectedFrequency(frequency);
     setShowFrequencies(false);
     
-    if (isPlaying) {
+    if (wasPlaying) {
+      // Stop current tone
       stopSacredTone();
+      // Immediately start new frequency
       const result = await createSacredTone(frequency.hz);
       if (!result) {
         setIsPlaying(false);
       }
+      // Keep playing state true since we're switching frequencies
     }
   };
 
