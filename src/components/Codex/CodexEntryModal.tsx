@@ -9,6 +9,8 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { CodexEntry, NewCodexEntry } from '@/hooks/useCodex';
+import { TooltipWrapper } from '@/components/HelpSystem/TooltipWrapper';
+import { HelpTooltips } from '@/components/HelpSystem/ContextualHelp';
 
 interface CodexEntryModalProps {
   isOpen: boolean;
@@ -130,58 +132,66 @@ export function CodexEntryModal({ isOpen, onClose, onSubmit, initialData }: Code
                 {/* Title */}
                 <div className="space-y-2">
                   <Label htmlFor="title">Title *</Label>
-                  <Input
-                    id="title"
-                    value={formData.title}
-                    onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                    placeholder="Enter a meaningful title..."
-                    required
-                    className="text-base"
-                  />
+                  <TooltipWrapper content={HelpTooltips.title}>
+                    <Input
+                      id="title"
+                      value={formData.title}
+                      onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                      placeholder="Enter a meaningful title..."
+                      required
+                      className="text-base"
+                    />
+                  </TooltipWrapper>
                 </div>
 
                 {/* Type and Source */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="type">Entry Type</Label>
-                    <Select value={formData.type} onValueChange={(value) => setFormData(prev => ({ ...prev, type: value }))}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {ENTRY_TYPES.map(type => (
-                          <SelectItem key={type} value={type}>{type}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <TooltipWrapper content={HelpTooltips.type}>
+                      <Select value={formData.type} onValueChange={(value) => setFormData(prev => ({ ...prev, type: value }))}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {ENTRY_TYPES.map(type => (
+                            <SelectItem key={type} value={type}>{type}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </TooltipWrapper>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="source">Source Module</Label>
-                    <Select value={formData.source_module} onValueChange={(value) => setFormData(prev => ({ ...prev, source_module: value }))}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select source" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {SOURCE_MODULES.map(source => (
-                          <SelectItem key={source} value={source}>{source}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <TooltipWrapper content={HelpTooltips.source}>
+                      <Select value={formData.source_module} onValueChange={(value) => setFormData(prev => ({ ...prev, source_module: value }))}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select source" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {SOURCE_MODULES.map(source => (
+                            <SelectItem key={source} value={source}>{source}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </TooltipWrapper>
                   </div>
                 </div>
 
                 {/* Content */}
                 <div className="space-y-2">
                   <Label htmlFor="content">Content</Label>
-                  <Textarea
-                    id="content"
-                    value={formData.content}
-                    onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
-                    placeholder="Describe your experience, insight, or memory..."
-                    rows={6}
-                    className="resize-none"
-                  />
+                  <TooltipWrapper content={HelpTooltips.content}>
+                    <Textarea
+                      id="content"
+                      value={formData.content}
+                      onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
+                      placeholder="Describe your experience, insight, or memory..."
+                      rows={6}
+                      className="resize-none"
+                    />
+                  </TooltipWrapper>
                 </div>
 
                 {/* Resonance Tags */}
@@ -207,13 +217,15 @@ export function CodexEntryModal({ isOpen, onClose, onSubmit, initialData }: Code
                   )}
                   
                   <div className="flex gap-2">
-                    <Input
-                      value={newTag}
-                      onChange={(e) => setNewTag(e.target.value)}
-                      onKeyPress={handleKeyPress}
-                      placeholder="Add resonance tags..."
-                      className="flex-1"
-                    />
+                    <TooltipWrapper content={HelpTooltips.tags}>
+                      <Input
+                        value={newTag}
+                        onChange={(e) => setNewTag(e.target.value)}
+                        onKeyPress={handleKeyPress}
+                        placeholder="Add resonance tags..."
+                        className="flex-1"
+                      />
+                    </TooltipWrapper>
                     <Button type="button" onClick={addTag} variant="outline" size="sm">
                       <Plus className="h-4 w-4" />
                     </Button>

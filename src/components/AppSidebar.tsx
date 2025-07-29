@@ -13,16 +13,18 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { TooltipWrapper } from "@/components/HelpSystem/TooltipWrapper";
+import { HelpTooltips } from "@/components/HelpSystem/ContextualHelp";
 
 const navItems = [
-  { title: "Home", url: "/", icon: Home },
-  { title: "Feed", url: "/feed", icon: Rss },
-  { title: "Circles", url: "/circles", icon: Users },
-  { title: "Journal", url: "/journal", icon: BookOpen },
-  { title: "Video Library", url: "/videos", icon: Video },
-  { title: "Registry", url: "/registry", icon: Database },
-  { title: "Personal Codex", url: "/codex", icon: Archive },
-  { title: "Profile", url: "/profile", icon: User },
+  { title: "Home", url: "/", icon: Home, tooltip: HelpTooltips.home },
+  { title: "Feed", url: "/feed", icon: Rss, tooltip: HelpTooltips.feed },
+  { title: "Circles", url: "/circles", icon: Users, tooltip: HelpTooltips.circles },
+  { title: "Journal", url: "/journal", icon: BookOpen, tooltip: HelpTooltips.journal },
+  { title: "Video Library", url: "/videos", icon: Video, tooltip: HelpTooltips.videos },
+  { title: "Registry", url: "/registry", icon: Database, tooltip: HelpTooltips.registry },
+  { title: "Personal Codex", url: "/codex", icon: Archive, tooltip: HelpTooltips.codex },
+  { title: "Profile", url: "/profile", icon: User, tooltip: HelpTooltips.profile },
 ];
 
 export function AppSidebar() {
@@ -61,16 +63,22 @@ export function AppSidebar() {
                 const isItemActive = isActive(item.url);
                 return (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton 
-                      asChild
-                      isActive={isItemActive}
-                      className={isItemActive ? "bg-primary/10 text-primary font-medium" : ""}
+                    <TooltipWrapper 
+                      content={item.tooltip} 
+                      side="right"
+                      disabled={!isCollapsed}
                     >
-                      <Link to={item.url}>
-                        <item.icon className="mr-2 h-4 w-4" />
-                        {!isCollapsed && <span>{item.title}</span>}
-                      </Link>
-                    </SidebarMenuButton>
+                      <SidebarMenuButton 
+                        asChild
+                        isActive={isItemActive}
+                        className={isItemActive ? "bg-primary/10 text-primary font-medium" : ""}
+                      >
+                        <Link to={item.url}>
+                          <item.icon className="mr-2 h-4 w-4" />
+                          {!isCollapsed && <span>{item.title}</span>}
+                        </Link>
+                      </SidebarMenuButton>
+                    </TooltipWrapper>
                   </SidebarMenuItem>
                 );
               })}
@@ -84,21 +92,33 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link to="/settings">
-                    <Settings className="mr-2 h-4 w-4" />
-                    {!isCollapsed && <span>Settings</span>}
-                  </Link>
-                </SidebarMenuButton>
+                <TooltipWrapper 
+                  content={HelpTooltips.settings} 
+                  side="right"
+                  disabled={!isCollapsed}
+                >
+                  <SidebarMenuButton asChild>
+                    <Link to="/settings">
+                      <Settings className="mr-2 h-4 w-4" />
+                      {!isCollapsed && <span>Settings</span>}
+                    </Link>
+                  </SidebarMenuButton>
+                </TooltipWrapper>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton 
-                  onClick={handleSignOut}
-                  className="hover:bg-destructive/10 hover:text-destructive"
+                <TooltipWrapper 
+                  content="Sign out of your Sacred Shifter account" 
+                  side="right"
+                  disabled={!isCollapsed}
                 >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  {!isCollapsed && <span>Sign Out</span>}
-                </SidebarMenuButton>
+                  <SidebarMenuButton 
+                    onClick={handleSignOut}
+                    className="hover:bg-destructive/10 hover:text-destructive"
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    {!isCollapsed && <span>Sign Out</span>}
+                  </SidebarMenuButton>
+                </TooltipWrapper>
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>

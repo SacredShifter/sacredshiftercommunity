@@ -10,6 +10,7 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { ParallaxBackground } from "@/components/ParallaxBackground";
 import { ChatBubble } from "@/components/ChatBubble";
 import { SacredSoundscape } from "@/components/SacredSoundscape";
+import { HelpModal } from "@/components/HelpSystem/HelpModal";
 import Index from "./pages/Index";
 import Feed from "./pages/Feed";
 import Circles from "./pages/Circles";
@@ -72,6 +73,9 @@ const App = () => {
                         <SacredSoundscape />
                         <ChatBubble />
                       </div>
+                      
+                      {/* Help System */}
+                      <HelpModal />
                     </div>
                   </SidebarProvider>
                 </ProtectedRoute>
