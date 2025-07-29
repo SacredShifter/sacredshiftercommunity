@@ -104,6 +104,33 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_assistant_requests: {
+        Row: {
+          context_data: Json | null
+          created_at: string
+          id: string
+          request_type: string
+          response_data: Json | null
+          user_id: string
+        }
+        Insert: {
+          context_data?: Json | null
+          created_at?: string
+          id?: string
+          request_type: string
+          response_data?: Json | null
+          user_id: string
+        }
+        Update: {
+          context_data?: Json | null
+          created_at?: string
+          id?: string
+          request_type?: string
+          response_data?: Json | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       akashic_records: {
         Row: {
           data: Json
@@ -542,6 +569,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      banned_users: {
+        Row: {
+          banned_at: string
+          banned_by: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          is_permanent: boolean
+          reason: string
+          user_id: string
+        }
+        Insert: {
+          banned_at?: string
+          banned_by: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_permanent?: boolean
+          reason: string
+          user_id: string
+        }
+        Update: {
+          banned_at?: string
+          banned_by?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_permanent?: boolean
+          reason?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       baptism_group_events: {
         Row: {
@@ -6107,6 +6167,54 @@ export type Database = {
         }
         Relationships: []
       }
+      registry_of_resonance: {
+        Row: {
+          access_level: string
+          content: string
+          created_at: string
+          entry_type: string
+          id: string
+          is_pinned: boolean | null
+          is_verified: boolean | null
+          resonance_rating: number
+          resonance_signature: string | null
+          tags: string[] | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_level?: string
+          content: string
+          created_at?: string
+          entry_type?: string
+          id?: string
+          is_pinned?: boolean | null
+          is_verified?: boolean | null
+          resonance_rating?: number
+          resonance_signature?: string | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_level?: string
+          content?: string
+          created_at?: string
+          entry_type?: string
+          id?: string
+          is_pinned?: boolean | null
+          is_verified?: boolean | null
+          resonance_rating?: number
+          resonance_signature?: string | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       reminders: {
         Row: {
           created_at: string | null
@@ -11342,6 +11450,10 @@ export type Database = {
         }
         Returns: Json
       }
+      assign_admin_role_by_email: {
+        Args: { user_email: string }
+        Returns: undefined
+      }
       box: {
         Args: { "": unknown } | { "": unknown }
         Returns: unknown
@@ -11882,6 +11994,10 @@ export type Database = {
       }
       is_mirror_theme_unlocked: {
         Args: { user_id_param: string; theme_id_param: string }
+        Returns: boolean
+      }
+      is_user_banned: {
+        Args: { user_id: string }
         Returns: boolean
       }
       json: {
