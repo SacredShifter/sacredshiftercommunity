@@ -45,20 +45,18 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
     }
   };
 
+  useEffect(() => {
+    console.log('Modal state changed:', { isOpen, video: video?.title });
+  }, [isOpen, video]);
+
   if (!video) return null;
 
   return (
     <AnimatePresence>
       {isOpen && (
         <Dialog open={isOpen} onOpenChange={onClose}>
-          <DialogContent className="max-w-6xl w-full max-h-[90vh] p-0 overflow-hidden bg-background/95 backdrop-blur-md border-border/30" aria-describedby="video-description">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.3 }}
-              className="h-full flex flex-col"
-            >
+          <DialogContent className="max-w-6xl w-full h-[90vh] p-0 overflow-hidden bg-background/95 backdrop-blur-md border-border/30" aria-describedby="video-description">
+            <div className="h-full flex flex-col">
               {/* Header */}
               <DialogHeader className="p-6 pb-4 border-b border-border/30">
                 <div className="flex items-start justify-between">
@@ -178,7 +176,7 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           </DialogContent>
         </Dialog>
       )}
