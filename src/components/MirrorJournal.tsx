@@ -347,7 +347,7 @@ export const MirrorJournal: React.FC<MirrorJournalProps> = ({ className }) => {
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            className="fixed bottom-6 right-6 z-50 space-y-3"
+            className="fixed bottom-4 right-4 z-50 space-y-3 max-w-[90vw]"
           >
             {/* Dream Analysis Button */}
             <motion.div
@@ -357,11 +357,12 @@ export const MirrorJournal: React.FC<MirrorJournalProps> = ({ className }) => {
             >
               <Button
                 onClick={() => setShowDreamAnalyzer(true)}
-                size="lg"
-                className="h-12 px-4 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-200 group"
+                size="sm"
+                className="h-10 px-3 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-200 group text-xs"
               >
-                <Brain className="w-5 h-5 mr-2" />
-                <span className="text-sm font-medium">Analyze Dream</span>
+                <Brain className="w-4 h-4 mr-1" />
+                <span className="font-medium hidden sm:inline">Analyze Dream</span>
+                <span className="font-medium sm:hidden">Dream</span>
               </Button>
             </motion.div>
             
@@ -374,9 +375,9 @@ export const MirrorJournal: React.FC<MirrorJournalProps> = ({ className }) => {
               <Button
                 onClick={handleCreateNew}
                 size="lg"
-                className="h-14 w-14 rounded-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg hover:shadow-xl transition-all duration-200"
+                className="h-12 w-12 rounded-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg hover:shadow-xl transition-all duration-200"
               >
-                <Plus className="w-6 h-6" />
+                <Plus className="w-5 h-5" />
               </Button>
             </motion.div>
           </motion.div>
