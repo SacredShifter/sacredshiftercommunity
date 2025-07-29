@@ -17,11 +17,13 @@ import {
   Sparkles,
   Clock,
   BookOpen,
-  X
+  X,
+  Brain
 } from 'lucide-react';
 import { format, formatDistanceToNow } from 'date-fns';
 import { useMirrorJournal, MirrorJournalEntry } from '@/hooks/useMirrorJournal';
 import { useAuth } from '@/hooks/useAuth';
+import { DreamAnalyzer } from '@/components/DreamAnalyzer';
 
 const poeticPrompts = [
   "What did your soul whisper today?",
@@ -71,6 +73,7 @@ export const MirrorJournal: React.FC<MirrorJournalProps> = ({ className }) => {
     chakra_alignment: '',
   });
   const [autoSaveTimeout, setAutoSaveTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [showDreamAnalyzer, setShowDreamAnalyzer] = useState(false);
 
   const currentPrompt = poeticPrompts[Math.floor(Math.random() * poeticPrompts.length)];
 
@@ -154,6 +157,13 @@ export const MirrorJournal: React.FC<MirrorJournalProps> = ({ className }) => {
   const getMoodTag = (tag: string) => moodTags.find(m => m.label === tag);
   const getChakraAlignment = (chakra: string) => chakraAlignments.find(c => c.name === chakra);
 
+  const handleSaveDreamAnalysis = async (dreamData: any): Promise<void> => {
+    await createEntry({
+      ...dreamData,
+      is_draft: false,
+    });
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -214,13 +224,23 @@ export const MirrorJournal: React.FC<MirrorJournalProps> = ({ className }) => {
                   <p className="text-muted-foreground mb-4 text-sm">
                     Your mirror journal awaits your first sacred thoughts
                   </p>
-                  <Button
-                    onClick={handleCreateNew}
-                    className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
-                  >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Create First Entry
-                  </Button>
+                  <div className="space-y-3">
+                    <Button
+                      onClick={handleCreateNew}
+                      className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Create First Entry
+                    </Button>
+                    <Button
+                      onClick={() => setShowDreamAnalyzer(true)}
+                      variant="outline"
+                      className="w-full border-purple-200 text-purple-600 hover:bg-purple-50"
+                    >
+                      <Brain className="w-4 h-4 mr-2" />
+                      Analyze a Dream
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             </motion.div>
@@ -322,20 +342,43 @@ export const MirrorJournal: React.FC<MirrorJournalProps> = ({ className }) => {
           )}
         </AnimatePresence>
 
-        {/* Floating Action Button */}
+        {/* Enhanced Action Buttons */}
         {!isCreating && !editingId && entries.length > 0 && (
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            className="fixed bottom-6 right-6 z-50"
+            className="fixed bottom-6 right-6 z-50 space-y-3"
           >
-            <Button
-              onClick={handleCreateNew}
-              size="lg"
-              className="h-14 w-14 rounded-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg hover:shadow-xl transition-all duration-200"
+            {/* Dream Analysis Button */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.1 }}
             >
-              <Plus className="w-6 h-6" />
-            </Button>
+              <Button
+                onClick={() => setShowDreamAnalyzer(true)}
+                size="lg"
+                className="h-12 px-4 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-200 group"
+              >
+                <Brain className="w-5 h-5 mr-2" />
+                <span className="text-sm font-medium">Analyze Dream</span>
+              </Button>
+            </motion.div>
+            
+            {/* Regular Journal Entry Button */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <Button
+                onClick={handleCreateNew}
+                size="lg"
+                className="h-14 w-14 rounded-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg hover:shadow-xl transition-all duration-200"
+              >
+                <Plus className="w-6 h-6" />
+              </Button>
+            </motion.div>
           </motion.div>
         )}
 
@@ -437,6 +480,14 @@ export const MirrorJournal: React.FC<MirrorJournalProps> = ({ className }) => {
               </div>
             </ScrollArea>
           </div>
+        )}
+
+        {/* Dream Analyzer Modal */}
+        {showDreamAnalyzer && (
+          <DreamAnalyzer
+            onSaveToJournal={handleSaveDreamAnalysis}
+            onClose={() => setShowDreamAnalyzer(false)}
+          />
         )}
       </div>
     </div>
