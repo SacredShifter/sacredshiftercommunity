@@ -216,9 +216,9 @@ const Feed = () => {
                       </div>
                       
                       <div className="flex items-center space-x-2 mt-1">
-                        {/* Circle Badge - placeholder for now */}
+                        {/* Circle Badge */}
                         <Badge variant="secondary" className="text-xs bg-primary/10 text-primary border-primary/20">
-                          📍 Sacred Circle
+                          📍 Welcome to Sacred Shifter
                         </Badge>
                         
                         {/* Chakra Tag */}
