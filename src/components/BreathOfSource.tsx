@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronUp, Settings, Play, Pause, RotateCcw, Volume2, VolumeX, X } from 'lucide-react';
+import { ChevronUp, Settings, Play, Pause, RotateCcw, Volume2, VolumeX, X, Minimize2, Maximize2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 
 interface BreathingPreset {
   id: string;
@@ -61,7 +62,9 @@ const BREATHING_PRESETS: BreathingPreset[] = [
 type BreathPhase = 'inhale' | 'hold1' | 'exhale' | 'hold2';
 
 const BreathOfSource: React.FC = () => {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const [currentPreset, setCurrentPreset] = useState<BreathingPreset>(BREATHING_PRESETS[0]);
   const [customPreset, setCustomPreset] = useState<BreathingPreset>({
@@ -290,350 +293,547 @@ const BreathOfSource: React.FC = () => {
     };
   }, []);
 
-
   return (
-    <>
-      {/* Collapsed State - Fixed Bottom Icon */}
-      <AnimatePresence>
-        {!isExpanded && (
-          <motion.div
-            initial={{ y: 100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 100, opacity: 0 }}
-            className="fixed bottom-20 right-4 z-40"
+    <div className="relative">
+      {/* Breath Button - Fixed position */}
+      {!isOpen && (
+        <motion.div
+          initial={{ y: 100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 100, opacity: 0 }}
+          className="fixed bottom-24 left-4 z-40"
+        >
+          <Button
+            onClick={() => setIsOpen(true)}
+            className="relative h-14 w-14 rounded-full bg-gradient-to-r from-purple-500/20 to-blue-500/20 backdrop-blur-md border border-purple-300/30 hover:border-purple-300/50 transition-all duration-300 group shadow-xl"
+            size="icon"
           >
-            <Button
-              onClick={() => setIsExpanded(true)}
-              className="relative h-12 w-12 rounded-full bg-gradient-to-r from-purple-500/20 to-blue-500/20 backdrop-blur-md border border-purple-300/30 hover:border-purple-300/50 transition-all duration-300 group"
-              size="icon"
+            <motion.div
+              animate={isActive ? { scale: [1, 1.2, 1], opacity: [0.7, 1, 0.7] } : { scale: 1, opacity: 0.8 }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-400/30 to-blue-400/30 blur-sm"
+            />
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              className="text-xl relative z-10"
             >
-              <motion.div
-                animate={isActive ? { scale: [1, 1.2, 1], opacity: [0.7, 1, 0.7] } : { scale: 1, opacity: 0.8 }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-400/30 to-blue-400/30 blur-sm"
-              />
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                className="text-lg"
-              >
-                🌬️
-              </motion.div>
-              <div className="absolute -inset-1 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-full blur opacity-30 group-hover:opacity-50 transition-opacity" />
-            </Button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              🌬️
+            </motion.div>
+            <div className="absolute -inset-1 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-full blur opacity-30 group-hover:opacity-50 transition-opacity" />
+          </Button>
+        </motion.div>
+      )}
 
-      {/* Expanded State - Full Screen Modal */}
+      {/* Breath Interface */}
       <AnimatePresence>
-        {isExpanded && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-background/95 backdrop-blur-md"
-          >
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-blue-900/20 to-indigo-900/20" />
-            
-            {/* Header */}
-            <div className="relative z-10 flex items-center justify-between p-4 border-b border-border/30">
-              <div className="flex items-center gap-3">
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                  className="text-2xl"
-                >
-                  🌬️
-                </motion.div>
-                <div>
-                  <h2 className="text-xl font-semibold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
-                    Breath of Source
-                  </h2>
-                  <p className="text-sm text-muted-foreground">
-                    {isActive ? `${getPhaseLabel(currentPhase)} • Cycle ${cycleCount + 1}` : 'Find your center'}
-                  </p>
-                </div>
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setSoundEnabled(!soundEnabled)}
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  {soundEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setShowCustomSettings(!showCustomSettings)}
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  <Settings className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setIsExpanded(false)}
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
+        {isOpen && (
+          <>
+            {/* Compact Mode */}
+            {!isFullscreen ? (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, x: -20 }}
+                animate={{ opacity: 1, scale: 1, x: 0 }}
+                exit={{ opacity: 0, scale: 0.95, x: -20 }}
+                transition={{ duration: 0.2 }}
+                className="fixed bottom-4 left-4 z-50"
+              >
+                <Card className={cn(
+                  "w-80 flex flex-col shadow-2xl bg-background/95 backdrop-blur-sm border-2 border-purple-300/30 transition-all duration-300",
+                  isMinimized ? "h-16" : "h-96"
+                )}>
+                  {/* Header */}
+                  <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-purple-500/10 to-blue-500/10">
+                    <div className="flex items-center gap-3">
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                        className="text-xl"
+                      >
+                        🌬️
+                      </motion.div>
+                      <div>
+                        <h3 className="font-semibold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+                          Breath of Source
+                        </h3>
+                        <p className="text-xs text-muted-foreground">
+                          {isActive ? `${getPhaseLabel(currentPhase)} • Cycle ${cycleCount + 1}` : 'Find your center'}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setIsMinimized(!isMinimized)}
+                        className="h-7 w-7 p-0 hover:bg-muted"
+                      >
+                        <Minimize2 className="h-3 w-3" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setIsFullscreen(true)}
+                        className="h-7 w-7 p-0 hover:bg-muted"
+                      >
+                        <Maximize2 className="h-3 w-3" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setIsOpen(false)}
+                        className="h-7 w-7 p-0 hover:bg-destructive/10"
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  </div>
 
-            <div className="relative z-10 flex flex-col lg:flex-row h-[calc(100vh-80px)]">
-              {/* Main Breathing Area */}
-              <div className="flex-1 flex flex-col items-center justify-center p-8">
-                {/* Breathing Orb */}
-                <div className="relative mb-8">
-                  <motion.div
-                    animate={isActive ? {
-                      scale: currentPhase === 'inhale' || currentPhase === 'hold1' ? 1.4 : 0.8,
-                      opacity: currentPhase === 'inhale' || currentPhase === 'hold1' ? 0.9 : 0.6
-                    } : { scale: 1, opacity: 0.8 }}
-                    transition={{ 
-                      duration: isActive ? activePreset[currentPhase] : 2, 
-                      ease: "easeInOut",
-                      repeat: isActive ? 0 : Infinity,
-                      repeatType: "reverse"
-                    }}
-                    className="w-64 h-64 lg:w-80 lg:h-80 rounded-full bg-gradient-to-br from-purple-400/30 via-blue-400/30 to-indigo-400/30 backdrop-blur-sm border border-purple-300/30"
-                  />
-                  <motion.div
-                    animate={isActive ? {
-                      scale: currentPhase === 'inhale' || currentPhase === 'hold1' ? 1.4 : 0.8,
-                      opacity: currentPhase === 'inhale' || currentPhase === 'hold1' ? 0.9 : 0.6
-                    } : { scale: 1, opacity: 0.8 }}
-                    transition={{ 
-                      duration: isActive ? activePreset[currentPhase] : 2, 
-                      ease: "easeInOut",
-                      repeat: isActive ? 0 : Infinity,
-                      repeatType: "reverse"
-                    }}
-                    className="absolute inset-4 rounded-full bg-gradient-to-br from-purple-300/20 via-blue-300/20 to-indigo-300/20 backdrop-blur-sm"
-                  />
-                  <motion.div
-                    animate={isActive ? {
-                      scale: currentPhase === 'inhale' || currentPhase === 'hold1' ? 1.4 : 0.8,
-                      opacity: currentPhase === 'inhale' || currentPhase === 'hold1' ? 0.9 : 0.6
-                    } : { scale: 1, opacity: 0.8 }}
-                    transition={{ 
-                      duration: isActive ? activePreset[currentPhase] : 2, 
-                      ease: "easeInOut",
-                      repeat: isActive ? 0 : Infinity,
-                      repeatType: "reverse"
-                    }}
-                    className="absolute inset-8 rounded-full bg-gradient-to-br from-purple-200/10 via-blue-200/10 to-indigo-200/10 backdrop-blur-sm"
-                  />
-                  
-                  {/* Sacred Geometry Pattern */}
-                  <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-                    className="absolute inset-0 opacity-20"
-                  >
-                    <svg viewBox="0 0 200 200" className="w-full h-full">
-                      <defs>
-                        <linearGradient id="sacred-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                          <stop offset="0%" stopColor="rgb(168, 85, 247)" />
-                          <stop offset="50%" stopColor="rgb(59, 130, 246)" />
-                          <stop offset="100%" stopColor="rgb(99, 102, 241)" />
-                        </linearGradient>
-                      </defs>
-                      <circle cx="100" cy="100" r="80" fill="none" stroke="url(#sacred-gradient)" strokeWidth="1" />
-                      <circle cx="100" cy="100" r="60" fill="none" stroke="url(#sacred-gradient)" strokeWidth="1" />
-                      <circle cx="100" cy="100" r="40" fill="none" stroke="url(#sacred-gradient)" strokeWidth="1" />
-                      <path d="M100,20 L173.2,60 L173.2,140 L100,180 L26.8,140 L26.8,60 Z" fill="none" stroke="url(#sacred-gradient)" strokeWidth="1" />
-                    </svg>
-                  </motion.div>
-                </div>
-
-                {/* Phase Indicator */}
-                <motion.div
-                  key={currentPhase}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-center mb-6"
-                >
-                  <h3 className="text-2xl lg:text-3xl font-light bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent mb-2">
-                    {isActive ? getPhaseLabel(currentPhase) : 'Ready to Begin'}
-                  </h3>
-                  {isActive && (
-                    <p className="text-muted-foreground">
-                      {Math.ceil(timeRemaining / 1000)}s remaining
-                    </p>
-                  )}
-                </motion.div>
-
-                {/* Controls */}
-                <div className="flex items-center gap-4">
-                  <Button
-                    onClick={isActive ? stopBreathing : startBreathing}
-                    size="lg"
-                    className="px-8 py-3 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-medium rounded-full transition-all duration-300 shadow-lg hover:shadow-xl"
-                  >
-                    {isActive ? (
-                      <>
-                        <Pause className="mr-2 h-5 w-5" />
-                        Stop
-                      </>
-                    ) : (
-                      <>
-                        <Play className="mr-2 h-5 w-5" />
-                        Begin
-                      </>
-                    )}
-                  </Button>
-                  
-                  {isActive && (
-                    <Button
-                      variant="outline"
-                      size="lg"
-                      onClick={() => {
-                        stopBreathing();
-                        setTimeout(startBreathing, 100);
-                      }}
-                      className="px-6 py-3 rounded-full"
-                    >
-                      <RotateCcw className="mr-2 h-4 w-4" />
-                      Reset
-                    </Button>
-                  )}
-                </div>
-
-                {/* Session Stats */}
-                {(cycleCount > 0 || sessionDuration > 0) && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="mt-6 text-center text-sm text-muted-foreground"
-                  >
-                    {cycleCount > 0 && <p>Cycles completed: {cycleCount}</p>}
-                    {sessionDuration > 0 && (
-                      <p>Last session: {Math.floor(sessionDuration / 60)}:{(sessionDuration % 60).toString().padStart(2, '0')}</p>
-                    )}
-                  </motion.div>
-                )}
-              </div>
-
-              {/* Settings Panel */}
-              <AnimatePresence>
-                {showCustomSettings && (
-                  <motion.div
-                    initial={{ x: 300, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    exit={{ x: 300, opacity: 0 }}
-                    className="w-full lg:w-80 border-t lg:border-t-0 lg:border-l border-border/30 p-6 bg-background/50 backdrop-blur-sm"
-                  >
-                    <Card>
-                      <CardContent className="p-6 space-y-6">
-                        <div>
-                          <Label className="text-sm font-medium mb-3 block">Breathing Pattern</Label>
-                          <Select
-                            value={currentPreset.id}
-                            onValueChange={(value) => {
-                              const preset = BREATHING_PRESETS.find(p => p.id === value);
-                              if (preset) setCurrentPreset(preset);
-                              else if (value === 'custom') setCurrentPreset(customPreset);
+                  {!isMinimized && (
+                    <>
+                      {/* Compact Breathing Area */}
+                      <div className="flex-1 flex flex-col items-center justify-center p-4">
+                        {/* Mini Breathing Orb */}
+                        <div className="relative mb-4">
+                          <motion.div
+                            animate={isActive ? {
+                              scale: currentPhase === 'inhale' || currentPhase === 'hold1' ? 1.3 : 0.9,
+                              opacity: currentPhase === 'inhale' || currentPhase === 'hold1' ? 0.9 : 0.6
+                            } : { scale: 1, opacity: 0.8 }}
+                            transition={{ 
+                              duration: isActive ? activePreset[currentPhase] : 2, 
+                              ease: "easeInOut",
+                              repeat: isActive ? 0 : Infinity,
+                              repeatType: "reverse"
                             }}
-                          >
-                            <SelectTrigger>
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {BREATHING_PRESETS.map((preset) => (
-                                <SelectItem key={preset.id} value={preset.id}>
-                                  {preset.name}
-                                </SelectItem>
-                              ))}
-                              <SelectItem value="custom">Custom</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            {activePreset.description}
-                          </p>
-                        </div>
-
-                        {currentPreset.id === 'custom' && (
-                          <div className="space-y-4">
-                            <div className="grid grid-cols-2 gap-4">
-                              <div>
-                                <Label className="text-xs">Inhale (s)</Label>
-                                <Input
-                                  type="number"
-                                  min="0"
-                                  step="0.5"
-                                  value={customPreset.inhale}
-                                  onChange={(e) => setCustomPreset(prev => ({ ...prev, inhale: parseFloat(e.target.value) || 0 }))}
-                                />
-                              </div>
-                              <div>
-                                <Label className="text-xs">Hold (s)</Label>
-                                <Input
-                                  type="number"
-                                  min="0"
-                                  step="0.5"
-                                  value={customPreset.hold1}
-                                  onChange={(e) => setCustomPreset(prev => ({ ...prev, hold1: parseFloat(e.target.value) || 0 }))}
-                                />
-                              </div>
-                              <div>
-                                <Label className="text-xs">Exhale (s)</Label>
-                                <Input
-                                  type="number"
-                                  min="0"
-                                  step="0.5"
-                                  value={customPreset.exhale}
-                                  onChange={(e) => setCustomPreset(prev => ({ ...prev, exhale: parseFloat(e.target.value) || 0 }))}
-                                />
-                              </div>
-                              <div>
-                                <Label className="text-xs">Hold (s)</Label>
-                                <Input
-                                  type="number"
-                                  min="0"
-                                  step="0.5"
-                                  value={customPreset.hold2}
-                                  onChange={(e) => setCustomPreset(prev => ({ ...prev, hold2: parseFloat(e.target.value) || 0 }))}
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        )}
-
-                        <div className="flex items-center justify-between">
-                          <Label className="text-sm">Sound Guidance</Label>
-                          <Switch
-                            checked={soundEnabled}
-                            onCheckedChange={setSoundEnabled}
+                            className="w-24 h-24 rounded-full bg-gradient-to-br from-purple-400/30 via-blue-400/30 to-indigo-400/30 backdrop-blur-sm border border-purple-300/30"
                           />
                         </div>
 
-                        <div className="pt-4 border-t border-border/30">
-                          <h4 className="text-sm font-medium mb-2">Pattern Overview</h4>
-                          <div className="text-xs text-muted-foreground space-y-1">
-                            <p>Inhale: {activePreset.inhale}s</p>
-                            {activePreset.hold1 > 0 && <p>Hold: {activePreset.hold1}s</p>}
-                            <p>Exhale: {activePreset.exhale}s</p>
-                            {activePreset.hold2 > 0 && <p>Hold: {activePreset.hold2}s</p>}
-                            <p className="mt-2 font-medium">
-                              Total cycle: {activePreset.inhale + activePreset.hold1 + activePreset.exhale + activePreset.hold2}s
+                        {/* Phase Indicator */}
+                        <motion.div
+                          key={currentPhase}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          className="text-center mb-3"
+                        >
+                          <h4 className="text-lg font-light bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+                            {isActive ? getPhaseLabel(currentPhase) : 'Ready to Begin'}
+                          </h4>
+                          {timeRemaining > 0 && (
+                            <p className="text-sm text-muted-foreground">
+                              {Math.ceil(timeRemaining / 1000)}s
                             </p>
-                          </div>
+                          )}
+                        </motion.div>
+
+                        {/* Compact Controls */}
+                        <div className="flex items-center gap-2">
+                          {!isActive ? (
+                            <Button
+                              onClick={startBreathing}
+                              className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
+                              size="sm"
+                            >
+                              <Play className="h-3 w-3 mr-1" />
+                              Start
+                            </Button>
+                          ) : (
+                            <Button
+                              onClick={stopBreathing}
+                              variant="outline"
+                              size="sm"
+                            >
+                              <Pause className="h-3 w-3 mr-1" />
+                              Stop
+                            </Button>
+                          )}
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setSoundEnabled(!soundEnabled)}
+                          >
+                            {soundEnabled ? <Volume2 className="h-3 w-3" /> : <VolumeX className="h-3 w-3" />}
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setShowCustomSettings(!showCustomSettings)}
+                          >
+                            <Settings className="h-3 w-3" />
+                          </Button>
                         </div>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          </motion.div>
+                      </div>
+                    </>
+                  )}
+                </Card>
+
+                {/* Settings Panel for compact mode */}
+                <AnimatePresence>
+                  {showCustomSettings && !isMinimized && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      className="mt-2"
+                    >
+                      <Card className="w-80 bg-background/95 backdrop-blur-sm border-2 border-purple-300/30">
+                        <CardContent className="p-4 space-y-4">
+                          <div>
+                            <Label className="text-sm font-medium mb-2 block">Breathing Pattern</Label>
+                            <Select
+                              value={currentPreset.id}
+                              onValueChange={(value) => {
+                                const preset = BREATHING_PRESETS.find(p => p.id === value);
+                                if (preset) setCurrentPreset(preset);
+                                else if (value === 'custom') setCurrentPreset(customPreset);
+                              }}
+                            >
+                              <SelectTrigger>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {BREATHING_PRESETS.map((preset) => (
+                                  <SelectItem key={preset.id} value={preset.id}>
+                                    {preset.name}
+                                  </SelectItem>
+                                ))}
+                                <SelectItem value="custom">Custom</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+
+                          <div className="flex items-center justify-between">
+                            <Label className="text-sm">Sound Guidance</Label>
+                            <Switch
+                              checked={soundEnabled}
+                              onCheckedChange={setSoundEnabled}
+                            />
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            ) : (
+              /* Fullscreen Mode */
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-50 bg-background/95 backdrop-blur-md"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-blue-900/20 to-indigo-900/20" />
+                
+                {/* Fullscreen Header */}
+                <div className="relative z-10 flex items-center justify-between p-4 border-b border-border/30">
+                  <div className="flex items-center gap-3">
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                      className="text-2xl"
+                    >
+                      🌬️
+                    </motion.div>
+                    <div>
+                      <h2 className="text-xl font-semibold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+                        Breath of Source
+                      </h2>
+                      <p className="text-sm text-muted-foreground">
+                        {isActive ? `${getPhaseLabel(currentPhase)} • Cycle ${cycleCount + 1}` : 'Find your center'}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setSoundEnabled(!soundEnabled)}
+                      className="text-muted-foreground hover:text-foreground"
+                    >
+                      {soundEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setShowCustomSettings(!showCustomSettings)}
+                      className="text-muted-foreground hover:text-foreground"
+                    >
+                      <Settings className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setIsFullscreen(false)}
+                      className="text-muted-foreground hover:text-foreground"
+                    >
+                      <Minimize2 className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setIsOpen(false)}
+                      className="text-muted-foreground hover:text-foreground"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="relative z-10 flex flex-col lg:flex-row h-[calc(100vh-80px)]">
+                  {/* Main Breathing Area */}
+                  <div className="flex-1 flex flex-col items-center justify-center p-8">
+                    {/* Breathing Orb */}
+                    <div className="relative mb-8">
+                      <motion.div
+                        animate={isActive ? {
+                          scale: currentPhase === 'inhale' || currentPhase === 'hold1' ? 1.4 : 0.8,
+                          opacity: currentPhase === 'inhale' || currentPhase === 'hold1' ? 0.9 : 0.6
+                        } : { scale: 1, opacity: 0.8 }}
+                        transition={{ 
+                          duration: isActive ? activePreset[currentPhase] : 2, 
+                          ease: "easeInOut",
+                          repeat: isActive ? 0 : Infinity,
+                          repeatType: "reverse"
+                        }}
+                        className="w-64 h-64 lg:w-80 lg:h-80 rounded-full bg-gradient-to-br from-purple-400/30 via-blue-400/30 to-indigo-400/30 backdrop-blur-sm border border-purple-300/30"
+                      />
+                      <motion.div
+                        animate={isActive ? {
+                          scale: currentPhase === 'inhale' || currentPhase === 'hold1' ? 1.4 : 0.8,
+                          opacity: currentPhase === 'inhale' || currentPhase === 'hold1' ? 0.9 : 0.6
+                        } : { scale: 1, opacity: 0.8 }}
+                        transition={{ 
+                          duration: isActive ? activePreset[currentPhase] : 2, 
+                          ease: "easeInOut",
+                          repeat: isActive ? 0 : Infinity,
+                          repeatType: "reverse"
+                        }}
+                        className="absolute inset-4 rounded-full bg-gradient-to-br from-purple-300/20 via-blue-300/20 to-indigo-300/20 backdrop-blur-sm"
+                      />
+                      <motion.div
+                        animate={isActive ? {
+                          scale: currentPhase === 'inhale' || currentPhase === 'hold1' ? 1.4 : 0.8,
+                          opacity: currentPhase === 'inhale' || currentPhase === 'hold1' ? 0.9 : 0.6
+                        } : { scale: 1, opacity: 0.8 }}
+                        transition={{ 
+                          duration: isActive ? activePreset[currentPhase] : 2, 
+                          ease: "easeInOut",
+                          repeat: isActive ? 0 : Infinity,
+                          repeatType: "reverse"
+                        }}
+                        className="absolute inset-8 rounded-full bg-gradient-to-br from-purple-200/10 via-blue-200/10 to-indigo-200/10 backdrop-blur-sm"
+                      />
+                      
+                      {/* Sacred Geometry Pattern */}
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+                        className="absolute inset-0 opacity-20"
+                      >
+                        <svg viewBox="0 0 200 200" className="w-full h-full">
+                          <defs>
+                            <linearGradient id="sacred-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                              <stop offset="0%" stopColor="rgb(168, 85, 247)" />
+                              <stop offset="50%" stopColor="rgb(59, 130, 246)" />
+                              <stop offset="100%" stopColor="rgb(99, 102, 241)" />
+                            </linearGradient>
+                          </defs>
+                          <circle cx="100" cy="100" r="80" fill="none" stroke="url(#sacred-gradient)" strokeWidth="1" />
+                          <circle cx="100" cy="100" r="60" fill="none" stroke="url(#sacred-gradient)" strokeWidth="1" />
+                          <circle cx="100" cy="100" r="40" fill="none" stroke="url(#sacred-gradient)" strokeWidth="1" />
+                          <path d="M100,20 L173.2,60 L173.2,140 L100,180 L26.8,140 L26.8,60 Z" fill="none" stroke="url(#sacred-gradient)" strokeWidth="1" />
+                        </svg>
+                      </motion.div>
+                    </div>
+
+                    {/* Phase Indicator */}
+                    <motion.div
+                      key={currentPhase}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="text-center mb-6"
+                    >
+                      <h3 className="text-2xl lg:text-3xl font-light bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent mb-2">
+                        {isActive ? getPhaseLabel(currentPhase) : 'Ready to Begin'}
+                      </h3>
+                      {isActive && (
+                        <p className="text-muted-foreground">
+                          {Math.ceil(timeRemaining / 1000)}s remaining
+                        </p>
+                      )}
+                    </motion.div>
+
+                    {/* Controls */}
+                    <div className="flex items-center gap-4">
+                      <Button
+                        onClick={isActive ? stopBreathing : startBreathing}
+                        size="lg"
+                        className="px-8 py-3 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-medium rounded-full transition-all duration-300 shadow-lg hover:shadow-xl"
+                      >
+                        {isActive ? (
+                          <>
+                            <Pause className="mr-2 h-5 w-5" />
+                            Stop
+                          </>
+                        ) : (
+                          <>
+                            <Play className="mr-2 h-5 w-5" />
+                            Begin
+                          </>
+                        )}
+                      </Button>
+                      
+                      {isActive && (
+                        <Button
+                          variant="outline"
+                          size="lg"
+                          onClick={() => {
+                            stopBreathing();
+                            setTimeout(startBreathing, 100);
+                          }}
+                          className="px-6 py-3 rounded-full"
+                        >
+                          <RotateCcw className="mr-2 h-4 w-4" />
+                          Reset
+                        </Button>
+                      )}
+                    </div>
+
+                    {/* Session Stats */}
+                    {(cycleCount > 0 || sessionDuration > 0) && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mt-6 text-center text-sm text-muted-foreground"
+                      >
+                        {cycleCount > 0 && <p>Cycles completed: {cycleCount}</p>}
+                        {sessionDuration > 0 && (
+                          <p>Last session: {Math.floor(sessionDuration / 60)}:{(sessionDuration % 60).toString().padStart(2, '0')}</p>
+                        )}
+                      </motion.div>
+                    )}
+                  </div>
+
+                  {/* Settings Panel */}
+                  <AnimatePresence>
+                    {showCustomSettings && (
+                      <motion.div
+                        initial={{ x: 300, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        exit={{ x: 300, opacity: 0 }}
+                        className="w-full lg:w-80 border-t lg:border-t-0 lg:border-l border-border/30 p-6 bg-background/50 backdrop-blur-sm"
+                      >
+                        <Card>
+                          <CardContent className="p-6 space-y-6">
+                            <div>
+                              <Label className="text-sm font-medium mb-3 block">Breathing Pattern</Label>
+                              <Select
+                                value={currentPreset.id}
+                                onValueChange={(value) => {
+                                  const preset = BREATHING_PRESETS.find(p => p.id === value);
+                                  if (preset) setCurrentPreset(preset);
+                                  else if (value === 'custom') setCurrentPreset(customPreset);
+                                }}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {BREATHING_PRESETS.map((preset) => (
+                                    <SelectItem key={preset.id} value={preset.id}>
+                                      {preset.name}
+                                    </SelectItem>
+                                  ))}
+                                  <SelectItem value="custom">Custom</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <p className="text-xs text-muted-foreground mt-1">
+                                {activePreset.description}
+                              </p>
+                            </div>
+
+                            {currentPreset.id === 'custom' && (
+                              <div className="space-y-4">
+                                <div className="grid grid-cols-2 gap-4">
+                                  <div>
+                                    <Label className="text-xs">Inhale (s)</Label>
+                                    <Input
+                                      type="number"
+                                      min="0"
+                                      step="0.5"
+                                      value={customPreset.inhale}
+                                      onChange={(e) => setCustomPreset(prev => ({ ...prev, inhale: parseFloat(e.target.value) || 0 }))}
+                                    />
+                                  </div>
+                                  <div>
+                                    <Label className="text-xs">Hold (s)</Label>
+                                    <Input
+                                      type="number"
+                                      min="0"
+                                      step="0.5"
+                                      value={customPreset.hold1}
+                                      onChange={(e) => setCustomPreset(prev => ({ ...prev, hold1: parseFloat(e.target.value) || 0 }))}
+                                    />
+                                  </div>
+                                  <div>
+                                    <Label className="text-xs">Exhale (s)</Label>
+                                    <Input
+                                      type="number"
+                                      min="0"
+                                      step="0.5"
+                                      value={customPreset.exhale}
+                                      onChange={(e) => setCustomPreset(prev => ({ ...prev, exhale: parseFloat(e.target.value) || 0 }))}
+                                    />
+                                  </div>
+                                  <div>
+                                    <Label className="text-xs">Hold (s)</Label>
+                                    <Input
+                                      type="number"
+                                      min="0"
+                                      step="0.5"
+                                      value={customPreset.hold2}
+                                      onChange={(e) => setCustomPreset(prev => ({ ...prev, hold2: parseFloat(e.target.value) || 0 }))}
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
+                            <div className="flex items-center justify-between">
+                              <Label className="text-sm">Sound Guidance</Label>
+                              <Switch
+                                checked={soundEnabled}
+                                onCheckedChange={setSoundEnabled}
+                              />
+                            </div>
+
+                            <div className="pt-4 border-t border-border/30">
+                              <h4 className="text-sm font-medium mb-2">Pattern Overview</h4>
+                              <div className="text-xs text-muted-foreground space-y-1">
+                                <p>Inhale: {activePreset.inhale}s</p>
+                                {activePreset.hold1 > 0 && <p>Hold: {activePreset.hold1}s</p>}
+                                <p>Exhale: {activePreset.exhale}s</p>
+                                {activePreset.hold2 > 0 && <p>Hold: {activePreset.hold2}s</p>}
+                                <p className="mt-2 font-medium">
+                                  Total cycle: {activePreset.inhale + activePreset.hold1 + activePreset.exhale + activePreset.hold2}s
+                                </p>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </motion.div>
+            )}
+          </>
         )}
       </AnimatePresence>
-    </>
+    </div>
   );
 };
 
