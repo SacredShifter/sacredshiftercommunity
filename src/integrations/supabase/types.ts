@@ -4926,6 +4926,42 @@ export type Database = {
           },
         ]
       }
+      mirror_journal_entries: {
+        Row: {
+          chakra_alignment: string | null
+          content: string | null
+          created_at: string | null
+          id: string
+          is_draft: boolean | null
+          mood_tag: string | null
+          title: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          chakra_alignment?: string | null
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          is_draft?: boolean | null
+          mood_tag?: string | null
+          title?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          chakra_alignment?: string | null
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          is_draft?: boolean | null
+          mood_tag?: string | null
+          title?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       mirror_moments: {
         Row: {
           created_at: string | null

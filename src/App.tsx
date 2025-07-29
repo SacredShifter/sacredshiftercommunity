@@ -15,6 +15,7 @@ import Feed from "./pages/Feed";
 import Circles from "./pages/Circles";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
+import Journal from "./pages/Journal";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -52,6 +53,7 @@ const App = () => {
                             <Route path="/" element={<Index />} />
                             <Route path="/feed" element={<Feed />} />
                             <Route path="/circles" element={<Circles />} />
+                            <Route path="/journal" element={<Journal />} />
                             <Route path="/profile" element={<Profile />} />
                             <Route path="/settings" element={<Settings />} />
                             <Route path="*" element={<NotFound />} />
