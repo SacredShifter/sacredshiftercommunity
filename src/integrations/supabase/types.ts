@@ -5485,6 +5485,45 @@ export type Database = {
         }
         Relationships: []
       }
+      personal_codex_entries: {
+        Row: {
+          content: string | null
+          created_at: string
+          id: string
+          is_private: boolean | null
+          resonance_tags: string[] | null
+          source_module: string | null
+          title: string
+          type: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          id?: string
+          is_private?: boolean | null
+          resonance_tags?: string[] | null
+          source_module?: string | null
+          title: string
+          type?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          id?: string
+          is_private?: boolean | null
+          resonance_tags?: string[] | null
+          source_module?: string | null
+          title?: string
+          type?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       potential_seeds: {
         Row: {
           chakra_alignment: string[] | null

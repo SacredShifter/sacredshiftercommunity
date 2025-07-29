@@ -18,6 +18,7 @@ import Settings from "./pages/Settings";
 import Journal from "./pages/Journal";
 import VideoLibrary from "./pages/VideoLibrary";
 import Registry from "./pages/Registry";
+import Codex from "./pages/Codex";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -58,6 +59,7 @@ const App = () => {
                             <Route path="/journal" element={<Journal />} />
                             <Route path="/videos" element={<VideoLibrary />} />
                             <Route path="/registry" element={<Registry />} />
+                            <Route path="/codex" element={<Codex />} />
                             <Route path="/profile" element={<Profile />} />
                             <Route path="/settings" element={<Settings />} />
                             <Route path="*" element={<NotFound />} />
