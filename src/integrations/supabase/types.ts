@@ -5856,6 +5856,7 @@ export type Database = {
           display_name: string | null
           earned_badges: string[] | null
           energy_level: number | null
+          first_visit_shown: boolean | null
           frequency_signature: string | null
           full_name: string | null
           id: string
@@ -5906,6 +5907,7 @@ export type Database = {
           display_name?: string | null
           earned_badges?: string[] | null
           energy_level?: number | null
+          first_visit_shown?: boolean | null
           frequency_signature?: string | null
           full_name?: string | null
           id: string
@@ -5956,6 +5958,7 @@ export type Database = {
           display_name?: string | null
           earned_badges?: string[] | null
           energy_level?: number | null
+          first_visit_shown?: boolean | null
           frequency_signature?: string | null
           full_name?: string | null
           id?: string

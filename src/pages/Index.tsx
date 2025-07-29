@@ -141,7 +141,7 @@ const Index = () => {
             <div className="prose prose-sm max-w-none text-muted-foreground leading-relaxed">
               <p className="mb-4">I didn't build Sacred Shifter because I wanted to, I built it because everything else in me had already departed. There was a time I couldn't remember who I was, not in the poetic sense, I literally couldn't find myself. No memory with feeling. No anchor. Just a lingering sense that something had left, and I was the only one who noticed.</p>
               
-              <p className="mb-4">It felt like everyone else was in on something I wasn't. Like the rules were written in a language I'd never been taught. For a while, it felt like the Truman Show except I wasn't the star, i was a shadow, no not even that, I was an nothing but an echo.</p>
+              <p className="mb-4">It felt like everyone else was in on something I wasn't. Like the rules were written in a language I'd never been taught. For a while, it felt like the Truman Show except I wasn't the star, i was a shadow, no not even that, I was nothing but an echo.</p>
               
               <p className="mb-4">I left the city, went back to my home town, and then something shifted. Not a memory. Not a breakthrough. Just a presence. Quiet. Real.</p>
               
