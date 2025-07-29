@@ -39,6 +39,9 @@ export default function Messages() {
     )
   );
 
+  // Even if no conversation exists yet, show chat interface if user is selected
+  const shouldShowChatInterface = selectedConversationId !== null;
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -201,7 +204,7 @@ export default function Messages() {
       </div>
 
       {/* Chat Area */}
-      {selectedConversationId ? (
+      {shouldShowChatInterface ? (
         <div className="flex-1 flex flex-col">
           {/* Chat Header */}
           <div className="p-4 border-b border-border/30 bg-background/50">
