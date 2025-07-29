@@ -22,6 +22,7 @@ import VideoLibrary from "./pages/VideoLibrary";
 import Registry from "./pages/Registry";
 import Codex from "./pages/Codex";
 import Guidebook from "./pages/Guidebook";
+import Support from "./pages/Support";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -64,6 +65,7 @@ const App = () => {
                             <Route path="/registry" element={<Registry />} />
                             <Route path="/codex" element={<Codex />} />
                             <Route path="/guidebook" element={<Guidebook />} />
+                            <Route path="/support" element={<Support />} />
                             <Route path="/profile" element={<Profile />} />
                             <Route path="/settings" element={<Settings />} />
                             <Route path="*" element={<NotFound />} />
