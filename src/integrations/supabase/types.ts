@@ -12061,6 +12061,10 @@ export type Database = {
         Args: { material_id: string }
         Returns: undefined
       }
+      increment_registry_engagement: {
+        Args: { entry_id: string; metric_type: string }
+        Returns: undefined
+      }
       is_circle_group_member: {
         Args: { group_id: string; user_id: string }
         Returns: boolean
