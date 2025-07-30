@@ -71,13 +71,21 @@ export const useDirectMessages = (conversationUserId?: string) => {
     if (!user) return;
 
     try {
+      setLoading(true);
+      console.log('Fetching conversations for user:', user.id);
+      
       const { data, error } = await supabase
         .from('conversations')
         .select('*')
         .or(`participant_1_id.eq.${user.id},participant_2_id.eq.${user.id}`)
         .order('last_message_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching conversations:', error);
+        throw error;
+      }
+
+      console.log('Fetched conversations:', data);
 
       // Transform conversations to basic format
       const transformedConversations = (data || []).map(conv => ({
@@ -87,9 +95,12 @@ export const useDirectMessages = (conversationUserId?: string) => {
       }));
 
       setConversations(transformedConversations as Conversation[]);
+      setError(null); // Clear any previous errors
     } catch (err) {
       console.error('Error fetching conversations:', err);
       setError('Failed to load conversations');
+    } finally {
+      setLoading(false); // This was missing!
     }
   }, [user]);
 
