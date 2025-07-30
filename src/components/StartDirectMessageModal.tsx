@@ -47,14 +47,14 @@ export const StartDirectMessageModal: React.FC<StartDirectMessageModalProps> = (
       
       let query = supabase
         .from('profiles')
-        .select('user_id, display_name, avatar_url')
+        .select('user_id, display_name, full_name, avatar_url')
         .neq('user_id', user.id)
         .limit(50);
 
       if (searchQuery.trim()) {
         console.log('Adding search filter for:', searchQuery.trim());
-        // Only search in display_name field
-        query = query.ilike('display_name', `%${searchQuery.trim()}%`);
+        // Search in both display_name and user_id (for users without display names)
+        query = query.or(`display_name.ilike.%${searchQuery.trim()}%,user_id.ilike.%${searchQuery.trim()}%`);
       }
 
       const { data, error } = await query;
@@ -73,7 +73,7 @@ export const StartDirectMessageModal: React.FC<StartDirectMessageModalProps> = (
           if (!exists) {
             acc.push({
               id: current.user_id,
-              display_name: current.display_name || `User ${current.user_id.slice(0, 8)}...`,
+              display_name: current.display_name || current.full_name || `Sacred Seeker`,
               avatar_url: current.avatar_url
             });
           }
@@ -98,6 +98,18 @@ export const StartDirectMessageModal: React.FC<StartDirectMessageModalProps> = (
     if (!user) return;
 
     try {
+      // For AI assistant, skip conversation creation since it's handled differently
+      if (selectedUserId === 'aura-ai-assistant') {
+        onUserSelect(selectedUserId);
+        onClose();
+        
+        toast({
+          title: "AI Assistant Ready",
+          description: "You can now chat with Aura"
+        });
+        return;
+      }
+
       // Check if conversation already exists
       const { data: existingConversation, error: convError } = await supabase
         .from('conversations')
