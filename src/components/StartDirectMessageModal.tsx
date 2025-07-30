@@ -43,6 +43,8 @@ export const StartDirectMessageModal: React.FC<StartDirectMessageModalProps> = (
 
     try {
       setLoading(true);
+      console.log('Fetching users, current user:', user.id, 'search query:', searchQuery);
+      
       let query = supabase
         .from('profiles')
         .select('user_id, display_name, avatar_url')
@@ -50,13 +52,19 @@ export const StartDirectMessageModal: React.FC<StartDirectMessageModalProps> = (
         .limit(50);
 
       if (searchQuery.trim()) {
+        console.log('Adding search filter for:', searchQuery.trim());
         // Only search in display_name field
         query = query.ilike('display_name', `%${searchQuery.trim()}%`);
       }
 
       const { data, error } = await query;
 
-      if (error) throw error;
+      if (error) {
+        console.error('Query error:', error);
+        throw error;
+      }
+      
+      console.log('Raw data from query:', data);
       
       // Deduplicate and create user profiles with fallback display names
       const uniqueUsers = (data || [])
@@ -72,6 +80,7 @@ export const StartDirectMessageModal: React.FC<StartDirectMessageModalProps> = (
           return acc;
         }, []);
       
+      console.log('Processed users:', uniqueUsers);
       setUsers(uniqueUsers);
     } catch (error) {
       console.error('Error fetching users:', error);
