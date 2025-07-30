@@ -10,6 +10,7 @@ import {
   PinOff, ExternalLink
 } from 'lucide-react';
 import { RegistryEntry, useRegistryOfResonance } from '@/hooks/useRegistryOfResonance';
+import { AdminVerificationPanel } from './AdminVerificationPanel';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
@@ -20,9 +21,10 @@ interface EntryModalProps {
   open: boolean;
   onClose: () => void;
   onEdit?: () => void;
+  onVerificationChange?: () => void;
 }
 
-export function EntryModal({ entry, open, onClose, onEdit }: EntryModalProps) {
+export function EntryModal({ entry, open, onClose, onEdit, onVerificationChange }: EntryModalProps) {
   const { user } = useAuth();
   const { deleteEntry, togglePin, incrementEngagement, deleteImage } = useRegistryOfResonance();
   const [isDeleting, setIsDeleting] = useState(false);
@@ -355,8 +357,14 @@ export function EntryModal({ entry, open, onClose, onEdit }: EntryModalProps) {
               </div>
             </div>
           </ScrollArea>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-}
+          </div>
+
+          {/* Admin Verification Panel */}
+          <AdminVerificationPanel 
+            entry={entry} 
+            onVerificationChange={onVerificationChange}
+          />
+        </DialogContent>
+      </Dialog>
+    );
+  }

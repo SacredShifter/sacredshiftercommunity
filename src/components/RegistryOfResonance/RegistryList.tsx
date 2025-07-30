@@ -216,6 +216,10 @@ export function RegistryList() {
               setSelectedEntry(null);
               setShowForm(true);
             }}
+            onVerificationChange={() => {
+              // Refresh entries after verification change
+              fetchEntries(activeTab as 'my' | 'collective' | 'drafts');
+            }}
           />
         )}
 

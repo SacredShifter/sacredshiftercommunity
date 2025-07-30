@@ -53,6 +53,7 @@ export interface NewRegistryEntry {
     circle_shared: boolean;
     featured: boolean;
   };
+  is_verified?: boolean;
 }
 
 export function useRegistryOfResonance() {
