@@ -53,8 +53,8 @@ export function AppSidebar() {
       const { data } = await supabase
         .from('profiles')
         .select('display_name, avatar_url')
-        .eq('id', user.id)
-        .single();
+        .eq('user_id', user.id)
+        .maybeSingle();
       
       setUserProfile(data);
     } catch (error) {
@@ -78,7 +78,7 @@ export function AppSidebar() {
           event: '*',
           schema: 'public',
           table: 'profiles',
-          filter: `id=eq.${user.id}`
+          filter: `user_id=eq.${user.id}`
         },
         () => {
           fetchProfile();

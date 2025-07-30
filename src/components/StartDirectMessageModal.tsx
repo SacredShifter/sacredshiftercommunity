@@ -14,7 +14,6 @@ interface UserProfile {
   id: string;
   display_name?: string;
   avatar_url?: string;
-  bio?: string;
 }
 
 interface StartDirectMessageModalProps {
@@ -69,8 +68,7 @@ export const StartDirectMessageModal: React.FC<StartDirectMessageModalProps> = (
             acc.push({
               id: current.user_id,
               display_name: current.display_name,
-              avatar_url: current.avatar_url,
-              bio: undefined
+              avatar_url: current.avatar_url
             });
           }
           return acc;
@@ -250,11 +248,6 @@ export const StartDirectMessageModal: React.FC<StartDirectMessageModalProps> = (
                           Message
                         </Badge>
                       </div>
-                      {profile.bio && (
-                        <p className="text-xs text-muted-foreground truncate">
-                          {profile.bio}
-                        </p>
-                      )}
                     </div>
                   </div>
                 ))

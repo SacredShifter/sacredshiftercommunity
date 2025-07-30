@@ -28,7 +28,7 @@ export const usePostInteractions = () => {
         .select('id')
         .eq('post_id', postId)
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
 
       if (checkError && checkError.code !== 'PGRST116') {
         throw checkError;
@@ -152,7 +152,7 @@ export const usePostInteractions = () => {
           .select('id')
           .eq('post_id', postId)
           .eq('user_id', user.id)
-          .single()).data !== null : false;
+          .maybeSingle()).data !== null : false;
 
       return {
         likeCount: likesResult.count || 0,
