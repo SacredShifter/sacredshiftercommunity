@@ -5885,6 +5885,7 @@ export type Database = {
           tour_progress: string[] | null
           transit_notifications: boolean | null
           updated_at: string | null
+          user_id: string | null
         }
         Insert: {
           account_deletion_requested?: boolean | null
@@ -5911,7 +5912,7 @@ export type Database = {
           first_visit_shown?: boolean | null
           frequency_signature?: string | null
           full_name?: string | null
-          id: string
+          id?: string
           initial_mood?: string | null
           interests?: string[] | null
           last_level_up?: string | null
@@ -5937,6 +5938,7 @@ export type Database = {
           tour_progress?: string[] | null
           transit_notifications?: boolean | null
           updated_at?: string | null
+          user_id?: string | null
         }
         Update: {
           account_deletion_requested?: boolean | null
@@ -5989,6 +5991,7 @@ export type Database = {
           tour_progress?: string[] | null
           transit_notifications?: boolean | null
           updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
