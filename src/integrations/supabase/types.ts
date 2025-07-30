@@ -6215,48 +6215,84 @@ export type Database = {
       registry_of_resonance: {
         Row: {
           access_level: string
+          author_bio: string | null
+          author_name: string | null
           content: string
+          content_type: string | null
           created_at: string
+          engagement_metrics: Json | null
           entry_type: string
           id: string
+          image_alt_text: string | null
+          image_url: string | null
+          inspiration_source: string | null
           is_pinned: boolean | null
           is_verified: boolean | null
+          publication_date: string | null
+          reading_time_minutes: number | null
           resonance_rating: number
           resonance_signature: string | null
+          source_citation: string | null
           tags: string[] | null
           title: string
           updated_at: string
           user_id: string
+          visibility_settings: Json | null
+          word_count: number | null
         }
         Insert: {
           access_level?: string
+          author_bio?: string | null
+          author_name?: string | null
           content: string
+          content_type?: string | null
           created_at?: string
+          engagement_metrics?: Json | null
           entry_type?: string
           id?: string
+          image_alt_text?: string | null
+          image_url?: string | null
+          inspiration_source?: string | null
           is_pinned?: boolean | null
           is_verified?: boolean | null
+          publication_date?: string | null
+          reading_time_minutes?: number | null
           resonance_rating?: number
           resonance_signature?: string | null
+          source_citation?: string | null
           tags?: string[] | null
           title: string
           updated_at?: string
           user_id: string
+          visibility_settings?: Json | null
+          word_count?: number | null
         }
         Update: {
           access_level?: string
+          author_bio?: string | null
+          author_name?: string | null
           content?: string
+          content_type?: string | null
           created_at?: string
+          engagement_metrics?: Json | null
           entry_type?: string
           id?: string
+          image_alt_text?: string | null
+          image_url?: string | null
+          inspiration_source?: string | null
           is_pinned?: boolean | null
           is_verified?: boolean | null
+          publication_date?: string | null
+          reading_time_minutes?: number | null
           resonance_rating?: number
           resonance_signature?: string | null
+          source_citation?: string | null
           tags?: string[] | null
           title?: string
           updated_at?: string
           user_id?: string
+          visibility_settings?: Json | null
+          word_count?: number | null
         }
         Relationships: []
       }
