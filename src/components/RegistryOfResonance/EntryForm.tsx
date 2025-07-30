@@ -9,8 +9,9 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { X, Plus, Sparkles, Target } from 'lucide-react';
+import { X, Plus, Sparkles, Target, Upload, Image as ImageIcon, Trash2 } from 'lucide-react';
 import { useRegistryOfResonance, NewRegistryEntry } from '@/hooks/useRegistryOfResonance';
+import { ImageUploader } from '@/components/ImageUploader';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
@@ -22,8 +23,17 @@ interface EntryFormProps {
 }
 
 export function EntryForm({ open, onClose, onSuccess, editEntry }: EntryFormProps) {
-  const { createEntry, updateEntry, generateResonanceSignature } = useRegistryOfResonance();
+  const { 
+    createEntry, 
+    updateEntry, 
+    generateResonanceSignature, 
+    uploadImage, 
+    deleteImage,
+    calculateWordCount,
+    calculateReadingTime 
+  } = useRegistryOfResonance();
   const [isLoading, setIsLoading] = useState(false);
+  const [imageUploading, setImageUploading] = useState(false);
   
   const [formData, setFormData] = useState<NewRegistryEntry>({
     title: editEntry?.title || '',
@@ -33,6 +43,18 @@ export function EntryForm({ open, onClose, onSuccess, editEntry }: EntryFormProp
     entry_type: editEntry?.entry_type || 'Personal',
     access_level: editEntry?.access_level || 'Private',
     resonance_signature: editEntry?.resonance_signature || '',
+    image_url: editEntry?.image_url || '',
+    image_alt_text: editEntry?.image_alt_text || '',
+    author_name: editEntry?.author_name || '',
+    author_bio: editEntry?.author_bio || '',
+    source_citation: editEntry?.source_citation || '',
+    inspiration_source: editEntry?.inspiration_source || '',
+    content_type: editEntry?.content_type || 'text',
+    visibility_settings: editEntry?.visibility_settings || {
+      public: false,
+      circle_shared: false,
+      featured: false,
+    },
   });
   
   const [newTag, setNewTag] = useState('');
@@ -44,10 +66,15 @@ export function EntryForm({ open, onClose, onSuccess, editEntry }: EntryFormProp
     setIsLoading(true);
     try {
       // Auto-generate resonance signature if not provided
+      const wordCount = calculateWordCount(formData.content);
+      const readingTime = calculateReadingTime(wordCount);
+      
       const finalData = {
         ...formData,
         resonance_signature: formData.resonance_signature || 
-          generateResonanceSignature(formData.content, formData.title)
+          generateResonanceSignature(formData.content, formData.title),
+        word_count: wordCount,
+        reading_time_minutes: readingTime,
       };
 
       if (editEntry) {
@@ -87,6 +114,29 @@ export function EntryForm({ open, onClose, onSuccess, editEntry }: EntryFormProp
     setFormData(prev => ({ ...prev, resonance_signature: signature }));
   };
 
+  const handleImageSelect = async (file: File) => {
+    setImageUploading(true);
+    try {
+      const imageUrl = await uploadImage(file);
+      if (imageUrl) {
+        setFormData(prev => ({ 
+          ...prev, 
+          image_url: imageUrl,
+          image_alt_text: `Image for ${formData.title || 'registry entry'}`
+        }));
+      }
+    } finally {
+      setImageUploading(false);
+    }
+  };
+
+  const handleRemoveImage = async () => {
+    if (formData.image_url) {
+      await deleteImage(formData.image_url);
+      setFormData(prev => ({ ...prev, image_url: '', image_alt_text: '' }));
+    }
+  };
+
   const getResonanceColor = (rating: number) => {
     if (rating >= 80) return 'text-green-500';
     if (rating >= 60) return 'text-blue-500';
@@ -121,6 +171,52 @@ export function EntryForm({ open, onClose, onSuccess, editEntry }: EntryFormProp
               />
             </div>
 
+            {/* Image Upload */}
+            <div className="space-y-3">
+              <Label>Image</Label>
+              {formData.image_url ? (
+                <div className="relative">
+                  <img 
+                    src={formData.image_url} 
+                    alt={formData.image_alt_text || 'Registry entry image'} 
+                    className="w-full h-48 object-cover rounded-lg border"
+                  />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="sm"
+                    onClick={handleRemoveImage}
+                    className="absolute top-2 right-2 gap-1"
+                  >
+                    <Trash2 className="w-3 h-3" />
+                    Remove
+                  </Button>
+                </div>
+              ) : (
+                <div className="border-2 border-dashed border-muted-foreground/20 rounded-lg p-6 text-center">
+                  <ImageUploader onImageSelect={handleImageSelect} />
+                  {imageUploading && (
+                    <div className="mt-2 text-sm text-muted-foreground">
+                      Uploading image...
+                    </div>
+                  )}
+                </div>
+              )}
+              
+              {formData.image_url && (
+                <div className="space-y-2">
+                  <Label htmlFor="image_alt_text">Image Alt Text</Label>
+                  <Input
+                    id="image_alt_text"
+                    value={formData.image_alt_text || ''}
+                    onChange={(e) => setFormData(prev => ({ ...prev, image_alt_text: e.target.value }))}
+                    placeholder="Describe the image for accessibility..."
+                    className="bg-background/50"
+                  />
+                </div>
+              )}
+            </div>
+
             {/* Content */}
             <div className="space-y-2">
               <Label htmlFor="content">Content *</Label>
@@ -132,6 +228,10 @@ export function EntryForm({ open, onClose, onSuccess, editEntry }: EntryFormProp
                 className="min-h-32 bg-background/50"
                 required
               />
+              <div className="text-xs text-muted-foreground">
+                Word count: {calculateWordCount(formData.content)} • 
+                Reading time: ~{calculateReadingTime(calculateWordCount(formData.content))} min
+              </div>
             </div>
 
             {/* Resonance Rating */}
@@ -158,8 +258,8 @@ export function EntryForm({ open, onClose, onSuccess, editEntry }: EntryFormProp
 
             <Separator />
 
-            {/* Entry Type & Access Level */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Entry Type, Content Type & Access Level */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label>Entry Type</Label>
                 <Select
@@ -173,6 +273,23 @@ export function EntryForm({ open, onClose, onSuccess, editEntry }: EntryFormProp
                     <SelectItem value="Personal">Personal</SelectItem>
                     <SelectItem value="Collective">Collective</SelectItem>
                     <SelectItem value="Transmission">Transmission</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Content Type</Label>
+                <Select
+                  value={formData.content_type}
+                  onValueChange={(value: any) => setFormData(prev => ({ ...prev, content_type: value }))}
+                >
+                  <SelectTrigger className="bg-background/50">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="text">Plain Text</SelectItem>
+                    <SelectItem value="markdown">Markdown</SelectItem>
+                    <SelectItem value="rich_text">Rich Text</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -192,6 +309,59 @@ export function EntryForm({ open, onClose, onSuccess, editEntry }: EntryFormProp
                     <SelectItem value="Public">Public</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+            </div>
+
+            {/* Enhanced Metadata Section */}
+            <div className="space-y-4 p-4 border rounded-lg bg-muted/10">
+              <h3 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">
+                Enhanced Metadata
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="author_name">Author Name</Label>
+                  <Input
+                    id="author_name"
+                    value={formData.author_name || ''}
+                    onChange={(e) => setFormData(prev => ({ ...prev, author_name: e.target.value }))}
+                    placeholder="Your name or pseudonym..."
+                    className="bg-background/50"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="source_citation">Source Citation</Label>
+                  <Input
+                    id="source_citation"
+                    value={formData.source_citation || ''}
+                    onChange={(e) => setFormData(prev => ({ ...prev, source_citation: e.target.value }))}
+                    placeholder="Reference or citation..."
+                    className="bg-background/50"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="author_bio">Author Bio</Label>
+                <Textarea
+                  id="author_bio"
+                  value={formData.author_bio || ''}
+                  onChange={(e) => setFormData(prev => ({ ...prev, author_bio: e.target.value }))}
+                  placeholder="Brief bio or context about the author..."
+                  className="bg-background/50 min-h-20"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="inspiration_source">Inspiration Source</Label>
+                <Input
+                  id="inspiration_source"
+                  value={formData.inspiration_source || ''}
+                  onChange={(e) => setFormData(prev => ({ ...prev, inspiration_source: e.target.value }))}
+                  placeholder="What inspired this entry..."
+                  className="bg-background/50"
+                />
               </div>
             </div>
 

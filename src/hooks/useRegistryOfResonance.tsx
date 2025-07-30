@@ -17,6 +17,19 @@ export interface RegistryEntry {
   is_pinned: boolean | null;
   created_at: string;
   updated_at: string;
+  // Enhanced metadata fields
+  image_url?: string | null;
+  image_alt_text?: string | null;
+  author_name?: string | null;
+  author_bio?: string | null;
+  publication_date?: string | null;
+  reading_time_minutes?: number | null;
+  word_count?: number | null;
+  source_citation?: string | null;
+  inspiration_source?: string | null;
+  visibility_settings?: any;
+  content_type?: string | null;
+  engagement_metrics?: any;
 }
 
 export interface NewRegistryEntry {
@@ -27,6 +40,19 @@ export interface NewRegistryEntry {
   entry_type: 'Personal' | 'Collective' | 'Transmission';
   access_level: 'Private' | 'Circle' | 'Public';
   resonance_signature?: string;
+  // Enhanced metadata fields
+  image_url?: string;
+  image_alt_text?: string;
+  author_name?: string;
+  author_bio?: string;
+  source_citation?: string;
+  inspiration_source?: string;
+  content_type?: 'text' | 'markdown' | 'rich_text';
+  visibility_settings?: {
+    public: boolean;
+    circle_shared: boolean;
+    featured: boolean;
+  };
 }
 
 export function useRegistryOfResonance() {
@@ -159,6 +185,113 @@ export function useRegistryOfResonance() {
     fetchEntries();
   }, [fetchEntries]);
 
+  const uploadImage = useCallback(async (file: File) => {
+    if (!user) {
+      toast.error('You must be logged in to upload images');
+      return null;
+    }
+
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+      
+      const { data, error } = await supabase.storage
+        .from('registry-images')
+        .upload(fileName, file);
+
+      if (error) throw error;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('registry-images')
+        .getPublicUrl(fileName);
+
+      return publicUrl;
+    } catch (err) {
+      console.error('Error uploading image:', err);
+      toast.error(err instanceof Error ? err.message : 'Failed to upload image');
+      return null;
+    }
+  }, [user]);
+
+  const deleteImage = useCallback(async (imageUrl: string) => {
+    try {
+      // Extract file path from URL
+      const urlParts = imageUrl.split('/');
+      const fileName = urlParts[urlParts.length - 1];
+      const filePath = urlParts.slice(-2).join('/'); // user_id/filename
+
+      const { error } = await supabase.storage
+        .from('registry-images')
+        .remove([filePath]);
+
+      if (error) throw error;
+    } catch (err) {
+      console.error('Error deleting image:', err);
+    }
+  }, []);
+
+  const incrementEngagement = useCallback(async (entryId: string, type: 'views' | 'shares' | 'bookmarks') => {
+    try {
+      // Get current entry
+      const { data: entry, error: fetchError } = await supabase
+        .from('registry_of_resonance')
+        .select('engagement_metrics')
+        .eq('id', entryId)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      const currentMetrics = entry?.engagement_metrics as Record<string, number> || { views: 0, shares: 0, bookmarks: 0 };
+      const updatedMetrics = {
+        views: currentMetrics.views || 0,
+        shares: currentMetrics.shares || 0,
+        bookmarks: currentMetrics.bookmarks || 0,
+        [type]: (currentMetrics[type] || 0) + 1
+      };
+
+      const { error } = await supabase
+        .from('registry_of_resonance')
+        .update({ engagement_metrics: updatedMetrics })
+        .eq('id', entryId);
+
+      if (error) throw error;
+    } catch (err) {
+      console.error('Error updating engagement:', err);
+    }
+  }, []);
+
+  const shareEntry = useCallback(async (entry: RegistryEntry) => {
+    await incrementEngagement(entry.id, 'shares');
+    
+    if (navigator.share && entry.access_level === 'Public') {
+      try {
+        await navigator.share({
+          title: entry.title,
+          text: entry.content.substring(0, 200) + '...',
+          url: window.location.href,
+        });
+      } catch (error) {
+        // Fallback to clipboard
+        await navigator.clipboard.writeText(window.location.href);
+        toast.success('Link copied to clipboard');
+      }
+    } else {
+      // Copy to clipboard
+      const text = `${entry.title}\n\n${entry.content}\n\nResonance Rating: ${entry.resonance_rating}/100`;
+      await navigator.clipboard.writeText(text);
+      toast.success('Entry copied to clipboard');
+    }
+  }, [incrementEngagement]);
+
+  const calculateWordCount = useCallback((content: string) => {
+    return content.trim().split(/\s+/).length;
+  }, []);
+
+  const calculateReadingTime = useCallback((wordCount: number) => {
+    // Average reading speed: 200 words per minute
+    return Math.ceil(wordCount / 200);
+  }, []);
+
   return {
     entries,
     loading,
@@ -169,5 +302,11 @@ export function useRegistryOfResonance() {
     deleteEntry,
     togglePin,
     generateResonanceSignature,
+    uploadImage,
+    deleteImage,
+    incrementEngagement,
+    shareEntry,
+    calculateWordCount,
+    calculateReadingTime,
   };
 }

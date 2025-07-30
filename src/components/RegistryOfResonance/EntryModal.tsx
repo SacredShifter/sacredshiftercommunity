@@ -19,12 +19,20 @@ interface EntryModalProps {
   entry: RegistryEntry;
   open: boolean;
   onClose: () => void;
+  onEdit?: () => void;
 }
 
-export function EntryModal({ entry, open, onClose }: EntryModalProps) {
+export function EntryModal({ entry, open, onClose, onEdit }: EntryModalProps) {
   const { user } = useAuth();
-  const { deleteEntry, togglePin } = useRegistryOfResonance();
+  const { deleteEntry, togglePin, incrementEngagement, deleteImage } = useRegistryOfResonance();
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // Track view when modal opens
+  React.useEffect(() => {
+    if (open && entry) {
+      incrementEngagement(entry.id, 'views');
+    }
+  }, [open, entry, incrementEngagement]);
 
   const isOwner = user?.id === entry.user_id;
 
@@ -53,6 +61,10 @@ export function EntryModal({ entry, open, onClose }: EntryModalProps) {
     
     setIsDeleting(true);
     try {
+      // Delete associated image if exists
+      if (entry.image_url) {
+        await deleteImage(entry.image_url);
+      }
       await deleteEntry(entry.id);
       onClose();
     } catch (error) {
@@ -73,6 +85,8 @@ export function EntryModal({ entry, open, onClose }: EntryModalProps) {
   };
 
   const handleShare = async () => {
+    await incrementEngagement(entry.id, 'shares');
+    
     if (navigator.share && entry.access_level === 'Public') {
       try {
         await navigator.share({
@@ -195,6 +209,7 @@ export function EntryModal({ entry, open, onClose }: EntryModalProps) {
                     <Button
                       variant="outline"
                       size="sm"
+                      onClick={onEdit}
                       className="gap-2"
                     >
                       <Edit className="w-4 h-4" />
@@ -220,6 +235,21 @@ export function EntryModal({ entry, open, onClose }: EntryModalProps) {
           {/* Content */}
           <ScrollArea className="flex-1 p-6">
             <div className="space-y-6">
+              {/* Image */}
+              {entry.image_url && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="relative"
+                >
+                  <img 
+                    src={entry.image_url} 
+                    alt={entry.image_alt_text || entry.title} 
+                    className="w-full max-h-96 object-cover rounded-lg border"
+                  />
+                </motion.div>
+              )}
+
               {/* Main Content */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -229,6 +259,14 @@ export function EntryModal({ entry, open, onClose }: EntryModalProps) {
                 <div className="whitespace-pre-wrap text-foreground leading-relaxed">
                   {entry.content}
                 </div>
+                
+                {/* Enhanced Metadata */}
+                {(entry.word_count || entry.reading_time_minutes) && (
+                  <div className="flex gap-4 text-xs text-muted-foreground mt-4 pt-2 border-t">
+                    {entry.word_count && <span>Words: {entry.word_count}</span>}
+                    {entry.reading_time_minutes && <span>Reading time: ~{entry.reading_time_minutes} min</span>}
+                  </div>
+                )}
               </motion.div>
 
               <Separator />
@@ -261,6 +299,50 @@ export function EntryModal({ entry, open, onClose }: EntryModalProps) {
                     </h4>
                     <div className="font-mono text-sm bg-muted/50 px-3 py-2 rounded">
                       {entry.resonance_signature}
+                    </div>
+                  </div>
+                )}
+
+                {/* Author Info */}
+                {entry.author_name && (
+                  <div className="space-y-2">
+                    <h4 className="font-medium">Author</h4>
+                    <div className="text-sm">
+                      <div className="font-medium">{entry.author_name}</div>
+                      {entry.author_bio && (
+                        <div className="text-muted-foreground mt-1">{entry.author_bio}</div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Sources */}
+                {(entry.source_citation || entry.inspiration_source) && (
+                  <div className="space-y-2">
+                    <h4 className="font-medium">Sources</h4>
+                    <div className="text-sm space-y-1">
+                      {entry.source_citation && (
+                        <div>
+                          <span className="text-muted-foreground">Citation:</span> {entry.source_citation}
+                        </div>
+                      )}
+                      {entry.inspiration_source && (
+                        <div>
+                          <span className="text-muted-foreground">Inspiration:</span> {entry.inspiration_source}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Engagement Metrics */}
+                {entry.engagement_metrics && (
+                  <div className="space-y-2">
+                    <h4 className="font-medium">Engagement</h4>
+                    <div className="text-sm text-muted-foreground">
+                      Views: {entry.engagement_metrics.views || 0} • 
+                      Shares: {entry.engagement_metrics.shares || 0} • 
+                      Bookmarks: {entry.engagement_metrics.bookmarks || 0}
                     </div>
                   </div>
                 )}

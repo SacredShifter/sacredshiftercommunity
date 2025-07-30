@@ -18,6 +18,7 @@ export function RegistryList() {
   const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState<RegistryEntry | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [editEntry, setEditEntry] = useState<RegistryEntry | null>(null);
   const [activeTab, setActiveTab] = useState('my');
 
   const handleTabChange = (value: string) => {
@@ -210,18 +211,28 @@ export function RegistryList() {
             entry={selectedEntry}
             open={!!selectedEntry}
             onClose={() => setSelectedEntry(null)}
+            onEdit={() => {
+              setEditEntry(selectedEntry);
+              setSelectedEntry(null);
+              setShowForm(true);
+            }}
           />
         )}
 
         {/* Entry Form Modal */}
-        {showForm && (
+        {(showForm || editEntry) && (
           <EntryForm
-            open={showForm}
-            onClose={() => setShowForm(false)}
+            open={showForm || !!editEntry}
+            onClose={() => {
+              setShowForm(false);
+              setEditEntry(null);
+            }}
             onSuccess={() => {
               setShowForm(false);
+              setEditEntry(null);
               fetchEntries(activeTab as 'my' | 'collective' | 'drafts');
             }}
+            editEntry={editEntry}
           />
         )}
       </div>
