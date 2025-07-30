@@ -25,19 +25,13 @@ const Index = () => {
       try {
         const { data: profile } = await supabase
           .from('profiles')
-          .select('first_visit_shown')
-          .eq('id', user.id)
+          .select('display_name')
+          .eq('user_id', user.id)
           .single();
 
-        if (!profile?.first_visit_shown) {
+        if (!profile) {
           setIsFirstVisit(true);
           setShowWelcome(true);
-          
-          // Mark as visited
-          await supabase
-            .from('profiles')
-            .update({ first_visit_shown: true })
-            .eq('id', user.id);
         }
       } catch (error) {
         console.error('Error checking first visit:', error);

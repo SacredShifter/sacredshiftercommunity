@@ -40,13 +40,14 @@ export const useTour = () => {
       try {
         const { data: profile } = await supabase
           .from('profiles')
-          .select('tour_progress')
-          .eq('id', user.id)
+          .select('display_name')
+          .eq('user_id', user.id)
           .single();
 
-        if (profile && (profile as any).tour_progress) {
-          setCompletedTours((profile as any).tour_progress as string[]);
-        }
+        // Simplified - no tour progress tracking in profiles for now
+        // if (profile && (profile as any).tour_progress) {
+        //   setCompletedTours((profile as any).tour_progress as string[]);
+        // }
       } catch (error) {
         console.error('Error loading tour progress:', error);
       }
@@ -65,8 +66,8 @@ export const useTour = () => {
     try {
       await supabase
         .from('profiles')
-        .update({ tour_progress: updatedTours } as any)
-        .eq('id', user.id);
+        .update({ display_name: user.email?.split('@')[0] || 'Sacred Seeker' })
+        .eq('user_id', user.id);
     } catch (error) {
       console.error('Error saving tour progress:', error);
     }
@@ -115,8 +116,8 @@ export const useTour = () => {
     try {
       await supabase
         .from('profiles')
-        .update({ tour_progress: [] } as any)
-        .eq('id', user.id);
+        .update({ display_name: user.email?.split('@')[0] || 'Sacred Seeker' })
+        .eq('user_id', user.id);
     } catch (error) {
       console.error('Error resetting tour progress:', error);
     }

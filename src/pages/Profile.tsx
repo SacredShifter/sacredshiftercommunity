@@ -41,7 +41,7 @@ const Profile = () => {
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
-        .eq('id', user.id)
+        .eq('user_id', user.id)
         .single();
 
       if (error) {
@@ -50,27 +50,41 @@ const Profile = () => {
           const { data: newProfile, error: createError } = await supabase
             .from('profiles')
             .insert([{
-              id: user.id,
+              user_id: user.id,
               display_name: user.email?.split('@')[0] || 'Sacred Seeker',
             }])
             .select()
             .single();
 
           if (createError) throw createError;
-          setProfile(newProfile);
+          setProfile({
+            id: user.id,
+            display_name: newProfile.display_name || '',
+            avatar_url: newProfile.avatar_url || '',
+            bio: null,
+            created_at: newProfile.created_at || new Date().toISOString(),
+            updated_at: newProfile.updated_at || new Date().toISOString()
+          });
           setFormData({
             display_name: newProfile.display_name || '',
-            bio: newProfile.bio || '',
+            bio: '',
             avatar_url: newProfile.avatar_url || '',
           });
         } else {
           throw error;
         }
       } else {
-        setProfile(data);
+        setProfile({
+          id: user.id,
+          display_name: data.display_name || '',
+          avatar_url: data.avatar_url || '',
+          bio: null,
+          created_at: data.created_at || new Date().toISOString(),
+          updated_at: data.updated_at || new Date().toISOString()
+        });
         setFormData({
           display_name: data.display_name || '',
-          bio: data.bio || '',
+          bio: '',
           avatar_url: data.avatar_url || '',
         });
       }
@@ -98,17 +112,23 @@ const Profile = () => {
       const { data, error } = await supabase
         .from('profiles')
         .update({
-          display_name: formData.display_name.trim() || null,
-          bio: formData.bio.trim() || null,
-          avatar_url: formData.avatar_url.trim() || null,
+          display_name: formData.display_name,
+          avatar_url: formData.avatar_url,
         })
-        .eq('id', user.id)
+        .eq('user_id', user.id)
         .select()
         .single();
 
       if (error) throw error;
-
-      setProfile(data);
+      
+      setProfile({
+        id: user.id,
+        display_name: data.display_name || '',
+        avatar_url: data.avatar_url || '',
+        bio: null,
+        created_at: data.created_at || new Date().toISOString(),
+        updated_at: data.updated_at || new Date().toISOString()
+      });
       setEditing(false);
       toast({
         title: "Profile Updated",
