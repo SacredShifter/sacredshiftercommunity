@@ -634,22 +634,7 @@ export type Database = {
           scheduled_time?: string | null
           title?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "baptism_group_events_coordinator_id_fkey"
-            columns: ["coordinator_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "baptism_group_events_coordinator_id_fkey"
-            columns: ["coordinator_id"]
-            isOneToOne: false
-            referencedRelation: "v_user_data_summary"
-            referencedColumns: ["user_id"]
-          },
-        ]
+        Relationships: []
       }
       breath_sessions: {
         Row: {
@@ -951,20 +936,6 @@ export type Database = {
             referencedRelation: "circle_groups"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "circle_group_members_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "circle_group_members_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_user_data_summary"
-            referencedColumns: ["user_id"]
-          },
         ]
       }
       circle_groups: {
@@ -1004,22 +975,7 @@ export type Database = {
           name?: string
           updated_at?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "circle_groups_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "circle_groups_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "v_user_data_summary"
-            referencedColumns: ["user_id"]
-          },
-        ]
+        Relationships: []
       }
       circle_post_comments: {
         Row: {
@@ -1073,13 +1029,6 @@ export type Database = {
             referencedRelation: "circle_posts"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "circle_post_comments_post_id_fkey"
-            columns: ["post_id"]
-            isOneToOne: false
-            referencedRelation: "circle_posts_with_profiles"
-            referencedColumns: ["id"]
-          },
         ]
       }
       circle_post_likes: {
@@ -1107,13 +1056,6 @@ export type Database = {
             columns: ["post_id"]
             isOneToOne: false
             referencedRelation: "circle_posts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "circle_post_likes_post_id_fkey"
-            columns: ["post_id"]
-            isOneToOne: false
-            referencedRelation: "circle_posts_with_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -1192,34 +1134,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "circle_groups"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "circle_posts_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "circle_posts_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_user_data_summary"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "fk_circle_posts_profile_id"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_circle_posts_profile_id"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_user_data_summary"
-            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -1720,22 +1634,7 @@ export type Database = {
           xp?: number | null
           xp_awarded?: number | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "continuum_sessions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "continuum_sessions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_user_data_summary"
-            referencedColumns: ["user_id"]
-          },
-        ]
+        Relationships: []
       }
       conversation_participants: {
         Row: {
@@ -2095,22 +1994,7 @@ export type Database = {
           user_id?: string | null
           water_type?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "digital_baptism_sessions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "digital_baptism_sessions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_user_data_summary"
-            referencedColumns: ["user_id"]
-          },
-        ]
+        Relationships: []
       }
       digital_entity_signatures: {
         Row: {
@@ -2884,20 +2768,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "continuum_sessions"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fractal_glyphs_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fractal_glyphs_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_user_data_summary"
-            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -4798,36 +4668,7 @@ export type Database = {
           recipient_id?: string
           sender_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "messages_recipient_id_fkey"
-            columns: ["recipient_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "messages_recipient_id_fkey"
-            columns: ["recipient_id"]
-            isOneToOne: false
-            referencedRelation: "v_user_data_summary"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "messages_sender_id_fkey"
-            columns: ["sender_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "messages_sender_id_fkey"
-            columns: ["sender_id"]
-            isOneToOne: false
-            referencedRelation: "v_user_data_summary"
-            referencedColumns: ["user_id"]
-          },
-        ]
+        Relationships: []
       }
       metatron_readings: {
         Row: {
@@ -5835,163 +5676,28 @@ export type Database = {
       }
       profiles: {
         Row: {
-          account_deletion_requested: boolean | null
-          account_deletion_scheduled_date: string | null
-          ascension_title: string | null
-          astrology_preferences: Json | null
           avatar_url: string | null
-          badges: string[] | null
-          bio: string | null
-          birth_city: string | null
-          birth_country: string | null
-          birth_date: string | null
-          birth_latitude: number | null
-          birth_location: string | null
-          birth_longitude: number | null
-          birth_state: string | null
-          birth_time: string | null
-          chakra_highlight: string | null
           created_at: string | null
-          data_retention_preference: string | null
           display_name: string | null
-          earned_badges: string[] | null
-          energy_level: number | null
-          first_visit_shown: boolean | null
-          frequency_signature: string | null
           full_name: string | null
-          id: string
-          initial_mood: string | null
-          interests: string[] | null
-          last_level_up: string | null
-          last_privacy_consent_at: string | null
-          light_level: number | null
-          light_points: number | null
-          lightbearer_level: number | null
-          lineage_ancestral: string | null
-          lineage_cultural: string[] | null
-          lineage_indigenous: string | null
-          lineage_spiritual: string[] | null
-          onboarding_completed: boolean | null
-          online_status: boolean | null
-          primary_intention: string | null
-          privacy_analytics_consent: boolean | null
-          privacy_data_sharing_consent: boolean | null
-          privacy_last_updated: string | null
-          privacy_marketing_consent: boolean | null
-          privacy_notification_consent: boolean | null
-          role: string | null
-          soul_alignment: string | null
-          timezone: string | null
-          tour_progress: string[] | null
-          transit_notifications: boolean | null
           updated_at: string | null
-          user_id: string | null
+          user_id: string
         }
         Insert: {
-          account_deletion_requested?: boolean | null
-          account_deletion_scheduled_date?: string | null
-          ascension_title?: string | null
-          astrology_preferences?: Json | null
           avatar_url?: string | null
-          badges?: string[] | null
-          bio?: string | null
-          birth_city?: string | null
-          birth_country?: string | null
-          birth_date?: string | null
-          birth_latitude?: number | null
-          birth_location?: string | null
-          birth_longitude?: number | null
-          birth_state?: string | null
-          birth_time?: string | null
-          chakra_highlight?: string | null
           created_at?: string | null
-          data_retention_preference?: string | null
           display_name?: string | null
-          earned_badges?: string[] | null
-          energy_level?: number | null
-          first_visit_shown?: boolean | null
-          frequency_signature?: string | null
           full_name?: string | null
-          id?: string
-          initial_mood?: string | null
-          interests?: string[] | null
-          last_level_up?: string | null
-          last_privacy_consent_at?: string | null
-          light_level?: number | null
-          light_points?: number | null
-          lightbearer_level?: number | null
-          lineage_ancestral?: string | null
-          lineage_cultural?: string[] | null
-          lineage_indigenous?: string | null
-          lineage_spiritual?: string[] | null
-          onboarding_completed?: boolean | null
-          online_status?: boolean | null
-          primary_intention?: string | null
-          privacy_analytics_consent?: boolean | null
-          privacy_data_sharing_consent?: boolean | null
-          privacy_last_updated?: string | null
-          privacy_marketing_consent?: boolean | null
-          privacy_notification_consent?: boolean | null
-          role?: string | null
-          soul_alignment?: string | null
-          timezone?: string | null
-          tour_progress?: string[] | null
-          transit_notifications?: boolean | null
           updated_at?: string | null
-          user_id?: string | null
+          user_id: string
         }
         Update: {
-          account_deletion_requested?: boolean | null
-          account_deletion_scheduled_date?: string | null
-          ascension_title?: string | null
-          astrology_preferences?: Json | null
           avatar_url?: string | null
-          badges?: string[] | null
-          bio?: string | null
-          birth_city?: string | null
-          birth_country?: string | null
-          birth_date?: string | null
-          birth_latitude?: number | null
-          birth_location?: string | null
-          birth_longitude?: number | null
-          birth_state?: string | null
-          birth_time?: string | null
-          chakra_highlight?: string | null
           created_at?: string | null
-          data_retention_preference?: string | null
           display_name?: string | null
-          earned_badges?: string[] | null
-          energy_level?: number | null
-          first_visit_shown?: boolean | null
-          frequency_signature?: string | null
           full_name?: string | null
-          id?: string
-          initial_mood?: string | null
-          interests?: string[] | null
-          last_level_up?: string | null
-          last_privacy_consent_at?: string | null
-          light_level?: number | null
-          light_points?: number | null
-          lightbearer_level?: number | null
-          lineage_ancestral?: string | null
-          lineage_cultural?: string[] | null
-          lineage_indigenous?: string | null
-          lineage_spiritual?: string[] | null
-          onboarding_completed?: boolean | null
-          online_status?: boolean | null
-          primary_intention?: string | null
-          privacy_analytics_consent?: boolean | null
-          privacy_data_sharing_consent?: boolean | null
-          privacy_last_updated?: string | null
-          privacy_marketing_consent?: boolean | null
-          privacy_notification_consent?: boolean | null
-          role?: string | null
-          soul_alignment?: string | null
-          timezone?: string | null
-          tour_progress?: string[] | null
-          transit_notifications?: boolean | null
           updated_at?: string | null
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -6920,20 +6626,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fk_user_id"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_user_id"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_user_data_summary"
-            referencedColumns: ["user_id"]
-          },
-          {
             foreignKeyName: "sacred_circle_posts_circle_id_fkey"
             columns: ["circle_id"]
             isOneToOne: false
@@ -7521,22 +7213,7 @@ export type Database = {
           user_id?: string
           visibility?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "sacred_posts_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "sacred_posts_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_user_data_summary"
-            referencedColumns: ["user_id"]
-          },
-        ]
+        Relationships: []
       }
       sacred_rituals: {
         Row: {
@@ -8750,20 +8427,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "fractal_glyphs"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "spoken_glyph_logs_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "spoken_glyph_logs_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_user_data_summary"
-            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -10802,20 +10465,6 @@ export type Database = {
             referencedRelation: "sound_codex_entries"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "user_sound_attempts_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "user_sound_attempts_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_user_data_summary"
-            referencedColumns: ["user_id"]
-          },
         ]
       }
       user_subscriptions: {
@@ -11140,70 +10789,6 @@ export type Database = {
         }
         Relationships: []
       }
-      circle_posts_with_profiles: {
-        Row: {
-          audio_url: string | null
-          auto_delete_at: string | null
-          avatar_url: string | null
-          chakra_tag: string | null
-          circle_name: string | null
-          content: string | null
-          created_at: string | null
-          display_name: string | null
-          frequency: number | null
-          group_id: string | null
-          has_audio: boolean | null
-          has_image: boolean | null
-          id: string | null
-          image_url: string | null
-          is_anonymous: boolean | null
-          shared_with: string[] | null
-          source_module: string | null
-          tags: string[] | null
-          title: string | null
-          tone: string | null
-          updated_at: string | null
-          user_id: string | null
-          visibility: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "circle_posts_group_id_fkey"
-            columns: ["group_id"]
-            isOneToOne: false
-            referencedRelation: "circle_groups"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "circle_posts_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "circle_posts_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_user_data_summary"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "fk_circle_posts_profile_id"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_circle_posts_profile_id"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_user_data_summary"
-            referencedColumns: ["user_id"]
-          },
-        ]
-      }
       geography_columns: {
         Row: {
           coord_dimension: number | null
@@ -11340,21 +10925,6 @@ export type Database = {
           next_threshold?: number | null
           threshold?: number | null
           title?: string | null
-        }
-        Relationships: []
-      }
-      v_user_data_summary: {
-        Row: {
-          analytics_opted_in: boolean | null
-          display_name: string | null
-          dream_count: number | null
-          journey_count: number | null
-          marketing_opted_in: boolean | null
-          post_count: number | null
-          reflection_count: number | null
-          retention_days: number | null
-          session_count: number | null
-          user_id: string | null
         }
         Relationships: []
       }
