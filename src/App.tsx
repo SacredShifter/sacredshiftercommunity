@@ -82,25 +82,25 @@ const App = () => {
                             </div>
                           </main>
                         </SidebarInset>
-                        
-                        {/* Floating Control Center - Top Right */}
-                        <div className="fixed top-4 right-4 z-50 flex items-center gap-3">
-                          <SacredSoundscape />
-                        </div>
-                        
-                        {/* AI Assistant - Bottom Right */}
-                        <div className="fixed bottom-20 right-4 z-50">
-                          <AIChatBubble />
-                        </div>
-                        
-                        {/* Breath of Source - Global Breathing Component */}
-                        <BreathOfSource />
-                        
                       </div>
                     </SidebarProvider>
                   </ProtectedRoute>
                 } />
               </Routes>
+              
+              {/* Global floating components - outside ProtectedRoute but inside AuthProvider */}
+              {/* Floating Control Center - Top Right */}
+              <div className="fixed top-4 right-4 z-50 flex items-center gap-3">
+                <SacredSoundscape />
+              </div>
+              
+              {/* AI Assistant - Bottom Right */}
+              <div className="fixed bottom-20 right-4 z-50">
+                <AIChatBubble />
+              </div>
+              
+              {/* Breath of Source - Global Breathing Component */}
+              <BreathOfSource />
             </BrowserRouter>
           </div>
         </TooltipProvider>
