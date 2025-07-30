@@ -42,14 +42,22 @@ export const useDirectMessages = (conversationUserId?: string) => {
     
     try {
       setLoading(true);
+      console.log('Fetching messages between', user.id, 'and', otherUserId);
+      
       const { data, error } = await supabase
         .from('direct_messages')
         .select('*')
         .or(`and(sender_id.eq.${user.id},recipient_id.eq.${otherUserId}),and(sender_id.eq.${otherUserId},recipient_id.eq.${user.id})`)
         .order('created_at', { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching messages:', error);
+        throw error;
+      }
+      
+      console.log('Fetched messages:', data);
       setMessages((data || []) as DirectMessage[]);
+      setError(null); // Clear any previous errors
     } catch (err) {
       console.error('Error fetching messages:', err);
       setError('Failed to load messages');
