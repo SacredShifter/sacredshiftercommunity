@@ -46,8 +46,8 @@ export const StartDirectMessageModal: React.FC<StartDirectMessageModalProps> = (
       setLoading(true);
       let query = supabase
         .from('profiles')
-        .select('id, display_name, avatar_url, bio')
-        .neq('id', user.id)
+        .select('user_id, display_name, avatar_url')
+        .neq('user_id', user.id)
         .not('display_name', 'is', null) // Only show users with display names
         .order('display_name', { ascending: true })
         .limit(50);
@@ -62,11 +62,16 @@ export const StartDirectMessageModal: React.FC<StartDirectMessageModalProps> = (
       
       // Filter out any remaining null display names and deduplicate
       const uniqueUsers = (data || [])
-        .filter(user => user.display_name && user.display_name.trim())
+        .filter(profile => profile.display_name && profile.display_name.trim())
         .reduce((acc: UserProfile[], current) => {
-          const exists = acc.find(user => user.id === current.id);
+          const exists = acc.find(profile => profile.id === current.user_id);
           if (!exists) {
-            acc.push(current);
+            acc.push({
+              id: current.user_id,
+              display_name: current.display_name,
+              avatar_url: current.avatar_url,
+              bio: undefined
+            });
           }
           return acc;
         }, []);
@@ -181,6 +186,32 @@ export const StartDirectMessageModal: React.FC<StartDirectMessageModalProps> = (
           {/* User List */}
           <ScrollArea className="flex-1">
             <div className="p-4 space-y-2">
+              {/* Aura AI Assistant */}
+              <div
+                onClick={() => handleUserSelect('aura-ai-assistant')}
+                className="flex items-center gap-3 p-3 rounded-lg bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 hover:border-primary/40 transition-all cursor-pointer group"
+              >
+                <Avatar className="h-10 w-10">
+                  <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-primary-foreground">
+                    🌟
+                  </AvatarFallback>
+                </Avatar>
+                
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between">
+                    <p className="font-medium text-sm">
+                      Aura ✨
+                    </p>
+                    <Badge variant="secondary" className="text-xs bg-primary/20 text-primary">
+                      AI Assistant
+                    </Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Your sacred guide and AI assistant for spiritual growth
+                  </p>
+                </div>
+              </div>
+
               {loading ? (
                 <div className="text-center py-8 text-muted-foreground">
                   <div className="animate-spin h-6 w-6 border-2 border-primary border-t-transparent rounded-full mx-auto mb-2"></div>

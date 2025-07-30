@@ -14,6 +14,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { CreateCircleModal } from '@/components/CreateCircleModal';
 import { StartDirectMessageModal } from '@/components/StartDirectMessageModal';
 import { DirectMessageInterface } from '@/components/DirectMessageInterface';
+import { AuraDirectMessageInterface } from '@/components/AuraDirectMessageInterface';
 
 interface ChatBubbleProps {
   className?: string;
@@ -54,12 +55,24 @@ export const ChatBubble = ({ className }: ChatBubbleProps) => {
   };
 
   const handleUserSelect = async (userId: string) => {
+    // Handle Aura AI assistant
+    if (userId === 'aura-ai-assistant') {
+      setSelectedUserId(userId);
+      setSelectedUserProfile({
+        name: 'Aura ✨',
+        avatar: undefined
+      });
+      setActiveView('dm-chat');
+      setShowStartDM(false);
+      return;
+    }
+
     // Fetch user profile data to pass to DM interface
     try {
       const { data: profile } = await supabase
         .from('profiles')
         .select('display_name, avatar_url')
-        .eq('id', userId)
+        .eq('user_id', userId)
         .single();
 
       setSelectedUserId(userId);
@@ -68,6 +81,7 @@ export const ChatBubble = ({ className }: ChatBubbleProps) => {
         avatar: profile?.avatar_url
       });
       setActiveView('dm-chat');
+      setShowStartDM(false);
     } catch (error) {
       console.error('Error fetching user profile:', error);
     }
@@ -310,13 +324,20 @@ export const ChatBubble = ({ className }: ChatBubbleProps) => {
 
             {activeView === 'dm-chat' && selectedUserId && selectedUserProfile && (
               <div className="h-full">
-                <DirectMessageInterface
-                  recipientId={selectedUserId}
-                  recipientName={selectedUserProfile.name}
-                  recipientAvatar={selectedUserProfile.avatar}
-                  onClose={handleBackToConversations}
-                  className="h-full"
-                />
+                {selectedUserId === 'aura-ai-assistant' ? (
+                  <AuraDirectMessageInterface
+                    onClose={handleBackToConversations}
+                    className="h-full"
+                  />
+                ) : (
+                  <DirectMessageInterface
+                    recipientId={selectedUserId}
+                    recipientName={selectedUserProfile.name}
+                    recipientAvatar={selectedUserProfile.avatar}
+                    onClose={handleBackToConversations}
+                    className="h-full"
+                  />
+                )}
               </div>
             )}
           </ScrollArea>
