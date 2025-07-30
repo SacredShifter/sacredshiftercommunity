@@ -50,8 +50,8 @@ export const StartDirectMessageModal: React.FC<StartDirectMessageModalProps> = (
         .limit(50);
 
       if (searchQuery.trim()) {
-        // Search in both display_name and user_id (as fallback)
-        query = query.or(`display_name.ilike.%${searchQuery.trim()}%,user_id.ilike.%${searchQuery.trim()}%`);
+        // Search in display_name only (since UUID search is complex)
+        query = query.ilike('display_name', `%${searchQuery.trim()}%`);
       }
 
       const { data, error } = await query;
