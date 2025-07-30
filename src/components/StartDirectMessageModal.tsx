@@ -47,27 +47,25 @@ export const StartDirectMessageModal: React.FC<StartDirectMessageModalProps> = (
         .from('profiles')
         .select('user_id, display_name, avatar_url')
         .neq('user_id', user.id)
-        .not('display_name', 'is', null) // Only show users with display names
-        .order('display_name', { ascending: true })
         .limit(50);
 
       if (searchQuery.trim()) {
-        query = query.ilike('display_name', `%${searchQuery.trim()}%`);
+        // Search in both display_name and user_id (as fallback)
+        query = query.or(`display_name.ilike.%${searchQuery.trim()}%,user_id.ilike.%${searchQuery.trim()}%`);
       }
 
       const { data, error } = await query;
 
       if (error) throw error;
       
-      // Filter out any remaining null display names and deduplicate
+      // Deduplicate and create user profiles with fallback display names
       const uniqueUsers = (data || [])
-        .filter(profile => profile.display_name && profile.display_name.trim())
         .reduce((acc: UserProfile[], current) => {
           const exists = acc.find(profile => profile.id === current.user_id);
           if (!exists) {
             acc.push({
               id: current.user_id,
-              display_name: current.display_name,
+              display_name: current.display_name || `User ${current.user_id.slice(0, 8)}...`,
               avatar_url: current.avatar_url
             });
           }
