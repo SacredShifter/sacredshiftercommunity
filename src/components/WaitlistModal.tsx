@@ -59,13 +59,14 @@ export const WaitlistModal: React.FC<WaitlistModalProps> = ({ open, onOpenChange
     setIsSubmitting(true);
 
     try {
-      const { error } = await supabase.functions.invoke('submit-waitlist', {
-        body: {
+      // Use the database directly instead of edge function
+      const { error } = await supabase
+        .from('waitlist_signups')
+        .insert({
           email: email.trim(),
           name: name.trim() || null,
           interest: selectedInterests,
-        },
-      });
+        });
 
       if (error) throw error;
 
@@ -168,7 +169,7 @@ export const WaitlistModal: React.FC<WaitlistModalProps> = ({ open, onOpenChange
             </Button>
             <Button
               type="submit"
-              className="flex-1 bg-gradient-to-r from-purpose to-resonance hover:from-purpose/90 hover:to-resonance/90"
+              className="flex-1 sacred-button bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/25"
               disabled={isSubmitting}
             >
               {isSubmitting ? 'Joining...' : 'Join Waitlist'}

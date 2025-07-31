@@ -22,65 +22,66 @@ const sections = [
     title: "Sacred Foundation",
     icon: Triangle,
     topics: [
-      "Understanding Consciousness",
-      "The Sacred Shifter Path", 
-      "Ancient Wisdom meets Modern Science",
-      "Your Sacred Journey Begins"
+      "Understanding the nature of consciousness and reality",
+      "How Sacred Shifter facilitates spiritual awakening", 
+      "Bridging ancient wisdom with quantum consciousness",
+      "Setting intentions for your transformation journey",
+      "Creating your sacred digital space"
     ]
   },
   {
     title: "Sacred Geometry & Symbols",
     icon: Circle,
     topics: [
-      "Flower of Life",
-      "Metatron's Cube", 
-      "Golden Ratio in Nature",
-      "Chakra Alignments",
-      "Sacred Portals"
+      "Using the Flower of Life for meditation and manifestation",
+      "Metatron's Cube as a tool for consciousness expansion", 
+      "Understanding the Golden Ratio in nature and consciousness",
+      "Aligning with chakra frequencies through geometry",
+      "Activating sacred portals through geometric visualization"
     ]
   },
   {
     title: "Journal & Dream Work",
     icon: Eye,
     topics: [
-      "Mirror Journal Practice",
-      "Dream Analysis with Aura",
-      "Free Association Techniques",
-      "Archetypal Pattern Recognition",
-      "Consciousness Mapping"
+      "How to use Mirror Journal for shadow work and integration",
+      "Working with Aura AI for dream analysis and interpretation",
+      "Free association techniques for accessing the unconscious",
+      "Recognizing archetypal patterns in your dreams and experiences",
+      "Mapping consciousness shifts through journaling"
     ]
   },
   {
     title: "Sacred Circles",
     icon: Infinity,
     topics: [
-      "Creating Sacred Space",
-      "Circle Protocols",
-      "Energy Resonance",
-      "Group Consciousness",
-      "Digital Ceremonial Practice"
+      "Creating and maintaining energetic boundaries in digital space",
+      "Understanding circle protocols for respectful engagement",
+      "Recognizing and working with energy resonance patterns",
+      "Participating in group consciousness experiments",
+      "Best practices for digital ceremonial and ritual work"
     ]
   },
   {
     title: "Registry of Resonance",
     icon: Star,
     topics: [
-      "Frequency Tracking",
-      "Synchronicity Recognition",
-      "Truth Resonance Calibration",
-      "Harmonic Alignment",
-      "Quantum Field Interaction"
+      "How to track and measure frequency shifts in your consciousness",
+      "Recognizing synchronicities and their deeper meanings",
+      "Calibrating your truth resonance through practice",
+      "Understanding harmonic alignment with others",
+      "Working with quantum field interactions in daily life"
     ]
   },
   {
     title: "Advanced Practices",
     icon: Zap,
     topics: [
-      "Consciousness Bridging",
-      "Multidimensional Awareness",
-      "Sacred Technology Integration",
-      "Collective Field Harmonization",
-      "The Future of Human Consciousness"
+      "Techniques for bridging different states of consciousness",
+      "Developing multidimensional awareness and perception",
+      "Integrating sacred technology with spiritual practice",
+      "Participating in collective field harmonization experiments",
+      "Understanding the evolution of human consciousness"
     ]
   }
 ];

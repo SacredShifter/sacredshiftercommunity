@@ -6056,6 +6056,7 @@ export type Database = {
           access_level: string
           author_bio: string | null
           author_name: string | null
+          bio: string | null
           content: string
           content_type: string | null
           created_at: string
@@ -6084,6 +6085,7 @@ export type Database = {
           access_level?: string
           author_bio?: string | null
           author_name?: string | null
+          bio?: string | null
           content: string
           content_type?: string | null
           created_at?: string
@@ -6112,6 +6114,7 @@ export type Database = {
           access_level?: string
           author_bio?: string | null
           author_name?: string | null
+          bio?: string | null
           content?: string
           content_type?: string | null
           created_at?: string

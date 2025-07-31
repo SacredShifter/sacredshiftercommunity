@@ -115,8 +115,7 @@ const Support: React.FC = () => {
             <div className="text-center">
               <Button
                 onClick={() => setContactOpen(true)}
-                variant="outline"
-                className="border-purpose/30 hover:border-purpose text-purpose hover:bg-purpose/10"
+                className="sacred-button bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/25"
               >
                 Contact Us
               </Button>

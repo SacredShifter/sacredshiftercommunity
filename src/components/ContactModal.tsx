@@ -46,14 +46,15 @@ export const ContactModal: React.FC<ContactModalProps> = ({ open, onOpenChange }
     setIsSubmitting(true);
 
     try {
-      const { error } = await supabase.functions.invoke('submit-contact', {
-        body: {
+      // Use the database directly instead of edge function
+      const { error } = await supabase
+        .from('contact_submissions')
+        .insert({
           email: email.trim(),
           name: name.trim() || null,
           reason,
           message: message.trim() || null,
-        },
-      });
+        });
 
       if (error) throw error;
 
