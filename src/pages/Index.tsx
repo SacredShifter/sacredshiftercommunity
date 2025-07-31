@@ -17,10 +17,18 @@ const Index = () => {
   const { startTour, isTourCompleted } = useTourContext();
   const [showWelcome, setShowWelcome] = useState(false);
   const [isFirstVisit, setIsFirstVisit] = useState(false);
+  const [welcomeDismissed, setWelcomeDismissed] = useState(false);
 
   useEffect(() => {
     const checkFirstVisit = async () => {
       if (!user) return;
+      
+      // Check if welcome has been permanently dismissed
+      const dismissed = localStorage.getItem(`welcome-dismissed-${user.id}`);
+      if (dismissed) {
+        setWelcomeDismissed(true);
+        return;
+      }
       
       try {
         const { data: profile } = await supabase
@@ -43,14 +51,22 @@ const Index = () => {
 
   // Auto-start tour for first-time users
   useEffect(() => {
-    if (user && !isTourCompleted('landing-page-tour') && !showWelcome) {
+    if (user && !isTourCompleted('landing-page-tour') && !showWelcome && !welcomeDismissed) {
       // Small delay to ensure elements are rendered
       const timer = setTimeout(() => {
         startTour(LANDING_PAGE_TOUR);
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [user, showWelcome, isTourCompleted, startTour]);
+  }, [user, showWelcome, welcomeDismissed, isTourCompleted, startTour]);
+
+  const handleWelcomeDismiss = () => {
+    if (user) {
+      localStorage.setItem(`welcome-dismissed-${user.id}`, 'true');
+      setWelcomeDismissed(true);
+    }
+    setShowWelcome(false);
+  };
 
   const sacredSections = [
     {
@@ -59,7 +75,9 @@ const Index = () => {
       icon: Rss,
       path: "/feed",
       gradient: "from-violet-500/20 to-purple-500/20",
-      glowColor: "violet"
+      glowColor: "violet",
+      cta: "Feed the Flame Within",
+      pulseColor: "269 69% 58%" // electric violet
     },
     {
       title: "Sacred Circles",
@@ -67,7 +85,9 @@ const Index = () => {
       icon: Users,
       path: "/circles",
       gradient: "from-blue-500/20 to-cyan-500/20",
-      glowColor: "blue"
+      glowColor: "blue",
+      cta: "Step Into the Shared Field",
+      pulseColor: "196 83% 60%" // alignment aqua
     },
     {
       title: "Mirror Journal",
@@ -75,7 +95,9 @@ const Index = () => {
       icon: BookOpen,
       path: "/journal",
       gradient: "from-emerald-500/20 to-green-500/20",
-      glowColor: "emerald"
+      glowColor: "emerald",
+      cta: "Witness Your Soul Unfold",
+      pulseColor: "143 25% 86%" // truth light
     },
     {
       title: "Resonance Register",
@@ -83,7 +105,9 @@ const Index = () => {
       icon: Database,
       path: "/registry",
       gradient: "from-amber-500/20 to-orange-500/20",
-      glowColor: "amber"
+      glowColor: "amber",
+      cta: "Anchor the Synchronicities",
+      pulseColor: "60 100% 50%" // pulse yellow
     },
     {
       title: "Personal Codex",
@@ -91,7 +115,9 @@ const Index = () => {
       icon: Archive,
       path: "/codex",
       gradient: "from-pink-500/20 to-rose-500/20",
-      glowColor: "pink"
+      glowColor: "pink",
+      cta: "Chronicle Your Sacred Knowing",
+      pulseColor: "324 78% 54%" // purpose magenta
     },
     {
       title: "YouTube Library",
@@ -99,7 +125,9 @@ const Index = () => {
       icon: Video,
       path: "/videos",
       gradient: "from-red-500/20 to-orange-500/20",
-      glowColor: "red"
+      glowColor: "red",
+      cta: "Receive Vision Through Sound & Story",
+      pulseColor: "14 100% 57%" // warm orange
     },
     {
       title: "Sacred Shifter Guidebook",
@@ -107,7 +135,9 @@ const Index = () => {
       icon: Scroll,
       path: "/guidebook",
       gradient: "from-indigo-500/20 to-blue-500/20",
-      glowColor: "indigo"
+      glowColor: "indigo",
+      cta: "Walk the Path of Living Wisdom",
+      pulseColor: "257 65% 70%" // deep indigo light
     },
     {
       title: "Support Sacred Shifter",
@@ -115,7 +145,9 @@ const Index = () => {
       icon: Heart,
       path: "/support",
       gradient: "from-rose-500/20 to-pink-500/20",
-      glowColor: "rose"
+      glowColor: "rose",
+      cta: "Fuel the Frequency of Truth",
+      pulseColor: "350 100% 60%" // rose pulse
     }
   ];
 
@@ -124,7 +156,7 @@ const Index = () => {
   };
 
   const WelcomeModal = () => (
-    showWelcome && (
+    showWelcome && !welcomeDismissed && (
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
         <Card className="w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-background/95 backdrop-blur-lg border-primary/30 shadow-2xl shadow-primary/20">
           <CardHeader className="text-center space-y-4">
@@ -167,13 +199,20 @@ const Index = () => {
               <p className="text-center text-sm italic">Kent - Founder, Sacred Shifter</p>
             </div>
             
-            <div className="flex justify-center pt-4">
+            <div className="flex justify-center gap-4 pt-4">
               <Button 
-                onClick={() => setShowWelcome(false)}
+                onClick={handleWelcomeDismiss}
                 className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
               >
                 <Crown className="h-4 w-4 mr-2" />
-                Begin Your Journey
+                Begin Your Journey (Don't show again)
+              </Button>
+              <Button 
+                onClick={() => setShowWelcome(false)}
+                variant="outline"
+                className="border-primary/20 hover:border-primary/50"
+              >
+                Continue for now
               </Button>
             </div>
           </CardContent>
@@ -246,8 +285,14 @@ const Index = () => {
                   </p>
                   
                   <div className="mt-4 pt-4 border-t border-primary/10">
-                    <span className="text-xs text-primary/80 group-hover:text-primary transition-colors duration-300">
-                      Enter Sacred Space →
+                    <span 
+                      className="text-xs text-primary/80 group-hover:text-primary transition-colors duration-300 sacred-cta-pulse text-center block"
+                      style={{ 
+                        '--pulse-color': section.pulseColor,
+                        textShadow: `0 0 8px hsl(${section.pulseColor} / 0.3)`
+                      } as React.CSSProperties & { '--pulse-color': string }}
+                    >
+                      → {section.cta}
                     </span>
                   </div>
                 </CardContent>
