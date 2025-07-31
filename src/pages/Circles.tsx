@@ -274,7 +274,7 @@ const Circles = () => {
                     <DialogContent 
                       className={
                         isCircleMaximized 
-                          ? "fixed top-0 right-0 bottom-0 left-64 z-40 max-w-none max-h-none w-auto h-screen rounded-none border-none m-0 p-0" 
+                          ? "fixed inset-0 z-50 max-w-none max-h-none w-full h-full rounded-none border-none m-0 p-0" 
                           : "max-w-4xl max-h-[90vh] overflow-hidden"
                       }
                       onOpenAutoFocus={() => {
