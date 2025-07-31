@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Send, Users, Settings, UserPlus, Hash, ArrowLeft, Crown, Shield, BookOpen } from 'lucide-react';
+import { Send, Users, Settings, UserPlus, Hash, ArrowLeft, Crown, Shield, BookOpen, Maximize2, Minimize2, Minus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -20,13 +20,23 @@ interface SacredCircleInterfaceProps {
   circleName?: string;
   onClose?: () => void;
   className?: string;
+  isMaximized?: boolean;
+  isMinimized?: boolean;
+  onMaximize?: () => void;
+  onMinimize?: () => void;
+  onRestore?: () => void;
 }
 
 export const SacredCircleInterface = ({
   circleId,
   circleName = 'Sacred Circle',
   onClose,
-  className
+  className,
+  isMaximized = false,
+  isMinimized = false,
+  onMaximize,
+  onMinimize,
+  onRestore
 }: SacredCircleInterfaceProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -155,7 +165,13 @@ export const SacredCircleInterface = ({
   ];
 
   return (
-    <Card className={cn("flex flex-col h-full bg-background/95 backdrop-blur-sm", className)}>
+    <Card className={cn(
+      "flex flex-col bg-background/95 backdrop-blur-sm transition-all duration-300",
+      isMaximized && "fixed inset-0 z-50 rounded-none animate-scale-in",
+      isMinimized && "h-12 overflow-hidden",
+      !isMaximized && !isMinimized && "h-full",
+      className
+    )}>
       {/* Header */}
       <div className="flex items-center gap-3 p-4 border-b bg-gradient-to-r from-purple-500/10 to-pink-500/10">
         {onClose && (
@@ -197,11 +213,33 @@ export const SacredCircleInterface = ({
           >
             <Settings className="h-4 w-4" />
           </Button>
+          
+          {/* Window Controls */}
+          <div className="flex items-center gap-0.5 ml-1">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-7 w-7 p-0 hover:bg-yellow-500/20"
+              onClick={onMinimize}
+              title="Minimize"
+            >
+              <Minus className="h-3 w-3" />
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-7 w-7 p-0 hover:bg-green-500/20"
+              onClick={isMaximized ? onRestore : onMaximize}
+              title={isMaximized ? "Restore" : "Maximize"}
+            >
+              {isMaximized ? <Minimize2 className="h-3 w-3" /> : <Maximize2 className="h-3 w-3" />}
+            </Button>
+          </div>
         </div>
       </div>
 
       {/* Content Area */}
-      <div className="flex-1 flex">
+      <div className={cn("flex-1 flex", isMinimized && "hidden")}>
         {/* Main Content */}
         <div className="flex-1 flex flex-col">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
