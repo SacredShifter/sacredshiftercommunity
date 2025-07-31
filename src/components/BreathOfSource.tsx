@@ -321,7 +321,7 @@ const BreathOfSource: React.FC = () => {
               xmlns="http://www.w3.org/2000/svg"
             >
               {/* Flower of Life Pattern */}
-              <g className="opacity-80">
+              <g className="opacity-90">
                 {/* Central circle */}
                 <motion.circle
                   cx="50" cy="50" r="20"
@@ -330,8 +330,8 @@ const BreathOfSource: React.FC = () => {
                   strokeWidth="2"
                   animate={isActive ? { 
                     scale: [1, 1.1, 1],
-                    opacity: [0.8, 1, 0.8]
-                  } : { scale: 1, opacity: 0.8 }}
+                    opacity: [0.9, 1, 0.9]
+                  } : { scale: 1, opacity: 0.9 }}
                   transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                 />
                 
@@ -347,8 +347,8 @@ const BreathOfSource: React.FC = () => {
                     strokeWidth="1.5"
                     animate={isActive ? {
                       scale: [1, 1.05, 1],
-                      opacity: [0.6, 0.9, 0.6]
-                    } : { scale: 1, opacity: 0.6 }}
+                      opacity: [0.8, 1, 0.8]
+                    } : { scale: 1, opacity: 0.8 }}
                     transition={{ 
                       duration: 4, 
                       repeat: Infinity, 
@@ -365,13 +365,13 @@ const BreathOfSource: React.FC = () => {
                     cx="50" cy="50"
                     r={25 + ring * 12}
                     fill="none"
-                    stroke="hsl(var(--truth))"
-                    strokeWidth="0.8"
+                    stroke="hsl(var(--pulse))"
+                    strokeWidth="1.2"
                     strokeDasharray="3,6"
                     animate={isActive ? {
                       r: [25 + ring * 12, 35 + ring * 12, 25 + ring * 12],
-                      opacity: [0.3, 0.6, 0.3]
-                    } : { opacity: 0.2 }}
+                      opacity: [0.6, 1, 0.6]
+                    } : { opacity: 0.5 }}
                     transition={{
                       duration: 3,
                       repeat: Infinity,
