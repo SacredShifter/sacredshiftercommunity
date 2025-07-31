@@ -12,6 +12,7 @@ import {
 import { RegistryEntry, useRegistryOfResonance } from '@/hooks/useRegistryOfResonance';
 import { AdminVerificationPanel } from './AdminVerificationPanel';
 import { RegistryComments } from './RegistryComments';
+import { ShareToCircleModal } from './ShareToCircleModal';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
@@ -29,6 +30,7 @@ export function EntryModal({ entry, open, onClose, onEdit, onVerificationChange 
   const { user } = useAuth();
   const { deleteEntry, togglePin, incrementEngagement, deleteImage } = useRegistryOfResonance();
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
 
   // Track view when modal opens
   React.useEffect(() => {
@@ -177,7 +179,7 @@ export function EntryModal({ entry, open, onClose, onEdit, onVerificationChange 
               </div>
 
               {/* Action Buttons */}
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
                 <Button
                   variant="outline"
                   size="sm"
@@ -186,6 +188,16 @@ export function EntryModal({ entry, open, onClose, onEdit, onVerificationChange 
                 >
                   <Share2 className="w-4 h-4" />
                   Share
+                </Button>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowShareModal(true)}
+                  className="gap-2"
+                >
+                  <Users className="w-4 h-4" />
+                  Share to Circle
                 </Button>
                 
                 {isOwner && (
@@ -238,6 +250,12 @@ export function EntryModal({ entry, open, onClose, onEdit, onVerificationChange 
           {/* Content */}
           <ScrollArea className="flex-1 p-6">
             <div className="space-y-6">
+              {/* Admin Verification Panel */}
+              <AdminVerificationPanel 
+                entry={entry} 
+                onVerificationChange={onVerificationChange}
+              />
+
               {/* Image */}
               {entry.image_url && (
                 <motion.div
@@ -356,16 +374,21 @@ export function EntryModal({ entry, open, onClose, onEdit, onVerificationChange 
                 <div>Created: {new Date(entry.created_at).toLocaleString()}</div>
                 <div>Updated: {new Date(entry.updated_at).toLocaleString()}</div>
               </div>
+
+              {/* Comments Section */}
+              <Separator />
+              <RegistryComments entryId={entry.id} />
             </div>
           </ScrollArea>
-          </div>
+        </div>
 
-          {/* Admin Verification Panel */}
-          <AdminVerificationPanel 
-            entry={entry} 
-            onVerificationChange={onVerificationChange}
-          />
-        </DialogContent>
-      </Dialog>
-    );
+        {/* Share to Circle Modal */}
+        <ShareToCircleModal
+          entry={entry}
+          open={showShareModal}
+          onClose={() => setShowShareModal(false)}
+        />
+      </DialogContent>
+    </Dialog>
+  );
   }
