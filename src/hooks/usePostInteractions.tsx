@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 import { useToast } from './use-toast';
+import { logger } from '@/lib/logger';
 
 export const usePostInteractions = () => {
   const { user } = useAuth();
@@ -57,7 +58,14 @@ export const usePostInteractions = () => {
         return { action: 'liked' };
       }
     } catch (error: any) {
-      console.error('Error toggling like:', error);
+      logger.error('Failed to toggle like', {
+        component: 'usePostInteractions',
+        function: 'toggleLike',
+        userId: user?.id,
+        postId,
+        errorCode: 'LIKE_ERROR'
+      }, error);
+      
       toast({
         title: "Error",
         description: "Failed to update resonance",
@@ -103,7 +111,14 @@ export const usePostInteractions = () => {
 
       return data;
     } catch (error: any) {
-      console.error('Error adding comment:', error);
+      logger.error('Failed to add comment', {
+        component: 'usePostInteractions', 
+        function: 'addComment',
+        userId: user?.id,
+        postId,
+        errorCode: 'COMMENT_ERROR'
+      }, error);
+      
       toast({
         title: "Error",
         description: "Failed to add reflection",
@@ -124,7 +139,12 @@ export const usePostInteractions = () => {
         description: "Sacred post link copied to clipboard",
       });
     } catch (error) {
-      console.error('Error copying to clipboard:', error);
+      logger.warn('Clipboard copy failed, showing fallback', {
+        component: 'usePostInteractions',
+        function: 'sharePost',
+        postId
+      }, error as Error);
+      
       toast({
         title: "Share",
         description: "Copy this link to share: " + shareUrl,
@@ -160,7 +180,13 @@ export const usePostInteractions = () => {
         userHasLiked
       };
     } catch (error) {
-      console.error('Error fetching post stats:', error);
+      logger.error('Failed to fetch post stats', {
+        component: 'usePostInteractions',
+        function: 'getPostStats', 
+        postId,
+        errorCode: 'STATS_ERROR'
+      }, error as Error);
+      
       return {
         likeCount: 0,
         commentCount: 0,

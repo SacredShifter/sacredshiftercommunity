@@ -5,6 +5,7 @@ import { usePostInteractions } from '@/hooks/usePostInteractions';
 import { cn } from '@/lib/utils';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { CommentSection } from './CommentSection';
+import { logger } from '@/lib/logger';
 
 interface PostInteractionButtonsProps {
   postId: string;
@@ -138,19 +139,19 @@ export const PostInteractionButtons = ({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-48">
-            <DropdownMenuItem onClick={() => console.log('Save post')}>
+            <DropdownMenuItem onClick={() => logger.userAction('save-post', { component: 'PostInteractionButtons', postId })}>
               Save Post
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => console.log('Copy link')}>
+            <DropdownMenuItem onClick={() => logger.userAction('copy-link', { component: 'PostInteractionButtons', postId })}>
               Copy Link
             </DropdownMenuItem>
             {currentUserId === postUserId && (
               <>
-                <DropdownMenuItem onClick={() => console.log('Edit post')}>
+                <DropdownMenuItem onClick={() => logger.userAction('edit-post', { component: 'PostInteractionButtons', postId })}>
                   Edit Post
                 </DropdownMenuItem>
                 <DropdownMenuItem 
-                  onClick={() => console.log('Delete post')}
+                  onClick={() => logger.userAction('delete-post', { component: 'PostInteractionButtons', postId })}
                   className="text-destructive focus:text-destructive"
                 >
                   Delete Post
@@ -159,10 +160,10 @@ export const PostInteractionButtons = ({
             )}
             {currentUserId !== postUserId && (
               <>
-                <DropdownMenuItem onClick={() => console.log('Report post')}>
+                <DropdownMenuItem onClick={() => logger.userAction('report-post', { component: 'PostInteractionButtons', postId })}>
                   Report Post
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => console.log('Block user')}>
+                <DropdownMenuItem onClick={() => logger.userAction('block-user', { component: 'PostInteractionButtons', postId })}>
                   Block User
                 </DropdownMenuItem>
               </>
