@@ -254,46 +254,173 @@ const Index = () => {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8"
             data-tour="frequency-tiles"
           >
-            {sacredSections.map((section, index) => (
-              <Card 
-                key={section.path}
-                onClick={() => navigate(section.path)}
-                className={`group relative overflow-hidden bg-gradient-to-br ${section.gradient} 
-                          backdrop-blur-sm border-primary/20 hover:border-primary/40 
-                          transition-all duration-300 hover:scale-105 hover:shadow-2xl 
-                          hover:shadow-${section.glowColor}-500/20 cursor-pointer
-                          animate-fade-in`}
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-background/60 to-background/40 backdrop-blur-sm" />
-                
-                <CardContent className="relative p-6 h-full flex flex-col">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className={`p-3 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 
-                                   group-hover:from-primary/30 group-hover:to-primary/20 
-                                   transition-all duration-300`}>
-                      <section.icon className="h-6 w-6 text-primary group-hover:scale-110 transition-transform duration-300" />
+            {sacredSections.map((section, index) => {
+              // Generate unique geometric pattern for each module
+              const getGeometricPattern = (sectionIndex: number) => {
+                const patterns = {
+                  0: ( // Sacred Feed - Flowing stream pattern
+                    <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
+                      <defs>
+                        <pattern id="feed-pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+                          <rect x="0" y="0" width="8" height="4" fill="currentColor" />
+                          <rect x="10" y="6" width="8" height="4" fill="currentColor" />
+                          <rect x="2" y="12" width="8" height="4" fill="currentColor" />
+                          <rect x="12" y="18" width="6" height="2" fill="currentColor" />
+                        </pattern>
+                      </defs>
+                      <rect width="100" height="100" fill="url(#feed-pattern)" />
+                    </svg>
+                  ),
+                  1: ( // Sacred Circles - Circular connected pattern
+                    <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
+                      <defs>
+                        <pattern id="circles-pattern" x="0" y="0" width="25" height="25" patternUnits="userSpaceOnUse">
+                          <circle cx="5" cy="5" r="3" fill="currentColor" />
+                          <circle cx="15" cy="5" r="3" fill="currentColor" />
+                          <circle cx="5" cy="15" r="3" fill="currentColor" />
+                          <circle cx="15" cy="15" r="3" fill="currentColor" />
+                          <rect x="8" y="0" width="2" height="25" fill="currentColor" />
+                          <rect x="0" y="8" width="25" height="2" fill="currentColor" />
+                        </pattern>
+                      </defs>
+                      <rect width="100" height="100" fill="url(#circles-pattern)" />
+                    </svg>
+                  ),
+                  2: ( // Mirror Journal - Reflective chevron pattern
+                    <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
+                      <defs>
+                        <pattern id="journal-pattern" x="0" y="0" width="16" height="16" patternUnits="userSpaceOnUse">
+                          <polygon points="0,0 8,8 0,16" fill="currentColor" />
+                          <polygon points="16,0 8,8 16,16" fill="currentColor" />
+                        </pattern>
+                      </defs>
+                      <rect width="100" height="100" fill="url(#journal-pattern)" />
+                    </svg>
+                  ),
+                  3: ( // Resonance Register - Synchronized grid pattern
+                    <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
+                      <defs>
+                        <pattern id="register-pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+                          <rect x="0" y="0" width="6" height="6" fill="currentColor" />
+                          <rect x="8" y="0" width="6" height="6" fill="currentColor" />
+                          <rect x="16" y="0" width="4" height="6" fill="currentColor" />
+                          <rect x="0" y="8" width="6" height="6" fill="currentColor" />
+                          <rect x="8" y="8" width="6" height="6" fill="currentColor" />
+                          <rect x="16" y="8" width="4" height="6" fill="currentColor" />
+                          <rect x="0" y="16" width="6" height="4" fill="currentColor" />
+                          <rect x="8" y="16" width="6" height="4" fill="currentColor" />
+                          <rect x="16" y="16" width="4" height="4" fill="currentColor" />
+                        </pattern>
+                      </defs>
+                      <rect width="100" height="100" fill="url(#register-pattern)" />
+                    </svg>
+                  ),
+                  4: ( // Personal Codex - Ancient manuscript pattern
+                    <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
+                      <defs>
+                        <pattern id="codex-pattern" x="0" y="0" width="24" height="12" patternUnits="userSpaceOnUse">
+                          <rect x="0" y="0" width="10" height="4" fill="currentColor" />
+                          <rect x="12" y="0" width="10" height="4" fill="currentColor" />
+                          <rect x="2" y="6" width="8" height="4" fill="currentColor" />
+                          <rect x="14" y="6" width="8" height="4" fill="currentColor" />
+                        </pattern>
+                      </defs>
+                      <rect width="100" height="100" fill="url(#codex-pattern)" />
+                    </svg>
+                  ),
+                  5: ( // YouTube Library - Video tile mosaic
+                    <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
+                      <defs>
+                        <pattern id="video-pattern" x="0" y="0" width="18" height="18" patternUnits="userSpaceOnUse">
+                          <rect x="0" y="0" width="8" height="8" fill="currentColor" />
+                          <rect x="10" y="0" width="8" height="4" fill="currentColor" />
+                          <rect x="10" y="6" width="8" height="4" fill="currentColor" />
+                          <rect x="0" y="10" width="4" height="8" fill="currentColor" />
+                          <rect x="6" y="10" width="4" height="8" fill="currentColor" />
+                          <rect x="12" y="12" width="6" height="6" fill="currentColor" />
+                        </pattern>
+                      </defs>
+                      <rect width="100" height="100" fill="url(#video-pattern)" />
+                    </svg>
+                  ),
+                  6: ( // Sacred Guidebook - Ancient scroll pattern
+                    <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
+                      <defs>
+                        <pattern id="guidebook-pattern" x="0" y="0" width="22" height="22" patternUnits="userSpaceOnUse">
+                          <rect x="0" y="0" width="20" height="3" fill="currentColor" />
+                          <rect x="0" y="5" width="15" height="3" fill="currentColor" />
+                          <rect x="0" y="10" width="18" height="3" fill="currentColor" />
+                          <rect x="0" y="15" width="12" height="3" fill="currentColor" />
+                          <rect x="0" y="20" width="16" height="2" fill="currentColor" />
+                        </pattern>
+                      </defs>
+                      <rect width="100" height="100" fill="url(#guidebook-pattern)" />
+                    </svg>
+                  ),
+                  7: ( // Support - Heart frequency pattern
+                    <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
+                      <defs>
+                        <pattern id="support-pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+                          <rect x="0" y="4" width="4" height="4" fill="currentColor" />
+                          <rect x="6" y="2" width="4" height="8" fill="currentColor" />
+                          <rect x="12" y="0" width="4" height="12" fill="currentColor" />
+                          <rect x="18" y="6" width="2" height="6" fill="currentColor" />
+                          <rect x="0" y="16" width="20" height="2" fill="currentColor" />
+                        </pattern>
+                      </defs>
+                      <rect width="100" height="100" fill="url(#support-pattern)" />
+                    </svg>
+                  )
+                };
+                return patterns[sectionIndex] || patterns[0];
+              };
+
+              return (
+                <Card 
+                  key={section.path}
+                  onClick={() => navigate(section.path)}
+                  className={`group relative overflow-hidden bg-gradient-to-br ${section.gradient} 
+                            backdrop-blur-sm border-primary/20 hover:border-primary/40 
+                            transition-all duration-300 hover:scale-105 hover:shadow-2xl 
+                            hover:shadow-${section.glowColor}-500/20 cursor-pointer
+                            animate-fade-in`}
+                  style={{ animationDelay: `${index * 100}ms` }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-background/60 to-background/40 backdrop-blur-sm" />
+                  
+                  {/* Geometric Pattern */}
+                  <div className="absolute inset-0 text-primary/40 group-hover:text-primary/60 transition-colors duration-300">
+                    {getGeometricPattern(index)}
+                  </div>
+                  
+                  <CardContent className="relative p-6 h-full flex flex-col z-10">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className={`p-3 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 
+                                     group-hover:from-primary/30 group-hover:to-primary/20 
+                                     transition-all duration-300`}>
+                        <section.icon className="h-6 w-6 text-primary group-hover:scale-110 transition-transform duration-300" />
+                      </div>
+                      <Zap className="h-4 w-4 text-primary/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     </div>
-                    <Zap className="h-4 w-4 text-primary/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  </div>
-                  
-                  <h3 className="text-lg font-semibold mb-2 group-hover:text-primary transition-colors duration-300">
-                    {section.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed flex-grow">
-                    {section.description}
-                  </p>
-                  
-                  <div className="mt-4 pt-4 border-t border-primary/10">
-                    <span 
-                      className="text-xs group-hover:text-primary transition-colors duration-300 resonance-flow text-center block font-medium"
-                    >
-                      → {section.cta}
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                    
+                    <h3 className="text-lg font-semibold mb-2 group-hover:text-primary transition-colors duration-300">
+                      {section.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed flex-grow">
+                      {section.description}
+                    </p>
+                    
+                    <div className="mt-4 pt-4 border-t border-primary/10">
+                      <span 
+                        className="text-xs group-hover:text-primary transition-colors duration-300 resonance-flow text-center block font-medium"
+                      >
+                        → {section.cta}
+                      </span>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
 
           {/* Quick Actions */}
