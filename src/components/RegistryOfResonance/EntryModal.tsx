@@ -116,6 +116,12 @@ export function EntryModal({ entry, open, onClose, onEdit, onVerificationChange 
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl h-[90vh] p-0 overflow-hidden flex flex-col">
         <div className="relative flex flex-col h-full">
+          {/* Admin Verification Panel - Always at top */}
+          <AdminVerificationPanel 
+            entry={entry} 
+            onVerificationChange={onVerificationChange}
+          />
+          
           {/* Header with gradient background */}
           <div className="relative bg-gradient-to-r from-primary/10 via-purple-500/10 to-blue-500/10 p-6 border-b flex-shrink-0">
             {entry.is_verified && (
@@ -250,12 +256,6 @@ export function EntryModal({ entry, open, onClose, onEdit, onVerificationChange 
           {/* Content */}
           <ScrollArea className="flex-1 p-6">
             <div className="space-y-6">
-              {/* Admin Verification Panel */}
-              <AdminVerificationPanel 
-                entry={entry} 
-                onVerificationChange={onVerificationChange}
-              />
-
               {/* Image */}
               {entry.image_url && (
                 <motion.div

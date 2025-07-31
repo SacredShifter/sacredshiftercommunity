@@ -16,8 +16,13 @@ export function AdminVerificationPanel({ entry, onVerificationChange }: AdminVer
   const { updateEntry } = useRegistryOfResonance();
   const { userRole } = useAuth();
 
+  console.log('AdminVerificationPanel - userRole:', userRole, 'entry:', entry?.id);
+
   // Only show for admins
-  if (userRole !== 'admin') return null;
+  if (userRole !== 'admin') {
+    console.log('AdminVerificationPanel - Not admin, userRole:', userRole);
+    return null;
+  }
 
   const handleVerify = async () => {
     try {
