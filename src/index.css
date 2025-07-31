@@ -225,58 +225,62 @@ All colors MUST be HSL.
   }
 
   .resonance-flow {
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      transparent 30%,
-      hsl(var(--pulse-color, var(--primary)) / 0.9) 50%,
-      transparent 70%,
-      transparent 100%
-    );
-    background-size: 300% 100%;
-    background-clip: text;
-    -webkit-background-clip: text;
-    color: transparent;
-    animation: resonance-flow-sweep 6s ease-in-out infinite;
     position: relative;
+    color: hsl(143 25% 86%); /* truth white */
+    background: transparent;
+    overflow: hidden;
   }
 
   .resonance-flow::before {
-    content: attr(data-text);
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      hsla(143, 25%, 86%, 0.8) 50%,
+      transparent 100%
+    );
+    animation: resonance-flow-sweep 4s ease-in-out infinite;
+    border-radius: 4px;
+    z-index: -1;
+  }
+
+  .resonance-flow::after {
+    content: '';
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     background: transparent;
-    color: hsl(var(--pulse-color, var(--primary)) / 0.7);
-    z-index: -1;
-  }
-
-  .resonance-flow:hover {
-    animation-duration: 3s;
+    z-index: 1;
+    pointer-events: none;
   }
 
   .resonance-flow:hover::before {
-    color: hsl(var(--pulse-color, var(--primary)) / 0.9);
-    text-shadow: 0 0 12px hsl(var(--pulse-color, var(--primary)) / 0.6);
+    animation-duration: 2s;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      hsla(143, 25%, 86%, 1) 50%,
+      transparent 100%
+    );
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .resonance-flow {
-      animation: none;
-      background: transparent;
-      color: hsl(var(--pulse-color, var(--primary)) / 0.8);
-      text-shadow: 0 0 8px hsl(var(--pulse-color, var(--primary)) / 0.4);
-    }
-    
     .resonance-flow::before {
-      display: none;
+      animation: none;
+      background: hsla(143, 25%, 86%, 0.3);
+      left: 0;
     }
     
     .sacred-cta-pulse {
       animation: none;
-      text-shadow: 0 0 6px hsl(var(--pulse-color, var(--primary)) / 0.4) !important;
+      text-shadow: 0 0 6px hsla(143, 25%, 86%, 0.4) !important;
     }
   }
 }
@@ -306,14 +310,19 @@ All colors MUST be HSL.
 }
 
 @keyframes resonance-flow-sweep {
-  0%, 15% {
-    background-position: -300% 0;
+  0% {
+    left: -100%;
+    opacity: 0;
   }
-  50% {
-    background-position: 0% 0;
+  10% {
+    opacity: 0.8;
   }
-  85%, 100% {
-    background-position: 300% 0;
+  90% {
+    opacity: 0.8;
+  }
+  100% {
+    left: 100%;
+    opacity: 0;
   }
 }
 
