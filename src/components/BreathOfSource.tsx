@@ -316,7 +316,7 @@ const BreathOfSource: React.FC = () => {
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              className="relative z-10 w-8 h-8"
+              className="relative z-10 w-12 h-12"
             >
               <svg 
                 viewBox="0 0 100 100" 
