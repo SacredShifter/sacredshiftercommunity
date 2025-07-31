@@ -305,13 +305,13 @@ const BreathOfSource: React.FC = () => {
         >
           <Button
             onClick={() => setIsOpen(true)}
-            className="relative h-14 w-14 rounded-full bg-gradient-to-r from-purple-500/20 to-blue-500/20 backdrop-blur-md border border-purple-300/30 hover:border-purple-300/50 transition-all duration-300 group shadow-xl"
+            className="relative h-14 w-14 rounded-full bg-background/20 backdrop-blur-md border border-primary/30 hover:border-primary/50 transition-all duration-300 group shadow-[0_0_20px_hsl(var(--primary)/0.4)] hover:shadow-[0_0_30px_hsl(var(--primary)/0.6)]"
             size="icon"
           >
             <motion.div
               animate={isActive ? { scale: [1, 1.2, 1], opacity: [0.7, 1, 0.7] } : { scale: 1, opacity: 0.8 }}
               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-400/30 to-blue-400/30 blur-sm"
+              className="absolute inset-0 rounded-full bg-primary/20 blur-sm"
             />
             <motion.div
               animate={{ rotate: 360 }}
@@ -320,7 +320,7 @@ const BreathOfSource: React.FC = () => {
             >
               🌬️
             </motion.div>
-            <div className="absolute -inset-1 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-full blur opacity-30 group-hover:opacity-50 transition-opacity" />
+            <div className="absolute -inset-1 bg-primary/10 rounded-full blur opacity-30 group-hover:opacity-50 transition-opacity" />
           </Button>
         </motion.div>
       )}
