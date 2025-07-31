@@ -12,6 +12,8 @@ import { useSacredCircles } from '@/hooks/useSacredCircles';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { CircleSettingsModal } from '@/components/CircleSettingsModal';
+import { AddMemberModal } from '@/components/AddMemberModal';
 
 interface SacredCircleInterfaceProps {
   circleId?: string;
@@ -32,6 +34,8 @@ export const SacredCircleInterface = ({
   const [activeTab, setActiveTab] = useState('messages');
   const [sharedEntries, setSharedEntries] = useState<any[]>([]);
   const [loadingShares, setLoadingShares] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [showAddMember, setShowAddMember] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -40,7 +44,8 @@ export const SacredCircleInterface = ({
     messages,
     loading,
     sendMessage,
-    fetchRecentMessages
+    fetchRecentMessages,
+    fetchCircles
   } = useSacredCircles();
 
   // Auto-scroll to bottom when new messages arrive
@@ -180,7 +185,7 @@ export const SacredCircleInterface = ({
             variant="ghost" 
             size="sm" 
             className="h-8 w-8 p-0"
-            onClick={() => toast({ title: "Coming Soon", description: "Invite functionality will be available soon." })}
+            onClick={() => setShowAddMember(true)}
           >
             <UserPlus className="h-4 w-4" />
           </Button>
@@ -188,7 +193,7 @@ export const SacredCircleInterface = ({
             variant="ghost" 
             size="sm" 
             className="h-8 w-8 p-0"
-            onClick={() => toast({ title: "Coming Soon", description: "Circle settings will be available soon." })}
+            onClick={() => setShowSettings(true)}
           >
             <Settings className="h-4 w-4" />
           </Button>
@@ -382,62 +387,109 @@ export const SacredCircleInterface = ({
                                   <p className="text-sm">{share.message}</p>
                                 </div>
                               )}
-                              
-                              <div className="flex items-center justify-between text-xs text-muted-foreground">
-                                <span>By {entry.author_name || 'Anonymous'}</span>
-                                <span>{new Date(share.shared_at).toLocaleDateString()}</span>
-                              </div>
-                            </div>
-                          </div>
-                        </Card>
-                      );
-                    })}
-                  </div>
-                )}
-              </ScrollArea>
-            </TabsContent>
+                               
+                               <div className="flex items-center justify-between text-xs text-muted-foreground">
+                                 <span>By {entry.author_name || 'Anonymous'}</span>
+                                 <span>{new Date(share.shared_at).toLocaleDateString()}</span>
+                               </div>
+                             </div>
+                           </div>
+                         </Card>
+                       );
+                     })}
+                   </div>
+                 )}
+               </ScrollArea>
+             </TabsContent>
 
-            <TabsContent value="members" className="flex-1 mt-2">
-              <ScrollArea className="flex-1 p-4">
-                <div className="space-y-2">
-                  {mockMembers.map((member) => (
-                    <div
-                      key={member.id}
-                      className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent/50 transition-colors"
-                    >
-                      <div className="relative">
-                        <Avatar className="h-10 w-10">
-                          <AvatarFallback className="bg-gradient-to-br from-purple-400/20 to-pink-400/20">
-                            {getInitials(member.name)}
-                          </AvatarFallback>
-                        </Avatar>
-                        {member.isOnline && (
-                          <div className="absolute -bottom-1 -right-1 h-3 w-3 bg-green-500 rounded-full border-2 border-background"></div>
-                        )}
-                      </div>
-                      
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium text-sm">{member.name}</span>
-                          {member.role === 'admin' && (
-                            <Crown className="h-3 w-3 text-yellow-500" />
-                          )}
-                          {member.role === 'moderator' && (
-                            <Shield className="h-3 w-3 text-blue-500" />
-                          )}
-                        </div>
-                        <span className="text-xs text-muted-foreground capitalize">
-                          {member.role} • {member.isOnline ? 'Online' : 'Offline'}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </ScrollArea>
-            </TabsContent>
-          </Tabs>
-        </div>
-      </div>
+             <TabsContent value="members" className="flex-1 mt-2">
+               <ScrollArea className="flex-1 p-4">
+                 <div className="space-y-2">
+                   {mockMembers.map((member) => (
+                     <div
+                       key={member.id}
+                       className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent/50 transition-colors"
+                     >
+                       <div className="relative">
+                         <Avatar className="h-10 w-10">
+                           <AvatarFallback className="bg-gradient-to-br from-purple-400/20 to-pink-400/20">
+                             {getInitials(member.name)}
+                           </AvatarFallback>
+                         </Avatar>
+                         {member.isOnline && (
+                           <div className="absolute -bottom-1 -right-1 h-3 w-3 bg-green-500 rounded-full border-2 border-background"></div>
+                         )}
+                       </div>
+                       
+                       <div className="flex-1">
+                         <div className="flex items-center gap-2">
+                           <span className="font-medium text-sm">{member.name}</span>
+                           {member.role === 'admin' && (
+                             <Crown className="h-3 w-3 text-yellow-500" />
+                           )}
+                           {member.role === 'moderator' && (
+                             <Shield className="h-3 w-3 text-blue-500" />
+                           )}
+                         </div>
+                         <span className="text-xs text-muted-foreground capitalize">{member.role}</span>
+                       </div>
+                       
+                       <div className="flex items-center gap-1">
+                         {member.isOnline ? (
+                           <div className="flex items-center gap-1 text-green-600">
+                             <div className="h-2 w-2 bg-green-500 rounded-full"></div>
+                             <span className="text-xs">Online</span>
+                           </div>
+                         ) : (
+                           <span className="text-xs text-muted-foreground">Offline</span>
+                         )}
+                       </div>
+                     </div>
+                   ))}
+                 </div>
+               </ScrollArea>
+             </TabsContent>
+           </Tabs>
+         </div>
+       </div>
+
+      {/* Settings Modal */}
+      <CircleSettingsModal
+        open={showSettings}
+        onOpenChange={setShowSettings}
+        circleId={circleId}
+        currentSettings={
+          circleId && circles.find(c => c.id === circleId)
+            ? {
+                name: circles.find(c => c.id === circleId)?.name || '',
+                description: circles.find(c => c.id === circleId)?.description,
+                isPrivate: circles.find(c => c.id === circleId)?.is_private || false,
+                chakraFocus: circles.find(c => c.id === circleId)?.chakra_focus,
+                frequencyRange: circles.find(c => c.id === circleId)?.frequency_range
+              }
+            : undefined
+        }
+        onSettingsUpdated={() => {
+          fetchCircles();
+          toast({
+            title: "Settings Updated",
+            description: "Circle settings have been refreshed.",
+          });
+        }}
+      />
+
+      {/* Add Member Modal */}
+      <AddMemberModal
+        open={showAddMember}
+        onOpenChange={setShowAddMember}
+        circleId={circleId}
+        onMemberAdded={() => {
+          toast({
+            title: "Member Added",
+            description: "New member has been added to the circle.",
+          });
+        }}
+      />
     </Card>
   );
 };
