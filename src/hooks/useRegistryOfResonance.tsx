@@ -123,6 +123,8 @@ export function useRegistryOfResonance() {
 
   const updateEntry = useCallback(async (id: string, updates: Partial<RegistryEntry>) => {
     try {
+      console.log('updateEntry called with:', { id, updates });
+      
       // Filter to only include registry_of_resonance table columns
       const validColumns = [
         'title', 'content', 'resonance_rating', 'resonance_signature', 'tags', 'entry_type',
@@ -135,6 +137,8 @@ export function useRegistryOfResonance() {
       const validUpdates = Object.fromEntries(
         Object.entries(updates).filter(([key]) => validColumns.includes(key))
       );
+
+      console.log('validUpdates after filtering:', validUpdates);
 
       // Ensure we only update the specific entry we want
       const { data, error } = await supabase
@@ -248,6 +252,8 @@ export function useRegistryOfResonance() {
 
   const incrementEngagement = useCallback(async (entryId: string, type: 'views' | 'shares' | 'bookmarks') => {
     try {
+      console.log('incrementEngagement called with:', { entryId, type });
+      
       // Get current entry
       const { data: entry, error: fetchError } = await supabase
         .from('registry_of_resonance')
@@ -264,6 +270,8 @@ export function useRegistryOfResonance() {
         bookmarks: currentMetrics.bookmarks || 0,
         [type]: (currentMetrics[type] || 0) + 1
       };
+
+      console.log('incrementEngagement update:', { engagement_metrics: updatedMetrics });
 
       const { error } = await supabase
         .from('registry_of_resonance')
