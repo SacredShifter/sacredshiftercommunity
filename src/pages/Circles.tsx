@@ -34,6 +34,8 @@ const Circles = () => {
   const [activeFilter, setActiveFilter] = useState('all');
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [selectedCircle, setSelectedCircle] = useState<string | null>(null);
+  const [isCircleMaximized, setIsCircleMaximized] = useState(false);
+  const [isCircleMinimized, setIsCircleMinimized] = useState(false);
 
   // Get joined circle IDs from the actual circles data
   const joinedCircleIds = new Set(
@@ -269,15 +271,29 @@ const Circles = () => {
                         Enter
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden">
-                      <DialogHeader>
+                    <DialogContent 
+                      className={isCircleMaximized ? "fixed inset-0 z-50 max-w-none max-h-none w-screen h-screen rounded-none border-none" : "max-w-4xl max-h-[90vh] overflow-hidden"}
+                      onOpenAutoFocus={() => {
+                        setIsCircleMaximized(false);
+                        setIsCircleMinimized(false);
+                      }}
+                    >
+                      <DialogHeader className={isCircleMinimized ? "hidden" : ""}>
                         <DialogTitle>Sacred Circle: {circle.name}</DialogTitle>
                       </DialogHeader>
-                      <div className="h-[70vh]">
+                      <div className={isCircleMaximized ? "h-full" : "h-[70vh]"}>
                         <SacredCircleInterface 
                           circleId={circle.id}
                           circleName={circle.name}
                           className="h-full"
+                          isMaximized={isCircleMaximized}
+                          isMinimized={isCircleMinimized}
+                          onMaximize={() => setIsCircleMaximized(true)}
+                          onMinimize={() => setIsCircleMinimized(true)}
+                          onRestore={() => {
+                            setIsCircleMaximized(false);
+                            setIsCircleMinimized(false);
+                          }}
                         />
                       </div>
                     </DialogContent>

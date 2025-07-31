@@ -462,22 +462,29 @@ export function useRegistryOfResonance() {
     }
 
     try {
-      const { error } = await supabase
+      console.log('Sharing to circle:', { entryId, circleId, userId: user.id, message });
+      
+      const { data, error } = await supabase
         .from('registry_entry_shares')
         .insert({
           entry_id: entryId,
           user_id: user.id,
           circle_id: circleId,
           message: message || null
-        });
+        })
+        .select();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
       
+      console.log('Share successful:', data);
       toast.success('Entry shared to circle successfully');
       return true;
     } catch (error) {
       console.error('Error sharing to circle:', error);
-      toast.error('Failed to share entry');
+      toast.error(`Failed to share entry: ${error.message || error}`);
       return false;
     }
   }, [user]);
