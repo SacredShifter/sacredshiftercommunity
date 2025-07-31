@@ -316,10 +316,10 @@ const BreathOfSource: React.FC = () => {
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              className="relative z-10 w-12 h-12"
+              className="relative z-10 w-10 h-10"
             >
               <svg 
-                viewBox="0 0 100 100" 
+                viewBox="0 0 60 60" 
                 className="w-full h-full"
                 xmlns="http://www.w3.org/2000/svg"
               >
