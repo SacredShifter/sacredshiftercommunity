@@ -1578,6 +1578,33 @@ export type Database = {
         }
         Relationships: []
       }
+      contact_submissions: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          message: string | null
+          name: string | null
+          reason: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          message?: string | null
+          name?: string | null
+          reason: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string | null
+          name?: string | null
+          reason?: string
+        }
+        Relationships: []
+      }
       continuum_sessions: {
         Row: {
           action: string | null
@@ -10792,6 +10819,30 @@ export type Database = {
           scale?: number
           sensitivity?: number
           thumbnail_url?: string | null
+        }
+        Relationships: []
+      }
+      waitlist_signups: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          interest: string[] | null
+          name: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          interest?: string[] | null
+          name?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          interest?: string[] | null
+          name?: string | null
         }
         Relationships: []
       }

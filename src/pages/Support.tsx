@@ -1,28 +1,53 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Heart, Sparkles, Star, Zap } from 'lucide-react';
+import { Heart, Sparkles, Star, Zap, CreditCard } from 'lucide-react';
+import { WaitlistModal } from '@/components/WaitlistModal';
+import { ContactModal } from '@/components/ContactModal';
+import { DonationModal } from '@/components/DonationModal';
+import { useToast } from '@/hooks/use-toast';
 
 const Support: React.FC = () => {
+  const [waitlistOpen, setWaitlistOpen] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
+  const [donationOpen, setDonationOpen] = useState(false);
+  const [searchParams] = useSearchParams();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    if (searchParams.get('success') === 'true') {
+      toast({
+        title: "Thank You! 🙏",
+        description: "Your donation helps keep Sacred Shifter free for everyone.",
+      });
+    } else if (searchParams.get('canceled') === 'true') {
+      toast({
+        title: "Donation Canceled",
+        description: "No problem - you can donate anytime.",
+        variant: "destructive",
+      });
+    }
+  }, [searchParams, toast]);
+
   return (
-    <div className="min-h-screen p-4 md:p-8">
-      <div className="max-w-4xl mx-auto space-y-8">
+    <div className="min-h-screen p-6 md:p-8 lg:p-12">
+      <div className="max-w-5xl mx-auto space-y-12">
         
-        {/* Intro Section */}
-        <div className="text-center space-y-6">
+        {/* Hero Section */}
+        <div className="text-center space-y-8 animate-fade-in">
           <div className="relative">
-            <h1 className="text-4xl md:text-6xl font-sacred bg-gradient-to-r from-truth via-resonance to-alignment bg-clip-text text-transparent animate-pulse-sacred">
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-sacred bg-gradient-to-r from-truth via-resonance to-alignment bg-clip-text text-transparent">
               Support Sacred Shifter
             </h1>
-            <div className="text-xl md:text-2xl text-truth/80 mt-2 font-light tracking-wide">
+            <div className="text-xl md:text-3xl text-truth/70 mt-4 font-light tracking-wider">
               — Fuel the Frequency —
             </div>
           </div>
           
-          <Card className="sacred-card border-truth/20">
-            <CardContent className="p-8">
-              <p className="text-lg md:text-xl text-muted-foreground leading-relaxed font-light">
+          <Card className="sacred-card border-truth/20 backdrop-blur-sm bg-background/80">
+            <CardContent className="p-8 md:p-12">
+              <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed font-light max-w-4xl mx-auto">
                 Sacred Shifter is free because <span className="text-truth font-medium">Truth should never be behind a paywall</span>. 
                 This ecosystem is here to elevate, awaken, and align — and that requires zero cost of entry. 
                 <span className="text-resonance font-medium"> Always.</span>
@@ -32,57 +57,71 @@ const Support: React.FC = () => {
         </div>
 
         {/* Why Donations Help Section */}
-        <Card className="sacred-card border-alignment/20">
-          <CardHeader>
-            <CardTitle className="text-2xl md:text-3xl text-alignment flex items-center gap-3">
-              <Heart className="h-8 w-8 text-pulse animate-pulse" />
-              Why Donations Help
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              While this platform is offered freely, it's not free to run. Your donation helps cover hosting, 
-              bandwidth, AI usage, and ongoing upgrades. This is a <span className="text-purpose font-medium">gift economy</span>: 
-              no expectation, only appreciation.
-            </p>
-          </CardContent>
-        </Card>
+        <div className="grid lg:grid-cols-2 gap-8 items-start">
+          <Card className="sacred-card border-alignment/20 h-full">
+            <CardHeader>
+              <CardTitle className="text-2xl md:text-3xl text-alignment flex items-center gap-3">
+                <Heart className="h-8 w-8 text-pulse animate-pulse" />
+                Why Donations Help
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                While this platform is offered freely, it's not free to run. Your donation helps cover hosting, 
+                bandwidth, AI usage, and ongoing upgrades.
+              </p>
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                This is a <span className="text-purpose font-medium">gift economy</span>: 
+                no expectation, only appreciation.
+              </p>
+            </CardContent>
+          </Card>
 
-        {/* Donation Buttons Section */}
+          {/* Donation Action Card */}
+          <Card className="sacred-card border-truth/20 h-full">
+            <CardHeader>
+              <CardTitle className="text-2xl md:text-3xl text-truth flex items-center gap-3">
+                <CreditCard className="h-8 w-8 text-truth" />
+                Make a Donation
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                Every contribution, no matter the size, helps keep Sacred Shifter accessible to all souls seeking truth and transformation.
+              </p>
+              <Button 
+                onClick={() => setDonationOpen(true)}
+                className="w-full h-16 text-lg bg-gradient-to-r from-truth to-truth/80 hover:from-truth/90 hover:to-truth text-white border border-truth/30 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-truth/25"
+              >
+                💳 Donate Now
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Contact Section */}
         <Card className="sacred-card border-purpose/20">
           <CardHeader>
             <CardTitle className="text-2xl md:text-3xl text-purpose flex items-center gap-3">
               <Sparkles className="h-8 w-8 text-resonance animate-pulse" />
-              How You Can Support
+              Get in Touch
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-4">
-              <Link to="/donate/stripe">
-                <Button 
-                  className="w-full h-16 text-lg bg-gradient-to-r from-truth to-truth/80 hover:from-truth/90 hover:to-truth text-white border border-truth/30 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-truth/25"
-                >
-                  💳 Donate via Stripe
-                </Button>
-              </Link>
-              
-              <a 
-                href="https://www.paypal.com/donate/?hosted_button_id=YOURID" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="w-full"
-              >
-                <Button 
-                  className="w-full h-16 text-lg bg-gradient-to-r from-alignment to-alignment/80 hover:from-alignment/90 hover:to-alignment text-white border border-alignment/30 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-alignment/25"
-                >
-                  💸 Donate via PayPal
-                </Button>
-              </a>
-            </div>
+            <p className="text-lg text-muted-foreground leading-relaxed">
+              Have questions, suggestions, or want to explore partnerships? We'd love to hear from you.
+            </p>
             
             <div className="text-center">
-              <p className="text-sm text-muted-foreground/80">
-                Want to donate crypto or direct deposit? <span className="text-truth hover:underline cursor-pointer">Contact us</span>.
+              <Button
+                onClick={() => setContactOpen(true)}
+                variant="outline"
+                className="border-purpose/30 hover:border-purpose text-purpose hover:bg-purpose/10"
+              >
+                Contact Us
+              </Button>
+              <p className="text-sm text-muted-foreground/80 mt-2">
+                Want to donate crypto or direct deposit? Let us know!
               </p>
             </div>
           </CardContent>
@@ -117,6 +156,7 @@ const Support: React.FC = () => {
             
             <div className="pt-4">
               <Button 
+                onClick={() => setWaitlistOpen(true)}
                 className="w-full md:w-auto h-14 text-lg bg-gradient-to-r from-pulse via-silence to-pulse hover:from-pulse/90 hover:via-silence/90 hover:to-pulse/90 text-white border border-pulse/30 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-pulse/25"
               >
                 <Zap className="mr-2 h-5 w-5" />
@@ -127,12 +167,17 @@ const Support: React.FC = () => {
         </Card>
 
         {/* Resonance Footer */}
-        <div className="text-center py-8">
-          <p className="text-muted-foreground/60 italic">
+        <div className="text-center py-12">
+          <p className="text-lg text-muted-foreground/60 italic font-light">
             "In resonance, we rise. In unity, we transcend."
           </p>
         </div>
       </div>
+
+      {/* Modals */}
+      <WaitlistModal open={waitlistOpen} onOpenChange={setWaitlistOpen} />
+      <ContactModal open={contactOpen} onOpenChange={setContactOpen} />
+      <DonationModal open={donationOpen} onOpenChange={setDonationOpen} />
     </div>
   );
 };
