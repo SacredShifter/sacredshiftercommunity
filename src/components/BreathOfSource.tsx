@@ -324,10 +324,10 @@ const BreathOfSource: React.FC = () => {
               <g className="opacity-80">
                 {/* Central circle */}
                 <motion.circle
-                  cx="50" cy="50" r="12"
+                  cx="50" cy="50" r="20"
                   fill="none"
                   stroke="hsl(var(--truth))"
-                  strokeWidth="1.5"
+                  strokeWidth="2"
                   animate={isActive ? { 
                     scale: [1, 1.1, 1],
                     opacity: [0.8, 1, 0.8]
@@ -339,12 +339,12 @@ const BreathOfSource: React.FC = () => {
                 {[0, 60, 120, 180, 240, 300].map((angle, index) => (
                   <motion.circle
                     key={angle}
-                    cx={50 + 12 * Math.cos((angle * Math.PI) / 180)}
-                    cy={50 + 12 * Math.sin((angle * Math.PI) / 180)}
-                    r="12"
+                    cx={50 + 20 * Math.cos((angle * Math.PI) / 180)}
+                    cy={50 + 20 * Math.sin((angle * Math.PI) / 180)}
+                    r="20"
                     fill="none"
                     stroke="hsl(var(--alignment))"
-                    strokeWidth="1"
+                    strokeWidth="1.5"
                     animate={isActive ? {
                       scale: [1, 1.05, 1],
                       opacity: [0.6, 0.9, 0.6]
@@ -363,13 +363,13 @@ const BreathOfSource: React.FC = () => {
                   <motion.circle
                     key={ring}
                     cx="50" cy="50"
-                    r={15 + ring * 8}
+                    r={25 + ring * 12}
                     fill="none"
                     stroke="hsl(var(--truth))"
-                    strokeWidth="0.5"
-                    strokeDasharray="2,4"
+                    strokeWidth="0.8"
+                    strokeDasharray="3,6"
                     animate={isActive ? {
-                      r: [15 + ring * 8, 25 + ring * 8, 15 + ring * 8],
+                      r: [25 + ring * 12, 35 + ring * 12, 25 + ring * 12],
                       opacity: [0.3, 0.6, 0.3]
                     } : { opacity: 0.2 }}
                     transition={{
