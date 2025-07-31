@@ -27,8 +27,15 @@ export const TourProvider: React.FC<TourProviderProps> = ({ children }) => {
       // Update step index
       handleTourCallback({ action, index, type, status });
     } else if (status === 'finished' || status === 'skipped') {
-      // Tour completed or skipped
+      // Tour completed or skipped - ensure clean state
       handleTourCallback({ action, index, type, status });
+      
+      // Force scroll reset after tour completion
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
+      }, 100);
     }
   };
 
@@ -45,7 +52,9 @@ export const TourProvider: React.FC<TourProviderProps> = ({ children }) => {
           showProgress={activeTour.showProgress ?? true}
           showSkipButton={activeTour.showSkipButton ?? true}
           disableOverlay={activeTour.disableOverlay ?? false}
-          disableScrolling={activeTour.disableScrolling ?? false}
+          disableScrolling={false}
+          scrollToFirstStep={false}
+          disableScrollParentFix={true}
           styles={{
             options: {
               primaryColor: 'hsl(var(--primary))',

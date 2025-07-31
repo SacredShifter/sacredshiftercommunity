@@ -84,11 +84,17 @@ export const useTour = () => {
     setIsRunning(true);
   }, [completedTours]);
 
-  // Stop the current tour
   const stopTour = useCallback(() => {
     setIsRunning(false);
     setActiveTour(null);
     setTourIndex(0);
+    
+    // Clean up any tour-related body styles
+    setTimeout(() => {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    }, 100);
   }, []);
 
   // Handle tour completion
