@@ -228,16 +228,16 @@ All colors MUST be HSL.
     background: linear-gradient(
       90deg,
       transparent 0%,
-      transparent 25%,
-      hsl(var(--pulse-color, var(--primary)) / 0.8) 50%,
-      transparent 75%,
+      transparent 30%,
+      hsl(var(--pulse-color, var(--primary)) / 0.9) 50%,
+      transparent 70%,
       transparent 100%
     );
-    background-size: 200% 100%;
+    background-size: 300% 100%;
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
-    animation: resonance-flow-sweep 4s ease-in-out infinite;
+    animation: resonance-flow-sweep 6s ease-in-out infinite;
     position: relative;
   }
 
@@ -254,7 +254,7 @@ All colors MUST be HSL.
   }
 
   .resonance-flow:hover {
-    animation-duration: 2s;
+    animation-duration: 3s;
   }
 
   .resonance-flow:hover::before {
@@ -306,14 +306,14 @@ All colors MUST be HSL.
 }
 
 @keyframes resonance-flow-sweep {
-  0%, 20% {
-    background-position: -200% 0;
+  0%, 15% {
+    background-position: -300% 0;
   }
-  40%, 60% {
+  50% {
     background-position: 0% 0;
   }
-  80%, 100% {
-    background-position: 200% 0;
+  85%, 100% {
+    background-position: 300% 0;
   }
 }
 
