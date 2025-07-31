@@ -101,7 +101,7 @@ const Guidebook: React.FC = () => {
               <div className="absolute inset-0 animate-pulse bg-primary/20 rounded-full blur-xl"></div>
             </div>
           </div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary via-purple-600 to-indigo-600 bg-clip-text text-transparent">
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
             Sacred Shifter Guidebook
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">

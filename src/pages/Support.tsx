@@ -35,43 +35,43 @@ const Support: React.FC = () => {
       <div className="max-w-5xl mx-auto space-y-12">
         
         {/* Hero Section */}
-        <div className="text-center space-y-8 animate-fade-in">
+        <div className="text-center space-y-6 animate-fade-in">
           <div className="relative">
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-sacred bg-gradient-to-r from-truth via-resonance to-alignment bg-clip-text text-transparent">
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
               Support Sacred Shifter
             </h1>
-            <div className="text-xl md:text-3xl text-truth/70 mt-4 font-light tracking-wider">
+            <div className="text-sm text-muted-foreground mt-2 font-light tracking-wider">
               — Fuel the Frequency —
             </div>
           </div>
           
           <Card className="sacred-card border-truth/20 backdrop-blur-sm bg-background/80">
-            <CardContent className="p-8 md:p-12">
-              <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed font-light max-w-4xl mx-auto">
-                Sacred Shifter is free because <span className="text-truth font-medium">Truth should never be behind a paywall</span>. 
+            <CardContent className="p-6">
+              <p className="text-base text-muted-foreground leading-relaxed max-w-3xl mx-auto">
+                Sacred Shifter is free because <span className="text-foreground font-medium">Truth should never be behind a paywall</span>. 
                 This ecosystem is here to elevate, awaken, and align — and that requires zero cost of entry. 
-                <span className="text-resonance font-medium"> Always.</span>
+                <span className="text-foreground font-medium"> Always.</span>
               </p>
             </CardContent>
           </Card>
         </div>
 
         {/* Why Donations Help Section */}
-        <div className="grid lg:grid-cols-2 gap-8 items-start">
+        <div className="grid lg:grid-cols-2 gap-6 items-start">
           <Card className="sacred-card border-alignment/20 h-full">
             <CardHeader>
-              <CardTitle className="text-2xl md:text-3xl text-alignment flex items-center gap-3">
-                <Heart className="h-8 w-8 text-pulse animate-pulse" />
+              <CardTitle className="text-lg text-foreground flex items-center gap-2">
+                <Heart className="h-5 w-5 text-pulse animate-pulse" />
                 Why Donations Help
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-lg text-muted-foreground leading-relaxed">
+            <CardContent className="space-y-3">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 While this platform is offered freely, it's not free to run. Your donation helps cover hosting, 
                 bandwidth, AI usage, and ongoing upgrades.
               </p>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                This is a <span className="text-purpose font-medium">gift economy</span>: 
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                This is a <span className="text-foreground font-medium">gift economy</span>: 
                 no expectation, only appreciation.
               </p>
             </CardContent>
@@ -80,20 +80,20 @@ const Support: React.FC = () => {
           {/* Donation Action Card */}
           <Card className="sacred-card border-truth/20 h-full">
             <CardHeader>
-              <CardTitle className="text-2xl md:text-3xl text-truth flex items-center gap-3">
-                <CreditCard className="h-8 w-8 text-truth" />
+              <CardTitle className="text-lg text-foreground flex items-center gap-2">
+                <CreditCard className="h-5 w-5 text-foreground" />
                 Make a Donation
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <p className="text-lg text-muted-foreground leading-relaxed">
+            <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 Every contribution, no matter the size, helps keep Sacred Shifter accessible to all souls seeking truth and transformation.
               </p>
               <Button 
-                onClick={() => setDonationOpen(true)}
-                className="w-full h-16 text-lg bg-gradient-to-r from-truth to-truth/80 hover:from-truth/90 hover:to-truth text-white border border-truth/30 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-truth/25"
+                onClick={() => window.open('https://buy.stripe.com/dRmfZh9Oi3rI9qT7gxeME00', '_blank')}
+                className="w-full h-12 text-base sacred-button bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/25 font-bold"
               >
-                💳 Donate Now
+                💳 Donate Now - Sacred Contribution
               </Button>
             </CardContent>
           </Card>
@@ -102,13 +102,13 @@ const Support: React.FC = () => {
         {/* Contact Section */}
         <Card className="sacred-card border-purpose/20">
           <CardHeader>
-            <CardTitle className="text-2xl md:text-3xl text-purpose flex items-center gap-3">
-              <Sparkles className="h-8 w-8 text-resonance animate-pulse" />
+            <CardTitle className="text-lg text-foreground flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-resonance animate-pulse" />
               Get in Touch
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-6">
-            <p className="text-lg text-muted-foreground leading-relaxed">
+          <CardContent className="space-y-4">
+            <p className="text-sm text-muted-foreground leading-relaxed">
               Have questions, suggestions, or want to explore partnerships? We'd love to hear from you.
             </p>
             
@@ -120,7 +120,7 @@ const Support: React.FC = () => {
               >
                 Contact Us
               </Button>
-              <p className="text-sm text-muted-foreground/80 mt-2">
+              <p className="text-xs text-muted-foreground/80 mt-2">
                 Want to donate crypto or direct deposit? Let us know!
               </p>
             </div>
@@ -131,35 +131,35 @@ const Support: React.FC = () => {
         <Card className="sacred-card border-silence/20 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-silence/5 via-transparent to-pulse/5 pointer-events-none" />
           <CardHeader>
-            <CardTitle className="text-2xl md:text-3xl text-silence flex items-center gap-3">
-              <Star className="h-8 w-8 text-pulse animate-pulse" />
+            <CardTitle className="text-lg text-foreground flex items-center gap-2">
+              <Star className="h-5 w-5 text-pulse animate-pulse" />
               🚀 Premium Modules Coming Soon
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-6 relative z-10">
-            <div className="space-y-4">
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                Modules like <span className="text-truth font-medium">Sonic Shifter</span>, 
-                <span className="text-resonance font-medium"> Dreamscape Deep Dive</span>, and 
-                <span className="text-alignment font-medium"> Mirror Journal+</span> are launching soon.
+          <CardContent className="space-y-4 relative z-10">
+            <div className="space-y-3">
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Modules like <span className="text-foreground font-medium">Sonic Shifter</span>, 
+                <span className="text-foreground font-medium"> Dreamscape Deep Dive</span>, and 
+                <span className="text-foreground font-medium"> Mirror Journal+</span> are launching soon.
               </p>
               
-              <p className="text-lg text-muted-foreground leading-relaxed">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 They will be part of a modular subscription package for users who want to go deeper into their 
                 transformation journey.
               </p>
               
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                <span className="text-purpose font-medium">The free version will always remain free.</span>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                <span className="text-foreground font-medium">The free version will always remain free.</span>
               </p>
             </div>
             
-            <div className="pt-4">
+            <div className="pt-2">
               <Button 
                 onClick={() => setWaitlistOpen(true)}
-                className="w-full md:w-auto h-14 text-lg bg-gradient-to-r from-pulse via-silence to-pulse hover:from-pulse/90 hover:via-silence/90 hover:to-pulse/90 text-white border border-pulse/30 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-pulse/25"
+                className="w-full md:w-auto h-12 text-base sacred-button bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/25"
               >
-                <Zap className="mr-2 h-5 w-5" />
+                <Zap className="mr-2 h-4 w-4" />
                 🌌 Join the Waitlist
               </Button>
             </div>
@@ -167,8 +167,8 @@ const Support: React.FC = () => {
         </Card>
 
         {/* Resonance Footer */}
-        <div className="text-center py-12">
-          <p className="text-lg text-muted-foreground/60 italic font-light">
+        <div className="text-center py-8">
+          <p className="text-sm text-muted-foreground/60 italic font-light">
             "In resonance, we rise. In unity, we transcend."
           </p>
         </div>
@@ -177,7 +177,6 @@ const Support: React.FC = () => {
       {/* Modals */}
       <WaitlistModal open={waitlistOpen} onOpenChange={setWaitlistOpen} />
       <ContactModal open={contactOpen} onOpenChange={setContactOpen} />
-      <DonationModal open={donationOpen} onOpenChange={setDonationOpen} />
     </div>
   );
 };
