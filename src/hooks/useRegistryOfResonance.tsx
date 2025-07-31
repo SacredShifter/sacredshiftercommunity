@@ -141,12 +141,15 @@ export function useRegistryOfResonance() {
       console.log('validUpdates after filtering:', validUpdates);
 
       // Ensure we only update the specific entry we want
+      console.log('About to call supabase update with:', { table: 'registry_of_resonance', validUpdates, id });
       const { data, error } = await supabase
         .from('registry_of_resonance')
         .update(validUpdates)
         .eq('id', id)
         .select()
         .single();
+      
+      console.log('Supabase update result:', { data, error });
 
       if (error) throw error;
 
