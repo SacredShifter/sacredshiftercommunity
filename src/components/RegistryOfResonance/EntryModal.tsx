@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { RegistryEntry, useRegistryOfResonance } from '@/hooks/useRegistryOfResonance';
 import { AdminVerificationPanel } from './AdminVerificationPanel';
+import { RegistryComments } from './RegistryComments';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';

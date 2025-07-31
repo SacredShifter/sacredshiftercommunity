@@ -5962,6 +5962,95 @@ export type Database = {
         }
         Relationships: []
       }
+      registry_entry_comments: {
+        Row: {
+          content: string
+          created_at: string
+          entry_id: string
+          id: string
+          is_anonymous: boolean | null
+          parent_comment_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          entry_id: string
+          id?: string
+          is_anonymous?: boolean | null
+          parent_comment_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          entry_id?: string
+          id?: string
+          is_anonymous?: boolean | null
+          parent_comment_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "registry_entry_comments_parent_comment_id_fkey"
+            columns: ["parent_comment_id"]
+            isOneToOne: false
+            referencedRelation: "registry_entry_comments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      registry_entry_resonance: {
+        Row: {
+          created_at: string
+          entry_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          entry_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          entry_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      registry_entry_shares: {
+        Row: {
+          circle_id: string | null
+          entry_id: string
+          id: string
+          message: string | null
+          shared_at: string
+          user_id: string
+        }
+        Insert: {
+          circle_id?: string | null
+          entry_id: string
+          id?: string
+          message?: string | null
+          shared_at?: string
+          user_id: string
+        }
+        Update: {
+          circle_id?: string | null
+          entry_id?: string
+          id?: string
+          message?: string | null
+          shared_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       registry_of_resonance: {
         Row: {
           access_level: string
@@ -5980,6 +6069,7 @@ export type Database = {
           is_verified: boolean | null
           publication_date: string | null
           reading_time_minutes: number | null
+          resonance_count: number | null
           resonance_rating: number
           resonance_signature: string | null
           source_citation: string | null
@@ -6007,6 +6097,7 @@ export type Database = {
           is_verified?: boolean | null
           publication_date?: string | null
           reading_time_minutes?: number | null
+          resonance_count?: number | null
           resonance_rating?: number
           resonance_signature?: string | null
           source_citation?: string | null
@@ -6034,6 +6125,7 @@ export type Database = {
           is_verified?: boolean | null
           publication_date?: string | null
           reading_time_minutes?: number | null
+          resonance_count?: number | null
           resonance_rating?: number
           resonance_signature?: string | null
           source_citation?: string | null

@@ -30,6 +30,7 @@ export interface RegistryEntry {
   visibility_settings?: any;
   content_type?: string | null;
   engagement_metrics?: any;
+  resonance_count?: number;
 }
 
 export interface NewRegistryEntry {
@@ -293,6 +294,169 @@ export function useRegistryOfResonance() {
     return Math.ceil(wordCount / 200);
   }, []);
 
+  // Resonance voting functions
+  const toggleResonance = useCallback(async (entryId: string): Promise<boolean> => {
+    if (!user) {
+      toast.error('You must be logged in to resonate with entries');
+      return false;
+    }
+
+    try {
+      // Check if user has already resonated
+      const { data: existingVote } = await supabase
+        .from('registry_entry_resonance')
+        .select('id')
+        .eq('entry_id', entryId)
+        .eq('user_id', user.id)
+        .single();
+
+      if (existingVote) {
+        // Remove resonance
+        await supabase
+          .from('registry_entry_resonance')
+          .delete()
+          .eq('entry_id', entryId)
+          .eq('user_id', user.id);
+        
+        toast.success('Resonance removed');
+        return false;
+      } else {
+        // Add resonance
+        await supabase
+          .from('registry_entry_resonance')
+          .insert({
+            entry_id: entryId,
+            user_id: user.id
+          });
+        
+        toast.success('Resonating with this entry!');
+        return true;
+      }
+    } catch (error) {
+      console.error('Error toggling resonance:', error);
+      toast.error('Failed to update resonance');
+      return false;
+    }
+  }, [user]);
+
+  const getUserResonanceStatus = useCallback(async (entryId: string): Promise<boolean> => {
+    if (!user) return false;
+
+    try {
+      const { data } = await supabase
+        .from('registry_entry_resonance')
+        .select('id')
+        .eq('entry_id', entryId)
+        .eq('user_id', user.id)
+        .single();
+      
+      return !!data;
+    } catch (error) {
+      return false;
+    }
+  }, [user]);
+
+  // Comments functions
+  const getComments = useCallback(async (entryId: string): Promise<any[]> => {
+    try {
+      const { data, error } = await supabase
+        .from('registry_entry_comments')
+        .select(`
+          id,
+          content,
+          created_at,
+          updated_at,
+          is_anonymous,
+          parent_comment_id,
+          user_id
+        `)
+        .eq('entry_id', entryId)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return data || [];
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+      return [];
+    }
+  }, []);
+
+  const addComment = useCallback(async (entryId: string, content: string, parentCommentId?: string): Promise<boolean> => {
+    if (!user) {
+      toast.error('You must be logged in to comment');
+      return false;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('registry_entry_comments')
+        .insert({
+          entry_id: entryId,
+          user_id: user.id,
+          content: content.trim(),
+          parent_comment_id: parentCommentId || null
+        });
+
+      if (error) throw error;
+      
+      toast.success('Comment added successfully');
+      return true;
+    } catch (error) {
+      console.error('Error adding comment:', error);
+      toast.error('Failed to add comment');
+      return false;
+    }
+  }, [user]);
+
+  const deleteComment = useCallback(async (commentId: string): Promise<boolean> => {
+    if (!user) return false;
+
+    try {
+      const { error } = await supabase
+        .from('registry_entry_comments')
+        .delete()
+        .eq('id', commentId)
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+      
+      toast.success('Comment deleted');
+      return true;
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+      toast.error('Failed to delete comment');
+      return false;
+    }
+  }, [user]);
+
+  // Share to circle function
+  const shareToCircle = useCallback(async (entryId: string, circleId: string, message?: string): Promise<boolean> => {
+    if (!user) {
+      toast.error('You must be logged in to share entries');
+      return false;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('registry_entry_shares')
+        .insert({
+          entry_id: entryId,
+          user_id: user.id,
+          circle_id: circleId,
+          message: message || null
+        });
+
+      if (error) throw error;
+      
+      toast.success('Entry shared to circle successfully');
+      return true;
+    } catch (error) {
+      console.error('Error sharing to circle:', error);
+      toast.error('Failed to share entry');
+      return false;
+    }
+  }, [user]);
+
   return {
     entries,
     loading,
@@ -309,5 +473,11 @@ export function useRegistryOfResonance() {
     shareEntry,
     calculateWordCount,
     calculateReadingTime,
+    toggleResonance,
+    getUserResonanceStatus,
+    getComments,
+    addComment,
+    deleteComment,
+    shareToCircle,
   };
 }

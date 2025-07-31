@@ -1,11 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Pin, Share2, Sparkles, Lock, Globe, Users } from 'lucide-react';
-import { RegistryEntry } from '@/hooks/useRegistryOfResonance';
+import { 
+  CheckCircle, 
+  Pin, 
+  Lock, 
+  Users, 
+  Globe, 
+  Sparkles,
+  Calendar,
+  Eye,
+  Share2,
+  Bookmark,
+  Clock,
+  Heart,
+  MessageCircle,
+  MoreVertical
+} from 'lucide-react';
+import { RegistryEntry, useRegistryOfResonance } from '@/hooks/useRegistryOfResonance';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { useAuth } from '@/hooks/useAuth';
 
 interface RegistryEntryCardProps {
   entry: RegistryEntry;
@@ -13,151 +30,197 @@ interface RegistryEntryCardProps {
 }
 
 export function RegistryEntryCard({ entry, onClick }: RegistryEntryCardProps) {
+  const { user } = useAuth();
+  const { toggleResonance, getUserResonanceStatus, shareToCircle } = useRegistryOfResonance();
+  const [hasResonated, setHasResonated] = useState(false);
+  const [resonanceCount, setResonanceCount] = useState(entry.resonance_count || 0);
+
+  useEffect(() => {
+    if (user && entry.id) {
+      getUserResonanceStatus(entry.id).then(setHasResonated);
+    }
+  }, [entry.id, user, getUserResonanceStatus]);
+
+  const handleResonanceClick = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    const newResonanceState = await toggleResonance(entry.id);
+    setHasResonated(newResonanceState);
+    setResonanceCount(prev => newResonanceState ? prev + 1 : prev - 1);
+  };
+
   const getAccessIcon = () => {
     switch (entry.access_level) {
-      case 'Public':
-        return <Globe className="w-3 h-3" />;
-      case 'Circle':
-        return <Users className="w-3 h-3" />;
       case 'Private':
-        return <Lock className="w-3 h-3" />;
+        return <Lock className="w-3 h-3 text-muted-foreground" />;
+      case 'Circle':
+        return <Users className="w-3 h-3 text-blue-500" />;
+      case 'Public':
+        return <Globe className="w-3 h-3 text-green-500" />;
       default:
-        return <Lock className="w-3 h-3" />;
+        return null;
     }
   };
 
-  const getResonanceColor = (rating: number) => {
-    if (rating >= 80) return 'text-green-500';
-    if (rating >= 60) return 'text-blue-500';
-    if (rating >= 40) return 'text-yellow-500';
-    return 'text-orange-500';
+  const getResonanceColor = () => {
+    return entry.resonance_rating >= 80 ? 'text-green-500 border-green-500/20 bg-green-500/10' : 
+           entry.resonance_rating >= 60 ? 'text-blue-500 border-blue-500/20 bg-blue-500/10' : 
+           entry.resonance_rating >= 40 ? 'text-yellow-500 border-yellow-500/20 bg-yellow-500/10' : 'text-orange-500 border-orange-500/20 bg-orange-500/10';
   };
 
-  const getResonanceRing = (rating: number) => {
-    const circumference = 2 * Math.PI * 20;
-    const strokeDasharray = `${(rating / 100) * circumference} ${circumference}`;
-    
-    return (
-      <div className="relative w-12 h-12">
-        <svg className="w-12 h-12 transform -rotate-90" viewBox="0 0 50 50">
-          <circle
-            cx="25"
-            cy="25"
-            r="20"
-            stroke="currentColor"
-            strokeWidth="2"
-            fill="none"
-            className="text-muted-foreground/20"
-          />
-          <circle
-            cx="25"
-            cy="25"
-            r="20"
-            stroke="currentColor"
-            strokeWidth="2"
-            fill="none"
-            strokeDasharray={strokeDasharray}
-            strokeLinecap="round"
-            className={cn("transition-all duration-500", getResonanceColor(rating))}
-          />
-        </svg>
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className={cn("text-xs font-bold", getResonanceColor(rating))}>
-            {rating}
-          </span>
-        </div>
-      </div>
-    );
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric'
+    });
   };
+
+  const engagementMetrics = entry.engagement_metrics as Record<string, number> || {};
 
   return (
     <motion.div
-      whileHover={{ scale: 1.02, y: -2 }}
-      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ 
+        y: -2,
+        boxShadow: "0 10px 25px -5px hsl(var(--primary) / 0.15)"
+      }}
+      className="group cursor-pointer"
     >
-      <Card 
-        className={cn(
-          "cursor-pointer group relative overflow-hidden",
-          "hover:shadow-lg transition-all duration-300",
-          "border-primary/20 bg-card/50 backdrop-blur-sm",
-          entry.is_verified && "ring-1 ring-primary/30",
-          entry.is_pinned && "border-yellow-500/50"
-        )}
-        onClick={onClick}
-      >
-        {/* Verified glow effect */}
-        {entry.is_verified && (
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-purple-500/10 opacity-50" />
-        )}
-        
-        <CardHeader className="relative">
+      <Card className="relative overflow-hidden border-primary/10 bg-gradient-to-br from-background via-background to-primary/5 hover:border-primary/20 transition-all duration-300 h-full">
+        <CardHeader className="pb-2 space-y-2">
+          {/* Top row with badges and actions */}
           <div className="flex items-start justify-between">
-            <div className="flex-1 space-y-1">
-              <div className="flex items-center gap-2">
-                <CardTitle className="text-lg group-hover:text-primary transition-colors line-clamp-1">
-                  {entry.title}
-                </CardTitle>
-                {entry.is_pinned && (
-                  <Pin className="w-4 h-4 text-yellow-500 fill-current" />
-                )}
-                {entry.is_verified && (
-                  <Sparkles className="w-4 h-4 text-primary animate-pulse" />
-                )}
-              </div>
-              
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Badge variant="outline" className="text-xs gap-1">
-                  {getAccessIcon()}
-                  {entry.access_level}
-                </Badge>
-                <Badge variant="secondary" className="text-xs">
-                  {entry.entry_type}
-                </Badge>
-              </div>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              {entry.is_pinned && <Pin className="w-3 h-3 text-amber-500 fill-current" />}
+              {entry.is_verified && <CheckCircle className="w-3 h-3 text-green-500 fill-current" />}
+              {getAccessIcon()}
+              <Badge variant="outline" className="text-xs px-1.5 py-0.5 h-5">
+                {entry.entry_type}
+              </Badge>
             </div>
             
-            {getResonanceRing(entry.resonance_rating)}
+            <div className="flex items-center gap-2">
+              <div className={cn("text-xs font-semibold px-2 py-1 rounded-md border", getResonanceColor())}>
+                {entry.resonance_rating}
+              </div>
+              
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                  <Button variant="ghost" size="sm" className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <MoreVertical className="w-3 h-3" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={onClick}>
+                    View Details
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
+                    Share to Circle
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
           
-          <CardDescription className="line-clamp-2 text-sm">
-            {entry.content.substring(0, 120)}...
-          </CardDescription>
+          {/* Title and description */}
+          <div onClick={onClick}>
+            <CardTitle className="text-sm leading-tight mb-1 group-hover:text-primary transition-colors line-clamp-2">
+              {entry.title}
+            </CardTitle>
+            
+            <CardDescription className="text-xs line-clamp-3 leading-relaxed">
+              {entry.content}
+            </CardDescription>
+          </div>
+
+          {/* Tags */}
+          {entry.tags && entry.tags.length > 0 && (
+            <div className="flex flex-wrap gap-1">
+              {entry.tags.slice(0, 2).map((tag) => (
+                <Badge key={tag} variant="secondary" className="text-xs px-1.5 py-0.5 h-4">
+                  {tag}
+                </Badge>
+              ))}
+              {entry.tags.length > 2 && (
+                <Badge variant="secondary" className="text-xs px-1.5 py-0.5 h-4">
+                  +{entry.tags.length - 2}
+                </Badge>
+              )}
+            </div>
+          )}
         </CardHeader>
 
-        <CardContent className="relative">
-          <div className="space-y-3">
-            {/* Tags */}
-            {entry.tags && entry.tags.length > 0 && (
-              <div className="flex flex-wrap gap-1">
-                {entry.tags.slice(0, 3).map(tag => (
-                  <Badge key={tag} variant="outline" className="text-xs">
-                    {tag}
-                  </Badge>
-                ))}
-                {entry.tags.length > 3 && (
-                  <Badge variant="outline" className="text-xs">
-                    +{entry.tags.length - 3}
-                  </Badge>
-                )}
-              </div>
-            )}
-
-            {/* Resonance Signature */}
+        <CardContent className="pt-0 pb-3">
+          {/* Metadata row */}
+          <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
+            <div className="flex items-center gap-2">
+              <span className="flex items-center gap-1">
+                <Calendar className="w-3 h-3" />
+                {formatDate(entry.created_at)}
+              </span>
+              
+              {entry.reading_time_minutes && (
+                <span className="flex items-center gap-1">
+                  <Clock className="w-3 h-3" />
+                  {entry.reading_time_minutes}m
+                </span>
+              )}
+            </div>
+            
             {entry.resonance_signature && (
-              <div className="text-xs font-mono text-muted-foreground bg-muted/50 px-2 py-1 rounded">
-                {entry.resonance_signature}
-              </div>
+              <span className="flex items-center gap-1 font-mono text-xs opacity-60">
+                <Sparkles className="w-3 h-3" />
+                {entry.resonance_signature.slice(-6)}
+              </span>
             )}
+          </div>
 
-            {/* Timestamp */}
-            <div className="text-xs text-muted-foreground">
-              {new Date(entry.created_at).toLocaleDateString()}
+          {/* Interaction buttons */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleResonanceClick}
+                className={cn(
+                  "h-6 px-2 gap-1 text-xs",
+                  hasResonated ? "text-red-500 hover:text-red-600" : "text-muted-foreground hover:text-red-500"
+                )}
+              >
+                <Heart className={cn("w-3 h-3", hasResonated && "fill-current")} />
+                {resonanceCount}
+              </Button>
+              
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onClick}
+                className="h-6 px-2 gap-1 text-xs text-muted-foreground hover:text-blue-500"
+              >
+                <MessageCircle className="w-3 h-3" />
+                0
+              </Button>
+            </div>
+            
+            {/* Engagement metrics */}
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              {engagementMetrics.views > 0 && (
+                <span className="flex items-center gap-1">
+                  <Eye className="w-3 h-3" />
+                  {engagementMetrics.views}
+                </span>
+              )}
+              
+              {engagementMetrics.shares > 0 && (
+                <span className="flex items-center gap-1">
+                  <Share2 className="w-3 h-3" />
+                  {engagementMetrics.shares}
+                </span>
+              )}
             </div>
           </div>
         </CardContent>
-
-        {/* Hover overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
       </Card>
     </motion.div>
   );
