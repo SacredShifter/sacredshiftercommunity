@@ -41,6 +41,49 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         
         // Fetch user role if logged in
         if (session?.user) {
+          // Set loading to false immediately and fetch roles in background
+          setLoading(false);
+          
+          // Fetch roles in background with timeout
+          setTimeout(async () => {
+            try {
+              const { data: roles, error } = await supabase
+                .from('user_roles')
+                .select('role')
+                .eq('user_id', session.user.id);
+              
+              if (error) {
+                console.error('Error fetching user roles:', error);
+                setUserRole('user'); // Default to user role on error
+              } else {
+                // Check if user is admin
+                const isAdmin = roles?.some(r => r.role === 'admin');
+                setUserRole(isAdmin ? 'admin' : 'user');
+              }
+            } catch (error) {
+              console.error('Error in role fetch:', error);
+              setUserRole('user'); // Default to user role on error
+            }
+          }, 0);
+        } else {
+          setUserRole(undefined);
+          setLoading(false);
+        }
+      }
+    );
+
+    // THEN check for existing session
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      console.log('Initial session check:', { session, user: session?.user });
+      setSession(session);
+      setUser(session?.user ?? null);
+      
+      // Set loading to false immediately for initial session
+      setLoading(false);
+      
+      // Fetch user role if logged in (in background)
+      if (session?.user) {
+        setTimeout(async () => {
           try {
             const { data: roles, error } = await supabase
               .from('user_roles')
@@ -59,45 +102,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             console.error('Error in role fetch:', error);
             setUserRole('user'); // Default to user role on error
           }
-        } else {
-          setUserRole(undefined);
-        }
-        
-        setLoading(false);
-      }
-    );
-
-    // THEN check for existing session
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      console.log('Initial session check:', { session, user: session?.user });
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      // Fetch user role if logged in
-      if (session?.user) {
-        try {
-          const { data: roles, error } = await supabase
-            .from('user_roles')
-            .select('role')
-            .eq('user_id', session.user.id);
-          
-          if (error) {
-            console.error('Error fetching user roles:', error);
-            setUserRole('user'); // Default to user role on error
-          } else {
-            // Check if user is admin
-            const isAdmin = roles?.some(r => r.role === 'admin');
-            setUserRole(isAdmin ? 'admin' : 'user');
-          }
-        } catch (error) {
-          console.error('Error in role fetch:', error);
-          setUserRole('user'); // Default to user role on error
-        }
+        }, 0);
       } else {
         setUserRole(undefined);
       }
-      
-      setLoading(false);
     });
 
     return () => subscription.unsubscribe();
