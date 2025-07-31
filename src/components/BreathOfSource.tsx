@@ -316,9 +316,75 @@ const BreathOfSource: React.FC = () => {
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              className="text-xl relative z-10"
+              className="relative z-10 w-8 h-8"
             >
-              🌬️
+              <svg 
+                viewBox="0 0 100 100" 
+                className="w-full h-full"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                {/* Flower of Life Pattern */}
+                <g className="opacity-80">
+                  {/* Central circle */}
+                  <motion.circle
+                    cx="50" cy="50" r="12"
+                    fill="none"
+                    stroke="hsl(var(--truth))"
+                    strokeWidth="1.5"
+                    animate={isActive ? { 
+                      scale: [1, 1.1, 1],
+                      opacity: [0.8, 1, 0.8]
+                    } : { scale: 1, opacity: 0.8 }}
+                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                  />
+                  
+                  {/* Surrounding circles forming flower of life */}
+                  {[0, 60, 120, 180, 240, 300].map((angle, index) => (
+                    <motion.circle
+                      key={angle}
+                      cx={50 + 12 * Math.cos((angle * Math.PI) / 180)}
+                      cy={50 + 12 * Math.sin((angle * Math.PI) / 180)}
+                      r="12"
+                      fill="none"
+                      stroke="hsl(var(--alignment))"
+                      strokeWidth="1"
+                      animate={isActive ? {
+                        scale: [1, 1.05, 1],
+                        opacity: [0.6, 0.9, 0.6]
+                      } : { scale: 1, opacity: 0.6 }}
+                      transition={{ 
+                        duration: 4, 
+                        repeat: Infinity, 
+                        ease: "easeInOut",
+                        delay: index * 0.2
+                      }}
+                    />
+                  ))}
+                  
+                  {/* Breath ripples */}
+                  {[1, 2, 3].map((ring) => (
+                    <motion.circle
+                      key={ring}
+                      cx="50" cy="50"
+                      r={15 + ring * 8}
+                      fill="none"
+                      stroke="hsl(var(--truth))"
+                      strokeWidth="0.5"
+                      strokeDasharray="2,4"
+                      animate={isActive ? {
+                        r: [15 + ring * 8, 25 + ring * 8, 15 + ring * 8],
+                        opacity: [0.3, 0.6, 0.3]
+                      } : { opacity: 0.2 }}
+                      transition={{
+                        duration: 3,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: ring * 0.5
+                      }}
+                    />
+                  ))}
+                </g>
+              </svg>
             </motion.div>
             <div className="absolute -inset-1 bg-primary/10 rounded-full blur opacity-30 group-hover:opacity-50 transition-opacity" />
           </Button>
