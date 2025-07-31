@@ -123,17 +123,20 @@ export function useRegistryOfResonance() {
 
   const updateEntry = useCallback(async (id: string, updates: Partial<RegistryEntry>) => {
     try {
-      // Only send valid database columns
+      // Filter to only include registry_of_resonance table columns
+      const validColumns = [
+        'title', 'content', 'resonance_rating', 'resonance_signature', 'tags', 'entry_type',
+        'access_level', 'is_verified', 'is_pinned', 'image_url', 'image_alt_text',
+        'author_name', 'author_bio', 'publication_date', 'reading_time_minutes',
+        'word_count', 'source_citation', 'inspiration_source', 'visibility_settings',
+        'content_type', 'engagement_metrics', 'resonance_count'
+      ];
+      
       const validUpdates = Object.fromEntries(
-        Object.entries(updates).filter(([key]) => 
-          ['title', 'content', 'resonance_rating', 'resonance_signature', 'tags', 'entry_type', 
-           'access_level', 'is_verified', 'is_pinned', 'image_url', 'image_alt_text', 
-           'author_name', 'author_bio', 'publication_date', 'reading_time_minutes', 
-           'word_count', 'source_citation', 'inspiration_source', 'visibility_settings', 
-           'content_type', 'engagement_metrics', 'resonance_count'].includes(key)
-        )
+        Object.entries(updates).filter(([key]) => validColumns.includes(key))
       );
 
+      // Ensure we only update the specific entry we want
       const { data, error } = await supabase
         .from('registry_of_resonance')
         .update(validUpdates)

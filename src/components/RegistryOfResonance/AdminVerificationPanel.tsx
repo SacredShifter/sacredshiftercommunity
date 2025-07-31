@@ -25,16 +25,28 @@ export function AdminVerificationPanel({ entry, onVerificationChange }: AdminVer
   }
 
   const handleVerify = async () => {
-    const result = await updateEntry(entry.id, { is_verified: true });
-    if (result) {
-      onVerificationChange?.();
+    try {
+      const result = await updateEntry(entry.id, { is_verified: true });
+      if (result) {
+        toast.success('Entry verified successfully');
+        onVerificationChange?.();
+      }
+    } catch (error) {
+      console.error('Verification failed:', error);
+      toast.error('Failed to verify entry');
     }
   };
 
   const handleUnverify = async () => {
-    const result = await updateEntry(entry.id, { is_verified: false });
-    if (result) {
-      onVerificationChange?.();
+    try {
+      const result = await updateEntry(entry.id, { is_verified: false });
+      if (result) {
+        toast.success('Entry unverified');
+        onVerificationChange?.();
+      }
+    } catch (error) {
+      console.error('Unverification failed:', error);
+      toast.error('Failed to unverify entry');
     }
   };
 
