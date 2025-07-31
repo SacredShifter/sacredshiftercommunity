@@ -82,7 +82,7 @@ export const SacredCircleInterface = ({
         .from('registry_entry_shares')
         .select(`
           *,
-          registry_of_resonance!entry_id (
+          registry_of_resonance (
             id,
             title,
             content,
@@ -167,7 +167,7 @@ export const SacredCircleInterface = ({
   return (
     <Card className={cn(
       "flex flex-col bg-background/95 backdrop-blur-sm transition-all duration-300",
-      isMaximized && "fixed inset-0 z-50 rounded-none animate-scale-in",
+      isMaximized && "fixed inset-0 top-0 left-0 right-0 bottom-0 z-50 rounded-none animate-scale-in w-screen h-screen",
       isMinimized && "h-12 overflow-hidden",
       !isMaximized && !isMinimized && "h-full",
       className
