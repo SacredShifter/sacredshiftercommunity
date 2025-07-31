@@ -68,8 +68,8 @@ const App = () => {
                                />
                              </div>
                            </header>
-                            <main className="flex-1 overflow-hidden min-h-0">
-                              <div className="h-full overflow-y-auto">
+                            <main className="flex-1 overflow-y-auto min-h-0">
+                              <div className="min-h-full">
                                <UIErrorBoundary>
                                  <Routes>
                                 <Route path="/" element={<Index />} />
