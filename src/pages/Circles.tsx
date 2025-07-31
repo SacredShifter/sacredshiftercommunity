@@ -274,13 +274,13 @@ const Circles = () => {
                      <DialogContent 
                        className={
                          isCircleMaximized 
-                           ? "fixed inset-0 top-0 left-0 right-0 bottom-0 z-50 max-w-none max-h-none w-screen h-screen rounded-none border-none m-0 p-0" 
+                           ? "fixed inset-0 top-0 left-0 right-0 bottom-0 z-50 max-w-none max-h-none w-screen h-screen rounded-none border-none m-0 p-0 !translate-x-0 !translate-y-0 !left-0 !top-0" 
                            : "max-w-4xl max-h-[90vh] overflow-hidden"
                        }
-                      onOpenAutoFocus={() => {
-                        setIsCircleMaximized(false);
-                        setIsCircleMinimized(false);
-                      }}
+                       onOpenAutoFocus={() => {
+                         setIsCircleMaximized(false);
+                         setIsCircleMinimized(false);
+                       }}
                     >
                       <DialogHeader className={isCircleMinimized ? "hidden" : ""}>
                         <DialogTitle>Sacred Circle: {circle.name}</DialogTitle>

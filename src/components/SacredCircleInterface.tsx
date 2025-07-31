@@ -81,21 +81,37 @@ export const SacredCircleInterface = ({
       const { data, error } = await supabase
         .from('registry_entry_shares')
         .select(`
-          *,
-          registry_of_resonance (
-            id,
-            title,
-            content,
-            entry_type,
-            resonance_rating,
-            author_name
-          )
+          id,
+          message,
+          shared_at,
+          user_id,
+          entry_id
         `)
         .eq('circle_id', circleId)
         .order('shared_at', { ascending: false });
 
       if (error) throw error;
-      setSharedEntries(data || []);
+
+      // Now fetch the registry entries separately
+      if (data && data.length > 0) {
+        const entryIds = data.map(share => share.entry_id);
+        const { data: registryData, error: registryError } = await supabase
+          .from('registry_of_resonance')
+          .select('id, title, content, entry_type, resonance_rating, author_name')
+          .in('id', entryIds);
+
+        if (registryError) throw registryError;
+
+        // Combine the data
+        const combinedData = data.map(share => ({
+          ...share,
+          registry_of_resonance: registryData?.find(entry => entry.id === share.entry_id)
+        }));
+
+        setSharedEntries(combinedData);
+      } else {
+        setSharedEntries([]);
+      }
     } catch (error) {
       console.error('Error fetching shared entries:', error);
     } finally {
