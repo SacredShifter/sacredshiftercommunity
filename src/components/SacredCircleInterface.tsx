@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Send, Users, Settings, UserPlus, Hash, ArrowLeft, Crown, Shield } from 'lucide-react';
+import { Send, Users, Settings, UserPlus, Hash, ArrowLeft, Crown, Shield, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils';
 import { useSacredCircles } from '@/hooks/useSacredCircles';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 interface SacredCircleInterfaceProps {
   circleId?: string;
@@ -29,6 +30,8 @@ export const SacredCircleInterface = ({
   const { toast } = useToast();
   const [newMessage, setNewMessage] = useState('');
   const [activeTab, setActiveTab] = useState('messages');
+  const [sharedEntries, setSharedEntries] = useState<any[]>([]);
+  const [loadingShares, setLoadingShares] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -47,10 +50,43 @@ export const SacredCircleInterface = ({
     }
   }, [messages]);
 
-  // Fetch messages on mount
+  // Fetch messages and shared entries on mount
   useEffect(() => {
     fetchRecentMessages();
-  }, [fetchRecentMessages]);
+    if (circleId) {
+      fetchSharedEntries();
+    }
+  }, [fetchRecentMessages, circleId]);
+
+  const fetchSharedEntries = async () => {
+    if (!circleId) return;
+    
+    setLoadingShares(true);
+    try {
+      const { data, error } = await supabase
+        .from('registry_entry_shares')
+        .select(`
+          *,
+          registry_of_resonance:entry_id (
+            id,
+            title,
+            content,
+            entry_type,
+            resonance_rating,
+            author_name
+          )
+        `)
+        .eq('circle_id', circleId)
+        .order('shared_at', { ascending: false });
+
+      if (error) throw error;
+      setSharedEntries(data || []);
+    } catch (error) {
+      console.error('Error fetching shared entries:', error);
+    } finally {
+      setLoadingShares(false);
+    }
+  };
 
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !user) return;
@@ -140,10 +176,20 @@ export const SacredCircleInterface = ({
         </div>
 
         <div className="flex items-center gap-1">
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="h-8 w-8 p-0"
+            onClick={() => toast({ title: "Coming Soon", description: "Invite functionality will be available soon." })}
+          >
             <UserPlus className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="h-8 w-8 p-0"
+            onClick={() => toast({ title: "Coming Soon", description: "Circle settings will be available soon." })}
+          >
             <Settings className="h-4 w-4" />
           </Button>
         </div>
@@ -154,8 +200,9 @@ export const SacredCircleInterface = ({
         {/* Main Content */}
         <div className="flex-1 flex flex-col">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
-            <TabsList className="grid w-full grid-cols-2 mx-4 mt-2">
+            <TabsList className="grid w-full grid-cols-3 mx-4 mt-2">
               <TabsTrigger value="messages" className="text-xs">Messages</TabsTrigger>
+              <TabsTrigger value="shared" className="text-xs">Shared</TabsTrigger>
               <TabsTrigger value="members" className="text-xs">Members</TabsTrigger>
             </TabsList>
 
@@ -287,6 +334,67 @@ export const SacredCircleInterface = ({
                   </Button>
                 </div>
               </div>
+            </TabsContent>
+
+            <TabsContent value="shared" className="flex-1 mt-2">
+              <ScrollArea className="flex-1 p-4">
+                {loadingShares ? (
+                  <div className="flex items-center justify-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                  </div>
+                ) : sharedEntries.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <BookOpen className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                    <p className="text-lg font-medium mb-1">No Shared Entries</p>
+                    <p className="text-sm">Registry entries shared to this circle will appear here</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {sharedEntries.map((share) => {
+                      const entry = share.registry_of_resonance;
+                      if (!entry) return null;
+                      
+                      return (
+                        <Card key={share.id} className="p-4 hover:shadow-md transition-shadow">
+                          <div className="flex items-start gap-3">
+                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center flex-shrink-0">
+                              <BookOpen className="h-5 w-5 text-white" />
+                            </div>
+                            
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-2">
+                                <h4 className="font-semibold text-sm truncate">{entry.title}</h4>
+                                <Badge variant="outline" className="text-xs">
+                                  {entry.entry_type}
+                                </Badge>
+                                <Badge variant="outline" className="text-xs">
+                                  ⚡ {entry.resonance_rating}
+                                </Badge>
+                              </div>
+                              
+                              <p className="text-sm text-muted-foreground line-clamp-3 mb-2">
+                                {entry.content.substring(0, 200)}...
+                              </p>
+                              
+                              {share.message && (
+                                <div className="bg-muted/50 p-2 rounded-lg mb-2">
+                                  <p className="text-xs text-muted-foreground mb-1">Shared with message:</p>
+                                  <p className="text-sm">{share.message}</p>
+                                </div>
+                              )}
+                              
+                              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                                <span>By {entry.author_name || 'Anonymous'}</span>
+                                <span>{new Date(share.shared_at).toLocaleDateString()}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </Card>
+                      );
+                    })}
+                  </div>
+                )}
+              </ScrollArea>
             </TabsContent>
 
             <TabsContent value="members" className="flex-1 mt-2">
