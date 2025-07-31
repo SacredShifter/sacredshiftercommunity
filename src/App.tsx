@@ -13,6 +13,7 @@ import { ChatBubble } from "@/components/ChatBubble";
 import { AIChatBubble } from "@/components/AIChatBubble";
 import BreathOfSource from "@/components/BreathOfSource";
 import { SacredSoundscape } from "@/components/SacredSoundscape";
+import { ErrorBoundary, UIErrorBoundary, AudioErrorBoundary } from "@/components/ErrorBoundary";
 
 import Index from "./pages/Index";
 import Feed from "./pages/Feed";
@@ -33,15 +34,18 @@ const queryClient = new QueryClient();
 
 const App = () => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <TourProvider>
-        <TooltipProvider>
+    <ErrorBoundary name="Root">
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <TourProvider>
+          <TooltipProvider>
           <Toaster />
           <Sonner />
           <div className="min-h-screen relative">
             {/* Beautiful moving background across all pages */}
-            <ParallaxBackground />
+            <UIErrorBoundary>
+              <ParallaxBackground />
+            </UIErrorBoundary>
             
             <BrowserRouter>
               <Routes>
@@ -50,7 +54,9 @@ const App = () => {
                   <ProtectedRoute>
                     <SidebarProvider>
                        <div className="h-screen flex w-full">
-                         <AppSidebar />
+                         <UIErrorBoundary>
+                           <AppSidebar />
+                         </UIErrorBoundary>
                          <SidebarInset className="flex-1 flex flex-col h-full">
                            <header className="h-12 flex items-center border-b border-border/30 backdrop-blur-md bg-background/20 px-4 shrink-0">
                              <SidebarTrigger className="mr-4" />
@@ -62,9 +68,10 @@ const App = () => {
                                />
                              </div>
                            </header>
-                           <main className="flex-1 overflow-hidden">
-                             <div className="h-full overflow-y-auto">
-                              <Routes>
+                            <main className="flex-1 overflow-hidden">
+                              <div className="h-full overflow-y-auto">
+                               <UIErrorBoundary>
+                                 <Routes>
                                 <Route path="/" element={<Index />} />
                                 <Route path="/feed" element={<Feed />} />
                                 <Route path="/messages" element={<Messages />} />
@@ -77,9 +84,10 @@ const App = () => {
                                 <Route path="/support" element={<Support />} />
                                 <Route path="/profile" element={<Profile />} />
                                 <Route path="/settings" element={<Settings />} />
-                                <Route path="*" element={<NotFound />} />
-                              </Routes>
-                            </div>
+                                 <Route path="*" element={<NotFound />} />
+                                 </Routes>
+                               </UIErrorBoundary>
+                             </div>
                           </main>
                         </SidebarInset>
                       </div>
@@ -91,22 +99,29 @@ const App = () => {
               {/* Global floating components - outside ProtectedRoute but inside AuthProvider */}
               {/* Floating Control Center - Top Right */}
               <div className="fixed top-4 right-4 z-50 flex items-center gap-3">
-                <SacredSoundscape />
+                <AudioErrorBoundary>
+                  <SacredSoundscape />
+                </AudioErrorBoundary>
               </div>
               
               {/* AI Assistant - Bottom Right */}
               <div className="fixed bottom-20 right-4 z-50">
-                <AIChatBubble />
+                <UIErrorBoundary>
+                  <AIChatBubble />
+                </UIErrorBoundary>
               </div>
               
               {/* Breath of Source - Global Breathing Component */}
-              <BreathOfSource />
+              <AudioErrorBoundary>
+                <BreathOfSource />
+              </AudioErrorBoundary>
             </BrowserRouter>
           </div>
         </TooltipProvider>
         </TourProvider>
       </AuthProvider>
     </QueryClientProvider>
+    </ErrorBoundary>
   );
 };
 

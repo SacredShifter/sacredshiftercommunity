@@ -1,5 +1,6 @@
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
+import { logger } from '@/lib/logger';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -8,7 +9,11 @@ interface ProtectedRouteProps {
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { user, loading } = useAuth();
   
-  console.log('ProtectedRoute state:', { user, loading });
+  logger.debug('ProtectedRoute state check', {
+    component: 'ProtectedRoute',
+    userId: user?.id,
+    metadata: { loading, hasUser: !!user }
+  });
 
   if (loading) {
     return (

@@ -1,6 +1,8 @@
 import { useState, useEffect, createContext, useContext } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/lib/logger';
+import { useErrorHandler } from './useErrorHandler';
 
 interface AuthContextType {
   user: User | null;
@@ -28,14 +30,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [userRole, setUserRole] = useState<string>();
+  const { handleAuthError } = useErrorHandler();
   
-  console.log('AuthProvider state:', { user, session, loading });
+  logger.debug('AuthProvider state change', { 
+    component: 'AuthProvider',
+    userId: user?.id,
+    metadata: { hasSession: !!session, loading }
+  });
 
   useEffect(() => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state change:', { event, session, user: session?.user });
+        logger.authEvent(`Auth state changed: ${event}`, {
+          component: 'AuthProvider',
+          function: 'onAuthStateChange',
+          userId: session?.user?.id,
+          metadata: { event, hasSession: !!session }
+        });
+        
         setSession(session);
         setUser(session?.user ?? null);
         
@@ -53,15 +66,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 .eq('user_id', session.user.id);
               
               if (error) {
-                console.error('Error fetching user roles:', error);
+                handleAuthError(error, {
+                  component: 'AuthProvider',
+                  function: 'fetchUserRoles',
+                  userId: session.user.id
+                });
                 setUserRole('user'); // Default to user role on error
               } else {
                 // Check if user is admin
                 const isAdmin = roles?.some(r => r.role === 'admin');
                 setUserRole(isAdmin ? 'admin' : 'user');
+                
+                logger.debug('User roles fetched successfully', {
+                  component: 'AuthProvider',
+                  userId: session.user.id,
+                  metadata: { isAdmin, roleCount: roles?.length }
+                });
               }
             } catch (error) {
-              console.error('Error in role fetch:', error);
+              handleAuthError(error, {
+                component: 'AuthProvider',
+                function: 'fetchUserRoles',
+                userId: session.user.id
+              });
               setUserRole('user'); // Default to user role on error
             }
           }, 0);
@@ -74,7 +101,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     // THEN check for existing session
     supabase.auth.getSession().then(async ({ data: { session } }) => {
-      console.log('Initial session check:', { session, user: session?.user });
+      logger.debug('Initial session check completed', {
+        component: 'AuthProvider',
+        function: 'getSession',
+        userId: session?.user?.id,
+        metadata: { hasSession: !!session }
+      });
+      
       setSession(session);
       setUser(session?.user ?? null);
       
@@ -91,7 +124,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               .eq('user_id', session.user.id);
             
             if (error) {
-              console.error('Error fetching user roles:', error);
+              handleAuthError(error, {
+                component: 'AuthProvider',
+                function: 'fetchInitialUserRoles',
+                userId: session.user.id
+              });
               setUserRole('user'); // Default to user role on error
             } else {
               // Check if user is admin
@@ -99,7 +136,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               setUserRole(isAdmin ? 'admin' : 'user');
             }
           } catch (error) {
-            console.error('Error in role fetch:', error);
+            handleAuthError(error, {
+              component: 'AuthProvider',
+              function: 'fetchInitialUserRoles',
+              userId: session.user.id
+            });
             setUserRole('user'); // Default to user role on error
           }
         }, 0);
