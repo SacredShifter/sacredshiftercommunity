@@ -134,6 +134,7 @@ export const useSacredCircles = () => {
       tone?: string;
       frequency?: number;
       isAnonymous?: boolean;
+      circleId?: string;
     } = {}
   ) => {
     if (!user) throw new Error('User not authenticated');
@@ -148,7 +149,8 @@ export const useSacredCircles = () => {
           chakra_tag: options.chakraTag,
           tone: options.tone,
           frequency: options.frequency,
-          is_anonymous: options.isAnonymous || false
+          is_anonymous: options.isAnonymous || false,
+          group_id: options.circleId || null
         })
         .select()
         .single();

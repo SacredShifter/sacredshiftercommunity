@@ -125,7 +125,8 @@ export const SacredCircleInterface = ({
     try {
       await sendMessage(newMessage.trim(), 'circle', {
         chakraTag: 'heart', // Default chakra
-        tone: 'harmonious'
+        tone: 'harmonious',
+        circleId: circleId
       });
       setNewMessage('');
       inputRef.current?.focus();
