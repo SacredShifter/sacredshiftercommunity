@@ -41,14 +41,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         
         // Fetch user role if logged in
         if (session?.user) {
-          const { data: roles } = await supabase
-            .from('user_roles')
-            .select('role')
-            .eq('user_id', session.user.id);
-          
-          // Check if user is admin
-          const isAdmin = roles?.some(r => r.role === 'admin');
-          setUserRole(isAdmin ? 'admin' : 'user');
+          try {
+            const { data: roles, error } = await supabase
+              .from('user_roles')
+              .select('role')
+              .eq('user_id', session.user.id);
+            
+            if (error) {
+              console.error('Error fetching user roles:', error);
+              setUserRole('user'); // Default to user role on error
+            } else {
+              // Check if user is admin
+              const isAdmin = roles?.some(r => r.role === 'admin');
+              setUserRole(isAdmin ? 'admin' : 'user');
+            }
+          } catch (error) {
+            console.error('Error in role fetch:', error);
+            setUserRole('user'); // Default to user role on error
+          }
         } else {
           setUserRole(undefined);
         }
@@ -65,14 +75,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       
       // Fetch user role if logged in
       if (session?.user) {
-        const { data: roles } = await supabase
-          .from('user_roles')
-          .select('role')
-          .eq('user_id', session.user.id);
-        
-        // Check if user is admin
-        const isAdmin = roles?.some(r => r.role === 'admin');
-        setUserRole(isAdmin ? 'admin' : 'user');
+        try {
+          const { data: roles, error } = await supabase
+            .from('user_roles')
+            .select('role')
+            .eq('user_id', session.user.id);
+          
+          if (error) {
+            console.error('Error fetching user roles:', error);
+            setUserRole('user'); // Default to user role on error
+          } else {
+            // Check if user is admin
+            const isAdmin = roles?.some(r => r.role === 'admin');
+            setUserRole(isAdmin ? 'admin' : 'user');
+          }
+        } catch (error) {
+          console.error('Error in role fetch:', error);
+          setUserRole('user'); // Default to user role on error
+        }
       } else {
         setUserRole(undefined);
       }
