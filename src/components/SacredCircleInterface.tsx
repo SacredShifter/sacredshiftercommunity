@@ -82,7 +82,7 @@ export const SacredCircleInterface = ({
         .from('registry_entry_shares')
         .select(`
           *,
-          registry_of_resonance:entry_id (
+          registry_of_resonance!entry_id (
             id,
             title,
             content,
