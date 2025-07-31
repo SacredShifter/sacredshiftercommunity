@@ -25,14 +25,14 @@ export function AdminVerificationPanel({ entry, onVerificationChange }: AdminVer
   }
 
   const handleVerify = async () => {
-    const result = await updateEntry(entry.id, { is_verified: true } as any);
+    const result = await updateEntry(entry.id, { is_verified: true });
     if (result) {
       onVerificationChange?.();
     }
   };
 
   const handleUnverify = async () => {
-    const result = await updateEntry(entry.id, { is_verified: false } as any);
+    const result = await updateEntry(entry.id, { is_verified: false });
     if (result) {
       onVerificationChange?.();
     }

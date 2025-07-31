@@ -121,11 +121,22 @@ export function useRegistryOfResonance() {
     }
   }, [user]);
 
-  const updateEntry = useCallback(async (id: string, updates: Partial<NewRegistryEntry>) => {
+  const updateEntry = useCallback(async (id: string, updates: Partial<RegistryEntry>) => {
     try {
+      // Only send valid database columns
+      const validUpdates = Object.fromEntries(
+        Object.entries(updates).filter(([key]) => 
+          ['title', 'content', 'resonance_rating', 'resonance_signature', 'tags', 'entry_type', 
+           'access_level', 'is_verified', 'is_pinned', 'image_url', 'image_alt_text', 
+           'author_name', 'author_bio', 'publication_date', 'reading_time_minutes', 
+           'word_count', 'source_citation', 'inspiration_source', 'visibility_settings', 
+           'content_type', 'engagement_metrics', 'resonance_count'].includes(key)
+        )
+      );
+
       const { data, error } = await supabase
         .from('registry_of_resonance')
-        .update(updates)
+        .update(validUpdates)
         .eq('id', id)
         .select()
         .single();

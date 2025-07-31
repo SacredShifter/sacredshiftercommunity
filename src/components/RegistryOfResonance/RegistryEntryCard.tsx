@@ -98,6 +98,25 @@ export function RegistryEntryCard({ entry, onClick }: RegistryEntryCardProps) {
               <Badge variant="outline" className="text-xs px-1.5 py-0.5 h-5">
                 {entry.entry_type}
               </Badge>
+              
+              {/* Verification status badge for admin visibility */}
+              {!entry.is_verified && (
+                <Badge
+                  variant="outline"
+                  className="text-xs px-1.5 py-0.5 h-5 bg-yellow-50 text-yellow-700 border-yellow-300 dark:bg-yellow-900/20 dark:text-yellow-400 dark:border-yellow-600"
+                >
+                  ⚠️ Review
+                </Badge>
+              )}
+              
+              {entry.is_verified && (
+                <Badge
+                  variant="outline"
+                  className="text-xs px-1.5 py-0.5 h-5 bg-green-50 text-green-700 border-green-300 dark:bg-green-900/20 dark:text-green-400 dark:border-green-600"
+                >
+                  ✓ Verified
+                </Badge>
+              )}
             </div>
             
             <div className="flex items-center gap-2">
