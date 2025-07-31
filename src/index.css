@@ -224,7 +224,56 @@ All colors MUST be HSL.
     animation: sacred-cta-glow 4s ease-in-out infinite;
   }
 
+  .resonance-flow {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      transparent 25%,
+      hsl(var(--pulse-color, var(--primary)) / 0.8) 50%,
+      transparent 75%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    animation: resonance-flow-sweep 4s ease-in-out infinite;
+    position: relative;
+  }
+
+  .resonance-flow::before {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    color: hsl(var(--pulse-color, var(--primary)) / 0.7);
+    z-index: -1;
+  }
+
+  .resonance-flow:hover {
+    animation-duration: 2s;
+  }
+
+  .resonance-flow:hover::before {
+    color: hsl(var(--pulse-color, var(--primary)) / 0.9);
+    text-shadow: 0 0 12px hsl(var(--pulse-color, var(--primary)) / 0.6);
+  }
+
   @media (prefers-reduced-motion: reduce) {
+    .resonance-flow {
+      animation: none;
+      background: transparent;
+      color: hsl(var(--pulse-color, var(--primary)) / 0.8);
+      text-shadow: 0 0 8px hsl(var(--pulse-color, var(--primary)) / 0.4);
+    }
+    
+    .resonance-flow::before {
+      display: none;
+    }
+    
     .sacred-cta-pulse {
       animation: none;
       text-shadow: 0 0 6px hsl(var(--pulse-color, var(--primary)) / 0.4) !important;
@@ -253,6 +302,18 @@ All colors MUST be HSL.
       0 0 12px hsl(var(--pulse-color, var(--primary)) / 0.6),
       0 0 20px hsl(var(--pulse-color, var(--primary)) / 0.3);
     filter: brightness(1.2);
+  }
+}
+
+@keyframes resonance-flow-sweep {
+  0%, 20% {
+    background-position: -200% 0;
+  }
+  40%, 60% {
+    background-position: 0% 0;
+  }
+  80%, 100% {
+    background-position: 200% 0;
   }
 }
 

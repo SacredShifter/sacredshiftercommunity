@@ -286,11 +286,11 @@ const Index = () => {
                   
                   <div className="mt-4 pt-4 border-t border-primary/10">
                     <span 
-                      className="text-xs text-primary/80 group-hover:text-primary transition-colors duration-300 sacred-cta-pulse text-center block"
+                      className="text-xs group-hover:text-primary transition-colors duration-300 resonance-flow text-center block font-medium"
                       style={{ 
-                        '--pulse-color': section.pulseColor,
-                        textShadow: `0 0 8px hsl(${section.pulseColor} / 0.3)`
+                        '--pulse-color': section.pulseColor
                       } as React.CSSProperties & { '--pulse-color': string }}
+                      data-text={`→ ${section.cta}`}
                     >
                       → {section.cta}
                     </span>
