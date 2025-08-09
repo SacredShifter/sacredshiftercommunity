@@ -29,10 +29,11 @@ Sacred Shifter is a platform designed to facilitate spiritual growth, consciousn
 
 ## Getting Started
 
-1. Clone the repository
-2. Install dependencies: `npm install`
-3. Create a `.env` file based on `.env.example`
-4. Start the development server: `npm run dev`
+1. cp .env.example .env
+   # Fill VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY
+2. npm ci
+3. npm run dev
+4. npm run check   # typecheck + lint + build
 
 ## Contributing
 
