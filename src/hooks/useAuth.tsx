@@ -100,7 +100,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     );
 
     // THEN check for existing session
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session }, error }) => {
+      if (error) {
+        logger.authEvent('Auth session error', {
+          component: 'AuthProvider',
+          function: 'getSession',
+          userId: undefined,
+          metadata: { error: String((error as any)?.message || error) }
+        });
+        try { await supabase.auth.signOut(); } catch {}
+        setSession(null);
+        setUser(null);
+        setUserRole(undefined);
+        setLoading(false);
+        return;
+      }
       logger.debug('Initial session check completed', {
         component: 'AuthProvider',
         function: 'getSession',
@@ -131,7 +145,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               });
               setUserRole('user'); // Default to user role on error
             } else {
-              // Check if user is admin
               const isAdmin = roles?.some(r => r.role === 'admin');
               setUserRole(isAdmin ? 'admin' : 'user');
             }
@@ -139,7 +152,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             handleAuthError(error, {
               component: 'AuthProvider',
               function: 'fetchInitialUserRoles',
-              userId: session.user.id
+              userId: session?.user?.id
             });
             setUserRole('user'); // Default to user role on error
           }

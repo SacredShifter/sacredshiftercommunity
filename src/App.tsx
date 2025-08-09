@@ -37,7 +37,7 @@ const App = () => {
     <ErrorBoundary name="Root">
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <TourProvider>
+          
           <TooltipProvider>
           <Toaster />
           <Sonner />
@@ -52,7 +52,8 @@ const App = () => {
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/*" element={
                   <ProtectedRoute>
-                    <SidebarProvider>
+                    <TourProvider>
+                     <SidebarProvider>
                        <div className="h-screen flex w-full">
                          <UIErrorBoundary>
                            <AppSidebar />
@@ -92,6 +93,7 @@ const App = () => {
                         </SidebarInset>
                       </div>
                     </SidebarProvider>
+                    </TourProvider>
                   </ProtectedRoute>
                 } />
               </Routes>
@@ -118,7 +120,7 @@ const App = () => {
             </BrowserRouter>
           </div>
         </TooltipProvider>
-        </TourProvider>
+        
       </AuthProvider>
     </QueryClientProvider>
     </ErrorBoundary>
