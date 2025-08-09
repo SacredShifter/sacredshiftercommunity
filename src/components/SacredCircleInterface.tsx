@@ -65,9 +65,9 @@ export const SacredCircleInterface = ({
     }
   }, [messages]);
 
-  // Fetch messages and shared entries on mount
+  // Fetch messages and shared entries on mount or when circle changes
   useEffect(() => {
-    fetchRecentMessages();
+    fetchRecentMessages(circleId);
     if (circleId) {
       fetchSharedEntries();
     }
@@ -302,97 +302,103 @@ export const SacredCircleInterface = ({
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {messages.map((message, index) => {
-                      const isOwnMessage = message.user_id === user?.id;
-                      const showAvatar = index === 0 || messages[index - 1]?.user_id !== message.user_id;
+                    {(() => {
+                      const circleMessages = circleId ? messages.filter(m => m.group_id === circleId) : messages;
+                      return circleMessages.map((message, index) => {
+                        const isOwnMessage = message.user_id === user?.id;
+                        const showAvatar = index === 0 || circleMessages[index - 1]?.user_id !== message.user_id;
 
-                      return (
-                        <div
-                          key={message.id}
-                          className={cn(
-                            "flex gap-3 group",
-                            isOwnMessage ? "justify-end" : "justify-start"
-                          )}
-                        >
-                          {!isOwnMessage && (
-                            <div className="w-8 flex-shrink-0">
-                              {showAvatar && (
-                                <Avatar className="h-8 w-8">
-                                  <AvatarFallback className={cn(
-                                    "bg-gradient-to-br text-white text-xs",
-                                    getChakraColor(message.chakra_tag)
-                                  )}>
-                                    {getInitials(message.user_id)}
-                                  </AvatarFallback>
-                                </Avatar>
-                              )}
-                            </div>
-                          )}
-
-                          <div className="max-w-[80%]">
-                            {showAvatar && !isOwnMessage && (
-                              <div className="flex items-center gap-2 mb-1">
-                                <span className="text-sm font-medium">
-                                  {message.is_anonymous ? 'Anonymous Soul' : `User ${message.user_id.slice(0, 8)}`}
-                                </span>
-                                {message.chakra_tag && (
-                                  <Badge 
-                                    variant="outline" 
-                                    className={cn("text-xs bg-gradient-to-r text-white border-none", getChakraColor(message.chakra_tag))}
-                                  >
-                                    {message.chakra_tag}
-                                  </Badge>
+                        return (
+                          <div
+                            key={message.id}
+                            className={cn(
+                              "flex gap-3 group",
+                              isOwnMessage ? "justify-end" : "justify-start"
+                            )}
+                          >
+                            {!isOwnMessage && (
+                              <div className="w-8 flex-shrink-0">
+                                {showAvatar && (
+                                  <Avatar className="h-8 w-8">
+                                    <AvatarFallback className={cn(
+                                      "bg-gradient-to-br text-white text-xs",
+                                      getChakraColor(message.chakra_tag)
+                                    )}>
+                                      {getInitials(message.user_id)}
+                                    </AvatarFallback>
+                                  </Avatar>
                                 )}
                               </div>
                             )}
-                            
-                            <div
-                              className={cn(
-                                "px-3 py-2 rounded-2xl relative",
-                                isOwnMessage
-                                  ? "bg-gradient-to-br from-primary to-primary/80 text-primary-foreground rounded-br-md"
-                                  : "bg-muted rounded-bl-md",
-                                "animate-fade-in"
+
+                            <div className="max-w-[80%]">
+                              {showAvatar && !isOwnMessage && (
+                                <div className="flex items-center gap-2 mb-1">
+                                  <span className="text-sm font-medium">
+                                    {message.is_anonymous ? 'Anonymous Soul' : `User ${message.user_id.slice(0, 8)}`}
+                                  </span>
+                                  {message.chakra_tag && (
+                                    <Badge 
+                                      variant="outline" 
+                                      className={cn("text-xs bg-gradient-to-r text-white border-none", getChakraColor(message.chakra_tag))}
+                                    >
+                                      {message.chakra_tag}
+                                    </Badge>
+                                  )}
+                                </div>
                               )}
-                            >
-                              <p className="text-sm whitespace-pre-wrap break-words">
-                                {message.content}
-                              </p>
                               
-                              <div className={cn(
-                                "flex items-center gap-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity",
-                                isOwnMessage ? "justify-end" : "justify-start"
-                              )}>
-                                <span className={cn(
-                                  "text-xs",
-                                  isOwnMessage ? "text-primary-foreground/70" : "text-muted-foreground"
+                              <div
+                                className={cn(
+                                  "px-3 py-2 rounded-2xl relative",
+                                  isOwnMessage
+                                    ? "bg-gradient-to-br from-primary to-primary/80 text-primary-foreground rounded-br-md"
+                                    : "bg-muted rounded-bl-md",
+                                  "animate-fade-in"
+                                )}
+                              >
+                                <p className="text-sm whitespace-pre-wrap break-words">
+                                  {message.content}
+                                </p>
+                                
+                                <div className={cn(
+                                  "flex items-center gap-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity",
+                                  isOwnMessage ? "justify-end" : "justify-start"
                                 )}>
-                                  {formatTime(message.created_at)}
-                                </span>
-                                {message.tone && (
                                   <span className={cn(
-                                    "text-xs opacity-75",
+                                    "text-xs",
                                     isOwnMessage ? "text-primary-foreground/70" : "text-muted-foreground"
                                   )}>
-                                    • {message.tone}
+                                    {formatTime(message.created_at)}
                                   </span>
-                                )}
+                                  {message.tone && (
+                                    <span className={cn(
+                                      "text-xs opacity-75",
+                                      isOwnMessage ? "text-primary-foreground/70" : "text-muted-foreground"
+                                    )}>
+                                      • {message.tone}
+                                    </span>
+                                  )}
+                                </div>
                               </div>
                             </div>
+
+                            {isOwnMessage && <div className="w-8 flex-shrink-0"></div>}
                           </div>
+                        );
+                      });
+                    })()}
 
-                          {isOwnMessage && <div className="w-8 flex-shrink-0"></div>}
+                    {(() => {
+                      const circleMessages = circleId ? messages.filter(m => m.group_id === circleId) : messages;
+                      return circleMessages.length === 0 && !loading ? (
+                        <div className="text-center py-8 text-muted-foreground">
+                          <Users className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                          <p className="text-lg font-medium mb-1">Welcome to the Sacred Circle</p>
+                          <p className="text-sm">Share your wisdom and connect with fellow souls</p>
                         </div>
-                      );
-                    })}
-
-                    {messages.length === 0 && !loading && (
-                      <div className="text-center py-8 text-muted-foreground">
-                        <Users className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                        <p className="text-lg font-medium mb-1">Welcome to the Sacred Circle</p>
-                        <p className="text-sm">Share your wisdom and connect with fellow souls</p>
-                      </div>
-                    )}
+                      ) : null;
+                    })()}
                   </div>
                 )}
               </ScrollArea>

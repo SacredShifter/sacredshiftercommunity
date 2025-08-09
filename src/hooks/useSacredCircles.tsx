@@ -34,6 +34,7 @@ export interface CircleMessage {
   has_image?: boolean;
   audio_url?: string;
   image_url?: string;
+  group_id?: string | null;
   author?: {
     id: string;
     display_name?: string;
@@ -103,17 +104,24 @@ export const useSacredCircles = () => {
     }
   }, [user]);
 
-  // Fetch recent posts from all circles
-  const fetchRecentMessages = useCallback(async () => {
+  // Fetch recent posts from all circles or a specific circle
+  const fetchRecentMessages = useCallback(async (groupId?: string) => {
     if (!user) return;
 
     try {
       setLoading(true);
-      const { data, error } = await supabase
+      let query = supabase
         .from('circle_posts')
         .select('*')
         .order('created_at', { ascending: false })
         .limit(50);
+
+      if (groupId) {
+        // Filter by specific circle
+        query = query.eq('group_id', groupId);
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
       setMessages(data || []);
