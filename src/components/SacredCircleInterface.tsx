@@ -120,17 +120,44 @@ export const SacredCircleInterface = ({
   };
 
   const handleSendMessage = async () => {
-    if (!newMessage.trim() || !user) return;
+    const trimmed = newMessage.trim();
+
+    if (!trimmed) {
+      toast({
+        title: "Nothing to send",
+        description: "Please enter a message.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!user) {
+      toast({
+        title: "Sign in required",
+        description: "Please sign in to send messages.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!circleId) {
+      toast({
+        title: "Circle unavailable",
+        description: "Cannot determine which circle to post to.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     try {
-      await sendMessage(newMessage.trim(), 'circle', {
+      await sendMessage(trimmed, 'circle', {
         chakraTag: 'heart', // Default chakra
         tone: 'harmonious',
-        circleId: circleId
+        circleId,
       });
       setNewMessage('');
       inputRef.current?.focus();
-      
+
       toast({
         title: "Message sent",
         description: "Your sacred message has been shared with the circle.",
@@ -139,7 +166,7 @@ export const SacredCircleInterface = ({
       toast({
         title: "Error",
         description: "Failed to send message. Please try again.",
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };
@@ -378,15 +405,16 @@ export const SacredCircleInterface = ({
                       ref={inputRef}
                       value={newMessage}
                       onChange={(e) => setNewMessage(e.target.value)}
-                      onKeyPress={handleKeyPress}
+                      onKeyDown={handleKeyPress}
                       placeholder="Share your sacred message..."
                       className="pr-10 resize-none bg-background/80 border-muted"
+                      disabled={!user}
                     />
                   </div>
 
                   <Button 
                     onClick={handleSendMessage}
-                    disabled={!newMessage.trim()}
+                    disabled={!newMessage.trim() || !user || !circleId}
                     size="sm"
                     className="h-9 w-9 p-0 bg-gradient-to-br from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
                   >
