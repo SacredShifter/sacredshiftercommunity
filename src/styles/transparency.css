@@ -1,0 +1,57 @@
+/* Transparency styles for components to allow background to show through */
+
+/* Make cards more transparent */
+.card {
+  background-color: hsla(var(--card) / 0.2) !important;
+  backdrop-filter: blur(4px) !important;
+}
+
+/* Make all background elements transparent by default */
+.bg-background {
+  background-color: transparent !important;
+}
+
+/* Adjust sidebar transparency */
+aside {
+  background-color: hsla(var(--background) / 0.1) !important;
+  backdrop-filter: blur(4px) !important;
+}
+
+/* Make content areas transparent */
+main {
+  background-color: transparent !important;
+}
+
+/* Adjust card hover effects */
+.card:hover {
+  background-color: hsla(var(--card) / 0.3) !important;
+}
+
+/* Ensure buttons maintain some opacity */
+.button, button {
+  background-color: hsla(var(--primary) / 0.7) !important;
+}
+
+/* Make modals semi-transparent */
+.dialog, .modal, [role="dialog"] {
+  background-color: hsla(var(--background) / 0.6) !important;
+  backdrop-filter: blur(8px) !important;
+}
+
+/* Ensure text remains readable */
+.text-foreground {
+  text-shadow: 0 0 10px hsla(var(--background) / 0.5);
+}
+
+/* Adjust post cards */
+.post-card {
+  background-color: hsla(var(--card) / 0.15) !important;
+  backdrop-filter: blur(3px) !important;
+  border: 1px solid hsla(var(--border) / 0.1) !important;
+}
+
+/* Adjust headers */
+header, .header, [role="banner"] {
+  background-color: hsla(var(--background) / 0.1) !important;
+  backdrop-filter: blur(5px) !important;
+}
