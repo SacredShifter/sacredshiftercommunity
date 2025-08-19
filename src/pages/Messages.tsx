@@ -10,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Search, Send, Smile, Image, Mic, Phone, Video, MoreHorizontal, ArrowLeft } from 'lucide-react';
-import { formatDistance } from 'date-fns';
+import { formatDistance } from 'date-fns/formatDistance';
 import { StartDirectMessageModal } from '@/components/StartDirectMessageModal';
 import { EmojiPicker } from '@/components/EmojiPicker';
 import { VoiceRecorder } from '@/components/VoiceRecorder';

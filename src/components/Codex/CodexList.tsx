@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { useCodex } from '@/hooks/useCodex';
 import { CodexEntryCard } from './CodexEntryCard';
 import { CodexEntryModal } from './CodexEntryModal';
-import { format } from 'date-fns';
+import { format } from 'date-fns/format';
 import { TooltipWrapper } from '@/components/HelpSystem/TooltipWrapper';
 import { ContextualHelp, HelpTooltips } from '@/components/HelpSystem/ContextualHelp';
 

@@ -13,7 +13,7 @@ import { SacredSoundscape } from '@/components/SacredSoundscape';
 import { ParallaxBackground } from '@/components/ParallaxBackground';
 import { PostInteractionButtons } from '@/components/PostInteractionButtons';
 import { CircleDiscoveryPanel } from '@/components/CircleDiscoveryPanel';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
 import { CommentSection } from '@/components/CommentSection';
 const sacredShifterLogo = 'https://mikltjgbvxrxndtszorb.supabase.co/storage/v1/object/public/sacred-assets/uploads/Logo-MainSacredShifter-removebg-preview%20(1).png';
 
