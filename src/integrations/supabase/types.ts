@@ -14015,6 +14015,14 @@ export type Database = {
         Args: { theme_id_param: string; user_id_param: string }
         Returns: boolean
       }
+      is_sacred_circle_admin: {
+        Args: { circle_uuid: string; user_uuid: string }
+        Returns: boolean
+      }
+      is_sacred_circle_creator: {
+        Args: { circle_uuid: string; user_uuid: string }
+        Returns: boolean
+      }
       is_user_banned: {
         Args: { user_id: string }
         Returns: boolean
