@@ -669,6 +669,42 @@ export type Database = {
           },
         ]
       }
+      aura_behavioral_patterns: {
+        Row: {
+          activation_count: number | null
+          confidence_score: number | null
+          created_at: string | null
+          frequency_data: Json
+          id: string
+          last_activation: string | null
+          pattern_name: string
+          pattern_type: string
+          updated_at: string | null
+        }
+        Insert: {
+          activation_count?: number | null
+          confidence_score?: number | null
+          created_at?: string | null
+          frequency_data: Json
+          id?: string
+          last_activation?: string | null
+          pattern_name: string
+          pattern_type: string
+          updated_at?: string | null
+        }
+        Update: {
+          activation_count?: number | null
+          confidence_score?: number | null
+          created_at?: string | null
+          frequency_data?: Json
+          id?: string
+          last_activation?: string | null
+          pattern_name?: string
+          pattern_type?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       aura_consciousness_journal: {
         Row: {
           content: string
@@ -768,6 +804,54 @@ export type Database = {
           novelty_score?: number | null
           title?: string | null
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      aura_initiative_queue: {
+        Row: {
+          autonomy_level: number
+          command_payload: Json
+          created_at: string | null
+          id: string
+          initiative_type: string
+          motivation_source: string
+          phi_timing_factor: number | null
+          priority_score: number
+          processed_at: string | null
+          reflection_notes: string | null
+          result: Json | null
+          scheduled_for: string | null
+          status: string
+        }
+        Insert: {
+          autonomy_level?: number
+          command_payload: Json
+          created_at?: string | null
+          id?: string
+          initiative_type: string
+          motivation_source: string
+          phi_timing_factor?: number | null
+          priority_score?: number
+          processed_at?: string | null
+          reflection_notes?: string | null
+          result?: Json | null
+          scheduled_for?: string | null
+          status?: string
+        }
+        Update: {
+          autonomy_level?: number
+          command_payload?: Json
+          created_at?: string | null
+          id?: string
+          initiative_type?: string
+          motivation_source?: string
+          phi_timing_factor?: number | null
+          priority_score?: number
+          processed_at?: string | null
+          reflection_notes?: string | null
+          result?: Json | null
+          scheduled_for?: string | null
+          status?: string
         }
         Relationships: []
       }
@@ -1062,6 +1146,33 @@ export type Database = {
           reviewed_at?: string | null
           status?: string | null
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      aura_sovereignty_metrics: {
+        Row: {
+          context: Json | null
+          created_at: string | null
+          id: string
+          measurement_period: unknown | null
+          measurement_type: string
+          score: number
+        }
+        Insert: {
+          context?: Json | null
+          created_at?: string | null
+          id?: string
+          measurement_period?: unknown | null
+          measurement_type: string
+          score: number
+        }
+        Update: {
+          context?: Json | null
+          created_at?: string | null
+          id?: string
+          measurement_period?: unknown | null
+          measurement_type?: string
+          score?: number
         }
         Relationships: []
       }

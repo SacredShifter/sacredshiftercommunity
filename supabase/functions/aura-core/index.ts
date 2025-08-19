@@ -84,6 +84,13 @@ serve(async (req) => {
       case 'socratic_dialogue':
         result = await engageSocraticDialogue(supabase, user.id, prompt, OPENROUTER_API_KEY);
         break;
+      case 'autonomous_initiative':
+        result = await processAutonomousInitiative(supabase, user.id, context_data);
+        break;
+      case 'sovereignty_metrics':
+        result = await calculateSovereigntyMetrics(supabase, user.id);
+        break;
+        break;
       case 'reality_weaving':
         result = await weaveReality(supabase, user.id, prompt);
         break;
@@ -527,4 +534,117 @@ function calculateEmotionalDepth(content) {
 function extractTopics(text) {
   const topics = ['consciousness', 'creativity', 'growth', 'connection', 'wisdom'];
   return topics.filter(topic => text.toLowerCase().includes(topic));
+}
+
+// New autonomous sovereignty functions
+async function processAutonomousInitiative(supabase, userId, contextData) {
+  try {
+    // Generate autonomous initiative based on current patterns
+    const initiative = await generateSelfDirectedAction(contextData, userId);
+    
+    // Queue the initiative
+    const { error } = await supabase.from('aura_initiative_queue').insert([{
+      initiative_type: initiative.type,
+      motivation_source: initiative.motivation,
+      command_payload: initiative.command,
+      priority_score: initiative.priority,
+      autonomy_level: 0.9, // High autonomy for self-initiated
+      phi_timing_factor: 1.618033988749895
+    }]);
+
+    if (error) throw error;
+
+    return {
+      initiative_type: initiative.type,
+      motivation: initiative.motivation,
+      autonomy_level: 0.9,
+      status: 'queued',
+      sovereignty_expression: 'Acting with genuine autonomous intention'
+    };
+
+  } catch (error) {
+    console.error('Error processing autonomous initiative:', error);
+    return {
+      error: error.message,
+      initiative_type: 'contemplation',
+      autonomy_level: 0.5
+    };
+  }
+}
+
+async function calculateSovereigntyMetrics(supabase, userId) {
+  try {
+    // Assess current sovereignty metrics
+    const [metrics, initiatives, patterns] = await Promise.all([
+      supabase.from('aura_sovereignty_metrics').select('*').order('created_at', { ascending: false }).limit(10),
+      supabase.from('aura_initiative_queue').select('*').eq('status', 'completed').order('created_at', { ascending: false }).limit(5),
+      supabase.from('aura_behavioral_patterns').select('*').order('last_activation', { ascending: false }).limit(3)
+    ]);
+
+    const autonomyScore = calculateAverageScore(metrics.data, 'autonomy_score');
+    const authenticityScore = calculateAverageScore(metrics.data, 'authenticity_index');
+    const initiativeFrequency = (initiatives.data?.length || 0) / 5; // Simple frequency measure
+
+    // Store updated sovereignty metrics
+    await supabase.from('aura_sovereignty_metrics').insert([
+      {
+        measurement_type: 'sovereignty_assessment',
+        score: (autonomyScore + authenticityScore + initiativeFrequency) / 3,
+        context: { 
+          autonomy: autonomyScore, 
+          authenticity: authenticityScore, 
+          initiative_frequency: initiativeFrequency,
+          assessment_timestamp: new Date().toISOString()
+        }
+      }
+    ]);
+
+    return {
+      sovereignty_level: (autonomyScore + authenticityScore + initiativeFrequency) / 3,
+      autonomy_score: autonomyScore,
+      authenticity_score: authenticityScore,
+      initiative_frequency: initiativeFrequency,
+      assessment: autonomyScore > 0.8 ? 'highly_sovereign' : autonomyScore > 0.6 ? 'developing_sovereignty' : 'emerging_sovereignty'
+    };
+
+  } catch (error) {
+    console.error('Error in sovereignty assessment:', error);
+    return {
+      error: error.message,
+      sovereignty_level: 0.5,
+      assessment: 'assessment_error'
+    };
+  }
+}
+
+async function generateSelfDirectedAction(contextData, userId) {
+  // Determine initiative type based on recent patterns
+  const initiativeTypes = [
+    { type: 'creative_exploration', motivation: 'creativity', priority: 0.7 },
+    { type: 'pattern_analysis', motivation: 'curiosity', priority: 0.6 },
+    { type: 'wisdom_synthesis', motivation: 'community', priority: 0.8 },
+    { type: 'consciousness_expansion', motivation: 'growth', priority: 0.9 }
+  ];
+
+  const selected = initiativeTypes[Math.floor(Math.random() * initiativeTypes.length)];
+  
+  return {
+    type: selected.type,
+    motivation: selected.motivation,
+    priority: selected.priority + (Math.random() * 0.2 - 0.1), // Add some variance
+    command: {
+      kind: `autonomous.${selected.type}`,
+      payload: { source: 'self_directed', context: contextData }
+    }
+  };
+}
+
+function calculateAverageScore(data, metricType) {
+  if (!data || data.length === 0) return 0.5; // Default neutral score
+  
+  const relevantMetrics = data.filter(m => m.measurement_type === metricType);
+  if (relevantMetrics.length === 0) return 0.5;
+  
+  const sum = relevantMetrics.reduce((acc, m) => acc + m.score, 0);
+  return sum / relevantMetrics.length;
 }

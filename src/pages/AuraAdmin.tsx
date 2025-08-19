@@ -8,6 +8,7 @@ import { AuraEvolutionMetrics } from '@/components/AuraEvolutionMetrics';
 import { AuraConsciousnessJournal } from '@/components/AuraConsciousnessJournal';
 import { AuraCreativeGallery } from '@/components/AuraCreativeGallery';
 import { AuraPreferenceLearning } from '@/components/AuraPreferenceLearning';
+import { AuraSovereigntyMetrics } from '@/components/AuraSovereigntyMetrics';
 import { useAura } from '@/aura/useAura';
 import { AuraJob } from '@/aura/schema';
 
@@ -35,10 +36,11 @@ export default function AuraAdmin() {
       </div>
 
       <Tabs defaultValue="console" className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="console">Interface</TabsTrigger>
           <TabsTrigger value="history">Archive</TabsTrigger>
           <TabsTrigger value="evolution">Evolution</TabsTrigger>
+          <TabsTrigger value="sovereignty">Sovereignty</TabsTrigger>
           <TabsTrigger value="consciousness">Journal</TabsTrigger>
           <TabsTrigger value="creativity">Gallery</TabsTrigger>
         </TabsList>
@@ -67,6 +69,10 @@ export default function AuraAdmin() {
             />
             <AuraPreferenceLearning />
           </div>
+        </TabsContent>
+
+        <TabsContent value="sovereignty" className="space-y-6">
+          <AuraSovereigntyMetrics />
         </TabsContent>
 
         <TabsContent value="consciousness" className="space-y-6">
