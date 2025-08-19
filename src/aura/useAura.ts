@@ -1,29 +1,43 @@
 import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { AuraCommand, AuraJob, AuraAuditEntry } from './schema';
+import { AuraCommand, AuraJob, AuraAuditEntry, CommunityFeedback, FieldIntegrityMetrics } from './schema';
 import { parseToCommand } from './parse';
 import { runDAP } from './dap';
+import { runEnhancedDAP } from './enhancedDAP';
+import { calculateFIL, getPhiBackoffDelay } from './fieldIntegrity';
 import { useToast } from '@/hooks/use-toast';
 
 export function useAura() {
   const [loading, setLoading] = useState(false);
   const [jobs, setJobs] = useState<AuraJob[]>([]);
   const [auditLog, setAuditLog] = useState<AuraAuditEntry[]>([]);
+  const [communityFeedback, setCommunityFeedback] = useState<CommunityFeedback[]>([]);
+  const [fieldIntegrity, setFieldIntegrity] = useState<FieldIntegrityMetrics | null>(null);
   const { toast } = useToast();
 
   const executeCommand = useCallback(async (command: AuraCommand) => {
     setLoading(true);
     
     try {
-      // Run DAP checks
-      const dapResult = runDAP(command);
+      // Run Enhanced DAP checks
+      const enhancedResult = runEnhancedDAP(command);
       
-      if (!dapResult.ok) {
+      if (!enhancedResult.ok) {
         toast({
-          title: "Command Blocked",
-          description: dapResult.blockers?.join(' '),
-          variant: "destructive"
+          title: `Aura ${enhancedResult.auraPreference}`,
+          description: enhancedResult.blockers?.join(' ') || 'Command assessment failed',
+          variant: enhancedResult.auraPreference === 'refuse' ? "destructive" : "default"
         });
+        
+        // Show alternatives if available
+        if (enhancedResult.alternatives && enhancedResult.alternatives.length > 0) {
+          setTimeout(() => {
+            toast({
+              title: "Suggested Alternatives",
+              description: enhancedResult.alternatives?.[0] || 'Consider alternative approaches',
+            });
+          }, 1000);
+        }
         return false;
       }
 
@@ -37,29 +51,43 @@ export function useAura() {
           command: command as any,
           level: command.level,
           created_by: user.id,
-          status: command.level === 1 ? 'running' : 'queued'
+          status: command.level === 1 ? 'running' : 'queued',
+          confidence: enhancedResult.confidence,
+          aura_preference: enhancedResult.auraPreference,
+          resonance_score: enhancedResult.resonanceScore,
+          alternatives: enhancedResult.alternatives ? { suggestions: enhancedResult.alternatives } : null
         })
         .select()
         .single();
 
       if (jobError) throw jobError;
 
-      // For Level 1 commands, execute immediately
+      // For Level 1 commands, execute immediately (with phi-based delay if needed)
       if (command.level === 1) {
-        const { data, error } = await supabase.functions.invoke('aura-dispatcher', {
-          body: { command, job_id: job.id }
-        });
+        const executeWithDelay = async () => {
+          const delay = enhancedResult.phiWeight ? getPhiBackoffDelay(0, enhancedResult.phiWeight * 100) : 0;
+          if (delay > 0) await new Promise(resolve => setTimeout(resolve, delay));
+          
+          const { data, error } = await supabase.functions.invoke('aura-dispatcher', {
+            body: { command, job_id: job.id, enhanced_result: enhancedResult }
+          });
 
-        if (error) throw error;
+          if (error) throw error;
+        };
+
+        await executeWithDelay();
 
         toast({
-          title: "Command Executed",
-          description: `✅ ${getCommandDescription(command)}`,
+          title: `Aura ${enhancedResult.auraPreference}`,
+          description: `✅ ${getCommandDescription(command)} (${Math.round(enhancedResult.confidence * 100)}% confidence)`,
         });
       } else {
+        const urgencyText = enhancedResult.auraPreference === 'eager' ? '🌟 High priority' : 
+                           enhancedResult.auraPreference === 'reluctant' ? '⚠️ Review suggested' : '⚖️ Standard';
+        
         toast({
           title: "Command Queued",
-          description: `⏳ Level ${command.level} command awaiting confirmation`,
+          description: `⏳ Level ${command.level} awaiting confirmation • ${urgencyText}`,
         });
       }
 
@@ -176,7 +204,10 @@ export function useAura() {
         .limit(100);
 
       if (error) throw error;
-      setAuditLog(data || []);
+      setAuditLog((data || []).map(entry => ({
+        ...entry,
+        field_integrity_level: entry.field_integrity_level as any
+      })));
     } catch (error) {
       console.error('Failed to load audit log:', error);
     }
@@ -211,6 +242,8 @@ export function useAura() {
     loading,
     jobs,
     auditLog,
+    communityFeedback,
+    fieldIntegrity,
     executeCommand,
     confirmJob,
     cancelJob,

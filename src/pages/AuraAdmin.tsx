@@ -3,6 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AuraConsole } from '@/aura/components/AuraConsole';
 import { AuraHistory } from '@/aura/components/AuraHistory';
 import { AuraConfirm } from '@/aura/components/AuraConfirm';
+import { FieldIntegrityMonitor } from '@/components/FieldIntegrityMonitor';
 import { useAura } from '@/aura/useAura';
 import { AuraJob } from '@/aura/schema';
 
@@ -34,7 +35,14 @@ export default function AuraAdmin() {
         </TabsList>
 
         <TabsContent value="console" className="space-y-6">
-          <AuraConsole />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <AuraConsole />
+            </div>
+            <div>
+              <FieldIntegrityMonitor />
+            </div>
+          </div>
         </TabsContent>
 
         <TabsContent value="history" className="space-y-6">

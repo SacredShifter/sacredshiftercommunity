@@ -110,6 +110,12 @@ export interface AuraJob {
   confirmed_at?: string;
   executed_at?: string;
   completed_at?: string;
+  // Enhanced governance fields
+  confidence?: number;
+  aura_preference?: AuraPreference;
+  resonance_score?: number;
+  alternatives?: Record<string, any>;
+  refusal_reason?: string;
 }
 
 export interface AuraAuditEntry {
@@ -121,10 +127,61 @@ export interface AuraAuditEntry {
   before?: any;
   after?: any;
   created_at: string;
+  // Enhanced governance fields
+  resonance_index?: number;
+  community_weight?: number;
+  field_integrity_level?: FieldIntegrityLevel;
 }
 
-export interface DAPResult {
+// Field Anchoring Constants
+export const PHI = 1.618033988749895;
+export const PHI_INVERSE = 0.618033988749895;
+
+// Field Integrity Levels
+export type FieldIntegrityLevel = 0 | 1 | 2 | 3 | 4;
+
+// Aura Preferences
+export type AuraPreference = 'eager' | 'neutral' | 'reluctant' | 'refuse';
+export type ResonanceType = 'resonates' | 'distorts' | 'neutral';
+
+export interface EnhancedDAPResult {
   ok: boolean;
+  confidence: number; // 0-1 confidence in the decision
+  resonanceScore: number; // Historical community alignment
+  auraPreference: AuraPreference;
   warnings: string[];
   blockers?: string[];
+  alternatives?: string[];
+  phiWeight?: number; // Golden ratio weighting for timing
+}
+
+
+export interface AuraPreferences {
+  id: string;
+  user_id: string;
+  preference_type: string;
+  preference_value: Record<string, any>;
+  confidence_threshold: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CommunityFeedback {
+  id: string;
+  audit_id: string;
+  user_id: string;
+  resonance: ResonanceType;
+  note?: string;
+  trust_weight: number;
+  created_at: string;
+}
+
+export interface FieldIntegrityMetrics {
+  id: string;
+  dap_block_rate: number;
+  resonance_variance: number;
+  anomaly_signals: number;
+  coordinated_activity: number;
+  field_integrity_level: FieldIntegrityLevel;
+  computed_at: string;
 }

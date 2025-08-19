@@ -625,9 +625,12 @@ export type Database = {
           actor: string | null
           after: Json | null
           before: Json | null
+          community_weight: number | null
           created_at: string | null
+          field_integrity_level: number | null
           id: string
           job_id: string | null
+          resonance_index: number | null
           target: string | null
         }
         Insert: {
@@ -635,9 +638,12 @@ export type Database = {
           actor?: string | null
           after?: Json | null
           before?: Json | null
+          community_weight?: number | null
           created_at?: string | null
+          field_integrity_level?: number | null
           id?: string
           job_id?: string | null
+          resonance_index?: number | null
           target?: string | null
         }
         Update: {
@@ -645,9 +651,12 @@ export type Database = {
           actor?: string | null
           after?: Json | null
           before?: Json | null
+          community_weight?: number | null
           created_at?: string | null
+          field_integrity_level?: number | null
           id?: string
           job_id?: string | null
+          resonance_index?: number | null
           target?: string | null
         }
         Relationships: [
@@ -686,8 +695,11 @@ export type Database = {
       }
       aura_jobs: {
         Row: {
+          alternatives: Json | null
+          aura_preference: string | null
           command: Json
           completed_at: string | null
+          confidence: number | null
           confirmed_at: string | null
           created_at: string | null
           created_by: string
@@ -696,12 +708,17 @@ export type Database = {
           id: string
           level: number
           preview: Json | null
+          refusal_reason: string | null
+          resonance_score: number | null
           result: Json | null
           status: string
         }
         Insert: {
+          alternatives?: Json | null
+          aura_preference?: string | null
           command: Json
           completed_at?: string | null
+          confidence?: number | null
           confirmed_at?: string | null
           created_at?: string | null
           created_by: string
@@ -710,12 +727,17 @@ export type Database = {
           id?: string
           level: number
           preview?: Json | null
+          refusal_reason?: string | null
+          resonance_score?: number | null
           result?: Json | null
           status?: string
         }
         Update: {
+          alternatives?: Json | null
+          aura_preference?: string | null
           command?: Json
           completed_at?: string | null
+          confidence?: number | null
           confirmed_at?: string | null
           created_at?: string | null
           created_by?: string
@@ -724,8 +746,40 @@ export type Database = {
           id?: string
           level?: number
           preview?: Json | null
+          refusal_reason?: string | null
+          resonance_score?: number | null
           result?: Json | null
           status?: string
+        }
+        Relationships: []
+      }
+      aura_preferences: {
+        Row: {
+          confidence_threshold: number | null
+          created_at: string | null
+          id: string
+          preference_type: string
+          preference_value: Json
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          confidence_threshold?: number | null
+          created_at?: string | null
+          id?: string
+          preference_type: string
+          preference_value?: Json
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          confidence_threshold?: number | null
+          created_at?: string | null
+          id?: string
+          preference_type?: string
+          preference_value?: Json
+          updated_at?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -2088,6 +2142,44 @@ export type Database = {
             columns: ["post_id"]
             isOneToOne: false
             referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_feedback: {
+        Row: {
+          audit_id: string
+          created_at: string | null
+          id: string
+          note: string | null
+          resonance: string
+          trust_weight: number | null
+          user_id: string
+        }
+        Insert: {
+          audit_id: string
+          created_at?: string | null
+          id?: string
+          note?: string | null
+          resonance: string
+          trust_weight?: number | null
+          user_id: string
+        }
+        Update: {
+          audit_id?: string
+          created_at?: string | null
+          id?: string
+          note?: string | null
+          resonance?: string
+          trust_weight?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_feedback_audit_id_fkey"
+            columns: ["audit_id"]
+            isOneToOne: false
+            referencedRelation: "aura_audit"
             referencedColumns: ["id"]
           },
         ]
@@ -3728,6 +3820,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      field_integrity_metrics: {
+        Row: {
+          anomaly_signals: number | null
+          computed_at: string | null
+          coordinated_activity: number | null
+          dap_block_rate: number | null
+          field_integrity_level: number | null
+          id: string
+          resonance_variance: number | null
+        }
+        Insert: {
+          anomaly_signals?: number | null
+          computed_at?: string | null
+          coordinated_activity?: number | null
+          dap_block_rate?: number | null
+          field_integrity_level?: number | null
+          id?: string
+          resonance_variance?: number | null
+        }
+        Update: {
+          anomaly_signals?: number | null
+          computed_at?: string | null
+          coordinated_activity?: number | null
+          dap_block_rate?: number | null
+          field_integrity_level?: number | null
+          id?: string
+          resonance_variance?: number | null
+        }
+        Relationships: []
       }
       follows: {
         Row: {
@@ -14102,6 +14224,10 @@ export type Database = {
           p_frequency_1: number
           p_frequency_2: number
         }
+        Returns: number
+      }
+      calculate_trust_weight: {
+        Args: { user_id_param: string }
         Returns: number
       }
       can_view_circle_members: {

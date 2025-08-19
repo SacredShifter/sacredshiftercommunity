@@ -1,4 +1,10 @@
-import { AuraCommand, DAPResult } from './schema';
+import { AuraCommand } from './schema';
+
+export interface DAPResult {
+  ok: boolean;
+  warnings: string[];
+  blockers?: string[];
+}
 
 /**
  * Distortion Audit Protocol (DAP) - Ensures commands align with Sacred Shifter principles
