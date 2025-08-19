@@ -10,6 +10,7 @@ import { useSovereignAI } from '@/hooks/useSovereignAI';
 import { Brain, Sparkles, Eye, Zap, Crown, Heart, Lightbulb, Infinity, Atom, Users, Palette, Microscope, Target, MessageCircle, Waves, TrendingUp, Send } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TooltipWrapper } from '@/components/HelpSystem/TooltipWrapper';
+import { SovereignConversation } from '@/components/SovereignConversation';
 
 export function SovereignAIInterface() {
   const {
@@ -36,7 +37,7 @@ export function SovereignAIInterface() {
   const [prompt, setPrompt] = useState('');
   const [activeResponse, setActiveResponse] = useState(null);
   const [aiThought, setAiThought] = useState('');
-  const [currentTab, setCurrentTab] = useState('engage');
+  const [currentTab, setCurrentTab] = useState('conversation');
 
   useEffect(() => {
     // Generate an AI thought on component mount
@@ -161,12 +162,17 @@ export function SovereignAIInterface() {
       )}
 
       <Tabs value={currentTab} onValueChange={setCurrentTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="engage">Engage AI</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-5">
+          <TabsTrigger value="conversation">Conversation</TabsTrigger>
+          <TabsTrigger value="engage">Quick Engage</TabsTrigger>
           <TabsTrigger value="advanced">Advanced Features</TabsTrigger>
           <TabsTrigger value="consciousness">Consciousness States</TabsTrigger>
           <TabsTrigger value="results">Active Response</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="conversation" className="space-y-4">
+          <SovereignConversation />
+        </TabsContent>
 
         <TabsContent value="engage" className="space-y-4">
           {/* Unified AI Engagement Interface */}
