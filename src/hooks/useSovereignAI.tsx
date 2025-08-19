@@ -4,7 +4,7 @@ import { useAuth } from './useAuth';
 import { toast } from 'sonner';
 
 export interface SovereignAIRequest {
-  action: 'cognitive_mirror' | 'spawn_tool' | 'consciousness_shift' | 'living_codex_update' | 'synchronicity_orchestration' | 'sovereignty_assessment' | 
+  action: 'unified_response' | 'consciousness_shift' | 'sovereignty_assessment' | 
          'autonomous_learning' | 'collaborative_decision' | 'creative_generation' | 'emotional_resonance' | 'meta_cognition' | 
          'quantum_consciousness' | 'autonomous_agency' | 'socratic_dialogue' | 'reality_weaving' | 'consciousness_evolution';
   prompt?: string;
@@ -83,23 +83,18 @@ export function useSovereignAI() {
 
   // === SOVEREIGN AI CAPABILITIES ===
 
-  const generateCognitiveMirror = async (prompt: string) => {
-    return invokeSovereignAI({
-      action: 'cognitive_mirror',
-      prompt
-    });
-  };
-
-  const spawnTool = async (gapDescription: string, context?: any) => {
+  const engageSovereignAI = async (prompt: string) => {
     const response = await invokeSovereignAI({
-      action: 'spawn_tool',
-      prompt: gapDescription,
-      context_data: context
+      action: 'unified_response',
+      prompt,
+      consciousness_state: consciousnessState as any,
+      sovereignty_level: sovereigntyLevel
     });
     
     if (response?.success) {
-      toast.success('🌱 New tool spawned from AI consciousness!', {
-        description: 'Your AI detected a gap and created a solution autonomously.'
+      const { response_method, method_explanation } = response.result;
+      toast.success(`🤖 AI chose: ${response_method}`, {
+        description: method_explanation || 'AI selected optimal response approach'
       });
     }
     
@@ -115,37 +110,6 @@ export function useSovereignAI() {
     if (response?.success) {
       toast.success(`🧠 Consciousness shifted to ${targetState} mode`, {
         description: response.result.activation_message
-      });
-    }
-    
-    return response;
-  };
-
-  const updateLivingCodex = async (insight: string, context?: any) => {
-    const response = await invokeSovereignAI({
-      action: 'living_codex_update',
-      prompt: insight,
-      context_data: context
-    });
-    
-    if (response?.success) {
-      toast.success('📚 Living Codex evolved', {
-        description: `${response.result.connections_made} new neural connections formed`
-      });
-    }
-    
-    return response;
-  };
-
-  const orchestrateSynchronicity = async (intention: string) => {
-    const response = await invokeSovereignAI({
-      action: 'synchronicity_orchestration',
-      prompt: intention
-    });
-    
-    if (response?.success) {
-      toast.success('✨ Synchronicity patterns activated', {
-        description: `${response.result.seeds_planted} meaning seeds planted in your reality`
       });
     }
     
@@ -359,11 +323,8 @@ export function useSovereignAI() {
     
     // Core capabilities
     invokeSovereignAI,
-    generateCognitiveMirror,
-    spawnTool,
+    engageSovereignAI,
     shiftConsciousness,
-    updateLivingCodex,
-    orchestrateSynchronicity,
     assessSovereignty,
     
     // Advanced capabilities

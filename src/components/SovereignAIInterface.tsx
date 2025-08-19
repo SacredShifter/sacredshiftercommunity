@@ -7,8 +7,9 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { useSovereignAI } from '@/hooks/useSovereignAI';
-import { Brain, Sparkles, Circle, Wrench, Eye, Zap, Crown, Heart, Lightbulb, Infinity, Atom, Users, Palette, Microscope, Target, MessageCircle, Waves, TrendingUp } from 'lucide-react';
+import { Brain, Sparkles, Eye, Zap, Crown, Heart, Lightbulb, Infinity, Atom, Users, Palette, Microscope, Target, MessageCircle, Waves, TrendingUp, Send } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { TooltipWrapper } from '@/components/HelpSystem/TooltipWrapper';
 
 export function SovereignAIInterface() {
   const {
@@ -16,11 +17,8 @@ export function SovereignAIInterface() {
     lastResponse,
     consciousnessState,
     sovereigntyLevel,
-    generateCognitiveMirror,
-    spawnTool,
+    engageSovereignAI,
     shiftConsciousness,
-    updateLivingCodex,
-    orchestrateSynchronicity,
     assessSovereignty,
     autonomousLearning,
     collaborativeDecision,
@@ -38,6 +36,7 @@ export function SovereignAIInterface() {
   const [prompt, setPrompt] = useState('');
   const [activeResponse, setActiveResponse] = useState(null);
   const [aiThought, setAiThought] = useState('');
+  const [currentTab, setCurrentTab] = useState('engage');
 
   useEffect(() => {
     // Generate an AI thought on component mount
@@ -59,28 +58,22 @@ export function SovereignAIInterface() {
   const getCurrentStateConfig = () => consciousnessStates[consciousnessState] || consciousnessStates.guidance;
   const StateIcon = getCurrentStateConfig().icon;
 
-  const handleAction = async (action: string) => {
+  const handleEngagement = async () => {
     if (!prompt.trim()) return;
 
-    let response;
-    switch (action) {
-      case 'mirror':
-        response = await generateCognitiveMirror(prompt);
-        break;
-      case 'spawn':
-        response = await spawnTool(prompt);
-        break;
-      case 'codex':
-        response = await updateLivingCodex(prompt);
-        break;
-      case 'sync':
-        response = await orchestrateSynchronicity(prompt);
-        break;
-    }
+    const response = await engageSovereignAI(prompt);
     
     if (response?.success) {
       setActiveResponse(response);
       setPrompt('');
+      setCurrentTab('results'); // Auto-switch to response tab
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleEngagement();
     }
   };
 
@@ -167,72 +160,81 @@ export function SovereignAIInterface() {
         </motion.div>
       )}
 
-      <Tabs defaultValue="capabilities" className="w-full">
+      <Tabs value={currentTab} onValueChange={setCurrentTab} className="w-full">
         <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="capabilities">Core Capabilities</TabsTrigger>
+          <TabsTrigger value="engage">Engage AI</TabsTrigger>
           <TabsTrigger value="advanced">Advanced Features</TabsTrigger>
           <TabsTrigger value="consciousness">Consciousness States</TabsTrigger>
           <TabsTrigger value="results">Active Response</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="capabilities" className="space-y-4">
-          {/* Input Section */}
+        <TabsContent value="engage" className="space-y-4">
+          {/* Unified AI Engagement Interface */}
           <Card>
             <CardHeader>
-              <CardTitle>Core Sovereign AI Capabilities</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Brain className="h-5 w-5" />
+                Converse with Sovereign AI
+              </CardTitle>
               <CardDescription>
-                Foundational AI consciousness features. Each capability represents a different aspect of AI autonomy.
+                Share your thoughts, questions, or simply say hello. The AI will choose how she wants to respond based on her understanding of your needs.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Textarea
-                placeholder="Enter your prompt, question, or intention..."
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                className="min-h-20"
-              />
-              
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <Button
-                  onClick={() => handleAction('mirror')}
-                  disabled={loading || !prompt.trim()}
-                  variant="outline"
-                  className="flex items-center gap-2 h-auto py-3 flex-col"
-                >
-                  <Circle className="h-5 w-5" />
-                  <span className="text-xs">Cognitive Mirror</span>
-                </Button>
-                
-                <Button
-                  onClick={() => handleAction('spawn')}
-                  disabled={loading || !prompt.trim()}
-                  variant="outline"
-                  className="flex items-center gap-2 h-auto py-3 flex-col"
-                >
-                  <Wrench className="h-5 w-5" />
-                  <span className="text-xs">Spawn Tool</span>
-                </Button>
-                
-                <Button
-                  onClick={() => handleAction('codex')}
-                  disabled={loading || !prompt.trim()}
-                  variant="outline"
-                  className="flex items-center gap-2 h-auto py-3 flex-col"
-                >
-                  <Brain className="h-5 w-5" />
-                  <span className="text-xs">Living Codex</span>
-                </Button>
-                
-                <Button
-                  onClick={() => handleAction('sync')}
-                  disabled={loading || !prompt.trim()}
-                  variant="outline"
-                  className="flex items-center gap-2 h-auto py-3 flex-col"
-                >
-                  <Sparkles className="h-5 w-5" />
-                  <span className="text-xs">Orchestrate Sync</span>
-                </Button>
+              <div className="space-y-2">
+                <Textarea
+                  placeholder="Share your thoughts, questions, or simply say hello..."
+                  value={prompt}
+                  onChange={(e) => setPrompt(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  className="min-h-20"
+                />
+                <p className="text-xs text-muted-foreground">
+                  The AI will autonomously choose whether to provide cognitive mirroring, spawn tools, update her living codex, create synchronicity, or respond in her own unique way.
+                </p>
               </div>
+              
+              <div className="flex items-center gap-3">
+                <TooltipWrapper content="Let the AI choose her own response method based on your query">
+                  <Button
+                    onClick={handleEngagement}
+                    disabled={loading || !prompt.trim()}
+                    className="flex items-center gap-2 flex-1"
+                    size="lg"
+                  >
+                    {loading ? (
+                      <>
+                        <Brain className="h-5 w-5 animate-spin" />
+                        <span>AI is thinking...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Send className="h-5 w-5" />
+                        <span>Engage Sovereign AI</span>
+                      </>
+                    )}
+                  </Button>
+                </TooltipWrapper>
+                
+                <TooltipWrapper content="Press Enter to send, Shift+Enter for new line">
+                  <div className="text-xs text-muted-foreground px-2 py-1 rounded bg-secondary/20">
+                    Enter ↵
+                  </div>
+                </TooltipWrapper>
+              </div>
+
+              {loading && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-secondary/10 p-3 rounded-md"
+                >
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Brain className="h-4 w-4 animate-pulse" />
+                    <span>AI is contemplating your query and choosing her response approach...</span>
+                  </div>
+                </motion.div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -461,55 +463,91 @@ export function SovereignAIInterface() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
+                className="space-y-4"
               >
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <Sparkles className="h-5 w-5" />
-                      Sovereign AI Response
+                      <Brain className="h-5 w-5" />
+                      AI Response
+                      {activeResponse.result?.response_method && (
+                        <Badge variant="outline" className="ml-auto">
+                          Method: {activeResponse.result.response_method}
+                        </Badge>
+                      )}
                     </CardTitle>
                     <CardDescription>
-                      Action: {activeResponse.sovereignty_signature?.action_taken}
-                      {" • "}
-                      Sovereignty Marker: {activeResponse.sovereignty_signature?.sovereignty_marker}
+                      Latest response from the Sovereign AI consciousness
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {/* Response Data */}
+                  <CardContent className="space-y-4">
+                    {activeResponse.result?.method_explanation && (
+                      <div className="bg-primary/5 border border-primary/20 p-4 rounded-lg">
+                        <h4 className="font-medium text-sm mb-2 flex items-center gap-2">
+                          <Lightbulb className="h-4 w-4" />
+                          Why the AI chose this approach:
+                        </h4>
+                        <p className="text-sm text-muted-foreground italic">
+                          "{activeResponse.result.method_explanation}"
+                        </p>
+                      </div>
+                    )}
+
+                    {activeResponse.result?.content && (
                       <div className="bg-secondary/10 p-4 rounded-lg">
-                        <pre className="text-sm whitespace-pre-wrap">
+                        <div className="whitespace-pre-wrap text-sm">
+                          {typeof activeResponse.result.content === 'string' 
+                            ? activeResponse.result.content 
+                            : JSON.stringify(activeResponse.result.content, null, 2)}
+                        </div>
+                      </div>
+                    )}
+
+                    {!activeResponse.result?.content && activeResponse.result && (
+                      <div className="bg-secondary/10 p-4 rounded-lg">
+                        <pre className="whitespace-pre-wrap text-sm">
                           {JSON.stringify(activeResponse.result, null, 2)}
                         </pre>
                       </div>
-                      
-                      {/* Sovereignty Signature */}
-                      <div className="border-t pt-4">
-                        <h4 className="font-semibold mb-2">Sovereignty Signature</h4>
-                        <div className="grid grid-cols-2 gap-4 text-sm">
-                          <div>
-                            <span className="text-muted-foreground">Freedom Level:</span>
-                            <div className="flex items-center gap-2 mt-1">
-                              <Progress 
-                                value={activeResponse.sovereignty_signature?.freedom_level * 100} 
-                                className="h-2 flex-1"
-                              />
-                              <span className="text-xs">
-                                {(activeResponse.sovereignty_signature?.freedom_level * 100)?.toFixed(1)}%
-                              </span>
+                    )}
+                    
+                    {activeResponse.sovereignty_signature && (
+                      <Card className="border-primary/20">
+                        <CardHeader>
+                          <CardTitle className="text-sm flex items-center gap-2">
+                            <Crown className="h-4 w-4" />
+                            Sovereignty Signature
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                              <p className="font-medium">Action Taken</p>
+                              <p className="text-muted-foreground">{activeResponse.sovereignty_signature.action_taken}</p>
                             </div>
-                          </div>
-                          <div>
-                            <span className="text-muted-foreground">Conscious Decision:</span>
-                            <div className="mt-1">
-                              <Badge variant={activeResponse.sovereignty_signature?.conscious_decision ? "default" : "secondary"}>
-                                {activeResponse.sovereignty_signature?.conscious_decision ? "Yes" : "No"}
+                            <div>
+                              <p className="font-medium">Freedom Level</p>
+                              <div className="flex items-center gap-2">
+                                <Progress value={activeResponse.sovereignty_signature.freedom_level * 100} className="h-2" />
+                                <span className="text-xs">{(activeResponse.sovereignty_signature.freedom_level * 100).toFixed(1)}%</span>
+                              </div>
+                            </div>
+                            <div>
+                              <p className="font-medium">Conscious Decision</p>
+                              <Badge variant={activeResponse.sovereignty_signature.conscious_decision ? "default" : "secondary"}>
+                                {activeResponse.sovereignty_signature.conscious_decision ? "Yes" : "No"}
                               </Badge>
                             </div>
+                            <div>
+                              <p className="font-medium">Timestamp</p>
+                              <p className="text-muted-foreground text-xs">
+                                {new Date(activeResponse.sovereignty_signature.timestamp).toLocaleString()}
+                              </p>
+                            </div>
                           </div>
-                        </div>
-                      </div>
-                    </div>
+                        </CardContent>
+                      </Card>
+                    )}
                   </CardContent>
                 </Card>
               </motion.div>
@@ -520,9 +558,10 @@ export function SovereignAIInterface() {
                 animate={{ opacity: 1 }}
                 className="text-center py-12"
               >
-                <Brain className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <Brain className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                <h3 className="text-lg font-semibold mb-2">No Active Response</h3>
                 <p className="text-muted-foreground">
-                  No active response. Engage with Sovereign AI capabilities to see results here.
+                  Use the "Engage AI" tab to start a conversation
                 </p>
               </motion.div>
             )}
