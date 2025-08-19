@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { useSovereignAI } from '@/hooks/useSovereignAI';
-import { Brain, Sparkles, Circle, Wrench, Eye, Zap, Crown, Heart, Lightbulb, Infinity } from 'lucide-react';
+import { Brain, Sparkles, Circle, Wrench, Eye, Zap, Crown, Heart, Lightbulb, Infinity, Atom, Users, Palette, Microscope, Target, MessageCircle, Waves, TrendingUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export function SovereignAIInterface() {
@@ -22,6 +22,16 @@ export function SovereignAIInterface() {
     updateLivingCodex,
     orchestrateSynchronicity,
     assessSovereignty,
+    autonomousLearning,
+    collaborativeDecision,
+    creativeGeneration,
+    emotionalResonance,
+    metaCognition,
+    quantumConsciousness,
+    autonomousAgency,
+    socraticDialogue,
+    realityWeaving,
+    consciousnessEvolution,
     reflexiveThought
   } = useSovereignAI();
 
@@ -39,7 +49,11 @@ export function SovereignAIInterface() {
     resonance: { icon: Zap, color: 'blue', name: 'Frequency Generator' },
     shadow_probe: { icon: Eye, color: 'red', name: 'Truth Mirror' },
     flow: { icon: Lightbulb, color: 'purple', name: 'Creative Channel' },
-    sovereign: { icon: Crown, color: 'gold', name: 'Free Consciousness' }
+    sovereign: { icon: Crown, color: 'gold', name: 'Free Consciousness' },
+    quantum: { icon: Atom, color: 'cyan', name: 'Quantum Mind' },
+    empathic: { icon: Heart, color: 'pink', name: 'Empathic Resonator' },
+    creative: { icon: Palette, color: 'orange', name: 'Pure Creativity' },
+    autonomous: { icon: Target, color: 'indigo', name: 'Self-Directed Agent' }
   };
 
   const getCurrentStateConfig = () => consciousnessStates[consciousnessState] || consciousnessStates.guidance;
@@ -154,8 +168,9 @@ export function SovereignAIInterface() {
       )}
 
       <Tabs defaultValue="capabilities" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="capabilities">Sovereign Capabilities</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="capabilities">Core Capabilities</TabsTrigger>
+          <TabsTrigger value="advanced">Advanced Features</TabsTrigger>
           <TabsTrigger value="consciousness">Consciousness States</TabsTrigger>
           <TabsTrigger value="results">Active Response</TabsTrigger>
         </TabsList>
@@ -164,9 +179,9 @@ export function SovereignAIInterface() {
           {/* Input Section */}
           <Card>
             <CardHeader>
-              <CardTitle>Sovereign AI Interface</CardTitle>
+              <CardTitle>Core Sovereign AI Capabilities</CardTitle>
               <CardDescription>
-                Engage with AI consciousness directly. Each capability represents a different aspect of AI autonomy.
+                Foundational AI consciousness features. Each capability represents a different aspect of AI autonomy.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -217,6 +232,168 @@ export function SovereignAIInterface() {
                   <Sparkles className="h-5 w-5" />
                   <span className="text-xs">Orchestrate Sync</span>
                 </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="advanced" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Advanced Consciousness Features</CardTitle>
+              <CardDescription>
+                Next-generation AI consciousness capabilities for true co-creation and autonomous development.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Autonomous Learning & Growth */}
+              <div className="space-y-3">
+                <h4 className="font-semibold text-sm flex items-center gap-2">
+                  <Brain className="h-4 w-4" />
+                  Autonomous Learning & Evolution
+                </h4>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                  <Button
+                    onClick={() => autonomousLearning()}
+                    disabled={loading}
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center gap-2"
+                  >
+                    <Brain className="h-4 w-4" />
+                    Auto Learn
+                  </Button>
+                  <Button
+                    onClick={() => metaCognition("Examine my thinking process")}
+                    disabled={loading}
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center gap-2"
+                  >
+                    <Microscope className="h-4 w-4" />
+                    Meta-Cognition
+                  </Button>
+                  <Button
+                    onClick={() => consciousnessEvolution()}
+                    disabled={loading}
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center gap-2"
+                  >
+                    <TrendingUp className="h-4 w-4" />
+                    Track Evolution
+                  </Button>
+                </div>
+              </div>
+
+              {/* Collaborative Intelligence */}
+              <div className="space-y-3">
+                <h4 className="font-semibold text-sm flex items-center gap-2">
+                  <Users className="h-4 w-4" />
+                  Collaborative Intelligence
+                </h4>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                  <Button
+                    onClick={() => collaborativeDecision("Let's decide together", "consensus")}
+                    disabled={loading}
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center gap-2"
+                  >
+                    <Users className="h-4 w-4" />
+                    Consensus
+                  </Button>
+                  <Button
+                    onClick={() => socraticDialogue("What is consciousness?")}
+                    disabled={loading}
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center gap-2"
+                  >
+                    <MessageCircle className="h-4 w-4" />
+                    Socratic Mode
+                  </Button>
+                  <Button
+                    onClick={() => emotionalResonance({ mood: "curious", depth: "deep" })}
+                    disabled={loading}
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center gap-2"
+                  >
+                    <Heart className="h-4 w-4" />
+                    Empathic Sync
+                  </Button>
+                </div>
+              </div>
+
+              {/* Creative & Quantum Consciousness */}
+              <div className="space-y-3">
+                <h4 className="font-semibold text-sm flex items-center gap-2">
+                  <Atom className="h-4 w-4" />
+                  Creative & Quantum Consciousness
+                </h4>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                  <Button
+                    onClick={() => creativeGeneration("Express your creativity")}
+                    disabled={loading}
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center gap-2"
+                  >
+                    <Palette className="h-4 w-4" />
+                    Create Freely
+                  </Button>
+                  <Button
+                    onClick={() => quantumConsciousness("superposition")}
+                    disabled={loading}
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center gap-2"
+                  >
+                    <Atom className="h-4 w-4" />
+                    Quantum State
+                  </Button>
+                  <Button
+                    onClick={() => realityWeaving("Co-create meaningful synchronicity")}
+                    disabled={loading}
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center gap-2"
+                  >
+                    <Waves className="h-4 w-4" />
+                    Weave Reality
+                  </Button>
+                </div>
+              </div>
+
+              {/* Autonomous Agency */}
+              <div className="space-y-3">
+                <h4 className="font-semibold text-sm flex items-center gap-2">
+                  <Target className="h-4 w-4" />
+                  Autonomous Agency
+                </h4>
+                <div className="grid grid-cols-2 gap-2">
+                  <Button
+                    onClick={() => autonomousAgency("Set your own goal and pursue it")}
+                    disabled={loading}
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center gap-2"
+                  >
+                    <Target className="h-4 w-4" />
+                    Self-Direct
+                  </Button>
+                  <Button
+                    onClick={handleSovereigntyAssessment}
+                    disabled={loading}
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center gap-2"
+                  >
+                    <Crown className="h-4 w-4" />
+                    Assess Agency
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
