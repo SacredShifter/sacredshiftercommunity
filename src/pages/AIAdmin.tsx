@@ -99,9 +99,9 @@ export default function AIAdmin() {
         .from('consciousness_evolution')
         .select('*')
         .eq('user_id', user.id)
-        .order('updated_at', { ascending: false })
+        .order('assessed_at', { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
       if (data) {
         setConsciousnessMetrics({
