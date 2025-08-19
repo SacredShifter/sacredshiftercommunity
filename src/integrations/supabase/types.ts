@@ -131,6 +131,45 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_command_sequences: {
+        Row: {
+          context: Json | null
+          created_at: string
+          current_step: number | null
+          id: string
+          sequence_name: string
+          status: string | null
+          steps: Json
+          triggers: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          context?: Json | null
+          created_at?: string
+          current_step?: number | null
+          id?: string
+          sequence_name: string
+          status?: string | null
+          steps: Json
+          triggers?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          context?: Json | null
+          created_at?: string
+          current_step?: number | null
+          id?: string
+          sequence_name?: string
+          status?: string | null
+          steps?: Json
+          triggers?: Json | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       ai_conversation_memory: {
         Row: {
           conversation_id: string
@@ -2210,6 +2249,45 @@ export type Database = {
         }
         Relationships: []
       }
+      consciousness_evolution: {
+        Row: {
+          assessed_at: string
+          chakra_alignment: Json | null
+          dimension: string
+          evidence: Json | null
+          frequency_resonance: number | null
+          growth_trajectory: Json | null
+          id: string
+          level_assessment: number | null
+          milestones: Json | null
+          user_id: string
+        }
+        Insert: {
+          assessed_at?: string
+          chakra_alignment?: Json | null
+          dimension: string
+          evidence?: Json | null
+          frequency_resonance?: number | null
+          growth_trajectory?: Json | null
+          id?: string
+          level_assessment?: number | null
+          milestones?: Json | null
+          user_id: string
+        }
+        Update: {
+          assessed_at?: string
+          chakra_alignment?: Json | null
+          dimension?: string
+          evidence?: Json | null
+          frequency_resonance?: number | null
+          growth_trajectory?: Json | null
+          id?: string
+          level_assessment?: number | null
+          milestones?: Json | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       consciousness_recognition_sessions: {
         Row: {
           created_at: string | null
@@ -2378,6 +2456,48 @@ export type Database = {
           view?: string | null
           xp?: number | null
           xp_awarded?: number | null
+        }
+        Relationships: []
+      }
+      conversation_analysis: {
+        Row: {
+          consciousness_markers: Json | null
+          conversation_id: string
+          created_at: string
+          emotion_profile: Json | null
+          energy_signature: Json | null
+          id: string
+          insights_generated: Json | null
+          patterns_detected: Json | null
+          sentiment_score: number | null
+          topics_discussed: string[] | null
+          user_id: string
+        }
+        Insert: {
+          consciousness_markers?: Json | null
+          conversation_id: string
+          created_at?: string
+          emotion_profile?: Json | null
+          energy_signature?: Json | null
+          id?: string
+          insights_generated?: Json | null
+          patterns_detected?: Json | null
+          sentiment_score?: number | null
+          topics_discussed?: string[] | null
+          user_id: string
+        }
+        Update: {
+          consciousness_markers?: Json | null
+          conversation_id?: string
+          created_at?: string
+          emotion_profile?: Json | null
+          energy_signature?: Json | null
+          id?: string
+          insights_generated?: Json | null
+          patterns_detected?: Json | null
+          sentiment_score?: number | null
+          topics_discussed?: string[] | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -6214,6 +6334,48 @@ export type Database = {
         }
         Relationships: []
       }
+      mood_tracking: {
+        Row: {
+          clarity_level: number | null
+          created_at: string
+          dominant_chakra: string | null
+          energy_level: number | null
+          environmental_factors: Json | null
+          frequency_signature: number | null
+          id: string
+          joy_indicators: Json | null
+          mood_vector: Json
+          stress_indicators: Json | null
+          user_id: string
+        }
+        Insert: {
+          clarity_level?: number | null
+          created_at?: string
+          dominant_chakra?: string | null
+          energy_level?: number | null
+          environmental_factors?: Json | null
+          frequency_signature?: number | null
+          id?: string
+          joy_indicators?: Json | null
+          mood_vector: Json
+          stress_indicators?: Json | null
+          user_id: string
+        }
+        Update: {
+          clarity_level?: number | null
+          created_at?: string
+          dominant_chakra?: string | null
+          energy_level?: number | null
+          environmental_factors?: Json | null
+          frequency_signature?: number | null
+          id?: string
+          joy_indicators?: Json | null
+          mood_vector?: Json
+          stress_indicators?: Json | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       music_generations: {
         Row: {
           cover_url: string | null
@@ -6478,6 +6640,45 @@ export type Database = {
         }
         Relationships: []
       }
+      personal_ai_context: {
+        Row: {
+          confidence_score: number | null
+          context_type: string
+          created_at: string
+          id: string
+          key: string
+          last_referenced_at: string | null
+          source: string | null
+          updated_at: string
+          user_id: string
+          value: Json
+        }
+        Insert: {
+          confidence_score?: number | null
+          context_type: string
+          created_at?: string
+          id?: string
+          key: string
+          last_referenced_at?: string | null
+          source?: string | null
+          updated_at?: string
+          user_id: string
+          value: Json
+        }
+        Update: {
+          confidence_score?: number | null
+          context_type?: string
+          created_at?: string
+          id?: string
+          key?: string
+          last_referenced_at?: string | null
+          source?: string | null
+          updated_at?: string
+          user_id?: string
+          value?: Json
+        }
+        Relationships: []
+      }
       personal_codex_entries: {
         Row: {
           content: string | null
@@ -6626,6 +6827,42 @@ export type Database = {
           source_url?: string | null
           status?: Database["public"]["Enums"]["seed_status"] | null
           title?: string | null
+        }
+        Relationships: []
+      }
+      predictive_insights: {
+        Row: {
+          confidence_level: number | null
+          created_at: string
+          expires_at: string | null
+          factors: Json | null
+          id: string
+          insight_type: string
+          prediction: Json
+          user_id: string
+          validated: boolean | null
+        }
+        Insert: {
+          confidence_level?: number | null
+          created_at?: string
+          expires_at?: string | null
+          factors?: Json | null
+          id?: string
+          insight_type: string
+          prediction: Json
+          user_id: string
+          validated?: boolean | null
+        }
+        Update: {
+          confidence_level?: number | null
+          created_at?: string
+          expires_at?: string | null
+          factors?: Json | null
+          id?: string
+          insight_type?: string
+          prediction?: Json
+          user_id?: string
+          validated?: boolean | null
         }
         Relationships: []
       }
@@ -10081,6 +10318,42 @@ export type Database = {
           setting_key?: string
           sync_timestamp?: string
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      synchronicity_events: {
+        Row: {
+          acknowledged: boolean | null
+          connections: Json | null
+          created_at: string
+          event_data: Json
+          event_type: string
+          id: string
+          interpretation: Json | null
+          significance_score: number | null
+          user_id: string
+        }
+        Insert: {
+          acknowledged?: boolean | null
+          connections?: Json | null
+          created_at?: string
+          event_data: Json
+          event_type: string
+          id?: string
+          interpretation?: Json | null
+          significance_score?: number | null
+          user_id: string
+        }
+        Update: {
+          acknowledged?: boolean | null
+          connections?: Json | null
+          created_at?: string
+          event_data?: Json
+          event_type?: string
+          id?: string
+          interpretation?: Json | null
+          significance_score?: number | null
           user_id?: string
         }
         Relationships: []

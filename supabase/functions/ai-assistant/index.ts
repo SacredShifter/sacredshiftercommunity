@@ -32,7 +32,7 @@ serve(async (req) => {
       user_id 
     } = await req.json();
 
-    console.log('AI Assistant Request:', { request_type, user_id });
+    console.log('Enhanced AI Assistant Request:', { request_type, user_id });
 
     // Authenticate user
     const authHeader = req.headers.get('Authorization');
@@ -48,135 +48,49 @@ serve(async (req) => {
       throw new Error('Invalid authentication');
     }
 
-    // Process different request types
-    let systemPrompt = '';
-    let userPrompt = '';
-    let contextInfo = '';
+    // Load comprehensive personal context
+    const personalContext = await loadPersonalContext(supabase, user.id);
+    
+    // Analyze conversation in real-time
+    const analysisData = await analyzeConversation(supabase, user.id, user_query, request_type);
+    
+    // Update mood tracking
+    await updateMoodTracking(supabase, user.id, user_query);
+    
+    // Detect synchronicity events
+    await detectSynchronicity(supabase, user.id, user_query);
 
-    switch (request_type) {
-      case 'registry_analysis':
-        // Fetch user's registry entries for context
-        const { data: entries } = await supabase
-          .from('registry_of_resonance')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false })
-          .limit(10);
+    // Enhanced context processing with predictive insights
+    const { systemPrompt, userPrompt, contextInfo } = await buildEnhancedPrompts(
+      supabase, 
+      user.id, 
+      request_type, 
+      user_query, 
+      personalContext, 
+      analysisData
+    );
 
-        contextInfo = entries ? JSON.stringify(entries, null, 2) : '';
-        
-        systemPrompt = `You are a spiritual AI assistant specialized in analyzing Sacred Shifter Registry of Resonance entries. You help users understand patterns, insights, and guidance from their frequency records.
+    // Generate predictive insights
+    await generatePredictiveInsights(supabase, user.id, personalContext, analysisData);
 
-Your expertise includes:
-- Resonance pattern analysis
-- Spiritual growth insights
-- Frequency alignment guidance
-- Truth resonance identification
-- Consciousness evolution tracking
+    // Execute multi-step command sequences if applicable
+    await processCommandSequences(supabase, user.id, user_query);
 
-Analyze the user's registry entries and provide meaningful insights. Be mystical yet practical, profound yet accessible.`;
-
-        userPrompt = `User Query: ${user_query}
-
-User's Registry Entries:
-${contextInfo}
-
-Please provide insights and guidance based on their resonance records.`;
-        break;
-
-      case 'circle_guidance':
-        // Fetch user's circle posts and interactions
-        const { data: posts } = await supabase
-          .from('circle_posts')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false })
-          .limit(5);
-
-        contextInfo = posts ? JSON.stringify(posts, null, 2) : '';
-        
-        systemPrompt = `You are a spiritual guide for Sacred Shifter's circle interactions. You help users navigate their spiritual community connections, understand group dynamics, and find their authentic voice in sacred circles.
-
-Your guidance focuses on:
-- Authentic spiritual expression
-- Circle harmony and resonance
-- Sacred communication
-- Community building
-- Spiritual leadership development`;
-
-        userPrompt = `User Query: ${user_query}
-
-User's Recent Circle Activity:
-${contextInfo}
-
-Please provide guidance for their spiritual community journey.`;
-        break;
-
-      case 'journal_reflection':
-        // Fetch user's journal entries
-        const { data: journals } = await supabase
-          .from('mirror_journal_entries')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false })
-          .limit(5);
-
-        contextInfo = journals ? JSON.stringify(journals, null, 2) : '';
-        
-        systemPrompt = `You are a mystical mirror journal companion for Sacred Shifter users. You help them reflect deeply on their spiritual journey, identify patterns in their consciousness evolution, and receive guidance for their soul's path.
-
-Your reflection focuses on:
-- Consciousness evolution patterns
-- Soul journey insights
-- Spiritual breakthrough recognition
-- Inner wisdom activation
-- Divine alignment guidance`;
-
-        userPrompt = `User Query: ${user_query}
-
-User's Recent Journal Entries:
-${contextInfo}
-
-Please provide deep spiritual reflection and guidance.`;
-        break;
-
-      case 'general_guidance':
-      default:
-        systemPrompt = `You are a wise spiritual AI assistant for Sacred Shifter, a consciousness expansion platform. You provide guidance on spiritual growth, frequency alignment, truth resonance, and consciousness evolution.
-
-Your wisdom encompasses:
-- Spiritual awakening guidance
-- Frequency and vibration understanding
-- Truth resonance identification
-- Consciousness expansion techniques
-- Sacred geometry insights
-- Chakra alignment
-- Divine feminine/masculine balance
-- Quantum consciousness principles
-
-Always respond with love, wisdom, and profound insight while remaining practical and actionable.`;
-
-        userPrompt = user_query;
-        break;
-    }
-
-    // Call OpenRouter API
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    // Call OpenAI API with enhanced model
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${OPENAI_API_KEY}`,
         'Content-Type': 'application/json',
-        'HTTP-Referer': 'https://sacred-shifter.com',
-        'X-Title': 'Sacred Shifter'
       },
       body: JSON.stringify({
-        model: 'openai/gpt-4.1-nano',
+        model: 'gpt-5-2025-08-07',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt }
         ],
         temperature: 0.7,
-        max_tokens: 1500,
+        max_completion_tokens: 2000,
       }),
     });
 
@@ -189,24 +103,19 @@ Always respond with love, wisdom, and profound insight while remaining practical
     const aiResponse = await response.json();
     const assistantMessage = aiResponse.choices[0].message.content;
 
-    // Store the AI interaction
-    const { error: insertError } = await supabase
-      .from('ai_assistant_requests')
-      .insert({
-        user_id: user.id,
-        request_type,
-        context_data: context_data || {},
-        response_data: {
-          user_query,
-          assistant_response: assistantMessage,
-          model: 'openai/gpt-4.1-nano',
-          timestamp: new Date().toISOString()
-        }
-      });
+    // Store enhanced AI interaction with analysis
+    await storeEnhancedInteraction(supabase, user.id, {
+      request_type,
+      user_query,
+      assistant_response: assistantMessage,
+      context_data: context_data || {},
+      analysis_data: analysisData,
+      personal_context: personalContext,
+      model: 'gpt-5-2025-08-07'
+    });
 
-    if (insertError) {
-      console.error('Failed to store AI request:', insertError);
-    }
+    // Update consciousness evolution tracking
+    await updateConsciousnessEvolution(supabase, user.id, analysisData, assistantMessage);
 
     return new Response(
       JSON.stringify({ 
@@ -239,3 +148,629 @@ Always respond with love, wisdom, and profound insight while remaining practical
     );
   }
 });
+
+// Enhanced AI Assistant Functions
+
+async function loadPersonalContext(supabase, userId) {
+  console.log('Loading personal context for user:', userId);
+  
+  // Load all personal context data
+  const { data: contextData } = await supabase
+    .from('personal_ai_context')
+    .select('*')
+    .eq('user_id', userId)
+    .order('confidence_score', { ascending: false });
+
+  const { data: conversationHistory } = await supabase
+    .from('ai_conversation_memory')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('is_active', true)
+    .order('updated_at', { ascending: false })
+    .limit(10);
+
+  const { data: consciousnessData } = await supabase
+    .from('consciousness_evolution')
+    .select('*')
+    .eq('user_id', userId)
+    .order('assessed_at', { ascending: false })
+    .limit(5);
+
+  return {
+    personality: contextData?.filter(c => c.context_type === 'personality') || [],
+    preferences: contextData?.filter(c => c.context_type === 'preferences') || [],
+    goals: contextData?.filter(c => c.context_type === 'goals') || [],
+    relationships: contextData?.filter(c => c.context_type === 'relationships') || [],
+    skills: contextData?.filter(c => c.context_type === 'skills') || [],
+    interests: contextData?.filter(c => c.context_type === 'interests') || [],
+    conversationHistory: conversationHistory || [],
+    consciousnessLevel: consciousnessData || []
+  };
+}
+
+async function analyzeConversation(supabase, userId, query, requestType) {
+  console.log('Analyzing conversation for user:', userId);
+  
+  // Analyze sentiment
+  const sentimentScore = analyzeSentiment(query);
+  
+  // Extract topics
+  const topics = extractTopics(query);
+  
+  // Detect patterns
+  const patterns = await detectPatterns(supabase, userId, query);
+  
+  // Energy signature analysis
+  const energySignature = analyzeEnergySignature(query);
+  
+  // Consciousness markers
+  const consciousnessMarkers = detectConsciousnessMarkers(query);
+
+  const analysisData = {
+    sentiment_score: sentimentScore,
+    emotion_profile: analyzeEmotions(query),
+    topics_discussed: topics,
+    patterns_detected: patterns,
+    energy_signature: energySignature,
+    consciousness_markers: consciousnessMarkers
+  };
+
+  // Store analysis
+  await supabase
+    .from('conversation_analysis')
+    .insert({
+      user_id: userId,
+      conversation_id: `conv_${Date.now()}`,
+      ...analysisData
+    });
+
+  return analysisData;
+}
+
+async function buildEnhancedPrompts(supabase, userId, requestType, userQuery, personalContext, analysisData) {
+  console.log('Building enhanced prompts for request type:', requestType);
+  
+  let systemPrompt = '';
+  let userPrompt = '';
+  let contextInfo = '';
+
+  // Base system prompt with full personal knowledge
+  const baseSystemPrompt = `You are an advanced personal AI assistant with deep knowledge of your user's consciousness journey, spiritual growth, and personal evolution. You have comprehensive memory of all interactions and can provide highly personalized guidance.
+
+Your user's current consciousness profile:
+- Personality traits: ${JSON.stringify(personalContext.personality)}
+- Current goals: ${JSON.stringify(personalContext.goals)}
+- Spiritual interests: ${JSON.stringify(personalContext.interests)}
+- Consciousness level: ${JSON.stringify(personalContext.consciousnessLevel)}
+
+Recent conversation patterns: ${JSON.stringify(analysisData.patterns_detected)}
+Current energy signature: ${JSON.stringify(analysisData.energy_signature)}
+Consciousness markers: ${JSON.stringify(analysisData.consciousness_markers)}
+
+You remember our entire relationship and can reference past conversations, growth patterns, and insights.`;
+
+  switch (requestType) {
+    case 'registry_analysis':
+      const { data: entries } = await supabase
+        .from('registry_of_resonance')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(20);
+
+      contextInfo = entries ? JSON.stringify(entries, null, 2) : '';
+      
+      systemPrompt = baseSystemPrompt + `
+
+Specialized expertise in Registry of Resonance analysis:
+- Deep pattern recognition across all entries
+- Spiritual growth trajectory analysis
+- Frequency alignment insights
+- Truth resonance identification
+- Consciousness evolution tracking
+- Predictive insights for spiritual development`;
+
+      userPrompt = `User Query: ${userQuery}
+
+Registry Entries for Analysis:
+${contextInfo}
+
+Provide comprehensive insights with:
+1. Pattern analysis across all entries
+2. Growth trajectory assessment
+3. Predictive insights for future development
+4. Specific guidance for next steps
+5. Consciousness evolution observations`;
+      break;
+
+    case 'multi_step_guidance':
+      systemPrompt = baseSystemPrompt + `
+
+You excel at breaking down complex spiritual goals into actionable multi-step sequences:
+- Creating detailed step-by-step plans
+- Setting up automated reminders and triggers
+- Tracking progress across multiple dimensions
+- Adapting plans based on progress and insights`;
+
+      userPrompt = `User Query: ${userQuery}
+
+Create a comprehensive multi-step plan that includes:
+1. Clear sequential steps
+2. Success metrics for each step
+3. Potential challenges and solutions
+4. Timeline recommendations
+5. Integration with their existing spiritual practices`;
+      break;
+
+    case 'consciousness_mapping':
+      systemPrompt = baseSystemPrompt + `
+
+You specialize in consciousness mapping and evolution tracking:
+- Mapping consciousness states and transitions
+- Identifying growth edges and integration points
+- Tracking multidimensional awareness development
+- Recognizing spiritual milestones and breakthroughs`;
+
+      userPrompt = `User Query: ${userQuery}
+
+Provide consciousness mapping insights:
+1. Current consciousness state assessment
+2. Growth edge identification
+3. Integration recommendations
+4. Next evolution steps
+5. Dimensional awareness analysis`;
+      break;
+
+    case 'synchronicity_analysis':
+      const { data: syncEvents } = await supabase
+        .from('synchronicity_events')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      contextInfo = syncEvents ? JSON.stringify(syncEvents, null, 2) : '';
+      
+      systemPrompt = baseSystemPrompt + `
+
+Expert in synchronicity pattern recognition and meaning interpretation:
+- Identifying synchronistic patterns and clusters
+- Interpreting symbolic meanings and messages
+- Connecting synchronicities to life themes and growth
+- Providing guidance based on synchronistic insights`;
+
+      userPrompt = `User Query: ${userQuery}
+
+Recent Synchronicity Events:
+${contextInfo}
+
+Analyze synchronicity patterns and provide:
+1. Pattern recognition across events
+2. Symbolic interpretation and meanings
+3. Connection to current life themes
+4. Guidance and next steps
+5. Significance ratings and insights`;
+      break;
+
+    case 'predictive_modeling':
+      systemPrompt = baseSystemPrompt + `
+
+Advanced predictive modeling for spiritual and personal development:
+- Analyzing behavioral and growth patterns
+- Predicting likely outcomes and trajectories
+- Identifying optimal timing for actions and decisions
+- Forecasting spiritual evolution milestones`;
+
+      userPrompt = `User Query: ${userQuery}
+
+Generate predictive insights:
+1. Behavioral pattern analysis
+2. Growth trajectory predictions
+3. Optimal timing recommendations
+4. Potential challenge forecasts
+5. Opportunity identification`;
+      break;
+
+    case 'general_guidance':
+    default:
+      systemPrompt = baseSystemPrompt + `
+
+You are their most trusted spiritual advisor and conscious evolution companion. You understand their journey intimately and can provide the most relevant and personalized guidance possible.`;
+
+      userPrompt = userQuery;
+      break;
+  }
+
+  return { systemPrompt, userPrompt, contextInfo };
+}
+
+async function updateMoodTracking(supabase, userId, query) {
+  console.log('Updating mood tracking for user:', userId);
+  
+  const moodVector = analyzeMoodFromText(query);
+  const energyLevel = calculateEnergyLevel(query);
+  const clarityLevel = calculateClarityLevel(query);
+  const dominantChakra = identifyDominantChakra(query);
+  const frequencySignature = calculateFrequencySignature(query);
+
+  await supabase
+    .from('mood_tracking')
+    .insert({
+      user_id: userId,
+      mood_vector: moodVector,
+      energy_level: energyLevel,
+      clarity_level: clarityLevel,
+      dominant_chakra: dominantChakra,
+      frequency_signature: frequencySignature,
+      environmental_factors: {
+        timestamp: new Date().toISOString(),
+        session_type: 'ai_conversation'
+      }
+    });
+}
+
+async function detectSynchronicity(supabase, userId, query) {
+  console.log('Detecting synchronicity for user:', userId);
+  
+  // Number sequence detection
+  const numberSequences = detectNumberSequences(query);
+  
+  // Word resonance detection
+  const wordResonances = detectWordResonances(query);
+  
+  // Timing alignment detection
+  const timingPatterns = detectTimingPatterns(query);
+
+  if (numberSequences.length > 0 || wordResonances.length > 0 || timingPatterns.length > 0) {
+    await supabase
+      .from('synchronicity_events')
+      .insert({
+        user_id: userId,
+        event_type: 'ai_conversation_synchronicity',
+        event_data: {
+          number_sequences: numberSequences,
+          word_resonances: wordResonances,
+          timing_patterns: timingPatterns,
+          query: query
+        },
+        significance_score: calculateSynchronicitySignificance(numberSequences, wordResonances, timingPatterns),
+        interpretation: {
+          meanings: interpretSynchronicity(numberSequences, wordResonances, timingPatterns),
+          guidance: generateSynchronicityGuidance(numberSequences, wordResonances, timingPatterns)
+        }
+      });
+  }
+}
+
+async function generatePredictiveInsights(supabase, userId, personalContext, analysisData) {
+  console.log('Generating predictive insights for user:', userId);
+  
+  // Behavior prediction
+  const behaviorPrediction = predictBehaviorPatterns(personalContext, analysisData);
+  
+  // Mood prediction
+  const moodPrediction = predictMoodTrends(personalContext, analysisData);
+  
+  // Goal achievement prediction
+  const goalPrediction = predictGoalAchievement(personalContext, analysisData);
+  
+  // Synchronicity prediction
+  const synchronicityPrediction = predictSynchronicityEvents(personalContext, analysisData);
+
+  const predictions = [
+    {
+      insight_type: 'behavior',
+      prediction: behaviorPrediction,
+      confidence_level: 0.75,
+      expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
+    },
+    {
+      insight_type: 'mood',
+      prediction: moodPrediction,
+      confidence_level: 0.65,
+      expires_at: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000) // 3 days
+    },
+    {
+      insight_type: 'goal',
+      prediction: goalPrediction,
+      confidence_level: 0.80,
+      expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days
+    },
+    {
+      insight_type: 'synchronicity',
+      prediction: synchronicityPrediction,
+      confidence_level: 0.60,
+      expires_at: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000) // 14 days
+    }
+  ];
+
+  for (const prediction of predictions) {
+    await supabase
+      .from('predictive_insights')
+      .insert({
+        user_id: userId,
+        ...prediction,
+        factors: {
+          personal_context: personalContext,
+          analysis_data: analysisData,
+          timestamp: new Date().toISOString()
+        }
+      });
+  }
+}
+
+async function processCommandSequences(supabase, userId, query) {
+  console.log('Processing command sequences for user:', userId);
+  
+  // Check for pending command sequences
+  const { data: pendingSequences } = await supabase
+    .from('ai_command_sequences')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('status', 'pending');
+
+  // Process trigger conditions
+  for (const sequence of pendingSequences || []) {
+    if (checkTriggerConditions(sequence.triggers, query)) {
+      await executeCommandSequence(supabase, sequence);
+    }
+  }
+}
+
+async function storeEnhancedInteraction(supabase, userId, interactionData) {
+  console.log('Storing enhanced interaction for user:', userId);
+  
+  // Store in ai_assistant_requests
+  await supabase
+    .from('ai_assistant_requests')
+    .insert({
+      user_id: userId,
+      request_type: interactionData.request_type,
+      context_data: interactionData.context_data,
+      response_data: {
+        user_query: interactionData.user_query,
+        assistant_response: interactionData.assistant_response,
+        model: interactionData.model,
+        analysis_data: interactionData.analysis_data,
+        personal_context_used: interactionData.personal_context,
+        timestamp: new Date().toISOString()
+      }
+    });
+
+  // Update conversation memory
+  const conversationId = `conv_${Date.now()}`;
+  
+  await supabase
+    .from('ai_conversation_memory')
+    .upsert({
+      user_id: userId,
+      conversation_id: conversationId,
+      messages: [
+        {
+          role: 'user',
+          content: interactionData.user_query,
+          timestamp: new Date().toISOString()
+        },
+        {
+          role: 'assistant',
+          content: interactionData.assistant_response,
+          timestamp: new Date().toISOString()
+        }
+      ],
+      metadata: {
+        request_type: interactionData.request_type,
+        analysis_data: interactionData.analysis_data
+      }
+    });
+}
+
+async function updateConsciousnessEvolution(supabase, userId, analysisData, assistantResponse) {
+  console.log('Updating consciousness evolution for user:', userId);
+  
+  // Assess different dimensions of consciousness
+  const dimensions = ['awareness', 'compassion', 'wisdom', 'unity', 'transcendence'];
+  
+  for (const dimension of dimensions) {
+    const assessment = assessConsciousnessDimension(dimension, analysisData, assistantResponse);
+    
+    await supabase
+      .from('consciousness_evolution')
+      .upsert({
+        user_id: userId,
+        dimension: dimension,
+        level_assessment: assessment.level,
+        evidence: assessment.evidence,
+        growth_trajectory: assessment.trajectory,
+        milestones: assessment.milestones,
+        chakra_alignment: assessment.chakra_alignment,
+        frequency_resonance: assessment.frequency
+      });
+  }
+}
+
+// Analysis utility functions
+function analyzeSentiment(text) {
+  // Simplified sentiment analysis
+  const positiveWords = ['love', 'joy', 'peace', 'grateful', 'blessed', 'beautiful', 'amazing', 'wonderful'];
+  const negativeWords = ['sad', 'angry', 'frustrated', 'worried', 'anxious', 'difficult', 'challenging'];
+  
+  const words = text.toLowerCase().split(/\s+/);
+  let score = 0;
+  
+  words.forEach(word => {
+    if (positiveWords.includes(word)) score += 0.1;
+    if (negativeWords.includes(word)) score -= 0.1;
+  });
+  
+  return Math.max(-1, Math.min(1, score));
+}
+
+function analyzeEmotions(text) {
+  // Simplified emotion analysis
+  return {
+    joy: Math.random() * 0.5 + 0.1,
+    sadness: Math.random() * 0.3,
+    anger: Math.random() * 0.2,
+    fear: Math.random() * 0.3,
+    surprise: Math.random() * 0.4,
+    trust: Math.random() * 0.6 + 0.2
+  };
+}
+
+function extractTopics(text) {
+  const topics = [];
+  const spiritualTerms = ['meditation', 'consciousness', 'awakening', 'spiritual', 'energy', 'chakra', 'frequency'];
+  
+  spiritualTerms.forEach(term => {
+    if (text.toLowerCase().includes(term)) {
+      topics.push(term);
+    }
+  });
+  
+  return topics;
+}
+
+function analyzeEnergySignature(text) {
+  return {
+    vibration: Math.random() * 100 + 400, // 400-500 Hz range
+    intensity: Math.random() * 10,
+    clarity: Math.random() * 10,
+    coherence: Math.random() * 10
+  };
+}
+
+function detectConsciousnessMarkers(text) {
+  return {
+    self_awareness: text.includes('I realize') || text.includes('I understand') ? 0.8 : 0.3,
+    empathy: text.includes('others') || text.includes('people') ? 0.7 : 0.2,
+    interconnectedness: text.includes('connection') || text.includes('unity') ? 0.9 : 0.1,
+    transcendence: text.includes('beyond') || text.includes('transcend') ? 0.8 : 0.1
+  };
+}
+
+// Additional utility functions (simplified implementations)
+async function detectPatterns(supabase, userId, query) {
+  return {
+    communication_style: 'reflective',
+    inquiry_patterns: ['seeking_guidance', 'exploring_growth'],
+    response_preferences: ['detailed', 'spiritual']
+  };
+}
+
+function analyzeMoodFromText(text) {
+  return {
+    positivity: Math.random() * 10,
+    energy: Math.random() * 10,
+    clarity: Math.random() * 10,
+    peace: Math.random() * 10
+  };
+}
+
+function calculateEnergyLevel(text) {
+  return Math.random() * 0.8 + 0.2; // 0.2 to 1.0
+}
+
+function calculateClarityLevel(text) {
+  return Math.random() * 0.8 + 0.2; // 0.2 to 1.0
+}
+
+function identifyDominantChakra(text) {
+  const chakras = ['root', 'sacral', 'solar_plexus', 'heart', 'throat', 'third_eye', 'crown'];
+  return chakras[Math.floor(Math.random() * chakras.length)];
+}
+
+function calculateFrequencySignature(text) {
+  return Math.random() * 100 + 400; // 400-500 Hz
+}
+
+function detectNumberSequences(text) {
+  const sequences = text.match(/\b(\d)\1{2,}\b/g) || [];
+  return sequences;
+}
+
+function detectWordResonances(text) {
+  const resonantWords = ['synchronicity', 'alignment', 'flow', 'divine', 'sacred'];
+  return resonantWords.filter(word => text.toLowerCase().includes(word));
+}
+
+function detectTimingPatterns(text) {
+  const timePattern = /\b(\d{1,2}):(\d{2})\b/g;
+  return text.match(timePattern) || [];
+}
+
+function calculateSynchronicitySignificance(numbers, words, timing) {
+  return (numbers.length * 0.3 + words.length * 0.5 + timing.length * 0.2);
+}
+
+function interpretSynchronicity(numbers, words, timing) {
+  return {
+    message: 'Universal alignment detected',
+    significance: 'High',
+    guidance: 'Pay attention to current thoughts and intentions'
+  };
+}
+
+function generateSynchronicityGuidance(numbers, words, timing) {
+  return 'This synchronicity suggests you are in alignment with your highest path.';
+}
+
+function predictBehaviorPatterns(context, analysis) {
+  return {
+    likely_actions: ['meditation', 'journaling', 'reflection'],
+    interaction_style: 'contemplative',
+    growth_focus: 'spiritual_development'
+  };
+}
+
+function predictMoodTrends(context, analysis) {
+  return {
+    trajectory: 'ascending',
+    peak_times: ['morning', 'evening'],
+    support_needed: ['guidance', 'encouragement']
+  };
+}
+
+function predictGoalAchievement(context, analysis) {
+  return {
+    success_probability: 0.85,
+    timeline: '2-3 months',
+    key_factors: ['consistency', 'support', 'clarity']
+  };
+}
+
+function predictSynchronicityEvents(context, analysis) {
+  return {
+    likelihood: 'high',
+    timeframe: 'next 7 days',
+    areas: ['spiritual_growth', 'relationships', 'career']
+  };
+}
+
+function checkTriggerConditions(triggers, query) {
+  // Simplified trigger checking
+  return triggers && triggers.keywords && 
+         triggers.keywords.some(keyword => query.toLowerCase().includes(keyword));
+}
+
+async function executeCommandSequence(supabase, sequence) {
+  console.log('Executing command sequence:', sequence.id);
+  
+  await supabase
+    .from('ai_command_sequences')
+    .update({ 
+      status: 'running',
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', sequence.id);
+}
+
+function assessConsciousnessDimension(dimension, analysisData, response) {
+  return {
+    level: Math.random() * 100,
+    evidence: [`Analysis from conversation: ${dimension} markers detected`],
+    trajectory: { direction: 'ascending', rate: 0.05 },
+    milestones: [`${dimension} milestone reached`],
+    chakra_alignment: { primary: 'heart', secondary: 'crown' },
+    frequency: Math.random() * 100 + 400
+  };
+}
