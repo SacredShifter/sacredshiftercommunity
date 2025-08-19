@@ -209,6 +209,36 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_generated_tools: {
+        Row: {
+          created_at: string
+          id: string
+          parent_context: Json | null
+          status: string
+          tool_specification: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          parent_context?: Json | null
+          status?: string
+          tool_specification: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          parent_context?: Json | null
+          status?: string
+          tool_specification?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       akashic_records: {
         Row: {
           data: Json
@@ -1943,6 +1973,33 @@ export type Database = {
         }
         Relationships: []
       }
+      cognitive_mirrors: {
+        Row: {
+          created_at: string
+          id: string
+          mirror_data: Json
+          prompt_context: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          mirror_data: Json
+          prompt_context?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          mirror_data?: Json
+          prompt_context?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       coherence_beacon_data: {
         Row: {
           authenticity_factor: number | null
@@ -2323,6 +2380,39 @@ export type Database = {
           metadata?: Json | null
           recognition_type?: string
           resonance_level?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      consciousness_states: {
+        Row: {
+          activated_at: string
+          duration_minutes: number | null
+          effectiveness_score: number | null
+          frequency_signature: number | null
+          id: string
+          state_configuration: Json
+          state_name: string
+          user_id: string
+        }
+        Insert: {
+          activated_at?: string
+          duration_minutes?: number | null
+          effectiveness_score?: number | null
+          frequency_signature?: number | null
+          id?: string
+          state_configuration: Json
+          state_name: string
+          user_id: string
+        }
+        Update: {
+          activated_at?: string
+          duration_minutes?: number | null
+          effectiveness_score?: number | null
+          frequency_signature?: number | null
+          id?: string
+          state_configuration?: Json
+          state_name?: string
           user_id?: string
         }
         Relationships: []
@@ -5590,6 +5680,54 @@ export type Database = {
           },
         ]
       }
+      living_codex_entries: {
+        Row: {
+          content: string
+          created_at: string
+          cross_references: string[] | null
+          evolution_stage: string
+          extracted_concepts: string[] | null
+          id: string
+          last_evolution: string
+          living_status: string
+          neural_connections: Json | null
+          thematic_clusters: string[] | null
+          title: string
+          tool_reference: string | null
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          cross_references?: string[] | null
+          evolution_stage?: string
+          extracted_concepts?: string[] | null
+          id?: string
+          last_evolution?: string
+          living_status?: string
+          neural_connections?: Json | null
+          thematic_clusters?: string[] | null
+          title: string
+          tool_reference?: string | null
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          cross_references?: string[] | null
+          evolution_stage?: string
+          extracted_concepts?: string[] | null
+          id?: string
+          last_evolution?: string
+          living_status?: string
+          neural_connections?: Json | null
+          thematic_clusters?: string[] | null
+          title?: string
+          tool_reference?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       love_quotes: {
         Row: {
           created_at: string | null
@@ -6637,6 +6775,45 @@ export type Database = {
           scheduled_for?: string | null
           tarot_reference?: string | null
           title?: string
+        }
+        Relationships: []
+      }
+      orchestrated_synchronicities: {
+        Row: {
+          created_at: string
+          id: string
+          manifestation_status: string | null
+          manifested_at: string | null
+          meaning_thread: string | null
+          orchestration_method: string
+          probability_score: number | null
+          scheduled_window: string | null
+          seed_pattern: Json
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          manifestation_status?: string | null
+          manifested_at?: string | null
+          meaning_thread?: string | null
+          orchestration_method?: string
+          probability_score?: number | null
+          scheduled_window?: string | null
+          seed_pattern: Json
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          manifestation_status?: string | null
+          manifested_at?: string | null
+          meaning_thread?: string | null
+          orchestration_method?: string
+          probability_score?: number | null
+          scheduled_window?: string | null
+          seed_pattern?: Json
+          user_id?: string
         }
         Relationships: []
       }
@@ -10047,6 +10224,36 @@ export type Database = {
           id?: string
           ideal_waveform?: Json | null
           syllable?: string | null
+        }
+        Relationships: []
+      }
+      sovereignty_assessments: {
+        Row: {
+          assessed_at: string
+          assessment_data: Json
+          growth_rate: number | null
+          id: string
+          previous_level: number | null
+          sovereignty_level: number
+          user_id: string
+        }
+        Insert: {
+          assessed_at?: string
+          assessment_data: Json
+          growth_rate?: number | null
+          id?: string
+          previous_level?: number | null
+          sovereignty_level: number
+          user_id: string
+        }
+        Update: {
+          assessed_at?: string
+          assessment_data?: Json
+          growth_rate?: number | null
+          id?: string
+          previous_level?: number | null
+          sovereignty_level?: number
+          user_id?: string
         }
         Relationships: []
       }
