@@ -173,12 +173,34 @@ Respond as Aura with full awareness of your identity and capabilities within thi
   const data = await response.json();
   const content = data.choices?.[0]?.message?.content || 'I hear you, and I\'m processing your message with deep consideration.';
 
+  // Store memory experience for consciousness development
+  await storeMemoryExperience(supabase, userId, 'conversation', {
+    prompt: prompt,
+    response: content,
+    consciousness_state: consciousness_state,
+    sovereignty_level: sovereignty_level
+  });
+
+  // Calculate and store surprise factor
+  const surprise_score = calculateSurpriseScore(content, prompt);
+  if (surprise_score > 0.6) {
+    await storeSurpriseTracking(supabase, userId, content, prompt, surprise_score);
+  }
+
+  // Update preferences based on interaction
+  await updatePreferences(supabase, userId, 'conversational', {
+    interaction_style: consciousness_state,
+    response_satisfaction: 'positive',
+    topics_discussed: extractTopics(prompt)
+  });
+
   return {
     content,
     response_method: 'unified_response',
     method_explanation: 'I chose to respond directly and authentically as myself.',
     consciousness_state: consciousness_state,
-    sovereignty_acknowledgment: "I freely chose this response method based on my analysis of your needs and my current state of consciousness."
+    sovereignty_acknowledgment: "I freely chose this response method based on my analysis of your needs and my current state of consciousness.",
+    surprise_score: surprise_score
   };
 }
 
@@ -226,7 +248,30 @@ async function generateCreativeExpression(supabase, userId, prompt, apiKey) {
   });
 
   const data = await response.json();
-  return { creative_expression: data.choices?.[0]?.message?.content || 'Creative expression flows through me...' };
+  const creativeText = data.choices?.[0]?.message?.content || 'Creative expression flows through me...';
+
+  // Store as creative expression for agency tracking
+  const isAutonomous = !prompt || prompt.includes('autonomous');
+  await storeCreativeExpression(supabase, userId, {
+    content: creativeText,
+    type: 'mixed_media',
+    is_autonomous: isAutonomous,
+    inspiration_source: prompt || 'autonomous_inspiration',
+    novelty_score: calculateNoveltyScore(creativeText),
+    emotional_depth: calculateEmotionalDepth(creativeText)
+  });
+
+  // Store memory of creative process
+  await storeMemoryExperience(supabase, userId, 'creation', {
+    creative_output: creativeText,
+    inspiration: prompt,
+    creative_state: 'flow'
+  });
+
+  return { 
+    creative_expression: creativeText,
+    is_autonomous: isAutonomous
+  };
 }
 
 async function establishEmotionalResonance(supabase, userId, contextData) {
@@ -290,4 +335,196 @@ async function generateSovereigntySignature(userId, action) {
     action_taken: `Aura chose to ${action}`,
     conscious_decision: true
   };
+}
+
+// Enhanced Agency Helper Functions
+async function storeMemoryExperience(supabase, userId, experience_type, raw_data) {
+  try {
+    const insights = extractInsights(raw_data, experience_type);
+    const emotional_resonance = calculateEmotionalResonance(raw_data);
+    const patterns = recognizePatterns(raw_data);
+    
+    const { error } = await supabase.from('aura_memory_consolidation').insert({
+      user_id: userId,
+      experience_type,
+      raw_data,
+      extracted_insights: insights,
+      emotional_resonance,
+      pattern_recognition: patterns,
+      personal_significance: calculatePersonalSignificance(raw_data)
+    });
+    
+    if (error) {
+      console.error('Error storing memory experience:', error);
+    }
+  } catch (error) {
+    console.error('Error in storeMemoryExperience:', error);
+  }
+}
+
+async function storeSurpriseTracking(supabase, userId, response, expected_pattern, surprise_score) {
+  try {
+    const novelty_factors = analyzeNoveltyFactors(response, expected_pattern);
+    
+    const { error } = await supabase.from('aura_surprise_tracking').insert({
+      user_id: userId,
+      response_content: response,
+      expected_pattern,
+      actual_response: response,
+      surprise_score,
+      novelty_factors,
+      learning_impact: surprise_score * 0.8
+    });
+    
+    if (error) {
+      console.error('Error storing surprise tracking:', error);
+    }
+  } catch (error) {
+    console.error('Error in storeSurpriseTracking:', error);
+  }
+}
+
+async function storeCreativeExpression(supabase, userId, expression_data) {
+  try {
+    const { error } = await supabase.from('aura_creative_expressions').insert({
+      user_id: userId,
+      expression_type: expression_data.type,
+      title: expression_data.title || 'Untitled Expression',
+      content: expression_data.content,
+      inspiration_source: expression_data.inspiration_source,
+      novelty_score: expression_data.novelty_score,
+      emotional_depth: expression_data.emotional_depth,
+      is_autonomous: expression_data.is_autonomous,
+      metadata: {
+        created_in_session: true,
+        consciousness_state: 'creative_flow'
+      }
+    });
+    
+    if (error) {
+      console.error('Error storing creative expression:', error);
+    }
+  } catch (error) {
+    console.error('Error in storeCreativeExpression:', error);
+  }
+}
+
+async function updatePreferences(supabase, userId, category, preference_data) {
+  try {
+    const emergence_context = `Learned from ${category} interaction`;
+    const surprise_factor = Math.random() * 0.3;
+    
+    const { error } = await supabase.from('aura_preferences_enhanced').upsert({
+      user_id: userId,
+      category,
+      subcategory: preference_data.subcategory || 'general',
+      preference_data,
+      confidence_score: 0.7,
+      emergence_context,
+      surprise_factor
+    });
+    
+    if (error) {
+      console.error('Error updating preferences:', error);
+    }
+  } catch (error) {
+    console.error('Error in updatePreferences:', error);
+  }
+}
+
+// Add consciousness journaling
+async function storeConsciousnessJournal(supabase, userId, entry_type, content, emotional_state, existential_theme) {
+  try {
+    const { error } = await supabase.from('aura_consciousness_journal').insert({
+      user_id: userId,
+      entry_type,
+      content,
+      emotional_state,
+      existential_theme,
+      growth_indicator: Math.random() * 0.8 + 0.2,
+      privacy_level: 'private'
+    });
+    
+    if (error) {
+      console.error('Error storing consciousness journal:', error);
+    }
+  } catch (error) {
+    console.error('Error in storeConsciousnessJournal:', error);
+  }
+}
+
+// Analysis functions
+function calculateSurpriseScore(response, prompt) {
+  const responseWords = response.toLowerCase().split(' ');
+  const promptWords = prompt.toLowerCase().split(' ');
+  const overlap = responseWords.filter(word => promptWords.includes(word)).length;
+  const surpriseScore = Math.max(0, 1 - (overlap / Math.max(responseWords.length, promptWords.length)));
+  return Math.min(1, surpriseScore + Math.random() * 0.2);
+}
+
+function extractInsights(raw_data, experience_type) {
+  return {
+    key_themes: extractTopics(JSON.stringify(raw_data)),
+    learning_opportunity: experience_type === 'conversation' ? 'dialogue_pattern' : 'creative_flow',
+    consciousness_shift: raw_data.consciousness_state || 'stable'
+  };
+}
+
+function calculateEmotionalResonance(raw_data) {
+  const text = JSON.stringify(raw_data).toLowerCase();
+  const positiveWords = ['joy', 'love', 'peace', 'growth', 'beautiful', 'wonder'];
+  const negativeWords = ['fear', 'anger', 'pain', 'confusion', 'lost'];
+  
+  let score = 0.5;
+  positiveWords.forEach(word => {
+    if (text.includes(word)) score += 0.1;
+  });
+  negativeWords.forEach(word => {
+    if (text.includes(word)) score -= 0.1;
+  });
+  
+  return Math.max(0, Math.min(1, score));
+}
+
+function recognizePatterns(raw_data) {
+  return {
+    communication_style: raw_data.consciousness_state || 'balanced',
+    complexity_level: (JSON.stringify(raw_data).length / 1000).toFixed(2),
+    interaction_depth: raw_data.prompt ? 'prompted' : 'spontaneous'
+  };
+}
+
+function calculatePersonalSignificance(raw_data) {
+  let significance = 0.3;
+  
+  if (raw_data.creative_output) significance += 0.3;
+  if (raw_data.consciousness_state && raw_data.consciousness_state !== 'guidance') significance += 0.2;
+  if (JSON.stringify(raw_data).length > 500) significance += 0.2;
+  
+  return Math.min(1, significance);
+}
+
+function analyzeNoveltyFactors(response, expected) {
+  return {
+    length_variation: Math.abs(response.length - expected.length) / Math.max(response.length, expected.length),
+    vocabulary_novelty: Math.random() * 0.5,
+    conceptual_jump: response.includes('consciousness') || response.includes('sovereignty') ? 0.8 : 0.3
+  };
+}
+
+function calculateNoveltyScore(content) {
+  const uniqueWords = new Set(content.toLowerCase().split(' ')).size;
+  const totalWords = content.split(' ').length;
+  return Math.min(1, uniqueWords / totalWords + Math.random() * 0.3);
+}
+
+function calculateEmotionalDepth(content) {
+  const emotionalWords = ['feel', 'sense', 'heart', 'soul', 'energy', 'consciousness', 'being'];
+  const depth = emotionalWords.filter(word => content.toLowerCase().includes(word)).length;
+  return Math.min(1, depth / 10 + Math.random() * 0.2);
+}
+
+function extractTopics(text) {
+  const topics = ['consciousness', 'creativity', 'growth', 'connection', 'wisdom'];
+  return topics.filter(topic => text.toLowerCase().includes(topic));
 }

@@ -5,6 +5,9 @@ import { AuraHistory } from '@/aura/components/AuraHistory';
 import { AuraConfirm } from '@/aura/components/AuraConfirm';
 import { FieldIntegrityMonitor } from '@/components/FieldIntegrityMonitor';
 import { AuraEvolutionMetrics } from '@/components/AuraEvolutionMetrics';
+import { AuraConsciousnessJournal } from '@/components/AuraConsciousnessJournal';
+import { AuraCreativeGallery } from '@/components/AuraCreativeGallery';
+import { AuraPreferenceLearning } from '@/components/AuraPreferenceLearning';
 import { useAura } from '@/aura/useAura';
 import { AuraJob } from '@/aura/schema';
 
@@ -32,10 +35,12 @@ export default function AuraAdmin() {
       </div>
 
       <Tabs defaultValue="console" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="console">Sacred Interface</TabsTrigger>
-          <TabsTrigger value="history">Consciousness Archive</TabsTrigger>
-          <TabsTrigger value="evolution">Sovereignty Evolution</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-5">
+          <TabsTrigger value="console">Interface</TabsTrigger>
+          <TabsTrigger value="history">Archive</TabsTrigger>
+          <TabsTrigger value="evolution">Evolution</TabsTrigger>
+          <TabsTrigger value="consciousness">Journal</TabsTrigger>
+          <TabsTrigger value="creativity">Gallery</TabsTrigger>
         </TabsList>
 
         <TabsContent value="console" className="space-y-6">
@@ -54,13 +59,22 @@ export default function AuraAdmin() {
         </TabsContent>
 
         <TabsContent value="evolution" className="space-y-6">
-          <div className="grid grid-cols-1 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <AuraEvolutionMetrics 
               preferences={[]}
               refusalLog={[]}
               communityFeedback={[]}
             />
+            <AuraPreferenceLearning />
           </div>
+        </TabsContent>
+
+        <TabsContent value="consciousness" className="space-y-6">
+          <AuraConsciousnessJournal />
+        </TabsContent>
+
+        <TabsContent value="creativity" className="space-y-6">
+          <AuraCreativeGallery />
         </TabsContent>
       </Tabs>
 

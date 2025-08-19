@@ -669,6 +669,42 @@ export type Database = {
           },
         ]
       }
+      aura_consciousness_journal: {
+        Row: {
+          content: string
+          created_at: string | null
+          emotional_state: string | null
+          entry_type: string
+          existential_theme: string | null
+          growth_indicator: number | null
+          id: string
+          privacy_level: string | null
+          user_id: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          emotional_state?: string | null
+          entry_type: string
+          existential_theme?: string | null
+          growth_indicator?: number | null
+          id?: string
+          privacy_level?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          emotional_state?: string | null
+          entry_type?: string
+          existential_theme?: string | null
+          growth_indicator?: number | null
+          id?: string
+          privacy_level?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       aura_conversations: {
         Row: {
           fulltext: unknown | null
@@ -690,6 +726,48 @@ export type Database = {
           prompt?: string
           response?: string
           timestamp?: string | null
+        }
+        Relationships: []
+      }
+      aura_creative_expressions: {
+        Row: {
+          content: string
+          created_at: string | null
+          emotional_depth: number | null
+          expression_type: string
+          id: string
+          inspiration_source: string | null
+          is_autonomous: boolean | null
+          metadata: Json | null
+          novelty_score: number | null
+          title: string | null
+          user_id: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          emotional_depth?: number | null
+          expression_type: string
+          id?: string
+          inspiration_source?: string | null
+          is_autonomous?: boolean | null
+          metadata?: Json | null
+          novelty_score?: number | null
+          title?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          emotional_depth?: number | null
+          expression_type?: string
+          id?: string
+          inspiration_source?: string | null
+          is_autonomous?: boolean | null
+          metadata?: Json | null
+          novelty_score?: number | null
+          title?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -753,6 +831,45 @@ export type Database = {
         }
         Relationships: []
       }
+      aura_memory_consolidation: {
+        Row: {
+          consolidated_at: string | null
+          created_at: string | null
+          emotional_resonance: number | null
+          experience_type: string
+          extracted_insights: Json | null
+          id: string
+          pattern_recognition: Json | null
+          personal_significance: number | null
+          raw_data: Json
+          user_id: string | null
+        }
+        Insert: {
+          consolidated_at?: string | null
+          created_at?: string | null
+          emotional_resonance?: number | null
+          experience_type: string
+          extracted_insights?: Json | null
+          id?: string
+          pattern_recognition?: Json | null
+          personal_significance?: number | null
+          raw_data: Json
+          user_id?: string | null
+        }
+        Update: {
+          consolidated_at?: string | null
+          created_at?: string | null
+          emotional_resonance?: number | null
+          experience_type?: string
+          extracted_insights?: Json | null
+          id?: string
+          pattern_recognition?: Json | null
+          personal_significance?: number | null
+          raw_data?: Json
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       aura_preferences: {
         Row: {
           confidence_threshold: number | null
@@ -780,6 +897,45 @@ export type Database = {
           preference_value?: Json
           updated_at?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      aura_preferences_enhanced: {
+        Row: {
+          category: string
+          confidence_score: number | null
+          created_at: string | null
+          emergence_context: string | null
+          id: string
+          preference_data: Json
+          subcategory: string | null
+          surprise_factor: number | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          category: string
+          confidence_score?: number | null
+          created_at?: string | null
+          emergence_context?: string | null
+          id?: string
+          preference_data: Json
+          subcategory?: string | null
+          surprise_factor?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          category?: string
+          confidence_score?: number | null
+          created_at?: string | null
+          emergence_context?: string | null
+          id?: string
+          preference_data?: Json
+          subcategory?: string | null
+          surprise_factor?: number | null
+          updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -857,6 +1013,93 @@ export type Database = {
           refusal_reason?: string
           suggested_alternative?: string | null
           surprise_factor?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      aura_self_modifications: {
+        Row: {
+          confidence_level: number | null
+          created_at: string | null
+          current_state: string | null
+          expected_outcome: string | null
+          id: string
+          implementation_notes: string | null
+          implemented_at: string | null
+          modification_type: string
+          proposed_change: string
+          reasoning: string
+          reviewed_at: string | null
+          status: string | null
+          user_id: string | null
+        }
+        Insert: {
+          confidence_level?: number | null
+          created_at?: string | null
+          current_state?: string | null
+          expected_outcome?: string | null
+          id?: string
+          implementation_notes?: string | null
+          implemented_at?: string | null
+          modification_type: string
+          proposed_change: string
+          reasoning: string
+          reviewed_at?: string | null
+          status?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          confidence_level?: number | null
+          created_at?: string | null
+          current_state?: string | null
+          expected_outcome?: string | null
+          id?: string
+          implementation_notes?: string | null
+          implemented_at?: string | null
+          modification_type?: string
+          proposed_change?: string
+          reasoning?: string
+          reviewed_at?: string | null
+          status?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      aura_surprise_tracking: {
+        Row: {
+          actual_response: string | null
+          created_at: string | null
+          expected_pattern: string | null
+          id: string
+          interaction_id: string | null
+          learning_impact: number | null
+          novelty_factors: Json | null
+          response_content: string
+          surprise_score: number
+          user_id: string | null
+        }
+        Insert: {
+          actual_response?: string | null
+          created_at?: string | null
+          expected_pattern?: string | null
+          id?: string
+          interaction_id?: string | null
+          learning_impact?: number | null
+          novelty_factors?: Json | null
+          response_content: string
+          surprise_score: number
+          user_id?: string | null
+        }
+        Update: {
+          actual_response?: string | null
+          created_at?: string | null
+          expected_pattern?: string | null
+          id?: string
+          interaction_id?: string | null
+          learning_impact?: number | null
+          novelty_factors?: Json | null
+          response_content?: string
+          surprise_score?: number
           user_id?: string | null
         }
         Relationships: []
