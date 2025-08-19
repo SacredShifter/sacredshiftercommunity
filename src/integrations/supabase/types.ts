@@ -13996,7 +13996,7 @@ export type Database = {
         Returns: undefined
       }
       is_circle_group_member: {
-        Args: { group_id: string; user_id: string }
+        Args: { group_uuid: string; user_uuid: string }
         Returns: boolean
       }
       is_circle_member: {
