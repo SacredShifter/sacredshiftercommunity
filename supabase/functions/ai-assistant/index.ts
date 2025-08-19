@@ -14,9 +14,9 @@ serve(async (req) => {
   }
 
   try {
-    const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
-    if (!OPENAI_API_KEY) {
-      throw new Error('OpenAI API key not configured');
+    const OPENROUTER_API_KEY = Deno.env.get('OPENAI_API_KEY'); // OpenRouter API key stored as OPENAI_API_KEY
+    if (!OPENROUTER_API_KEY) {
+      throw new Error('OpenRouter API key not configured');
     }
 
     // Initialize Supabase client
@@ -76,28 +76,29 @@ serve(async (req) => {
     // Execute multi-step command sequences if applicable
     await processCommandSequences(supabase, user.id, user_query);
 
-    // Call OpenAI API with enhanced model
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    // Call OpenRouter API with enhanced model
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
+        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
         'Content-Type': 'application/json',
+        'HTTP-Referer': 'https://mikltjgbvxrxndtszorb.supabase.co',
+        'X-Title': 'Sacred Shifter AI Assistant',
       },
       body: JSON.stringify({
-        model: 'gpt-5-2025-08-07',
+        model: 'google/gemini-2.0-flash-exp:free',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt }
         ],
-        temperature: 0.7,
-        max_completion_tokens: 2000,
+        max_tokens: 2000,
       }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('OpenAI API Error:', { status: response.status, statusText: response.statusText, body: errorText });
-      throw new Error(`OpenAI API error: ${response.statusText}`);
+      console.error('OpenRouter API Error:', { status: response.status, statusText: response.statusText, body: errorText });
+      throw new Error(`OpenRouter API error: ${response.statusText}`);
     }
 
     const aiResponse = await response.json();
