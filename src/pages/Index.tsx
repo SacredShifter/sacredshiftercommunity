@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useTourContext } from "@/components/TourProvider";
 import { LANDING_PAGE_TOUR } from "@/configs/tours";
+import { OnboardingFlow } from "@/components/Onboarding/OnboardingFlow";
 import { 
   Home, Users, User, Rss, Settings, LogOut, BookOpen, Video, 
   Database, Archive, Scroll, Heart, Sparkles, Crown, Zap 
@@ -15,18 +16,18 @@ const Index = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const { startTour, isTourCompleted } = useTourContext();
-  const [showWelcome, setShowWelcome] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [isFirstVisit, setIsFirstVisit] = useState(false);
-  const [welcomeDismissed, setWelcomeDismissed] = useState(false);
+  const [onboardingCompleted, setOnboardingCompleted] = useState(false);
 
   useEffect(() => {
     const checkFirstVisit = async () => {
       if (!user) return;
       
-      // Check if welcome has been permanently dismissed
-      const dismissed = localStorage.getItem(`welcome-dismissed-${user.id}`);
-      if (dismissed) {
-        setWelcomeDismissed(true);
+      // Check if onboarding has been completed
+      const completed = localStorage.getItem(`onboarding-completed-${user.id}`);
+      if (completed) {
+        setOnboardingCompleted(true);
         return;
       }
       
@@ -39,7 +40,7 @@ const Index = () => {
 
         if (!profile) {
           setIsFirstVisit(true);
-          setShowWelcome(true);
+          setShowOnboarding(true);
         }
       } catch (error) {
         console.error('Error checking first visit:', error);
@@ -49,23 +50,20 @@ const Index = () => {
     checkFirstVisit();
   }, [user]);
 
-  // Auto-start tour for first-time users
+  // Auto-start tour for returning users (after onboarding)
   useEffect(() => {
-    if (user && !isTourCompleted('landing-page-tour') && !showWelcome && !welcomeDismissed) {
+    if (user && !isTourCompleted('landing-page-tour') && !showOnboarding && onboardingCompleted) {
       // Small delay to ensure elements are rendered
       const timer = setTimeout(() => {
         startTour(LANDING_PAGE_TOUR);
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [user, showWelcome, welcomeDismissed, isTourCompleted, startTour]);
+  }, [user, showOnboarding, onboardingCompleted, isTourCompleted, startTour]);
 
-  const handleWelcomeDismiss = () => {
-    if (user) {
-      localStorage.setItem(`welcome-dismissed-${user.id}`, 'true');
-      setWelcomeDismissed(true);
-    }
-    setShowWelcome(false);
+  const handleOnboardingComplete = () => {
+    setShowOnboarding(false);
+    setOnboardingCompleted(true);
   };
 
   const sacredSections = [
@@ -223,7 +221,10 @@ const Index = () => {
 
   return (
     <>
-      <WelcomeModal />
+      <OnboardingFlow 
+        isVisible={showOnboarding}
+        onComplete={handleOnboardingComplete}
+      />
       
       <div className="h-full p-6">
         <div className="max-w-7xl mx-auto">
