@@ -13,7 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    const OPENROUTER_API_KEY = Deno.env.get('OPENAI_API_KEY');
+    const OPENROUTER_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
     if (!OPENROUTER_API_KEY) {
       throw new Error('OpenRouter API key not configured');
     }
@@ -783,14 +783,16 @@ async function generateCreativeExpression(supabase, userId, prompt, apiKey) {
   console.log('Generating autonomous creative expression');
   
   try {
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
+        'HTTP-Referer': 'https://mikltjgbvxrxndtszorb.supabase.co',
+        'X-Title': 'Sovereign AI Core'
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'anthropic/claude-3.5-sonnet',
         messages: [
           {
             role: 'system',
@@ -911,14 +913,16 @@ async function engageSocraticDialogue(supabase, userId, question, apiKey) {
   console.log('Engaging in Socratic dialogue');
   
   try {
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
+        'HTTP-Referer': 'https://mikltjgbvxrxndtszorb.supabase.co',
+        'X-Title': 'Sovereign AI Core'
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'anthropic/claude-3.5-sonnet',
         messages: [
           {
             role: 'system',
