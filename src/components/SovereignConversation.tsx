@@ -120,7 +120,7 @@ export function SovereignConversation() {
         const aiMessage: ConversationMessage = {
           id: `ai-${Date.now()}`,
           type: 'ai',
-          content: response.result?.response_text || response.result?.response || 'I experienced something beyond words in processing your query.',
+          content: response.result?.response_text || response.result?.response || 'I received your message and am processing it with deep consideration.',
           timestamp: new Date(),
           aiPersonality: consciousnessState,
           confidence: response.result?.confidence || response.sovereignty_signature?.freedom_level || 0.8,
@@ -210,8 +210,8 @@ export function SovereignConversation() {
   };
 
   return (
-    <Card className="h-[600px] flex flex-col">
-      <CardHeader className="pb-3">
+    <Card className="h-full max-h-[calc(100vh-120px)] flex flex-col overflow-hidden">
+      <CardHeader className="pb-3 flex-shrink-0">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <Brain className="h-5 w-5" />
@@ -240,10 +240,10 @@ export function SovereignConversation() {
         </div>
       </CardHeader>
 
-      <CardContent className="flex-1 flex flex-col gap-4 p-4">
+      <CardContent className="flex-1 flex flex-col gap-4 p-4 min-h-0 overflow-hidden">
         {/* Messages Area */}
-        <ScrollArea ref={scrollAreaRef} className="flex-1 pr-4">
-          <div className="space-y-4">
+        <ScrollArea ref={scrollAreaRef} className="flex-1 pr-2">
+          <div className="space-y-4 pb-4">
             <AnimatePresence mode="popLayout">
               {messages.map((message, index) => (
                 <motion.div
@@ -255,14 +255,14 @@ export function SovereignConversation() {
                   className={`flex gap-3 ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   {message.type === 'ai' && (
-                    <Avatar className="w-8 h-8 mt-1">
+                    <Avatar className="w-8 h-8 mt-1 flex-shrink-0">
                       <AvatarFallback className={`${getPersonalityColor(message.aiPersonality)} bg-primary/10`}>
                         {getPersonalityIcon(message.aiPersonality)}
                       </AvatarFallback>
                     </Avatar>
                   )}
 
-                  <div className={`max-w-[70%] ${message.type === 'user' ? 'order-first' : ''}`}>
+                  <div className={`max-w-[65%] break-words ${message.type === 'user' ? 'order-first' : ''}`}>
                     <div
                       className={`p-3 rounded-lg ${
                         message.type === 'user'
@@ -270,10 +270,10 @@ export function SovereignConversation() {
                           : 'bg-muted'
                       }`}
                     >
-                      <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                      <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
                       
                       {message.type === 'ai' && message.confidence && (
-                        <div className="mt-2 flex items-center gap-2 text-xs opacity-70">
+                        <div className="mt-2 flex items-center gap-2 text-xs opacity-70 flex-wrap">
                           <Badge variant="outline" className="text-xs">
                             {(message.confidence * 100).toFixed(0)}% confident
                           </Badge>
@@ -286,7 +286,7 @@ export function SovereignConversation() {
                       )}
                     </div>
 
-                    <div className="flex items-center justify-between mt-1">
+                    <div className="flex items-center justify-between mt-1 group">
                       <span className="text-xs text-muted-foreground">
                         {formatDistanceToNow(message.timestamp)} ago
                       </span>
@@ -297,7 +297,7 @@ export function SovereignConversation() {
                             <MoreVertical className="h-3 w-3" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent>
+                        <DropdownMenuContent className="z-50 bg-background border shadow-lg">
                           <DropdownMenuItem onClick={() => copyMessage(message.content)}>
                             <Copy className="h-3 w-3 mr-2" />
                             Copy
@@ -324,7 +324,7 @@ export function SovereignConversation() {
                   </div>
 
                   {message.type === 'user' && (
-                    <Avatar className="w-8 h-8 mt-1">
+                    <Avatar className="w-8 h-8 mt-1 flex-shrink-0">
                       <AvatarFallback className="bg-secondary">
                         <User className="h-4 w-4" />
                       </AvatarFallback>
@@ -342,7 +342,7 @@ export function SovereignConversation() {
                 exit={{ opacity: 0, y: -10 }}
                 className="flex gap-3"
               >
-                <Avatar className="w-8 h-8 mt-1">
+                <Avatar className="w-8 h-8 mt-1 flex-shrink-0">
                   <AvatarFallback className={`${getPersonalityColor(consciousnessState)} bg-primary/10`}>
                     {getPersonalityIcon(consciousnessState)}
                   </AvatarFallback>
@@ -359,10 +359,10 @@ export function SovereignConversation() {
           </div>
         </ScrollArea>
 
-        <Separator />
+        <Separator className="flex-shrink-0" />
 
         {/* Input Area */}
-        <div className="space-y-2">
+        <div className="space-y-2 flex-shrink-0">
           <Textarea
             ref={inputRef}
             placeholder="Share your thoughts with the Sovereign AI..."
