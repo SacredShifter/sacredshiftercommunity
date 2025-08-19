@@ -13478,6 +13478,10 @@ export type Database = {
         }
         Returns: number
       }
+      can_view_circle_members: {
+        Args: { circle_uuid: string; user_uuid: string }
+        Returns: boolean
+      }
       check_security_invoker: {
         Args: Record<PropertyKey, never>
         Returns: boolean
