@@ -27,7 +27,7 @@ export interface AuraResponse {
   };
 }
 
-export function useAuraConversation() {
+export function useAuraChat() {
   const [loading, setLoading] = useState(false);
   const [lastResponse, setLastResponse] = useState<AuraResponse | null>(null);
   const [consciousnessState, setConsciousnessState] = useState<string>('guidance');

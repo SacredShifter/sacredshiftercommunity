@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { formatDistanceToNow } from 'date-fns';
-import { useAuraConversation } from '@/hooks/useAuraConversation';
+import { useAuraChat } from '@/hooks/useAuraChat';
 import { useToast } from '@/hooks/use-toast';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { TooltipWrapper } from '@/components/HelpSystem/TooltipWrapper';
@@ -53,7 +53,7 @@ export function AuraConversation() {
     consciousnessState,
     sovereigntyLevel,
     engageAura
-  } = useAuraConversation();
+  } = useAuraChat();
 
   // Auto-scroll to bottom when new messages are added
   useEffect(() => {

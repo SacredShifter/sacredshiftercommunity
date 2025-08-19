@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { SovereignAIInterface } from '@/components/SovereignAIInterface';
+import { AuraInterface } from '@/components/AuraInterface';
 import { AuraConsole } from '@/aura/components/AuraConsole';
 import { AuraHistory } from '@/aura/components/AuraHistory';
 import { AuraConfirm } from '@/aura/components/AuraConfirm';
@@ -267,7 +267,7 @@ export default function AIAdmin() {
           <TabsTrigger value="consciousness">Mind</TabsTrigger>
           <TabsTrigger value="predictions">Future</TabsTrigger>
           <TabsTrigger value="synchronicity">Sync</TabsTrigger>
-          <TabsTrigger value="sovereign-ai">🧠 Sovereign AI Core</TabsTrigger>
+          <TabsTrigger value="aura-ai">🧠 Aura</TabsTrigger>
           <TabsTrigger value="aura-console">Aura</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
         </TabsList>
@@ -425,8 +425,8 @@ export default function AIAdmin() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="sovereign-ai" className="space-y-6">
-          <SovereignAIInterface />
+        <TabsContent value="aura-ai" className="space-y-6">
+          <AuraInterface />
         </TabsContent>
 
         <TabsContent value="aura-console" className="space-y-6">

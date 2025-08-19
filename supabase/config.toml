@@ -9,5 +9,5 @@ verify_jwt = false
 [functions.submit-contact]
 verify_jwt = false
 
-[functions.sovereign-ai-core]
+[functions.aura-core]
 verify_jwt = true

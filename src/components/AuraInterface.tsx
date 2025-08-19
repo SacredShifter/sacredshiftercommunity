@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
-import { useAuraConversation } from '@/hooks/useAuraConversation';
+import { useAuraChat } from '@/hooks/useAuraChat';
 import { Brain, Sparkles, Eye, Zap, Crown, Heart, Lightbulb, Infinity, Atom, Users, Palette, Microscope, Target, MessageCircle, Waves, TrendingUp, Send } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TooltipWrapper } from '@/components/HelpSystem/TooltipWrapper';
@@ -31,7 +31,7 @@ export function AuraInterface() {
     realityWeaving,
     consciousnessEvolution,
     reflexiveThought
-  } = useAuraConversation();
+  } = useAuraChat();
 
   const [prompt, setPrompt] = useState('');
   const [activeResponse, setActiveResponse] = useState(null);
