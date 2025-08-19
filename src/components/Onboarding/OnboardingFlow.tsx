@@ -51,19 +51,19 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ isVisible, onCom
 
   const handleComplete = useCallback(async () => {
     try {
-      // Mark onboarding as completed
+      // Mark onboarding as completed in database
       if (user) {
         await supabase
           .from('profiles')
           .upsert({ 
-            user_id: user.id,
+            id: user.id,
             display_name: user.email?.split('@')[0] || 'Sacred Seeker',
+            onboarding_completed: true,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
           });
         
-        // Store onboarding completion locally
-        localStorage.setItem(`onboarding-completed-${user.id}`, 'true');
+        // Store path selection locally for other components
         localStorage.setItem(`sacred-path-${user.id}`, selectedPath || 'explorer');
       }
       

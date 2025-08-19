@@ -24,26 +24,24 @@ const Index = () => {
     const checkFirstVisit = async () => {
       if (!user) return;
       
-      // Check if onboarding has been completed
-      const completed = localStorage.getItem(`onboarding-completed-${user.id}`);
-      if (completed) {
-        setOnboardingCompleted(true);
-        return;
-      }
-      
       try {
         const { data: profile } = await supabase
           .from('profiles')
-          .select('display_name')
-          .eq('user_id', user.id)
+          .select('onboarding_completed')
+          .eq('id', user.id)
           .single();
 
-        if (!profile) {
+        if (!profile?.onboarding_completed) {
           setIsFirstVisit(true);
           setShowOnboarding(true);
+        } else {
+          setOnboardingCompleted(true);
         }
       } catch (error) {
-        console.error('Error checking first visit:', error);
+        console.error('Error checking onboarding status:', error);
+        // If there's an error fetching profile, assume user needs onboarding
+        setIsFirstVisit(true);
+        setShowOnboarding(true);
       }
     };
 
@@ -64,6 +62,24 @@ const Index = () => {
   const handleOnboardingComplete = () => {
     setShowOnboarding(false);
     setOnboardingCompleted(true);
+  };
+
+  // Reset onboarding for testing (only in development)
+  const resetOnboarding = async () => {
+    if (!user) return;
+    try {
+      await supabase
+        .from('profiles')
+        .update({ onboarding_completed: false })
+        .eq('id', user.id);
+      
+      setShowOnboarding(true);
+      setOnboardingCompleted(false);
+      
+      console.log('Onboarding reset successfully');
+    } catch (error) {
+      console.error('Error resetting onboarding:', error);
+    }
   };
 
   const sacredSections = [

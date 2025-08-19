@@ -6778,6 +6778,7 @@ export type Database = {
           last_level_up: string | null
           light_level: number | null
           light_points: number | null
+          onboarding_completed: boolean
           updated_at: string | null
           user_id: string | null
         }
@@ -6796,6 +6797,7 @@ export type Database = {
           last_level_up?: string | null
           light_level?: number | null
           light_points?: number | null
+          onboarding_completed?: boolean
           updated_at?: string | null
           user_id?: string | null
         }
@@ -6814,6 +6816,7 @@ export type Database = {
           last_level_up?: string | null
           light_level?: number | null
           light_points?: number | null
+          onboarding_completed?: boolean
           updated_at?: string | null
           user_id?: string | null
         }
