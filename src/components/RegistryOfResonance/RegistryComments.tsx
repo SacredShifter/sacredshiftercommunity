@@ -8,7 +8,7 @@ import { MessageCircle, Send, Trash2, Reply } from 'lucide-react';
 import { useRegistryOfResonance } from '@/hooks/useRegistryOfResonance';
 import { useAuth } from '@/hooks/useAuth';
 import { motion, AnimatePresence } from 'framer-motion';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
 
 interface Comment {
   id: string;

@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { usePostInteractions } from '@/hooks/usePostInteractions';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
 import { Send, ChevronDown, ChevronUp, MessageCircle } from 'lucide-react';
 
 interface Comment {

@@ -20,7 +20,8 @@ import {
   X,
   Brain
 } from 'lucide-react';
-import { format, formatDistanceToNow } from 'date-fns';
+import { format } from 'date-fns/format';
+import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
 import { useMirrorJournal, MirrorJournalEntry } from '@/hooks/useMirrorJournal';
 import { useAuth } from '@/hooks/useAuth';
 import { DreamAnalyzer } from '@/components/DreamAnalyzer';
