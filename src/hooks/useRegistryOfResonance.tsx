@@ -333,7 +333,7 @@ export function useRegistryOfResonance() {
         .select('id')
         .eq('entry_id', entryId)
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
 
       if (existingVote) {
         // Remove resonance
@@ -373,7 +373,7 @@ export function useRegistryOfResonance() {
         .select('id')
         .eq('entry_id', entryId)
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
       
       return !!data;
     } catch (error) {

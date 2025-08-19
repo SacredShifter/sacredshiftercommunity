@@ -2,7 +2,9 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useRealtimeSubscription } from './useRealtimeSubscription';
 import { useAuth } from './useAuth';
+import { useMessageValidation } from './useMessageValidation';
 import { Database } from '@/integrations/supabase/types';
+import { toast } from 'sonner';
 
 type DirectMessageRow = Database['public']['Tables']['direct_messages']['Row'];
 type ConversationRow = Database['public']['Tables']['conversations']['Row'];
@@ -31,10 +33,12 @@ export interface Conversation extends ConversationRow {
 
 export const useDirectMessages = (conversationUserId?: string) => {
   const { user } = useAuth();
+  const { validateAndSend } = useMessageValidation();
   const [messages, setMessages] = useState<DirectMessage[]>([]);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isTyping, setIsTyping] = useState<{ [userId: string]: boolean }>({});
 
   // Fetch messages for specific conversation
   const fetchMessages = useCallback(async (otherUserId: string) => {
@@ -104,7 +108,7 @@ export const useDirectMessages = (conversationUserId?: string) => {
     }
   }, [user]);
 
-  // Send a new message
+  // Send a new message with validation
   const sendMessage = useCallback(async (
     recipientId: string, 
     content: string, 
@@ -114,26 +118,44 @@ export const useDirectMessages = (conversationUserId?: string) => {
   ) => {
     if (!user) throw new Error('User not authenticated');
 
-    try {
-      const { data, error } = await supabase
-        .from('direct_messages')
-        .insert({
-          sender_id: user.id,
-          recipient_id: recipientId,
-          content,
-          message_type: messageType,
-          metadata,
-          reply_to_id: replyToId
-        })
-        .select()
-        .single();
+    const success = await validateAndSend(
+      content,
+      messageType,
+      user.id,
+      async () => {
+        const { data, error } = await supabase
+          .from('direct_messages')
+          .insert({
+            sender_id: user.id,
+            recipient_id: recipientId,
+            content,
+            message_type: messageType,
+            metadata,
+            reply_to_id: replyToId
+          })
+          .select()
+          .single();
 
-      if (error) throw error;
-      return data;
-    } catch (err) {
-      console.error('Error sending message:', err);
-      throw new Error('Failed to send message');
+        if (error) throw error;
+        return data;
+      }
+    );
+
+    if (!success) {
+      throw new Error('Message validation failed');
     }
+
+    return success;
+  }, [user, validateAndSend]);
+
+  // Typing indicator functions
+  const setTypingStatus = useCallback((recipientId: string, typing: boolean) => {
+    if (!user) return;
+    
+    setIsTyping(prev => ({ ...prev, [recipientId]: typing }));
+    
+    // In a real implementation, you'd send this to the recipient via websocket
+    // For now, we'll just manage local state
   }, [user]);
 
   // Mark messages as read
@@ -210,6 +232,8 @@ export const useDirectMessages = (conversationUserId?: string) => {
     sendMessage,
     markAsRead,
     fetchMessages,
-    fetchConversations
+    fetchConversations,
+    isTyping,
+    setTypingStatus
   };
 };
