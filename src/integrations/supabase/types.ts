@@ -550,6 +550,47 @@ export type Database = {
         }
         Relationships: []
       }
+      aura_audit: {
+        Row: {
+          action: string
+          actor: string | null
+          after: Json | null
+          before: Json | null
+          created_at: string | null
+          id: string
+          job_id: string | null
+          target: string | null
+        }
+        Insert: {
+          action: string
+          actor?: string | null
+          after?: Json | null
+          before?: Json | null
+          created_at?: string | null
+          id?: string
+          job_id?: string | null
+          target?: string | null
+        }
+        Update: {
+          action?: string
+          actor?: string | null
+          after?: Json | null
+          before?: Json | null
+          created_at?: string | null
+          id?: string
+          job_id?: string | null
+          target?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "aura_audit_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "aura_jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       aura_conversations: {
         Row: {
           fulltext: unknown | null
@@ -571,6 +612,51 @@ export type Database = {
           prompt?: string
           response?: string
           timestamp?: string | null
+        }
+        Relationships: []
+      }
+      aura_jobs: {
+        Row: {
+          command: Json
+          completed_at: string | null
+          confirmed_at: string | null
+          created_at: string | null
+          created_by: string
+          error: string | null
+          executed_at: string | null
+          id: string
+          level: number
+          preview: Json | null
+          result: Json | null
+          status: string
+        }
+        Insert: {
+          command: Json
+          completed_at?: string | null
+          confirmed_at?: string | null
+          created_at?: string | null
+          created_by: string
+          error?: string | null
+          executed_at?: string | null
+          id?: string
+          level: number
+          preview?: Json | null
+          result?: Json | null
+          status?: string
+        }
+        Update: {
+          command?: Json
+          completed_at?: string | null
+          confirmed_at?: string | null
+          created_at?: string | null
+          created_by?: string
+          error?: string | null
+          executed_at?: string | null
+          id?: string
+          level?: number
+          preview?: Json | null
+          result?: Json | null
+          status?: string
         }
         Relationships: []
       }
@@ -2614,6 +2700,30 @@ export type Database = {
         }
         Relationships: []
       }
+      design_tokens_preview: {
+        Row: {
+          created_at: string | null
+          created_by: string
+          id: string
+          is_active: boolean | null
+          tokens: Json
+        }
+        Insert: {
+          created_at?: string | null
+          created_by: string
+          id?: string
+          is_active?: boolean | null
+          tokens: Json
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string
+          id?: string
+          is_active?: boolean | null
+          tokens?: Json
+        }
+        Relationships: []
+      }
       developer_profiles: {
         Row: {
           avatar_url: string | null
@@ -4315,6 +4425,36 @@ export type Database = {
           tags?: string[] | null
           title?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      journal_templates: {
+        Row: {
+          created_at: string | null
+          created_by: string
+          fields: Json
+          id: string
+          is_active: boolean | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by: string
+          fields: Json
+          id?: string
+          is_active?: boolean | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string
+          fields?: Json
+          id?: string
+          is_active?: boolean | null
+          title?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -6779,6 +6919,7 @@ export type Database = {
           light_level: number | null
           light_points: number | null
           onboarding_completed: boolean
+          role: Database["public"]["Enums"]["app_role"] | null
           updated_at: string | null
           user_id: string | null
         }
@@ -6798,6 +6939,7 @@ export type Database = {
           light_level?: number | null
           light_points?: number | null
           onboarding_completed?: boolean
+          role?: Database["public"]["Enums"]["app_role"] | null
           updated_at?: string | null
           user_id?: string | null
         }
@@ -6817,6 +6959,7 @@ export type Database = {
           light_level?: number | null
           light_points?: number | null
           onboarding_completed?: boolean
+          role?: Database["public"]["Enums"]["app_role"] | null
           updated_at?: string | null
           user_id?: string | null
         }
