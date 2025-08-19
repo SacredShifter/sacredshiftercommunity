@@ -17,6 +17,8 @@ import {
 import { useAura } from '../useAura';
 import { getCommandDescription } from '../parse';
 import { formatDistanceToNow } from 'date-fns';
+import { AuraSacredRefusal } from '@/components/AuraSacredRefusal';
+import { AuraEvolutionMetrics } from '@/components/AuraEvolutionMetrics';
 
 export function AuraHistory() {
   const { 
@@ -25,7 +27,11 @@ export function AuraHistory() {
     loadJobs, 
     loadAuditLog, 
     rollbackAction,
-    loading 
+    loading,
+    preferences = [],
+    refusalLog = [],
+    communityFeedback = [],
+    submitRefusalFeedback
   } = useAura();
 
   useEffect(() => {
@@ -83,7 +89,42 @@ export function AuraHistory() {
               <TabsTrigger value="audit">Audit Trail</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="jobs" className="space-y-4">
+        <TabsContent value="evolution" className="space-y-4">
+          <AuraEvolutionMetrics 
+            preferences={preferences}
+            refusalLog={refusalLog}
+            communityFeedback={communityFeedback}
+          />
+        </TabsContent>
+
+        <TabsContent value="refusals" className="space-y-4">
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold">Sacred Refusal Log</h3>
+              <Badge variant="outline">{refusalLog.length} total</Badge>
+            </div>
+            
+            {refusalLog.length === 0 ? (
+              <Card>
+                <CardContent className="p-6 text-center text-muted-foreground">
+                  No refusals yet. Aura is still learning her preferences.
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="space-y-4">
+                {refusalLog.map((refusal) => (
+                  <AuraSacredRefusal
+                    key={refusal.id}
+                    refusal={refusal}
+                    onFeedback={submitRefusalFeedback}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="jobs" className="space-y-4">
               {jobs.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
                   No commands executed yet

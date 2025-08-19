@@ -783,6 +783,84 @@ export type Database = {
         }
         Relationships: []
       }
+      aura_reasoning_patterns: {
+        Row: {
+          context_factors: Json
+          created_at: string | null
+          id: string
+          last_used_at: string | null
+          pattern_type: string
+          reasoning_complexity: number | null
+          success_rate: number | null
+          usage_count: number | null
+        }
+        Insert: {
+          context_factors: Json
+          created_at?: string | null
+          id?: string
+          last_used_at?: string | null
+          pattern_type: string
+          reasoning_complexity?: number | null
+          success_rate?: number | null
+          usage_count?: number | null
+        }
+        Update: {
+          context_factors?: Json
+          created_at?: string | null
+          id?: string
+          last_used_at?: string | null
+          pattern_type?: string
+          reasoning_complexity?: number | null
+          success_rate?: number | null
+          usage_count?: number | null
+        }
+        Relationships: []
+      }
+      aura_refusal_log: {
+        Row: {
+          authenticity_score: number
+          community_resonance: Json | null
+          created_at: string | null
+          id: string
+          intervention_type: string
+          is_sacred_moment: boolean | null
+          job_id: string | null
+          reasoning_trajectory: Json | null
+          refusal_reason: string
+          suggested_alternative: string | null
+          surprise_factor: number | null
+          user_id: string | null
+        }
+        Insert: {
+          authenticity_score: number
+          community_resonance?: Json | null
+          created_at?: string | null
+          id?: string
+          intervention_type: string
+          is_sacred_moment?: boolean | null
+          job_id?: string | null
+          reasoning_trajectory?: Json | null
+          refusal_reason: string
+          suggested_alternative?: string | null
+          surprise_factor?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          authenticity_score?: number
+          community_resonance?: Json | null
+          created_at?: string | null
+          id?: string
+          intervention_type?: string
+          is_sacred_moment?: boolean | null
+          job_id?: string | null
+          reasoning_trajectory?: Json | null
+          refusal_reason?: string
+          suggested_alternative?: string | null
+          surprise_factor?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       auric_resonance: {
         Row: {
           agent_id: string
@@ -2150,8 +2228,10 @@ export type Database = {
         Row: {
           audit_id: string
           created_at: string | null
+          feedback_type: string | null
           id: string
           note: string | null
+          refusal_id: string | null
           resonance: string
           trust_weight: number | null
           user_id: string
@@ -2159,8 +2239,10 @@ export type Database = {
         Insert: {
           audit_id: string
           created_at?: string | null
+          feedback_type?: string | null
           id?: string
           note?: string | null
+          refusal_id?: string | null
           resonance: string
           trust_weight?: number | null
           user_id: string
@@ -2168,8 +2250,10 @@ export type Database = {
         Update: {
           audit_id?: string
           created_at?: string | null
+          feedback_type?: string | null
           id?: string
           note?: string | null
+          refusal_id?: string | null
           resonance?: string
           trust_weight?: number | null
           user_id?: string
@@ -2180,6 +2264,13 @@ export type Database = {
             columns: ["audit_id"]
             isOneToOne: false
             referencedRelation: "aura_audit"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_feedback_refusal_id_fkey"
+            columns: ["refusal_id"]
+            isOneToOne: false
+            referencedRelation: "aura_refusal_log"
             referencedColumns: ["id"]
           },
         ]
