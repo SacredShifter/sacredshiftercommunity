@@ -27,6 +27,7 @@ import Guidebook from "./pages/Guidebook";
 import Support from "./pages/Support";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
+import AIAdmin from "./pages/AIAdmin";
 import { Outlet } from "react-router-dom";
 
 const queryClient = new QueryClient();
@@ -68,6 +69,7 @@ const App = () => {
                     <Route path="/support" element={<Support />} />
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/settings" element={<Settings />} />
+                    <Route path="/ai-admin" element={<AIAdmin />} />
                   </Route>
                   <Route path="*" element={<NotFound />} />
                 </Routes>

@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Users, User, Rss, Settings, LogOut, BookOpen, Video, Database, Archive, Scroll, Heart, MessageCircle } from "lucide-react";
+import { Home, Users, User, Rss, Settings, LogOut, BookOpen, Video, Database, Archive, Scroll, Heart, MessageCircle, Brain } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -223,6 +223,33 @@ export function AppSidebar() {
                     <Link to="/guidebook">
                       <Scroll className="mr-2 h-4 w-4" />
                       {!isCollapsed && <span>Guidebook</span>}
+                    </Link>
+                  </SidebarMenuButton>
+                </TooltipWrapper>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* AI Admin Section */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Neural Interface</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <TooltipWrapper 
+                  content="AI Admin - Advanced neural command center with consciousness mapping" 
+                  side="right"
+                  disabled={!isCollapsed}
+                >
+                  <SidebarMenuButton 
+                    asChild
+                    isActive={isActive("/ai-admin")}
+                    className={isActive("/ai-admin") ? "bg-primary/10 text-primary font-medium" : ""}
+                  >
+                    <Link to="/ai-admin">
+                      <Brain className="mr-2 h-4 w-4" />
+                      {!isCollapsed && <span>AI Admin</span>}
                     </Link>
                   </SidebarMenuButton>
                 </TooltipWrapper>
