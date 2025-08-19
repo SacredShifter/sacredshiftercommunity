@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { AuraCommand, AuraJob, AuraAuditEntry, CommunityFeedback, FieldIntegrityMetrics } from './schema';
+import { AuraCommand, AuraJob, AuraAuditEntry, CommunityFeedback, FieldIntegrityMetrics, AuraPreferences } from './schema';
 import { parseToCommand } from './parse';
 import { runDAP } from './dap';
 import { runEnhancedDAP } from './enhancedDAP';
@@ -13,6 +13,8 @@ export function useAura() {
   const [auditLog, setAuditLog] = useState<AuraAuditEntry[]>([]);
   const [communityFeedback, setCommunityFeedback] = useState<CommunityFeedback[]>([]);
   const [fieldIntegrity, setFieldIntegrity] = useState<FieldIntegrityMetrics | null>(null);
+  const [preferences, setPreferences] = useState<AuraPreferences[]>([]);
+  const [refusalLog, setRefusalLog] = useState<any[]>([]);
   const { toast } = useToast();
 
   const executeCommand = useCallback(async (command: AuraCommand) => {
@@ -213,6 +215,38 @@ export function useAura() {
     }
   }, []);
 
+  const submitRefusalFeedback = useCallback(async (refusalId: string, feedback: any) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Authentication required');
+
+      const { error } = await supabase
+        .from('community_feedback')
+        .insert({
+          refusal_id: refusalId,
+          feedback_type: 'refusal_feedback',
+          note: JSON.stringify(feedback),
+          resonance: 'neutral',
+          audit_id: '', // Empty string as required field
+          user_id: user.id
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Feedback Submitted",
+        description: "Thank you for helping Aura learn",
+      });
+    } catch (error) {
+      console.error('Failed to submit feedback:', error);
+      toast({
+        title: "Feedback Failed",
+        description: "Could not submit feedback",
+        variant: "destructive"
+      });
+    }
+  }, [toast]);
+
   const rollbackAction = useCallback(async (auditId: string) => {
     try {
       const audit = auditLog.find(a => a.id === auditId);
@@ -244,6 +278,8 @@ export function useAura() {
     auditLog,
     communityFeedback,
     fieldIntegrity,
+    preferences,
+    refusalLog,
     executeCommand,
     confirmJob,
     cancelJob,
@@ -251,7 +287,8 @@ export function useAura() {
     previewCommand,
     loadJobs,
     loadAuditLog,
-    rollbackAction
+    rollbackAction,
+    submitRefusalFeedback
   };
 }
 
