@@ -6,10 +6,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { TourProvider } from "@/components/TourProvider";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/AppSidebar";
+import { MainLayout } from "@/components/MainLayout";
 import { ParallaxBackground } from "@/components/ParallaxBackground";
-import { ChatBubble } from "@/components/ChatBubble";
 import { AIChatBubble } from "@/components/AIChatBubble";
 import BreathOfSource from "@/components/BreathOfSource";
 import { SacredSoundscape } from "@/components/SacredSoundscape";
@@ -29,6 +27,7 @@ import Guidebook from "./pages/Guidebook";
 import Support from "./pages/Support";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
+import { Outlet } from "react-router-dom";
 
 const queryClient = new QueryClient();
 
@@ -37,92 +36,63 @@ const App = () => {
     <ErrorBoundary name="Root">
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          
           <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <div className="min-h-screen relative">
-            {/* Beautiful moving background across all pages */}
-            <UIErrorBoundary>
-              <ParallaxBackground />
-            </UIErrorBoundary>
-            
-            <BrowserRouter>
-              <Routes>
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/*" element={
-                  <ProtectedRoute>
-                    <TourProvider>
-                     <SidebarProvider>
-                       <div className="h-screen flex w-full">
-                         <UIErrorBoundary>
-                           <AppSidebar />
-                         </UIErrorBoundary>
-                         <SidebarInset className="flex-1 flex flex-col h-screen">
-                           <header className="h-12 flex items-center border-b border-border/30 backdrop-blur-md bg-background/20 px-4 shrink-0">
-                             <SidebarTrigger className="mr-4" />
-                             <div className="flex items-center">
-                               <img 
-                                 src="https://mikltjgbvxrxndtszorb.supabase.co/storage/v1/object/public/sacred-assets/uploads/Logo-MainSacredShifter-removebg-preview%20(1).png" 
-                                 alt="Sacred Shifter" 
-                                 className="h-8 w-auto filter invert brightness-0 contrast-100 opacity-90"
-                               />
-                             </div>
-                           </header>
-                            <main className="flex-1 overflow-y-auto min-h-0">
-                              <div className="min-h-full">
-                               <UIErrorBoundary>
-                                 <Routes>
-                                <Route path="/" element={<Index />} />
-                                <Route path="/feed" element={<Feed />} />
-                                <Route path="/messages" element={<Messages />} />
-                                <Route path="/circles" element={<Circles />} />
-                                <Route path="/journal" element={<Journal />} />
-                                <Route path="/videos" element={<VideoLibrary />} />
-                                <Route path="/registry" element={<Registry />} />
-                                <Route path="/codex" element={<Codex />} />
-                                <Route path="/guidebook" element={<Guidebook />} />
-                                <Route path="/support" element={<Support />} />
-                                <Route path="/profile" element={<Profile />} />
-                                <Route path="/settings" element={<Settings />} />
-                                 <Route path="*" element={<NotFound />} />
-                                 </Routes>
-                               </UIErrorBoundary>
-                             </div>
-                          </main>
-                        </SidebarInset>
-                      </div>
-                    </SidebarProvider>
-                    </TourProvider>
-                  </ProtectedRoute>
-                } />
-              </Routes>
+            <Toaster />
+            <Sonner />
+            <div className="min-h-screen relative">
+              <UIErrorBoundary>
+                <ParallaxBackground />
+              </UIErrorBoundary>
               
-              {/* Global floating components - outside ProtectedRoute but inside AuthProvider */}
-              {/* Floating Control Center - Top Right */}
-              <div className="fixed top-4 right-4 z-50 flex items-center gap-3">
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/auth" element={<Auth />} />
+                  <Route
+                    element={
+                      <ProtectedRoute>
+                        <TourProvider>
+                          <MainLayout />
+                        </TourProvider>
+                      </ProtectedRoute>
+                    }
+                  >
+                    <Route path="/" element={<Index />} />
+                    <Route path="/feed" element={<Feed />} />
+                    <Route path="/messages" element={<Messages />} />
+                    <Route path="/circles"element={<Circles />} />
+                    <Route path="/journal" element={<Journal />} />
+                    <Route path="/videos" element={<VideoLibrary />} />
+                    <Route path="/registry" element={<Registry />} />
+                    <Route path="/codex" element={<Codex />} />
+                    <Route path="/guidebook" element={<Guidebook />} />
+                    <Route path="/support" element={<Support />} />
+                    <Route path="/profile" element={<Profile />} />
+                    <Route path="/settings" element={<Settings />} />
+                  </Route>
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+
+                {/* Global floating components */}
+                <div className="fixed top-4 right-4 z-50 flex items-center gap-3">
+                  <AudioErrorBoundary>
+                    <SacredSoundscape />
+                  </AudioErrorBoundary>
+                </div>
+
+                <div className="fixed bottom-20 right-4 z-50">
+                  <UIErrorBoundary>
+                    <AIChatBubble />
+                  </UIErrorBoundary>
+                </div>
+
                 <AudioErrorBoundary>
-                  <SacredSoundscape />
+                  <BreathOfSource />
                 </AudioErrorBoundary>
-              </div>
-              
-              {/* AI Assistant - Bottom Right */}
-              <div className="fixed bottom-20 right-4 z-50">
-                <UIErrorBoundary>
-                  <AIChatBubble />
-                </UIErrorBoundary>
-              </div>
-              
-              {/* Breath of Source - Global Breathing Component */}
-              <AudioErrorBoundary>
-                <BreathOfSource />
-              </AudioErrorBoundary>
-            </BrowserRouter>
-          </div>
-        </TooltipProvider>
-        
-      </AuthProvider>
-    </QueryClientProvider>
+              </BrowserRouter>
+            </div>
+          </TooltipProvider>
+        </AuthProvider>
+      </QueryClientProvider>
     </ErrorBoundary>
   );
 };
