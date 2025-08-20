@@ -81,6 +81,48 @@ export type AuraCommand =
         description?: string 
       } 
     }
+  | {
+      kind: 'module.generate';
+      level: 2;
+      payload: {
+        concept_id: string;
+        module_type: 'component' | 'hook' | 'utility' | 'feature';
+        implementation_details: {
+          architecture: any;
+          dependencies: string[];
+          ui_patterns: any;
+          integration_points: string[];
+        };
+      };
+    }
+  | {
+      kind: 'module.conceive';
+      level: 1;
+      payload: {
+        need_analysis: {
+          user_patterns: any[];
+          pain_points: string[];
+          opportunity_score: number;
+        };
+        proposed_solution: {
+          concept_name: string;
+          description: string;
+          expected_outcomes: string[];
+        };
+      };
+    }
+  | {
+      kind: 'module.validate';
+      level: 2;
+      payload: {
+        concept_id: string;
+        validation_criteria: {
+          philosophical_alignment: any;
+          technical_feasibility: any;
+          user_impact: any;
+        };
+      };
+    }
   // Level 3 - Owner approval required
   | { 
       kind: 'site.style.apply'; 

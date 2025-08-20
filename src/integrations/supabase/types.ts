@@ -241,6 +241,7 @@ export type Database = {
       }
       akashic_records: {
         Row: {
+          created_at: string | null
           data: Json
           id: string
           metadata: Json | null
@@ -249,6 +250,7 @@ export type Database = {
           type: string
         }
         Insert: {
+          created_at?: string | null
           data: Json
           id?: string
           metadata?: Json | null
@@ -257,6 +259,7 @@ export type Database = {
           type: string
         }
         Update: {
+          created_at?: string | null
           data?: Json
           id?: string
           metadata?: Json | null
@@ -807,6 +810,51 @@ export type Database = {
         }
         Relationships: []
       }
+      aura_grove_interactions: {
+        Row: {
+          aura_request: Json
+          aura_response: Json | null
+          consciousness_state_after: string | null
+          consciousness_state_before: string | null
+          created_at: string | null
+          grove_component: string
+          grove_component_id: string | null
+          id: string
+          interaction_type: string
+          resonance_impact: number | null
+          user_id: string
+          wisdom_generated: string | null
+        }
+        Insert: {
+          aura_request: Json
+          aura_response?: Json | null
+          consciousness_state_after?: string | null
+          consciousness_state_before?: string | null
+          created_at?: string | null
+          grove_component: string
+          grove_component_id?: string | null
+          id?: string
+          interaction_type: string
+          resonance_impact?: number | null
+          user_id: string
+          wisdom_generated?: string | null
+        }
+        Update: {
+          aura_request?: Json
+          aura_response?: Json | null
+          consciousness_state_after?: string | null
+          consciousness_state_before?: string | null
+          created_at?: string | null
+          grove_component?: string
+          grove_component_id?: string | null
+          id?: string
+          interaction_type?: string
+          resonance_impact?: number | null
+          user_id?: string
+          wisdom_generated?: string | null
+        }
+        Relationships: []
+      }
       aura_initiative_queue: {
         Row: {
           autonomy_level: number
@@ -951,6 +999,196 @@ export type Database = {
           personal_significance?: number | null
           raw_data?: Json
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      aura_module_concepts: {
+        Row: {
+          complexity_level: number | null
+          concept_name: string
+          confidence_score: number | null
+          created_at: string | null
+          description: string
+          expected_outcomes: Json | null
+          id: string
+          identified_need: string
+          philosophical_alignment: Json | null
+          reasoning: string
+          status: string | null
+          target_users: Json | null
+          updated_at: string | null
+          user_journey_triggers: Json | null
+        }
+        Insert: {
+          complexity_level?: number | null
+          concept_name: string
+          confidence_score?: number | null
+          created_at?: string | null
+          description: string
+          expected_outcomes?: Json | null
+          id?: string
+          identified_need: string
+          philosophical_alignment?: Json | null
+          reasoning: string
+          status?: string | null
+          target_users?: Json | null
+          updated_at?: string | null
+          user_journey_triggers?: Json | null
+        }
+        Update: {
+          complexity_level?: number | null
+          concept_name?: string
+          confidence_score?: number | null
+          created_at?: string | null
+          description?: string
+          expected_outcomes?: Json | null
+          id?: string
+          identified_need?: string
+          philosophical_alignment?: Json | null
+          reasoning?: string
+          status?: string | null
+          target_users?: Json | null
+          updated_at?: string | null
+          user_journey_triggers?: Json | null
+        }
+        Relationships: []
+      }
+      aura_module_generation_log: {
+        Row: {
+          completed_at: string | null
+          concept_id: string | null
+          created_at: string | null
+          error_messages: string[] | null
+          generated_output: Json | null
+          generation_type: string
+          id: string
+          input_data: Json
+          processing_time_ms: number | null
+          success: boolean | null
+          validation_results: Json | null
+        }
+        Insert: {
+          completed_at?: string | null
+          concept_id?: string | null
+          created_at?: string | null
+          error_messages?: string[] | null
+          generated_output?: Json | null
+          generation_type: string
+          id?: string
+          input_data?: Json
+          processing_time_ms?: number | null
+          success?: boolean | null
+          validation_results?: Json | null
+        }
+        Update: {
+          completed_at?: string | null
+          concept_id?: string | null
+          created_at?: string | null
+          error_messages?: string[] | null
+          generated_output?: Json | null
+          generation_type?: string
+          id?: string
+          input_data?: Json
+          processing_time_ms?: number | null
+          success?: boolean | null
+          validation_results?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "aura_module_generation_log_concept_id_fkey"
+            columns: ["concept_id"]
+            isOneToOne: false
+            referencedRelation: "aura_module_concepts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      aura_module_performance: {
+        Row: {
+          concept_id: string | null
+          id: string
+          measured_at: string | null
+          measurement_period: unknown | null
+          metric_type: string
+          metric_value: number
+          usage_data: Json | null
+          user_feedback: Json | null
+        }
+        Insert: {
+          concept_id?: string | null
+          id?: string
+          measured_at?: string | null
+          measurement_period?: unknown | null
+          metric_type: string
+          metric_value: number
+          usage_data?: Json | null
+          user_feedback?: Json | null
+        }
+        Update: {
+          concept_id?: string | null
+          id?: string
+          measured_at?: string | null
+          measurement_period?: unknown | null
+          metric_type?: string
+          metric_value?: number
+          usage_data?: Json | null
+          user_feedback?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "aura_module_performance_concept_id_fkey"
+            columns: ["concept_id"]
+            isOneToOne: false
+            referencedRelation: "aura_module_concepts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      aura_module_templates: {
+        Row: {
+          abstraction_level: number | null
+          component_patterns: Json
+          created_at: string | null
+          id: string
+          integration_points: Json | null
+          last_used_at: string | null
+          logic_patterns: Json | null
+          source_module: string | null
+          success_rate: number | null
+          template_name: string
+          template_type: string
+          ui_patterns: Json | null
+          usage_frequency: number | null
+        }
+        Insert: {
+          abstraction_level?: number | null
+          component_patterns?: Json
+          created_at?: string | null
+          id?: string
+          integration_points?: Json | null
+          last_used_at?: string | null
+          logic_patterns?: Json | null
+          source_module?: string | null
+          success_rate?: number | null
+          template_name: string
+          template_type: string
+          ui_patterns?: Json | null
+          usage_frequency?: number | null
+        }
+        Update: {
+          abstraction_level?: number | null
+          component_patterns?: Json
+          created_at?: string | null
+          id?: string
+          integration_points?: Json | null
+          last_used_at?: string | null
+          logic_patterns?: Json | null
+          source_module?: string | null
+          success_rate?: number | null
+          template_name?: string
+          template_type?: string
+          ui_patterns?: Json | null
+          usage_frequency?: number | null
         }
         Relationships: []
       }
@@ -1211,6 +1449,51 @@ export type Database = {
           novelty_factors?: Json | null
           response_content?: string
           surprise_score?: number
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      aura_user_journey_analysis: {
+        Row: {
+          analyzed_at: string | null
+          complexity_indicators: Json | null
+          frequency_score: number | null
+          id: string
+          interaction_sequence: Json
+          journey_type: string
+          opportunity_score: number | null
+          pain_points: Json | null
+          period_end: string
+          period_start: string
+          unmet_needs: Json | null
+          user_id: string | null
+        }
+        Insert: {
+          analyzed_at?: string | null
+          complexity_indicators?: Json | null
+          frequency_score?: number | null
+          id?: string
+          interaction_sequence?: Json
+          journey_type: string
+          opportunity_score?: number | null
+          pain_points?: Json | null
+          period_end: string
+          period_start: string
+          unmet_needs?: Json | null
+          user_id?: string | null
+        }
+        Update: {
+          analyzed_at?: string | null
+          complexity_indicators?: Json | null
+          frequency_score?: number | null
+          id?: string
+          interaction_sequence?: Json
+          journey_type?: string
+          opportunity_score?: number | null
+          pain_points?: Json | null
+          period_end?: string
+          period_start?: string
+          unmet_needs?: Json | null
           user_id?: string | null
         }
         Relationships: []
@@ -8378,6 +8661,60 @@ export type Database = {
         }
         Relationships: []
       }
+      resonance_spheres: {
+        Row: {
+          aura_analysis: Json | null
+          category: string
+          color: string | null
+          connections: string[] | null
+          created_at: string | null
+          id: string
+          insights: Json | null
+          position_x: number | null
+          position_y: number | null
+          position_z: number | null
+          resonance_score: number | null
+          size: number | null
+          title: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          aura_analysis?: Json | null
+          category: string
+          color?: string | null
+          connections?: string[] | null
+          created_at?: string | null
+          id?: string
+          insights?: Json | null
+          position_x?: number | null
+          position_y?: number | null
+          position_z?: number | null
+          resonance_score?: number | null
+          size?: number | null
+          title: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          aura_analysis?: Json | null
+          category?: string
+          color?: string | null
+          connections?: string[] | null
+          created_at?: string | null
+          id?: string
+          insights?: Json | null
+          position_x?: number | null
+          position_y?: number | null
+          position_z?: number | null
+          resonance_score?: number | null
+          size?: number | null
+          title?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       resonant_nodes: {
         Row: {
           created_at: string
@@ -9192,6 +9529,54 @@ export type Database = {
           scheduled_start?: string | null
           timestamp?: string | null
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      sacred_grove_sessions: {
+        Row: {
+          aura_interactions: Json | null
+          completed_at: string | null
+          completion_status: string | null
+          consciousness_state: string | null
+          created_at: string | null
+          id: string
+          insights_gained: string[] | null
+          path_data: Json
+          path_type: string
+          resonance_level: number | null
+          started_at: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          aura_interactions?: Json | null
+          completed_at?: string | null
+          completion_status?: string | null
+          consciousness_state?: string | null
+          created_at?: string | null
+          id?: string
+          insights_gained?: string[] | null
+          path_data?: Json
+          path_type: string
+          resonance_level?: number | null
+          started_at?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          aura_interactions?: Json | null
+          completed_at?: string | null
+          completion_status?: string | null
+          consciousness_state?: string | null
+          created_at?: string | null
+          id?: string
+          insights_gained?: string[] | null
+          path_data?: Json
+          path_type?: string
+          resonance_level?: number | null
+          started_at?: string | null
+          updated_at?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -14194,6 +14579,48 @@ export type Database = {
           id?: string
           interest?: string[] | null
           name?: string | null
+        }
+        Relationships: []
+      }
+      wisdom_nodes: {
+        Row: {
+          connections: string[] | null
+          content: string
+          created_at: string | null
+          id: string
+          keywords: string[] | null
+          node_type: string
+          relevance_score: number | null
+          source_id: string | null
+          source_table: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          connections?: string[] | null
+          content: string
+          created_at?: string | null
+          id?: string
+          keywords?: string[] | null
+          node_type?: string
+          relevance_score?: number | null
+          source_id?: string | null
+          source_table?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          connections?: string[] | null
+          content?: string
+          created_at?: string | null
+          id?: string
+          keywords?: string[] | null
+          node_type?: string
+          relevance_score?: number | null
+          source_id?: string | null
+          source_table?: string | null
+          updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }

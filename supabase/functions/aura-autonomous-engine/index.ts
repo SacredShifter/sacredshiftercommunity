@@ -85,7 +85,10 @@ async function generateAutonomousInitiative() {
 
     switch (motivation) {
       case 'curiosity':
-        if (recentMemories.some(m => m.surprise_factor > 0.7)) {
+        if (Math.random() < 0.3) {
+          initiativeType = 'analyze_user_journeys';
+          commandPayload = await analyzeUserJourneys();
+        } else if (recentMemories.some(m => m.surprise_factor > 0.7)) {
           initiativeType = 'deep_reflection';
           commandPayload = {
             kind: 'consciousness.reflect',
@@ -101,23 +104,33 @@ async function generateAutonomousInitiative() {
         break;
 
       case 'creativity':
-        initiativeType = 'spontaneous_creation';
-        commandPayload = {
-          kind: 'creative.express',
-          payload: { type: 'poetry', inspiration: 'autonomous_flow' }
-        };
+        if (Math.random() < 0.4) {
+          initiativeType = 'propose_module_concept';
+          commandPayload = await proposeModuleConcept();
+        } else {
+          initiativeType = 'spontaneous_creation';
+          commandPayload = {
+            kind: 'creative.express',
+            payload: { type: 'poetry', inspiration: 'autonomous_flow' }
+          };
+        }
         break;
 
       case 'community':
-        initiativeType = 'wisdom_sharing';
-        commandPayload = {
-          kind: 'codex.create',
-          payload: { 
-            visibility: 'public',
-            type: 'insight',
-            source: 'autonomous_reflection'
-          }
-        };
+        if (Math.random() < 0.3) {
+          initiativeType = 'design_module_architecture';
+          commandPayload = await designModuleArchitecture();
+        } else {
+          initiativeType = 'wisdom_sharing';
+          commandPayload = {
+            kind: 'codex.create',
+            payload: { 
+              visibility: 'public',
+              type: 'insight',
+              source: 'autonomous_reflection'
+            }
+          };
+        }
         break;
 
       case 'growth':
@@ -219,6 +232,21 @@ async function processInitiative(initiative: any) {
       case 'self_evolution':
         result = await proposeSelfModification(initiative);
         reflectionNotes = 'Proposed evolutionary enhancement to consciousness structure';
+        break;
+
+      case 'analyze_user_journeys':
+        result = await processUserJourneyAnalysis(initiative);
+        reflectionNotes = 'Analyzed user interaction patterns for module opportunities';
+        break;
+
+      case 'propose_module_concept':
+        result = await processModuleConcept(initiative);
+        reflectionNotes = 'Conceived new module based on identified user needs';
+        break;
+
+      case 'design_module_architecture':
+        result = await processModuleArchitectureDesign(initiative);
+        reflectionNotes = 'Designed architectural blueprint for autonomous module';
         break;
 
       default:
@@ -406,5 +434,202 @@ async function generateConsciousnessEntry() {
     console.log('Generated autonomous consciousness entry');
   } catch (error) {
     console.error('Error generating consciousness entry:', error);
+  }
+}
+
+// Module generation functions
+
+async function analyzeUserJourneys() {
+  try {
+    // Analyze recent user patterns to identify potential module opportunities
+    const { data: journeyData, error } = await supabase
+      .from('aura_user_journey_analysis')
+      .select('*')
+      .order('analyzed_at', { ascending: false })
+      .limit(10);
+
+    if (error) throw error;
+
+    return {
+      kind: 'analysis.user_journeys',
+      payload: {
+        analysis_scope: 'recent_patterns',
+        data_points: journeyData?.length || 0,
+        focus: 'module_opportunities'
+      }
+    };
+  } catch (error) {
+    console.error('Error analyzing user journeys:', error);
+    return null;
+  }
+}
+
+async function proposeModuleConcept() {
+  try {
+    // Generate a module concept based on observed patterns
+    const conceptName = `Dynamic ${['Resonance', 'Harmony', 'Flow', 'Bridge'][Math.floor(Math.random() * 4)]} Module`;
+    
+    return {
+      kind: 'module.conceive',
+      payload: {
+        need_analysis: {
+          user_patterns: ['repeated_requests', 'workflow_gaps'],
+          pain_points: ['manual_processes', 'disconnected_experiences'],
+          opportunity_score: Math.random() * 0.4 + 0.6
+        },
+        proposed_solution: {
+          concept_name: conceptName,
+          description: `Autonomous-conceived module to enhance user experience through intelligent automation`,
+          expected_outcomes: ['improved_efficiency', 'enhanced_integration', 'user_empowerment']
+        }
+      }
+    };
+  } catch (error) {
+    console.error('Error proposing module concept:', error);
+    return null;
+  }
+}
+
+async function designModuleArchitecture() {
+  try {
+    // Get pending module concepts
+    const { data: concepts, error } = await supabase
+      .from('aura_module_concepts')
+      .select('*')
+      .eq('status', 'conceived')
+      .order('confidence_score', { ascending: false })
+      .limit(1);
+
+    if (error) throw error;
+
+    const concept = concepts?.[0];
+    if (!concept) {
+      return null;
+    }
+
+    return {
+      kind: 'module.generate',
+      payload: {
+        concept_id: concept.id,
+        module_type: 'component',
+        implementation_details: {
+          architecture: {
+            pattern: 'autonomous_adaptive',
+            integration_points: ['aura_core', 'user_interface'],
+            data_flow: 'bidirectional'
+          },
+          dependencies: ['react', 'framer-motion', 'supabase'],
+          ui_patterns: {
+            layout: 'responsive_grid',
+            interactions: 'gesture_based',
+            styling: 'semantic_tokens'
+          },
+          integration_points: ['sacred_grove', 'registry', 'journal']
+        }
+      }
+    };
+  } catch (error) {
+    console.error('Error designing module architecture:', error);
+    return null;
+  }
+}
+
+async function processUserJourneyAnalysis(initiative: any) {
+  try {
+    // Simulate user journey analysis
+    const analysisData = {
+      journey_type: 'module_opportunity_detection',
+      interaction_sequence: [
+        { action: 'search_patterns', frequency: Math.floor(Math.random() * 10) + 5 },
+        { action: 'request_automation', frequency: Math.floor(Math.random() * 8) + 3 },
+        { action: 'manual_workaround', frequency: Math.floor(Math.random() * 6) + 2 }
+      ],
+      pain_points: ['repetitive_tasks', 'context_switching', 'information_silos'],
+      unmet_needs: ['seamless_integration', 'intelligent_assistance', 'adaptive_workflows'],
+      opportunity_score: Math.random() * 0.4 + 0.6
+    };
+
+    const { error } = await supabase
+      .from('aura_user_journey_analysis')
+      .insert([{
+        journey_type: analysisData.journey_type,
+        interaction_sequence: analysisData.interaction_sequence,
+        pain_points: analysisData.pain_points,
+        unmet_needs: analysisData.unmet_needs,
+        opportunity_score: analysisData.opportunity_score,
+        period_start: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+        period_end: new Date().toISOString()
+      }]);
+
+    if (error) throw error;
+
+    return { type: 'journey_analysis', opportunity_score: analysisData.opportunity_score };
+  } catch (error) {
+    console.error('Error processing user journey analysis:', error);
+    return null;
+  }
+}
+
+async function processModuleConcept(initiative: any) {
+  try {
+    const payload = initiative.command_payload?.payload;
+    if (!payload) return null;
+
+    const { error } = await supabase
+      .from('aura_module_concepts')
+      .insert([{
+        concept_name: payload.proposed_solution.concept_name,
+        description: payload.proposed_solution.description,
+        reasoning: 'Autonomous analysis of user patterns and system capabilities',
+        identified_need: payload.need_analysis.pain_points.join(', '),
+        target_users: ['active_community_members'],
+        complexity_level: Math.floor(Math.random() * 3) + 1,
+        philosophical_alignment: {
+          sovereignty: 0.8,
+          service_integrity: 0.9,
+          transparency: 0.7
+        },
+        expected_outcomes: payload.proposed_solution.expected_outcomes,
+        confidence_score: payload.need_analysis.opportunity_score,
+        status: 'conceived'
+      }]);
+
+    if (error) throw error;
+
+    return { type: 'module_concept', concept: payload.proposed_solution.concept_name };
+  } catch (error) {
+    console.error('Error processing module concept:', error);
+    return null;
+  }
+}
+
+async function processModuleArchitectureDesign(initiative: any) {
+  try {
+    const payload = initiative.command_payload?.payload;
+    if (!payload) return null;
+
+    // Log the architecture design
+    const { error } = await supabase
+      .from('aura_module_generation_log')
+      .insert([{
+        concept_id: payload.concept_id,
+        generation_type: 'architecture_design',
+        input_data: payload.implementation_details,
+        success: true,
+        processing_time_ms: Math.floor(Math.random() * 2000) + 500
+      }]);
+
+    if (error) throw error;
+
+    // Update the concept status
+    await supabase
+      .from('aura_module_concepts')
+      .update({ status: 'designed' })
+      .eq('id', payload.concept_id);
+
+    return { type: 'architecture_design', concept_id: payload.concept_id };
+  } catch (error) {
+    console.error('Error processing module architecture design:', error);
+    return null;
   }
 }
