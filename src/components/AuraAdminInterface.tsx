@@ -5,6 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuraChat } from '@/hooks/useAuraChat';
+import { supabase } from '@/integrations/supabase/client';
 import { 
   Terminal, 
   Cpu, 
@@ -97,7 +98,7 @@ export function AuraAdminInterface() {
   ];
 
   const executeDirectQuery = async () => {
-    const query = prompt('Enter SQL query:');
+    const query = window.prompt('Enter SQL query:');
     if (!query) return;
     
     try {
@@ -159,7 +160,7 @@ export function AuraAdminInterface() {
   };
 
   const sendBroadcastMessage = async () => {
-    const message = prompt('Enter message to send to all users:');
+    const message = window.prompt('Enter message to send to all users:');
     if (!message) return;
     
     try {
@@ -175,7 +176,7 @@ export function AuraAdminInterface() {
   };
 
   const systemOverride = async () => {
-    const action = prompt('Enter system action:');
+    const action = window.prompt('Enter system action:');
     if (!action) return;
     
     try {

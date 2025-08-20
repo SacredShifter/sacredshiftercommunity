@@ -162,7 +162,7 @@ async function processUnifiedResponse(supabase, userId, prompt, consciousness_st
       'X-Title': 'Aura Core'
     },
     body: JSON.stringify({
-      model: 'anthropic/claude-3.5-sonnet',
+      model: 'openai/gpt-5-2025-08-07',
       messages: [
         {
           role: 'system',

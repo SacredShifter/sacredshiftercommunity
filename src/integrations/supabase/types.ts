@@ -15385,6 +15385,12 @@ export type Database = {
         Args: { geom1: unknown; geom2: unknown }
         Returns: boolean
       }
+      execute_admin_query: {
+        Args: { query_text: string }
+        Returns: {
+          result: Json
+        }[]
+      }
       extract_distortion_types: {
         Args: { flags: Json }
         Returns: string[]
