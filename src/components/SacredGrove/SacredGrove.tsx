@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Compass, Sparkles, Heart, Brain, TreePine, Star, Zap, Eye } from 'lucide-react';
+import { Compass, Sparkles, Heart, Brain, TreePine, Star, Zap, Eye, Home } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { usePersonalSignature } from '@/hooks/usePersonalSignature';
 import { useCommunityResonance } from '@/hooks/useCommunityResonance';
@@ -290,7 +290,7 @@ export const SacredGrove: React.FC<SacredGroveProps> = ({ isVisible, onClose }) 
                 transition={{ delay: 1.0 }}
                 className="mt-6 pt-6 border-t border-primary/10"
               >
-                <div className="flex flex-wrap gap-4">
+                <div className="flex flex-wrap gap-4 justify-between">
                   <Button
                     onClick={toggleResonanceCheck}
                     variant="outline"
@@ -298,12 +298,22 @@ export const SacredGrove: React.FC<SacredGroveProps> = ({ isVisible, onClose }) 
                   >
                     3-Point Resonance Check
                   </Button>
-                  <Button
-                    onClick={onClose}
-                    className="bg-primary text-primary-foreground"
-                  >
-                    Return to Sacred Shifter
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={handleBackToEntry}
+                      variant="outline"
+                      className="bg-secondary/5 border-secondary/30 hover:bg-secondary/10"
+                    >
+                      Back to Grove Entry
+                    </Button>
+                    <Button
+                      onClick={onClose}
+                      className="bg-primary text-primary-foreground flex items-center gap-2"
+                    >
+                      <Home className="w-4 h-4" />
+                      Return to Homepage
+                    </Button>
+                  </div>
                 </div>
               </motion.div>
             </CardContent>
