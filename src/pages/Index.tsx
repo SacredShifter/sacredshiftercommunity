@@ -442,24 +442,14 @@ const Index = () => {
 
                 {/* Development Controls */}
                 {process.env.NODE_ENV === 'development' && (
-                  <div className="flex gap-2">
-                    <Button 
-                      onClick={resetOnboarding}
-                      variant="outline"
-                      size="sm"
-                      className="text-xs"
-                    >
-                      Reset Onboarding
-                    </Button>
-                    <Button 
-                      onClick={() => setShowSacredGrove(true)}
-                      variant="outline"
-                      size="sm"
-                      className="text-xs bg-primary/10 hover:bg-primary/20 text-primary border-primary/30"
-                    >
-                      Enter Sacred Grove
-                    </Button>
-                  </div>
+                  <Button 
+                    onClick={resetOnboarding}
+                    variant="outline"
+                    size="sm"
+                    className="text-xs"
+                  >
+                    Reset Onboarding
+                  </Button>
                 )}
               </div>
             </CardContent>

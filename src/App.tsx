@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { TourProvider } from "@/components/TourProvider";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import AdminRoute from "@/components/AdminRoute";
 import { MainLayout } from "@/components/MainLayout";
 import { ParallaxBackground } from "@/components/ParallaxBackground";
 import { AIChatBubble } from "@/components/AIChatBubble";
@@ -69,7 +70,11 @@ const App = () => {
                     <Route path="/support" element={<Support />} />
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/settings" element={<Settings />} />
-                    <Route path="/ai-admin" element={<AIAdmin />} />
+                    <Route path="/ai-admin" element={
+                      <AdminRoute>
+                        <AIAdmin />
+                      </AdminRoute>
+                    } />
                   </Route>
                   <Route path="*" element={<NotFound />} />
                 </Routes>
