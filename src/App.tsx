@@ -9,7 +9,7 @@ import { MainLayout } from "@/components/MainLayout";
 import { ParallaxBackground } from "@/components/ParallaxBackground";
 import { AIChatBubble } from "@/components/AIChatBubble";
 import BreathOfSource from "@/components/BreathOfSource";
-import { SacredSoundscape } from "@/components/SacredSoundscape";
+import { ModernToolbar } from "@/components/ModernToolbar";
 import { ErrorBoundary, UIErrorBoundary, AudioErrorBoundary } from "@/components/ErrorBoundary";
 
 import Index from "./pages/Index";
@@ -78,18 +78,8 @@ const App = () => {
                 <Route path="*" element={<NotFound />} />
               </Routes>
 
-              {/* Global floating toolbar */}
-              <div className="fixed top-16 right-4 z-50 flex items-center gap-3">
-                <AudioErrorBoundary>
-                  <BreathOfSource />
-                </AudioErrorBoundary>
-                <UIErrorBoundary>
-                  <AIChatBubble />
-                </UIErrorBoundary>
-                <AudioErrorBoundary>
-                  <SacredSoundscape />
-                </AudioErrorBoundary>
-              </div>
+              {/* Modern Floating Toolbar */}
+              <ModernToolbar />
             </div>
         
           </TooltipProvider>
