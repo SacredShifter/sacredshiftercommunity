@@ -14,7 +14,10 @@ import {
   Infinity,
   Triangle,
   Circle,
-  Square
+  Square,
+  TreePine,
+  Brain,
+  Sparkles
 } from 'lucide-react';
 
 const sections = [
@@ -27,6 +30,20 @@ const sections = [
       "Bridging ancient wisdom with quantum consciousness",
       "Setting intentions for your transformation journey",
       "Creating your sacred digital space"
+    ]
+  },
+  {
+    title: "Sacred Grove Wisdom Ecosystem",
+    icon: TreePine,
+    topics: [
+      "Entering the Sacred Grove through conscious intention",
+      "Understanding the three sacred paths: Discovery, Purpose, and Connection",
+      "Working with Resonance Spheres for multi-dimensional insights",
+      "Navigating Evolution Spirals to track your consciousness growth",
+      "Opening Mystery Gates to explore undefined wisdom territories",
+      "Building your personal wisdom ecosystem through sacred experiences",
+      "Understanding how your grove interactions create living insights",
+      "Interpreting resonance patterns and consciousness signatures"
     ]
   },
   {
@@ -143,6 +160,71 @@ const Guidebook: React.FC = () => {
           </Card>
         </motion.div>
 
+        {/* Sacred Grove Special Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+        >
+          <Card className="bg-gradient-to-br from-emerald/10 via-teal/5 to-cyan/5 border-emerald/30">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TreePine className="w-6 h-6 text-emerald-600" />
+                Sacred Grove: Your Living Wisdom Ecosystem
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid md:grid-cols-3 gap-4">
+                <div className="p-4 rounded-lg bg-emerald/5 border border-emerald/20">
+                  <h4 className="font-semibold text-emerald-700 mb-2 flex items-center gap-2">
+                    <Compass className="w-4 h-4" />
+                    The Three Sacred Paths
+                  </h4>
+                  <div className="space-y-1 text-sm text-muted-foreground">
+                    <p><strong>Discovery:</strong> Explore your inner landscape and uncover hidden aspects of consciousness</p>
+                    <p><strong>Purpose:</strong> Align with your highest calling and sacred mission</p>
+                    <p><strong>Connection:</strong> Understand your place in the web of universal consciousness</p>
+                  </div>
+                </div>
+                
+                <div className="p-4 rounded-lg bg-cyan/5 border border-cyan/20">
+                  <h4 className="font-semibold text-cyan-700 mb-2 flex items-center gap-2">
+                    <Brain className="w-4 h-4" />
+                    Ecosystem Components
+                  </h4>
+                  <div className="space-y-1 text-sm text-muted-foreground">
+                    <p><strong>Resonance Spheres:</strong> Multi-dimensional wisdom clusters</p>
+                    <p><strong>Evolution Spirals:</strong> Track your consciousness growth patterns</p>
+                    <p><strong>Mystery Gates:</strong> Portals to unexplored wisdom territories</p>
+                  </div>
+                </div>
+                
+                <div className="p-4 rounded-lg bg-purple/5 border border-purple/20">
+                  <h4 className="font-semibold text-purple-700 mb-2 flex items-center gap-2">
+                    <Sparkles className="w-4 h-4" />
+                    Living Insights
+                  </h4>
+                  <div className="space-y-1 text-sm text-muted-foreground">
+                    <p><strong>Pattern Recognition:</strong> Your grove learns from your interactions</p>
+                    <p><strong>Wisdom Weaving:</strong> Insights connect and evolve organically</p>
+                    <p><strong>Consciousness Signatures:</strong> Track your unique spiritual fingerprint</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-gradient-to-r from-emerald/10 to-cyan/10 p-4 rounded-lg border border-emerald/20">
+                <h4 className="font-semibold text-emerald-800 mb-2">How to Work with Your Sacred Grove</h4>
+                <div className="text-sm text-muted-foreground space-y-2">
+                  <p>1. Enter with clear intention and an open heart</p>
+                  <p>2. Choose your path based on your current spiritual needs</p>
+                  <p>3. Engage fully with each experience, allowing insights to emerge naturally</p>
+                  <p>4. Review your ecosystem regularly to track patterns and growth</p>
+                  <p>5. Trust the process - your grove reflects your unique consciousness journey</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
         {/* Sections Grid */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {sections.map((section, index) => (
