@@ -14,7 +14,7 @@ serve(async (req) => {
   }
 
   try {
-    const OPENROUTER_API_KEY = Deno.env.get('OPENAI_API_KEY'); // OpenRouter API key stored as OPENAI_API_KEY
+    const OPENROUTER_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
     if (!OPENROUTER_API_KEY) {
       throw new Error('OpenRouter API key not configured');
     }
