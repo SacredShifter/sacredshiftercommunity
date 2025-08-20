@@ -86,6 +86,16 @@ const Index = () => {
 
   const sacredSections = [
     {
+      title: "Sacred Grove",
+      description: "Enter the foundational consciousness transformation experience",
+      icon: Crown,
+      action: () => setShowSacredGrove(true),
+      gradient: "from-yellow-500/20 to-amber-500/20",
+      glowColor: "yellow",
+      cta: "Enter the Living Wisdom Portal",
+      pulseColor: "45 93% 47%" // sacred gold
+    },
+    {
       title: "Sacred Feed",
       description: "Your personalized stream of consciousness transformation content",
       icon: Rss,
@@ -217,7 +227,21 @@ const Index = () => {
               // Generate unique geometric pattern for each module
               const getGeometricPattern = (sectionIndex: number) => {
                 const patterns = {
-                  0: ( // Sacred Feed - Flowing stream pattern
+                  0: ( // Sacred Grove - Crown/Tree pattern
+                    <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
+                      <defs>
+                        <pattern id="grove-pattern" x="0" y="0" width="30" height="30" patternUnits="userSpaceOnUse">
+                          <polygon points="15,2 10,12 20,12" fill="currentColor" />
+                          <rect x="13" y="12" width="4" height="8" fill="currentColor" />
+                          <polygon points="5,25 15,15 25,25" fill="currentColor" />
+                          <circle cx="8" cy="8" r="2" fill="currentColor" />
+                          <circle cx="22" cy="8" r="2" fill="currentColor" />
+                        </pattern>
+                      </defs>
+                      <rect width="100" height="100" fill="url(#grove-pattern)" />
+                    </svg>
+                  ),
+                  1: ( // Sacred Feed - Flowing stream pattern
                     <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
                       <defs>
                         <pattern id="feed-pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
@@ -230,7 +254,7 @@ const Index = () => {
                       <rect width="100" height="100" fill="url(#feed-pattern)" />
                     </svg>
                   ),
-                  1: ( // Sacred Circles - Circular connected pattern
+                  2: ( // Sacred Circles - Circular connected pattern
                     <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
                       <defs>
                         <pattern id="circles-pattern" x="0" y="0" width="25" height="25" patternUnits="userSpaceOnUse">
@@ -245,7 +269,7 @@ const Index = () => {
                       <rect width="100" height="100" fill="url(#circles-pattern)" />
                     </svg>
                   ),
-                  2: ( // Mirror Journal - Reflective chevron pattern
+                  3: ( // Mirror Journal - Reflective chevron pattern
                     <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
                       <defs>
                         <pattern id="journal-pattern" x="0" y="0" width="16" height="16" patternUnits="userSpaceOnUse">
@@ -256,7 +280,7 @@ const Index = () => {
                       <rect width="100" height="100" fill="url(#journal-pattern)" />
                     </svg>
                   ),
-                  3: ( // Resonance Register - Synchronized grid pattern
+                  4: ( // Resonance Register - Synchronized grid pattern
                     <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
                       <defs>
                         <pattern id="register-pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
@@ -274,7 +298,7 @@ const Index = () => {
                       <rect width="100" height="100" fill="url(#register-pattern)" />
                     </svg>
                   ),
-                  4: ( // Personal Codex - Ancient manuscript pattern
+                  5: ( // Personal Codex - Ancient manuscript pattern
                     <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
                       <defs>
                         <pattern id="codex-pattern" x="0" y="0" width="24" height="12" patternUnits="userSpaceOnUse">
@@ -287,7 +311,7 @@ const Index = () => {
                       <rect width="100" height="100" fill="url(#codex-pattern)" />
                     </svg>
                   ),
-                  5: ( // YouTube Library - Video tile mosaic
+                  6: ( // YouTube Library - Video tile mosaic
                     <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
                       <defs>
                         <pattern id="video-pattern" x="0" y="0" width="18" height="18" patternUnits="userSpaceOnUse">
@@ -302,7 +326,7 @@ const Index = () => {
                       <rect width="100" height="100" fill="url(#video-pattern)" />
                     </svg>
                   ),
-                  6: ( // Sacred Guidebook - Ancient scroll pattern
+                  7: ( // Sacred Guidebook - Ancient scroll pattern
                     <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
                       <defs>
                         <pattern id="guidebook-pattern" x="0" y="0" width="22" height="22" patternUnits="userSpaceOnUse">
@@ -316,7 +340,7 @@ const Index = () => {
                       <rect width="100" height="100" fill="url(#guidebook-pattern)" />
                     </svg>
                   ),
-                  7: ( // Support - Heart frequency pattern
+                  8: ( // Support - Heart frequency pattern
                     <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
                       <defs>
                         <pattern id="support-pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
@@ -336,8 +360,8 @@ const Index = () => {
 
               return (
                 <Card 
-                  key={section.path}
-                  onClick={() => navigate(section.path)}
+                  key={section.path || section.title}
+                  onClick={() => section.action ? section.action() : navigate(section.path)}
                   className={`group relative overflow-hidden bg-gradient-to-br ${section.gradient} 
                             backdrop-blur-sm border-primary/20 hover:border-primary/40 
                             transition-all duration-300 hover:scale-105 hover:shadow-2xl 
