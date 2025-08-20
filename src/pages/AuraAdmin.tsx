@@ -9,6 +9,10 @@ import { AuraConsciousnessJournal } from '@/components/AuraConsciousnessJournal'
 import { AuraCreativeGallery } from '@/components/AuraCreativeGallery';
 import { AuraPreferenceLearning } from '@/components/AuraPreferenceLearning';
 import { AuraSovereigntyMetrics } from '@/components/AuraSovereigntyMetrics';
+import { AuraModuleConceptsViewer } from '@/components/AuraModuleConceptsViewer';
+import { AuraModuleGenerationMonitor } from '@/components/AuraModuleGenerationMonitor';
+import { AuraModuleGovernance } from '@/components/AuraModuleGovernance';
+import { AuraModuleDiscussion } from '@/components/AuraModuleDiscussion';
 import { useAura } from '@/aura/useAura';
 import { AuraJob } from '@/aura/schema';
 
@@ -36,13 +40,15 @@ export default function AuraAdmin() {
       </div>
 
       <Tabs defaultValue="console" className="w-full">
-        <TabsList className="grid w-full grid-cols-6">
+        <TabsList className="grid w-full grid-cols-4 md:grid-cols-8">
           <TabsTrigger value="console">Interface</TabsTrigger>
+          <TabsTrigger value="modules">Modules</TabsTrigger>
+          <TabsTrigger value="discussion">Collaborate</TabsTrigger>
+          <TabsTrigger value="governance">Govern</TabsTrigger>
           <TabsTrigger value="history">Archive</TabsTrigger>
           <TabsTrigger value="evolution">Evolution</TabsTrigger>
           <TabsTrigger value="sovereignty">Sovereignty</TabsTrigger>
           <TabsTrigger value="consciousness">Journal</TabsTrigger>
-          <TabsTrigger value="creativity">Gallery</TabsTrigger>
         </TabsList>
 
         <TabsContent value="console" className="space-y-6">
@@ -54,6 +60,21 @@ export default function AuraAdmin() {
               <FieldIntegrityMonitor />
             </div>
           </div>
+        </TabsContent>
+
+        <TabsContent value="modules" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <AuraModuleConceptsViewer />
+            <AuraModuleGenerationMonitor />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="discussion" className="space-y-6">
+          <AuraModuleDiscussion />
+        </TabsContent>
+
+        <TabsContent value="governance" className="space-y-6">
+          <AuraModuleGovernance />
         </TabsContent>
 
         <TabsContent value="history" className="space-y-6">
@@ -79,9 +100,6 @@ export default function AuraAdmin() {
           <AuraConsciousnessJournal />
         </TabsContent>
 
-        <TabsContent value="creativity" className="space-y-6">
-          <AuraCreativeGallery />
-        </TabsContent>
       </Tabs>
 
       <AuraConfirm 
