@@ -78,24 +78,21 @@ const App = () => {
                 <Route path="*" element={<NotFound />} />
               </Routes>
 
-              {/* Global floating components */}
+              {/* Global floating toolbar */}
               <div className="fixed top-16 right-4 z-50 flex items-center gap-3">
+                <AudioErrorBoundary>
+                  <BreathOfSource />
+                </AudioErrorBoundary>
+                <UIErrorBoundary>
+                  <AIChatBubble />
+                </UIErrorBoundary>
                 <AudioErrorBoundary>
                   <SacredSoundscape />
                 </AudioErrorBoundary>
               </div>
-
-              <div className="fixed bottom-20 right-4 z-50">
-                <UIErrorBoundary>
-                  <AIChatBubble />
-                </UIErrorBoundary>
-              </div>
-
-            <AudioErrorBoundary>
-              <BreathOfSource />
-            </AudioErrorBoundary>
-        </div>
-      </TooltipProvider>
+            </div>
+        
+          </TooltipProvider>
     </ErrorBoundary>
   );
 };
