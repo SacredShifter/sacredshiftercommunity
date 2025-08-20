@@ -111,7 +111,17 @@ serve(async (req) => {
       }
 
       const arrayBuffer = await elevenLabsResponse.arrayBuffer();
-      audioContent = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+      // Process large audio files in chunks to prevent stack overflow
+      const uint8Array = new Uint8Array(arrayBuffer);
+      const chunkSize = 32768; // 32KB chunks
+      let binaryString = '';
+      
+      for (let i = 0; i < uint8Array.length; i += chunkSize) {
+        const chunk = uint8Array.slice(i, i + chunkSize);
+        binaryString += String.fromCharCode(...chunk);
+      }
+      
+      audioContent = btoa(binaryString);
 
     } else {
       // Fallback to OpenAI TTS
@@ -137,7 +147,17 @@ serve(async (req) => {
       }
 
       const arrayBuffer = await openAIResponse.arrayBuffer();
-      audioContent = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+      // Process large audio files in chunks to prevent stack overflow
+      const uint8Array = new Uint8Array(arrayBuffer);
+      const chunkSize = 32768; // 32KB chunks
+      let binaryString = '';
+      
+      for (let i = 0; i < uint8Array.length; i += chunkSize) {
+        const chunk = uint8Array.slice(i, i + chunkSize);
+        binaryString += String.fromCharCode(...chunk);
+      }
+      
+      audioContent = btoa(binaryString);
     }
 
     console.log('Voice synthesis successful');
