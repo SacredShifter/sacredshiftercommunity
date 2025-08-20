@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,11 +7,8 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import AdminRoute from "@/components/AdminRoute";
 import { MainLayout } from "@/components/MainLayout";
 import { ParallaxBackground } from "@/components/ParallaxBackground";
-import { AIChatBubble } from "@/components/AIChatBubble";
-import BreathOfSource from "@/components/BreathOfSource";
-import { SacredSoundscape } from "@/components/SacredSoundscape";
 import { ModernToolbar } from "@/components/ModernToolbar";
-import { ErrorBoundary, UIErrorBoundary, AudioErrorBoundary } from "@/components/ErrorBoundary";
+import { ErrorBoundary, UIErrorBoundary } from "@/components/ErrorBoundary";
 
 import Index from "./pages/Index";
 import Feed from "./pages/Feed";
@@ -32,12 +28,6 @@ import AIAdmin from "./pages/AIAdmin";
 import AuraAdmin from "./pages/AuraAdmin";
 
 function App() {
-  const [activeTool, setActiveTool] = useState<string | null>(null);
-
-  const handleToolToggle = (tool: string, isActive: boolean) => {
-    setActiveTool(isActive ? tool : null);
-  };
-
   return (
     <ErrorBoundary name="Root">
       <TooltipProvider>
@@ -85,33 +75,8 @@ function App() {
               <Route path="*" element={<NotFound />} />
             </Routes>
 
-            {/* Modern Floating Toolbar */}
-            <ModernToolbar onToolToggle={handleToolToggle} activeTool={activeTool} />
-
-            {/* Individual Tool Components */}
-            {activeTool === 'ai' && (
-              <div className="fixed bottom-20 right-4 z-40">
-                <UIErrorBoundary>
-                  <AIChatBubble />
-                </UIErrorBoundary>
-              </div>
-            )}
-
-            {activeTool === 'breath' && (
-              <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-40">
-                <AudioErrorBoundary>
-                  <BreathOfSource />
-                </AudioErrorBoundary>
-              </div>
-            )}
-
-            {activeTool === 'frequency' && (
-              <div className="fixed top-20 left-4 z-40">
-                <AudioErrorBoundary>
-                  <SacredSoundscape />
-                </AudioErrorBoundary>
-              </div>
-            )}
+            {/* Simple Modern Toolbar */}
+            <ModernToolbar />
           </div>
         </TooltipProvider>
     </ErrorBoundary>
