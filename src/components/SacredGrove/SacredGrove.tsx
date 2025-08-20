@@ -322,7 +322,7 @@ export const SacredGrove: React.FC<SacredGroveProps> = ({ isVisible, onClose }) 
   // Initial Entry View
   return (
     <SacredGroveEntry
-      isVisible={!groveState.hasEntered}
+      isVisible={true}
       onPathSelect={handlePathSelect}
     />
   );
