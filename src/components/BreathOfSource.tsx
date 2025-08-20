@@ -61,8 +61,8 @@ const BREATHING_PRESETS: BreathingPreset[] = [
 
 type BreathPhase = 'inhale' | 'hold1' | 'exhale' | 'hold2';
 
-const BreathOfSource: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
+const BreathOfSource: React.FC<{ autoOpen?: boolean }> = ({ autoOpen = false }) => {
+  const [isOpen, setIsOpen] = useState(autoOpen);
   const [isMinimized, setIsMinimized] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isActive, setIsActive] = useState(false);

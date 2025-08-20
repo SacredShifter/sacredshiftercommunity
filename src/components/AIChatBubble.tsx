@@ -19,10 +19,11 @@ interface Message {
 
 interface AIChatBubbleProps {
   className?: string;
+  autoOpen?: boolean;
 }
 
-export const AIChatBubble = ({ className }: AIChatBubbleProps) => {
-  const [isOpen, setIsOpen] = useState(false);
+export const AIChatBubble = ({ className, autoOpen = false }: AIChatBubbleProps) => {
+  const [isOpen, setIsOpen] = useState(autoOpen);
   const [isMinimized, setIsMinimized] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {

@@ -78,29 +78,23 @@ export const ToolbarWithComponents = () => {
                   >
                     {/* Breath of Source Component */}
                     {tool.id === 'breath' && (
-                      <div className="relative">
-                        <AudioErrorBoundary>
-                          <BreathOfSource />
-                        </AudioErrorBoundary>
-                      </div>
+                      <AudioErrorBoundary>
+                        <BreathOfSource autoOpen={true} />
+                      </AudioErrorBoundary>
                     )}
 
                     {/* AI Assistant Component */}
                     {tool.id === 'ai' && (
-                      <div className="relative">
-                        <UIErrorBoundary>
-                          <AIChatBubble />
-                        </UIErrorBoundary>
-                      </div>
+                      <UIErrorBoundary>
+                        <AIChatBubble autoOpen={true} />
+                      </UIErrorBoundary>
                     )}
 
                     {/* Sacred Soundscape Component */}
                     {tool.id === 'frequency' && (
-                      <div className="relative">
-                        <AudioErrorBoundary>
-                          <SacredSoundscape />
-                        </AudioErrorBoundary>
-                      </div>
+                      <AudioErrorBoundary>
+                        <SacredSoundscape autoOpen={true} />
+                      </AudioErrorBoundary>
                     )}
                   </motion.div>
                 )}

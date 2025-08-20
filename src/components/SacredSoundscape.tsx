@@ -29,7 +29,7 @@ const sacredFrequencies: SacredFrequency[] = [
   { hz: 174, name: 'Pain Relief', purpose: 'Deep physical healing', chakra: 'Nervous System', color: 'hsl(190, 80%, 50%)' },
 ];
 
-export const SacredSoundscape = () => {
+export const SacredSoundscape = ({ autoOpen = false }: { autoOpen?: boolean }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [showFrequencies, setShowFrequencies] = useState(false);
   const [selectedFrequency, setSelectedFrequency] = useState<SacredFrequency>(sacredFrequencies[4]); // Default to 528 Hz Love
