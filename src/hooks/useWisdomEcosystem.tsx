@@ -435,7 +435,8 @@ export function useWisdomEcosystem() {
     // Pattern insights
     const topPatterns = Array.from(ecosystemMemory.patterns.entries())
       .sort((a, b) => b[1] - a[1])
-      .slice(0, 5);
+      .slice(0, 5)
+      .filter(([pattern]) => pattern && pattern.length > 0);
     
     if (topPatterns.length > 0) {
       insights.push({
@@ -452,29 +453,52 @@ export function useWisdomEcosystem() {
       .slice(0, 3);
 
     if (highlyConnectedNodes.length > 0) {
-      insights.push({
-        type: 'connection',
-        title: 'Knowledge Hubs',
-        content: `Key insight nodes are creating webs of understanding around: ${highlyConnectedNodes.map(n => extractKeywords(n.content)[0]).join(', ')}`
-      });
+      const nodeKeywords = highlyConnectedNodes
+        .map(n => {
+          const keywords = extractKeywords(n.content);
+          return keywords.length > 0 ? keywords[0] : n.type || 'insight';
+        })
+        .filter(keyword => keyword && keyword.length > 0);
+      
+      if (nodeKeywords.length > 0) {
+        insights.push({
+          type: 'connection',
+          title: 'Knowledge Hubs',
+          content: `Key insight nodes are creating webs of understanding around: ${nodeKeywords.join(', ')}`
+        });
+      }
     }
 
     // Learning trajectory insights
-    if (ecosystemMemory.learningTrajectories.length > 0) {
+    const validTrajectories = ecosystemMemory.learningTrajectories
+      .filter(trajectory => trajectory && trajectory.length > 0);
+    
+    if (validTrajectories.length > 0) {
       insights.push({
         type: 'trajectory',
         title: 'Learning Patterns',
-        content: `The ecosystem is showing progression in: ${ecosystemMemory.learningTrajectories.join(', ')}`
+        content: `The ecosystem is showing progression in: ${validTrajectories.join(', ')}`
       });
     }
 
     // Feedback loop insights
-    const strengthenedLoops = feedbackLoops.filter(loop => loop.strengthening);
+    const strengthenedLoops = feedbackLoops
+      .filter(loop => loop.strengthening && loop.inputPattern && loop.inputPattern.length > 0);
+    
     if (strengthenedLoops.length > 0) {
       insights.push({
         type: 'feedback',
         title: 'Reinforcing Patterns',
         content: `Self-strengthening loops detected in: ${strengthenedLoops.map(l => l.inputPattern).join(', ')}`
+      });
+    }
+
+    // Fallback insight if no data is available
+    if (insights.length === 0) {
+      insights.push({
+        type: 'welcome',
+        title: 'Ecosystem Growing',
+        content: 'Your wisdom ecosystem is beginning to form. As you engage with the Sacred Grove, patterns and insights will emerge.'
       });
     }
 
