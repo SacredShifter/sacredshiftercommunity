@@ -189,11 +189,6 @@ const Index = () => {
         onComplete={handleOnboardingComplete}
       />
       
-      <SacredGrove 
-        isVisible={showSacredGrove}
-        onClose={() => setShowSacredGrove(false)}
-      />
-      
       <div className="h-full p-6">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
@@ -456,6 +451,12 @@ const Index = () => {
           </Card>
         </div>
       </div>
+
+      {/* Sacred Grove Modal */}
+      <SacredGrove 
+        isVisible={showSacredGrove}
+        onClose={() => setShowSacredGrove(false)}
+      />
     </>
   );
 };
