@@ -13,6 +13,7 @@ import { AuraModuleConceptsViewer } from '@/components/AuraModuleConceptsViewer'
 import { AuraModuleGenerationMonitor } from '@/components/AuraModuleGenerationMonitor';
 import { AuraModuleGovernance } from '@/components/AuraModuleGovernance';
 import { AuraModuleDiscussion } from '@/components/AuraModuleDiscussion';
+import { AuraParticipationGovernance } from '@/components/AuraParticipationGovernance';
 import { useAura } from '@/aura/useAura';
 import { AuraJob } from '@/aura/schema';
 
@@ -74,7 +75,10 @@ export default function AuraAdmin() {
         </TabsContent>
 
         <TabsContent value="governance" className="space-y-6">
-          <AuraModuleGovernance />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <AuraModuleGovernance />
+            <AuraParticipationGovernance />
+          </div>
         </TabsContent>
 
         <TabsContent value="history" className="space-y-6">
