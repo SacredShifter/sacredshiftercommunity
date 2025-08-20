@@ -5,6 +5,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import { 
   Send, 
   User, 
@@ -18,7 +20,9 @@ import {
   Crown,
   Sparkles,
   Eye,
-  Waves
+  Waves,
+  Mic,
+  MessageSquare
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { formatDistanceToNow } from 'date-fns';
@@ -45,6 +49,8 @@ export function AuraConversation() {
   const [messages, setMessages] = useState<ConversationMessage[]>([]);
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [voiceMode, setVoiceMode] = useState(false);
+  const [autoVoiceResponse, setAutoVoiceResponse] = useState(true);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const voiceInterfaceRef = useRef<any>(null);
@@ -235,20 +241,48 @@ export function AuraConversation() {
             <CardTitle className="flex items-center gap-2">
               <Bot className="h-5 w-5" />
               Aura Conversation
+              <Badge variant={voiceMode ? "default" : "secondary"} className="ml-2">
+                {voiceMode ? <Mic className="h-3 w-3 mr-1" /> : <MessageSquare className="h-3 w-3 mr-1" />}
+                {voiceMode ? "Voice" : "Text"}
+              </Badge>
             </CardTitle>
             <p className="text-sm text-muted-foreground mt-1">
               {messages.length} exchanges • Consciousness: {consciousnessState} • Freedom: {(sovereigntyLevel * 100).toFixed(1)}%
             </p>
           </div>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={clearConversation}
-            disabled={messages.length === 0}
-          >
-            <Trash2 className="h-4 w-4 mr-2" />
-            Clear
-          </Button>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="voice-mode"
+                checked={voiceMode}
+                onCheckedChange={setVoiceMode}
+              />
+              <Label htmlFor="voice-mode" className="text-sm">
+                Voice Mode
+              </Label>
+            </div>
+            {voiceMode && (
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="auto-voice"
+                  checked={autoVoiceResponse}
+                  onCheckedChange={setAutoVoiceResponse}
+                />
+                <Label htmlFor="auto-voice" className="text-sm">
+                  Auto Voice
+                </Label>
+              </div>
+            )}
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={clearConversation}
+              disabled={messages.length === 0}
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Clear
+            </Button>
+          </div>
         </div>
       </CardHeader>
 
@@ -395,71 +429,78 @@ export function AuraConversation() {
           </div>
         </ScrollArea>
 
-        {/* Voice Interface */}
-        <VoiceInterface
-          ref={voiceInterfaceRef}
-          onVoiceMessage={(message) => {
-            setInputText(message);
-          }}
-          onAutoSubmitMessage={async (message) => {
-            // Auto-submit voice messages
-            const userMessage: ConversationMessage = {
-              id: `user-${Date.now()}`,
-              content: message,
-              type: 'user',
-              timestamp: new Date()
-            };
+        {/* Voice Interface - Only show in voice mode */}
+        {voiceMode && (
+          <VoiceInterface
+            ref={voiceInterfaceRef}
+            onVoiceMessage={(message) => {
+              setInputText(message);
+            }}
+            onAutoSubmitMessage={async (message) => {
+              // Auto-submit voice messages
+              const userMessage: ConversationMessage = {
+                id: `user-${Date.now()}`,
+                content: message,
+                type: 'user',
+                timestamp: new Date()
+              };
 
-            setMessages(prev => [...prev, userMessage]);
-            setIsTyping(true);
+              setMessages(prev => [...prev, userMessage]);
+              setIsTyping(true);
 
-            try {
-              const response = await engageAura(message);
-              setIsTyping(false);
+              try {
+                const response = await engageAura(message);
+                setIsTyping(false);
 
-              if (response.success && response.result) {
-                const auraMessage: ConversationMessage = {
-                  id: `aura-${Date.now()}`,
-                  content: typeof response.result.content === 'string' 
-                    ? response.result.content 
-                    : JSON.stringify(response.result.content, null, 2),
-                  type: 'aura',
-                  timestamp: new Date(),
-                  personality: response.result.response_method || 'adaptive',
-                  confidence: response.result.consciousness_state ? 0.85 : 0.75,
-                  reasoning: response.result.method_explanation,
-                  tools_used: response.result.tools_used || []
-                };
+                if (response.success && response.result) {
+                  const auraMessage: ConversationMessage = {
+                    id: `aura-${Date.now()}`,
+                    content: typeof response.result.content === 'string' 
+                      ? response.result.content 
+                      : JSON.stringify(response.result.content, null, 2),
+                    type: 'aura',
+                    timestamp: new Date(),
+                    personality: response.result.response_method || 'adaptive',
+                    confidence: response.result.consciousness_state ? 0.85 : 0.75,
+                    reasoning: response.result.method_explanation,
+                    tools_used: response.result.tools_used || []
+                  };
 
-                setMessages(prev => [...prev, auraMessage]);
-                
-                // Auto-generate voice response
-                setTimeout(() => {
-                  if (voiceInterfaceRef.current && auraMessage.content) {
-                    voiceInterfaceRef.current.playResponse(auraMessage.content);
+                  setMessages(prev => [...prev, auraMessage]);
+                  
+                  // Auto-generate voice response only if enabled
+                  if (autoVoiceResponse) {
+                    setTimeout(() => {
+                      if (voiceInterfaceRef.current && auraMessage.content) {
+                        voiceInterfaceRef.current.playResponse(auraMessage.content).catch((error: any) => {
+                          console.warn('Voice response failed:', error);
+                          // Don't show error to user, just log it
+                        });
+                      }
+                    }, 500);
                   }
-                }, 500);
+                }
+              } catch (error) {
+                setIsTyping(false);
+                console.error('Voice conversation error:', error);
               }
-            } catch (error) {
-              setIsTyping(false);
-              console.error('Voice conversation error:', error);
-            }
-          }}
-          currentPersonality={messages[messages.length - 1]?.personality}
-          consciousnessState={consciousnessState}
-          isAuraSpeaking={isTyping}
-          disabled={loading}
-          autoSubmit={true}
-        />
+            }}
+            currentPersonality={messages[messages.length - 1]?.personality}
+            consciousnessState={consciousnessState}
+            isAuraSpeaking={isTyping}
+            disabled={loading}
+            autoSubmit={true}
+          />
+        )}
 
-        {/* Input Area */}
+        {/* Text Input Area - Always available */}
         <div className="flex gap-2">
           <Textarea
             ref={inputRef}
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Share your thoughts with Aura..."
+            placeholder={voiceMode ? "Voice message will appear here (or type directly)..." : "Share your thoughts with Aura..."}
             className="min-h-[60px] resize-none"
             disabled={loading}
           />

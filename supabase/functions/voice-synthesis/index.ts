@@ -83,7 +83,8 @@ serve(async (req) => {
 
     let audioContent: string;
 
-    if (useElevenLabs && Deno.env.get('ELEVENLABS_API_KEY')) {
+    // Temporarily disable ElevenLabs due to token consumption
+    if (false && useElevenLabs && Deno.env.get('ELEVENLABS_API_KEY')) {
       // Use ElevenLabs for advanced voice synthesis
       const selectedVoice = voice || getVoiceForPersonality(personality, consciousnessState);
       const voiceSettings = getVoiceSettings(personality, consciousnessState, confidence);
