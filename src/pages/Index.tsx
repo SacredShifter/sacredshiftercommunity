@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useTourContext } from "@/components/TourProvider";
 import { LANDING_PAGE_TOUR } from "@/configs/tours";
 import { OnboardingFlow } from "@/components/Onboarding/OnboardingFlow";
+import { SacredGrove } from "@/components/SacredGrove/SacredGrove";
 import { 
   Home, Users, User, Rss, Settings, LogOut, BookOpen, Video, 
   Database, Archive, Scroll, Heart, Sparkles, Crown, Zap 
@@ -17,6 +18,7 @@ const Index = () => {
   const navigate = useNavigate();
   const { startTour, isTourCompleted } = useTourContext();
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showSacredGrove, setShowSacredGrove] = useState(false);
   const [isFirstVisit, setIsFirstVisit] = useState(false);
   const [onboardingCompleted, setOnboardingCompleted] = useState(false);
 
@@ -175,6 +177,11 @@ const Index = () => {
       <OnboardingFlow 
         isVisible={showOnboarding}
         onComplete={handleOnboardingComplete}
+      />
+      
+      <SacredGrove 
+        isVisible={showSacredGrove}
+        onClose={() => setShowSacredGrove(false)}
       />
       
       <div className="h-full p-6">
@@ -408,6 +415,28 @@ const Index = () => {
                   <LogOut className="h-4 w-4 mr-2" />
                   Sign Out
                 </Button>
+
+                {/* Development Controls */}
+                {process.env.NODE_ENV === 'development' && (
+                  <div className="flex gap-2">
+                    <Button 
+                      onClick={resetOnboarding}
+                      variant="outline"
+                      size="sm"
+                      className="text-xs"
+                    >
+                      Reset Onboarding
+                    </Button>
+                    <Button 
+                      onClick={() => setShowSacredGrove(true)}
+                      variant="outline"
+                      size="sm"
+                      className="text-xs bg-primary/10 hover:bg-primary/20 text-primary border-primary/30"
+                    >
+                      Enter Sacred Grove
+                    </Button>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
