@@ -15,6 +15,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { usePersonalSignature } from '@/hooks/usePersonalSignature';
 import { useCommunityResonance } from '@/hooks/useCommunityResonance';
 import { useWisdomEcosystem } from '@/hooks/useWisdomEcosystem';
+import { useAuraPlatformAwareness } from '@/hooks/useAuraPlatformAwareness';
 import { supabase } from '@/integrations/supabase/client';
 
 type PathType = 'discovery' | 'purpose' | 'connection';
@@ -37,6 +38,7 @@ export const SacredGrove: React.FC<SacredGroveProps> = ({ isVisible, onClose }) 
   const { signature, isAnalyzing } = usePersonalSignature();
   const { resonanceState } = useCommunityResonance();
   const { getEcosystemInsights } = useWisdomEcosystem();
+  const { recordGroveActivity, notifyAuraOfEvent } = useAuraPlatformAwareness();
   
   const [groveState, setGroveState] = useState<GroveState>({
     hasEntered: false,
@@ -52,6 +54,10 @@ export const SacredGrove: React.FC<SacredGroveProps> = ({ isVisible, onClose }) 
       hasEntered: true,
       selectedPath: path
     }));
+
+    // Notify Aura of Grove entry
+    recordGroveActivity('entry', `${path}_path`, { selected_path: path });
+    notifyAuraOfEvent('grove_path_selected', { path, user_id: user?.id });
   };
 
   const handlePathComplete = async (pathData: any) => {
@@ -78,6 +84,14 @@ export const SacredGrove: React.FC<SacredGroveProps> = ({ isVisible, onClose }) 
         console.error('Error storing path data:', error);
       }
     }
+
+    // Notify Aura of path completion
+    recordGroveActivity('interaction', 'path_completion', pathData);
+    await notifyAuraOfEvent('grove_path_completed', { 
+      pathData, 
+      user_id: user?.id,
+      wisdom_gained: pathData.insights 
+    }, true);
 
     // Navigate to Grove ecosystem view
     setTimeout(() => {
