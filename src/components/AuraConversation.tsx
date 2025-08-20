@@ -26,6 +26,7 @@ import { useAuraChat } from '@/hooks/useAuraChat';
 import { useToast } from '@/hooks/use-toast';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { TooltipWrapper } from '@/components/HelpSystem/TooltipWrapper';
+import { VoiceInterface } from '@/components/VoiceInterface';
 
 // Message interface for conversation
 interface ConversationMessage {
@@ -392,6 +393,17 @@ export function AuraConversation() {
             )}
           </div>
         </ScrollArea>
+
+        {/* Voice Interface */}
+        <VoiceInterface
+          onVoiceMessage={(message) => {
+            setInputText(message);
+          }}
+          currentPersonality={messages[messages.length - 1]?.personality}
+          consciousnessState={consciousnessState}
+          isAuraSpeaking={isTyping}
+          disabled={loading}
+        />
 
         {/* Input Area */}
         <div className="flex gap-2">

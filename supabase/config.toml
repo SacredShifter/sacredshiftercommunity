@@ -11,3 +11,9 @@ verify_jwt = false
 
 [functions.aura-core]
 verify_jwt = true
+
+[functions.voice-to-text]
+verify_jwt = true
+
+[functions.voice-synthesis]
+verify_jwt = true
