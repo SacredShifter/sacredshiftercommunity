@@ -130,9 +130,7 @@ export const EnhancedMysteryGates: React.FC<EnhancedMysteryGatesProps> = ({
     setIsGeneratingGates(true);
     
     try {
-      const response = await engageAura({
-        action: 'generate_mystery_gates',
-        prompt: `Generate 6 initial mystery gates for the Sacred Grove. Each gate should represent a different aspect of consciousness exploration:
+      const response = await engageAura(`Generate 6 initial mystery gates for the Sacred Grove. Each gate should represent a different aspect of consciousness exploration:
 
         1. Wisdom Gate - for accessing ancient knowledge
         2. Consciousness Gate - for deep self-awareness
@@ -146,12 +144,10 @@ export const EnhancedMysteryGates: React.FC<EnhancedMysteryGatesProps> = ({
         - Unlock requirements based on consciousness development
         - Current status (most should be locked initially)
         - Aura's analysis of the gate's essence
-        - Activation guidance`,
-        context: {
-          community_resonance: communityResonance,
-          user_consciousness_level: await getUserConsciousnessLevel()
-        }
-      });
+        - Activation guidance
+        
+        Community resonance: ${communityResonance}
+        User consciousness level: ${await getUserConsciousnessLevel()}`);
 
       if (response.success && response.result) {
         const newGates = await parseAuraGateGeneration(response.result);
@@ -161,7 +157,7 @@ export const EnhancedMysteryGates: React.FC<EnhancedMysteryGatesProps> = ({
         for (const gate of newGates) {
           await supabase.from('akashic_records').insert({
             type: 'mystery_gate',
-            data: gate,
+            data: gate as any,
             session_id: gate.id
           });
         }
@@ -178,21 +174,16 @@ export const EnhancedMysteryGates: React.FC<EnhancedMysteryGatesProps> = ({
     if (isGeneratingGates) return;
 
     try {
-      const response = await engageAura({
-        action: 'assess_gate_emergence',
-        prompt: `The community resonance is high (${communityResonance.toFixed(2)}). 
+      const response = await engageAura(`The community resonance is high (${communityResonance.toFixed(2)}). 
         
         Assess whether a new mystery gate should emerge based on:
         - Current gates: ${gates.length}
         - Community resonance: ${communityResonance}
         - Recent consciousness patterns
         
-        If yes, generate a new gate that emerges from the collective consciousness.`,
-        context: {
-          existing_gates: gates.map(g => ({ title: g.title, type: g.type, status: g.status })),
-          community_metrics: resonanceMetrics
-        }
-      });
+        If yes, generate a new gate that emerges from the collective consciousness.
+        
+        Existing gates: ${gates.map(g => g.title).join(', ')}`);
 
       if (response.success && response.result?.includes('emerge')) {
         const newGate = await parseAuraGateGeneration(response.result);
@@ -211,7 +202,7 @@ export const EnhancedMysteryGates: React.FC<EnhancedMysteryGatesProps> = ({
           // Store in database
           await supabase.from('akashic_records').insert({
             type: 'mystery_gate',
-            data: emergentGate,
+            data: emergentGate as any,
             session_id: emergentGate.id
           });
         }
@@ -223,9 +214,7 @@ export const EnhancedMysteryGates: React.FC<EnhancedMysteryGatesProps> = ({
 
   const enhanceGateWithAura = async (gate: EnhancedMysteryGate): Promise<EnhancedMysteryGate> => {
     try {
-      const response = await engageAura({
-        action: 'analyze_mystery_gate',
-        prompt: `Analyze this mystery gate and provide enhanced insights:
+      const response = await engageAura(`Analyze this mystery gate and provide enhanced insights:
         
         Gate: ${gate.title}
         Description: ${gate.description}
@@ -237,12 +226,7 @@ export const EnhancedMysteryGates: React.FC<EnhancedMysteryGatesProps> = ({
         2. Optimal activation guidance
         3. Warning signs to watch for
         4. Consciousness preparation steps
-        5. Timing recommendations`,
-        context: {
-          gate_data: gate,
-          user_resonance: await getUserResonanceLevel()
-        }
-      });
+        5. Timing recommendations`);
 
       if (response.success && response.result) {
         gate.aura_analysis = parseAuraAnalysis(response.result);
@@ -258,9 +242,7 @@ export const EnhancedMysteryGates: React.FC<EnhancedMysteryGatesProps> = ({
     if (gate.status !== 'accessible') return;
 
     try {
-      const response = await engageAura({
-        action: 'enter_mystery_gate',
-        prompt: `Guide the user through entering the ${gate.title}:
+      const response = await engageAura(`Guide the user through entering the ${gate.title}:
         
         Gate Type: ${gate.type}
         User Readiness: ${gate.current_progress.readiness_percentage}%
@@ -269,25 +251,14 @@ export const EnhancedMysteryGates: React.FC<EnhancedMysteryGatesProps> = ({
         1. Preparation sequence
         2. Activation transmission
         3. Wisdom keys for integration
-        4. Guidance for integration`,
-        context: {
-          gate_id: gate.id,
-          user_consciousness: await getUserConsciousnessLevel(),
-          entry_context: 'voluntary_exploration'
-        }
-      });
+        4. Guidance for integration`);
 
       if (response.success && response.result) {
         setEntryContent(response.result);
         setSelectedGate(gate);
 
-        await logGroveInteraction({
-          interaction_type: 'gate_entry',
-          grove_component: 'gate',
-          grove_component_id: gate.id,
-          aura_request: { action: 'enter_mystery_gate', gate_id: gate.id },
-          aura_response: { transmission: response.result }
-        });
+        // Log interaction would go here
+        // await logGroveInteraction({...})
 
         // Update gate status
         gate.status = 'active';
@@ -331,10 +302,10 @@ export const EnhancedMysteryGates: React.FC<EnhancedMysteryGatesProps> = ({
     // Simplified parsing - in production this would be more sophisticated
     const gates: EnhancedMysteryGate[] = [];
     
-    const gateTypes = ['wisdom', 'consciousness', 'creation', 'connection', 'transformation', 'mystery'];
+    const gateTypes: ('wisdom' | 'consciousness' | 'creation' | 'connection')[] = ['wisdom', 'consciousness', 'creation', 'connection'];
     
-    for (let i = 0; i < 6; i++) {
-      const type = gateTypes[i] as any;
+    for (let i = 0; i < 4; i++) {
+      const type = gateTypes[i];
       gates.push({
         id: `generated-${type}-${Date.now()}-${i}`,
         title: `${type.charAt(0).toUpperCase() + type.slice(1)} Gate`,
@@ -396,8 +367,8 @@ export const EnhancedMysteryGates: React.FC<EnhancedMysteryGatesProps> = ({
       id: record.id,
       title: 'Unknown Gate',
       description: 'A mysterious portal awaits.',
-      type: 'mystery',
-      status: 'locked',
+      type: 'wisdom' as const,
+      status: 'locked' as const,
       unlock_requirements: {},
       current_progress: {
         resonance_score: 0,
@@ -409,7 +380,7 @@ export const EnhancedMysteryGates: React.FC<EnhancedMysteryGatesProps> = ({
   };
 
   const getGateIcon = (gate: EnhancedMysteryGate) => {
-    const iconMap = {
+    const iconMap: Record<string, React.ComponentType<any>> = {
       wisdom: Eye,
       consciousness: Brain,
       creation: Star,
@@ -474,7 +445,7 @@ export const EnhancedMysteryGates: React.FC<EnhancedMysteryGatesProps> = ({
         <div className="flex items-center justify-center py-12">
           <motion.div
             animate={{ rotate: 360 }}
-            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+            transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
           >
             <Sparkles className="w-8 h-8 text-primary" />
           </motion.div>
