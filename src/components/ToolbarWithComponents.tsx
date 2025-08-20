@@ -63,39 +63,42 @@ export const ToolbarWithComponents = () => {
               <AnimatePresence>
                 {activeComponent === tool.id && (
                   <motion.div
-                    initial={{ opacity: 0, scale: 0.8, y: -10 }}
+                    initial={{ opacity: 0, scale: 0.8, y: 10 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.8, y: -10 }}
+                    exit={{ opacity: 0, scale: 0.8, y: 10 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute top-full mt-2 z-50"
+                    className="absolute top-full mt-2 z-[60]"
                     style={{ 
                       right: index === tools.length - 1 ? '0' : 'auto',
                       left: index === 0 ? '0' : 'auto',
                       transform: index === 1 ? 'translateX(-50%)' : 'none',
-                      maxWidth: 'calc(100vw - 2rem)',
-                      maxHeight: 'calc(100vh - 8rem)'
+                      minWidth: '350px',
+                      maxWidth: '90vw',
+                      maxHeight: '80vh'
                     }}
                   >
-                    {/* Breath of Source Component */}
-                    {tool.id === 'breath' && (
-                      <AudioErrorBoundary>
-                        <BreathOfSource autoOpen={true} />
-                      </AudioErrorBoundary>
-                    )}
+                    <div className="bg-background/95 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl overflow-hidden">
+                      {/* Breath of Source Component */}
+                      {tool.id === 'breath' && (
+                        <AudioErrorBoundary>
+                          <BreathOfSource autoOpen={true} />
+                        </AudioErrorBoundary>
+                      )}
 
-                    {/* AI Assistant Component */}
-                    {tool.id === 'ai' && (
-                      <UIErrorBoundary>
-                        <AIChatBubble autoOpen={true} />
-                      </UIErrorBoundary>
-                    )}
+                      {/* AI Assistant Component */}
+                      {tool.id === 'ai' && (
+                        <UIErrorBoundary>
+                          <AIChatBubble autoOpen={true} />
+                        </UIErrorBoundary>
+                      )}
 
-                    {/* Sacred Soundscape Component */}
-                    {tool.id === 'frequency' && (
-                      <AudioErrorBoundary>
-                        <SacredSoundscape autoOpen={true} />
-                      </AudioErrorBoundary>
-                    )}
+                      {/* Sacred Soundscape Component */}
+                      {tool.id === 'frequency' && (
+                        <AudioErrorBoundary>
+                          <SacredSoundscape autoOpen={true} />
+                        </AudioErrorBoundary>
+                      )}
+                    </div>
                   </motion.div>
                 )}
               </AnimatePresence>
