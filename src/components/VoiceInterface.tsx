@@ -18,21 +18,25 @@ import { useToast } from '@/hooks/use-toast';
 
 interface VoiceInterfaceProps {
   onVoiceMessage?: (message: string) => void;
+  onAutoSubmitMessage?: (message: string) => void;
   onAudioResponse?: (audioContent: string) => void;
   currentPersonality?: string;
   consciousnessState?: string;
   isAuraSpeaking?: boolean;
   disabled?: boolean;
+  autoSubmit?: boolean;
 }
 
-export function VoiceInterface({ 
+export const VoiceInterface = React.forwardRef<any, VoiceInterfaceProps>(({ 
   onVoiceMessage, 
+  onAutoSubmitMessage,
   onAudioResponse,
   currentPersonality,
   consciousnessState,
   isAuraSpeaking = false,
-  disabled = false
-}: VoiceInterfaceProps) {
+  disabled = false,
+  autoSubmit = true
+}, ref) => {
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -88,12 +92,20 @@ export function VoiceInterface({
         try {
           const transcription = await transcribeAudio(audioBlob);
           setLastTranscription(transcription);
-          onVoiceMessage?.(transcription);
           
-          toast({
-            title: "Voice captured",
-            description: "Successfully transcribed your message"
-          });
+          if (autoSubmit) {
+            onAutoSubmitMessage?.(transcription);
+            toast({
+              title: "Voice message sent",
+              description: "Your message was automatically sent to Aura"
+            });
+          } else {
+            onVoiceMessage?.(transcription);
+            toast({
+              title: "Voice captured",
+              description: "Successfully transcribed your message"
+            });
+          }
         } catch (error) {
           console.error('Transcription failed:', error);
         }
@@ -209,6 +221,11 @@ export function VoiceInterface({
     }
     return 'Adaptive';
   };
+
+  // Expose playResponse method via ref
+  React.useImperativeHandle(ref, () => ({
+    playResponse
+  }));
 
   return (
     <Card className="w-full">
@@ -335,4 +352,4 @@ export function VoiceInterface({
       </CardContent>
     </Card>
   );
-}
+});

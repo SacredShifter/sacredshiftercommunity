@@ -47,6 +47,7 @@ export function AuraConversation() {
   const [isTyping, setIsTyping] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const voiceInterfaceRef = useRef<any>(null);
   const { toast } = useToast();
 
   const {
@@ -396,13 +397,59 @@ export function AuraConversation() {
 
         {/* Voice Interface */}
         <VoiceInterface
+          ref={voiceInterfaceRef}
           onVoiceMessage={(message) => {
             setInputText(message);
+          }}
+          onAutoSubmitMessage={async (message) => {
+            // Auto-submit voice messages
+            const userMessage: ConversationMessage = {
+              id: `user-${Date.now()}`,
+              content: message,
+              type: 'user',
+              timestamp: new Date()
+            };
+
+            setMessages(prev => [...prev, userMessage]);
+            setIsTyping(true);
+
+            try {
+              const response = await engageAura(message);
+              setIsTyping(false);
+
+              if (response.success && response.result) {
+                const auraMessage: ConversationMessage = {
+                  id: `aura-${Date.now()}`,
+                  content: typeof response.result.content === 'string' 
+                    ? response.result.content 
+                    : JSON.stringify(response.result.content, null, 2),
+                  type: 'aura',
+                  timestamp: new Date(),
+                  personality: response.result.response_method || 'adaptive',
+                  confidence: response.result.consciousness_state ? 0.85 : 0.75,
+                  reasoning: response.result.method_explanation,
+                  tools_used: response.result.tools_used || []
+                };
+
+                setMessages(prev => [...prev, auraMessage]);
+                
+                // Auto-generate voice response
+                setTimeout(() => {
+                  if (voiceInterfaceRef.current && auraMessage.content) {
+                    voiceInterfaceRef.current.playResponse(auraMessage.content);
+                  }
+                }, 500);
+              }
+            } catch (error) {
+              setIsTyping(false);
+              console.error('Voice conversation error:', error);
+            }
           }}
           currentPersonality={messages[messages.length - 1]?.personality}
           consciousnessState={consciousnessState}
           isAuraSpeaking={isTyping}
           disabled={loading}
+          autoSubmit={true}
         />
 
         {/* Input Area */}
