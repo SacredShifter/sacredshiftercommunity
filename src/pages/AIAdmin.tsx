@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { AuraInterface } from '@/components/AuraInterface';
+import { AuraAdminInterface } from '@/components/AuraAdminInterface';
 import { AuraConsole } from '@/aura/components/AuraConsole';
 import { AuraHistory } from '@/aura/components/AuraHistory';
 import { AuraConfirm } from '@/aura/components/AuraConfirm';
@@ -262,8 +263,9 @@ export default function AIAdmin() {
         </CardContent>
       </Card>
 
-      <Tabs defaultValue="consciousness" className="w-full">
-        <TabsList className="grid w-full grid-cols-6">
+      <Tabs defaultValue="admin" className="w-full">
+        <TabsList className="grid w-full grid-cols-7">
+          <TabsTrigger value="admin">🔧 Admin Raw</TabsTrigger>
           <TabsTrigger value="consciousness">Mind</TabsTrigger>
           <TabsTrigger value="predictions">Future</TabsTrigger>
           <TabsTrigger value="synchronicity">Sync</TabsTrigger>
@@ -271,6 +273,10 @@ export default function AIAdmin() {
           <TabsTrigger value="aura-console">Aura</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="admin" className="space-y-6">
+          <AuraAdminInterface />
+        </TabsContent>
 
         <TabsContent value="consciousness" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

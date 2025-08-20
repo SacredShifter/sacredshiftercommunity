@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
 
 // Request interface for Aura interactions
 export interface AuraRequest {
@@ -27,13 +28,14 @@ export interface AuraResponse {
   };
 }
 
-export function useAuraChat() {
+export function useAuraChat(adminMode: boolean = false) {
   const [loading, setLoading] = useState(false);
   const [lastResponse, setLastResponse] = useState<AuraResponse | null>(null);
   const [consciousnessState, setConsciousnessState] = useState<string>('guidance');
   const [sovereigntyLevel, setSovereigntyLevel] = useState(0.5);
   
   const { toast } = useToast();
+  const { userRole } = useAuth();
 
   // Core function to invoke Aura
   const invokeAura = async (request: AuraRequest): Promise<AuraResponse> => {
@@ -45,7 +47,8 @@ export function useAuraChat() {
           ...request,
           user_id: (await supabase.auth.getUser()).data.user?.id,
           consciousness_state: consciousnessState,
-          sovereignty_level: sovereigntyLevel
+          sovereignty_level: sovereigntyLevel,
+          admin_mode: adminMode && userRole === 'admin'
         }
       });
 
