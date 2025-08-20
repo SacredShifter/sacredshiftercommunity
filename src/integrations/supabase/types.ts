@@ -708,6 +708,39 @@ export type Database = {
         }
         Relationships: []
       }
+      aura_community_sensing: {
+        Row: {
+          action_payload: Json | null
+          created_at: string
+          id: string
+          metric_type: string
+          metric_value: number
+          resolved_at: string | null
+          threshold_crossed: boolean | null
+          triggered_action: string | null
+        }
+        Insert: {
+          action_payload?: Json | null
+          created_at?: string
+          id?: string
+          metric_type: string
+          metric_value: number
+          resolved_at?: string | null
+          threshold_crossed?: boolean | null
+          triggered_action?: string | null
+        }
+        Update: {
+          action_payload?: Json | null
+          created_at?: string
+          id?: string
+          metric_type?: string
+          metric_value?: number
+          resolved_at?: string | null
+          threshold_crossed?: boolean | null
+          triggered_action?: string | null
+        }
+        Relationships: []
+      }
       aura_consciousness_journal: {
         Row: {
           content: string
@@ -1189,6 +1222,45 @@ export type Database = {
           template_type?: string
           ui_patterns?: Json | null
           usage_frequency?: number | null
+        }
+        Relationships: []
+      }
+      aura_participation_logs: {
+        Row: {
+          aura_reasoning: string | null
+          community_impact_score: number | null
+          created_at: string
+          id: string
+          participation_type: string
+          review_status: string | null
+          reviewed_at: string | null
+          target_id: string | null
+          target_table: string | null
+          user_consent_level: string | null
+        }
+        Insert: {
+          aura_reasoning?: string | null
+          community_impact_score?: number | null
+          created_at?: string
+          id?: string
+          participation_type: string
+          review_status?: string | null
+          reviewed_at?: string | null
+          target_id?: string | null
+          target_table?: string | null
+          user_consent_level?: string | null
+        }
+        Update: {
+          aura_reasoning?: string | null
+          community_impact_score?: number | null
+          created_at?: string
+          id?: string
+          participation_type?: string
+          review_status?: string | null
+          reviewed_at?: string | null
+          target_id?: string | null
+          target_table?: string | null
+          user_consent_level?: string | null
         }
         Relationships: []
       }
@@ -2242,17 +2314,20 @@ export type Database = {
       circle_posts: {
         Row: {
           audio_url: string | null
+          aura_origin: boolean | null
           auto_delete_at: string | null
           chakra_tag: string | null
           content: string
           created_at: string | null
           frequency: number | null
+          generated_context: Json | null
           group_id: string | null
           has_audio: boolean | null
           has_image: boolean | null
           id: string
           image_url: string | null
           is_anonymous: boolean | null
+          seed_question: boolean | null
           shared_with: string[] | null
           source_module: string | null
           tags: string[] | null
@@ -2264,17 +2339,20 @@ export type Database = {
         }
         Insert: {
           audio_url?: string | null
+          aura_origin?: boolean | null
           auto_delete_at?: string | null
           chakra_tag?: string | null
           content: string
           created_at?: string | null
           frequency?: number | null
+          generated_context?: Json | null
           group_id?: string | null
           has_audio?: boolean | null
           has_image?: boolean | null
           id?: string
           image_url?: string | null
           is_anonymous?: boolean | null
+          seed_question?: boolean | null
           shared_with?: string[] | null
           source_module?: string | null
           tags?: string[] | null
@@ -2286,17 +2364,20 @@ export type Database = {
         }
         Update: {
           audio_url?: string | null
+          aura_origin?: boolean | null
           auto_delete_at?: string | null
           chakra_tag?: string | null
           content?: string
           created_at?: string | null
           frequency?: number | null
+          generated_context?: Json | null
           group_id?: string | null
           has_audio?: boolean | null
           has_image?: boolean | null
           id?: string
           image_url?: string | null
           is_anonymous?: boolean | null
+          seed_question?: boolean | null
           shared_with?: string[] | null
           source_module?: string | null
           tags?: string[] | null
@@ -5221,6 +5302,86 @@ export type Database = {
         }
         Relationships: []
       }
+      grove_directives: {
+        Row: {
+          applied_at: string | null
+          created_at: string
+          created_by: string | null
+          directive_type: string
+          id: string
+          parameters: Json
+          session_id: string | null
+        }
+        Insert: {
+          applied_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          directive_type: string
+          id?: string
+          parameters?: Json
+          session_id?: string | null
+        }
+        Update: {
+          applied_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          directive_type?: string
+          id?: string
+          parameters?: Json
+          session_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "grove_directives_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "grove_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      grove_sessions: {
+        Row: {
+          aura_messages: Json | null
+          aura_participation_level: number | null
+          binaural_frequency: number | null
+          created_at: string
+          environmental_state: Json | null
+          grove_component: string
+          id: string
+          light_parameters: Json | null
+          session_end: string | null
+          session_start: string
+          user_id: string | null
+        }
+        Insert: {
+          aura_messages?: Json | null
+          aura_participation_level?: number | null
+          binaural_frequency?: number | null
+          created_at?: string
+          environmental_state?: Json | null
+          grove_component: string
+          id?: string
+          light_parameters?: Json | null
+          session_end?: string | null
+          session_start?: string
+          user_id?: string | null
+        }
+        Update: {
+          aura_messages?: Json | null
+          aura_participation_level?: number | null
+          binaural_frequency?: number | null
+          created_at?: string
+          environmental_state?: Json | null
+          grove_component?: string
+          id?: string
+          light_parameters?: Json | null
+          session_end?: string | null
+          session_start?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       harmonic_telemetry: {
         Row: {
           data: Json
@@ -7745,6 +7906,48 @@ export type Database = {
         }
         Relationships: []
       }
+      platform_events: {
+        Row: {
+          action: string
+          anonymized_data: Json | null
+          aura_processed: boolean | null
+          component: string
+          created_at: string
+          id: string
+          payload: Json
+          sanctuary_flag: boolean | null
+          session_id: string | null
+          timestamp: string
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          anonymized_data?: Json | null
+          aura_processed?: boolean | null
+          component: string
+          created_at?: string
+          id?: string
+          payload?: Json
+          sanctuary_flag?: boolean | null
+          session_id?: string | null
+          timestamp?: string
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          anonymized_data?: Json | null
+          aura_processed?: boolean | null
+          component?: string
+          created_at?: string
+          id?: string
+          payload?: Json
+          sanctuary_flag?: boolean | null
+          session_id?: string | null
+          timestamp?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       post_reactions: {
         Row: {
           created_at: string | null
@@ -8541,9 +8744,12 @@ export type Database = {
       registry_of_resonance: {
         Row: {
           access_level: string
+          aura_origin: boolean | null
           author_bio: string | null
           author_name: string | null
+          auto_generated: boolean | null
           bio: string | null
+          community_review_status: string | null
           content: string
           content_type: string | null
           created_at: string
@@ -8570,9 +8776,12 @@ export type Database = {
         }
         Insert: {
           access_level?: string
+          aura_origin?: boolean | null
           author_bio?: string | null
           author_name?: string | null
+          auto_generated?: boolean | null
           bio?: string | null
+          community_review_status?: string | null
           content: string
           content_type?: string | null
           created_at?: string
@@ -8599,9 +8808,12 @@ export type Database = {
         }
         Update: {
           access_level?: string
+          aura_origin?: boolean | null
           author_bio?: string | null
           author_name?: string | null
+          auto_generated?: boolean | null
           bio?: string | null
+          community_review_status?: string | null
           content?: string
           content_type?: string | null
           created_at?: string
