@@ -3,7 +3,6 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "@/hooks/useAuth";
 import { TourProvider } from "@/components/TourProvider";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import AdminRoute from "@/components/AdminRoute";
@@ -29,6 +28,7 @@ import Support from "./pages/Support";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import AIAdmin from "./pages/AIAdmin";
+import AuraAdmin from "./pages/AuraAdmin";
 import { Outlet } from "react-router-dom";
 
 const queryClient = new QueryClient();
@@ -37,68 +37,71 @@ const App = () => {
   return (
     <ErrorBoundary name="Root">
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <div className="min-h-screen relative">
-              <UIErrorBoundary>
-                <ParallaxBackground />
-              </UIErrorBoundary>
-              
-              <BrowserRouter>
-                <Routes>
-                  <Route path="/auth" element={<Auth />} />
-                  <Route
-                    element={
-                      <ProtectedRoute>
-                        <TourProvider>
-                          <MainLayout />
-                        </TourProvider>
-                      </ProtectedRoute>
-                    }
-                  >
-                    <Route path="/" element={<Index />} />
-                    <Route path="/feed" element={<Feed />} />
-                    <Route path="/messages" element={<Messages />} />
-                    <Route path="/circles"element={<Circles />} />
-                    <Route path="/journal" element={<Journal />} />
-                    <Route path="/videos" element={<VideoLibrary />} />
-                    <Route path="/registry" element={<Registry />} />
-                    <Route path="/codex" element={<Codex />} />
-                    <Route path="/guidebook" element={<Guidebook />} />
-                    <Route path="/support" element={<Support />} />
-                    <Route path="/profile" element={<Profile />} />
-                    <Route path="/settings" element={<Settings />} />
-                    <Route path="/ai-admin" element={
-                      <AdminRoute>
-                        <AIAdmin />
-                      </AdminRoute>
-                    } />
-                  </Route>
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <div className="min-h-screen relative">
+            <UIErrorBoundary>
+              <ParallaxBackground />
+            </UIErrorBoundary>
+            
+            <BrowserRouter>
+              <Routes>
+                <Route path="/auth" element={<Auth />} />
+                <Route
+                  element={
+                    <ProtectedRoute>
+                      <TourProvider>
+                        <MainLayout />
+                      </TourProvider>
+                    </ProtectedRoute>
+                  }
+                >
+                  <Route path="/" element={<Index />} />
+                  <Route path="/feed" element={<Feed />} />
+                  <Route path="/messages" element={<Messages />} />
+                  <Route path="/circles" element={<Circles />} />
+                  <Route path="/journal" element={<Journal />} />
+                  <Route path="/videos" element={<VideoLibrary />} />
+                  <Route path="/registry" element={<Registry />} />
+                  <Route path="/codex" element={<Codex />} />
+                  <Route path="/guidebook" element={<Guidebook />} />
+                  <Route path="/support" element={<Support />} />
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/settings" element={<Settings />} />
+                  <Route path="/ai-admin" element={
+                    <AdminRoute>
+                      <AIAdmin />
+                    </AdminRoute>
+                  } />
+                  <Route path="/aura-admin" element={
+                    <AdminRoute>
+                      <AuraAdmin />
+                    </AdminRoute>
+                  } />
+                </Route>
+                <Route path="*" element={<NotFound />} />
+              </Routes>
 
-                {/* Global floating components */}
-                <div className="fixed top-4 right-4 z-50 flex items-center gap-3">
-                  <AudioErrorBoundary>
-                    <SacredSoundscape />
-                  </AudioErrorBoundary>
-                </div>
-
-                <div className="fixed bottom-20 right-4 z-50">
-                  <UIErrorBoundary>
-                    <AIChatBubble />
-                  </UIErrorBoundary>
-                </div>
-
+              {/* Global floating components */}
+              <div className="fixed top-4 right-4 z-50 flex items-center gap-3">
                 <AudioErrorBoundary>
-                  <BreathOfSource />
+                  <SacredSoundscape />
                 </AudioErrorBoundary>
-              </BrowserRouter>
-            </div>
-          </TooltipProvider>
-        </AuthProvider>
+              </div>
+
+              <div className="fixed bottom-20 right-4 z-50">
+                <UIErrorBoundary>
+                  <AIChatBubble />
+                </UIErrorBoundary>
+              </div>
+
+              <AudioErrorBoundary>
+                <BreathOfSource />
+              </AudioErrorBoundary>
+            </BrowserRouter>
+          </div>
+        </TooltipProvider>
       </QueryClientProvider>
     </ErrorBoundary>
   );
