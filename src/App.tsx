@@ -7,8 +7,10 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import AdminRoute from "@/components/AdminRoute";
 import { MainLayout } from "@/components/MainLayout";
 import { ParallaxBackground } from "@/components/ParallaxBackground";
-import { ModernToolbar } from "@/components/ModernToolbar";
-import { ErrorBoundary, UIErrorBoundary } from "@/components/ErrorBoundary";
+import { AIChatBubble } from "@/components/AIChatBubble";
+import BreathOfSource from "@/components/BreathOfSource";
+import { SacredSoundscape } from "@/components/SacredSoundscape";
+import { ErrorBoundary, UIErrorBoundary, AudioErrorBoundary } from "@/components/ErrorBoundary";
 
 import Index from "./pages/Index";
 import Feed from "./pages/Feed";
@@ -75,8 +77,20 @@ function App() {
               <Route path="*" element={<NotFound />} />
             </Routes>
 
-            {/* Simple Modern Toolbar */}
-            <ModernToolbar />
+            {/* Separate functional components positioned like a toolbar */}
+            <div className="fixed top-16 right-4 z-50 flex items-start gap-4">
+              <AudioErrorBoundary>
+                <BreathOfSource />
+              </AudioErrorBoundary>
+              
+              <UIErrorBoundary>
+                <AIChatBubble />
+              </UIErrorBoundary>
+              
+              <AudioErrorBoundary>
+                <SacredSoundscape />
+              </AudioErrorBoundary>
+            </div>
           </div>
         </TooltipProvider>
     </ErrorBoundary>
