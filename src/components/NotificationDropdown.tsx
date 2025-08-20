@@ -39,7 +39,7 @@ export const NotificationDropdown = () => {
         </Button>
       </DropdownMenuTrigger>
       
-      <DropdownMenuContent className="w-80 z-50" align="end" alignOffset={-100} sideOffset={8}>
+      <DropdownMenuContent className="w-80 !z-[100] bg-background/95 backdrop-blur-md border border-border shadow-2xl" align="end" alignOffset={-100} sideOffset={8}>
         <div className="p-4 border-b">
           <div className="flex items-center justify-between">
             <h4 className="font-semibold">Notifications</h4>
