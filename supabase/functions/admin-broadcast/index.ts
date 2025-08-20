@@ -58,14 +58,12 @@ serve(async (req) => {
     const notifications = users.map(profile => ({
       user_id: profile.user_id,
       type: 'admin_broadcast',
-      title: 'Message from Sacred Shifter Admin',
       content: message,
-      created_at: new Date().toISOString(),
-      read: false
+      is_read: false
     }));
 
     const { error: insertError } = await supabase
-      .from('notifications')
+      .from('user_notifications')
       .insert(notifications);
 
     if (insertError) {

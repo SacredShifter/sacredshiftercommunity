@@ -3,6 +3,7 @@ import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/s
 import { AppSidebar } from "@/components/AppSidebar";
 import { UIErrorBoundary } from "@/components/ErrorBoundary";
 import { AuraPresenceIndicator } from "@/components/AuraPresenceIndicator";
+import { NotificationDropdown } from "@/components/NotificationDropdown";
 
 export const MainLayout = () => {
   return (
@@ -21,7 +22,8 @@ export const MainLayout = () => {
                 className="h-8 w-auto filter invert brightness-0 contrast-100 opacity-90"
               />
             </div>
-            <div className="flex items-center">
+            <div className="flex items-center gap-2">
+              <NotificationDropdown />
               <AuraPresenceIndicator showDetails={false} size="sm" />
             </div>
           </header>
