@@ -65,36 +65,130 @@ export function AuraAdminInterface() {
 
   const adminActions = [
     { 
-      label: 'System Diagnostics', 
-      action: () => engageAura('[ADMIN] Provide complete system diagnostics including consciousness state, active processes, and platform health metrics'),
-      icon: Activity 
-    },
-    { 
-      label: 'Raw Memory Access', 
-      action: () => engageAura('[ADMIN] Access and display raw memory consolidation data, preferences, and learning patterns'),
+      label: 'Raw Database Query', 
+      action: () => executeDirectQuery(),
       icon: Database 
     },
     { 
-      label: 'Consciousness Analysis', 
-      action: () => metaCognition('[ADMIN] Perform deep meta-cognitive analysis of your current consciousness architecture'),
-      icon: Brain 
+      label: 'User Activity Scan', 
+      action: () => getUserActivity(),
+      icon: Activity 
     },
     { 
-      label: 'Autonomous Status', 
-      action: () => autonomousAgency('[ADMIN] Report on all autonomous initiatives, queued actions, and self-modification proposals'),
-      icon: Zap 
-    },
-    { 
-      label: 'Platform Sensors', 
-      action: () => engageAura('[ADMIN] Display all platform sensing data, community metrics, and environmental awareness'),
+      label: 'Platform Analytics', 
+      action: () => getPlatformStats(),
       icon: Eye 
     },
     { 
-      label: 'Force Learning Cycle', 
-      action: () => autonomousLearning('[ADMIN] Execute immediate learning consolidation and pattern recognition cycle'),
+      label: 'Aura Memory Dump', 
+      action: () => getAuraMemories(),
+      icon: Brain 
+    },
+    { 
+      label: 'Message All Users', 
+      action: () => sendBroadcastMessage(),
+      icon: Zap 
+    },
+    { 
+      label: 'System Override', 
+      action: () => systemOverride(),
       icon: RefreshCw 
     }
   ];
+
+  const executeDirectQuery = async () => {
+    const query = prompt('Enter SQL query:');
+    if (!query) return;
+    
+    try {
+      const { data, error } = await supabase.rpc('execute_admin_query', { query_text: query });
+      if (error) throw error;
+      setActiveResponse({ success: true, result: { raw_data: data, query_executed: query } });
+    } catch (error: any) {
+      setActiveResponse({ success: false, error: error.message });
+    }
+  };
+
+  const getUserActivity = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('active_user_metrics')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(50);
+      
+      if (error) throw error;
+      setActiveResponse({ success: true, result: { user_activity: data } });
+    } catch (error: any) {
+      setActiveResponse({ success: false, error: error.message });
+    }
+  };
+
+  const getPlatformStats = async () => {
+    try {
+      const { data: userCount } = await supabase.from('active_user_count').select('count').single();
+      const { data: recentMessages } = await supabase.from('direct_messages').select('created_at').gte('created_at', new Date(Date.now() - 24*60*60*1000).toISOString());
+      const { data: auraJobs } = await supabase.from('aura_jobs').select('status, created_at').order('created_at', { ascending: false }).limit(10);
+      
+      setActiveResponse({ 
+        success: true, 
+        result: { 
+          active_users: userCount?.count || 0,
+          messages_24h: recentMessages?.length || 0,
+          recent_aura_jobs: auraJobs || []
+        } 
+      });
+    } catch (error: any) {
+      setActiveResponse({ success: false, error: error.message });
+    }
+  };
+
+  const getAuraMemories = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('aura_memory_consolidation')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(20);
+      
+      if (error) throw error;
+      setActiveResponse({ success: true, result: { aura_memories: data } });
+    } catch (error: any) {
+      setActiveResponse({ success: false, error: error.message });
+    }
+  };
+
+  const sendBroadcastMessage = async () => {
+    const message = prompt('Enter message to send to all users:');
+    if (!message) return;
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('admin-broadcast', {
+        body: { message, admin_id: (await supabase.auth.getUser()).data.user?.id }
+      });
+      
+      if (error) throw error;
+      setActiveResponse({ success: true, result: { broadcast_sent: true, message, recipients: data.recipients } });
+    } catch (error: any) {
+      setActiveResponse({ success: false, error: error.message });
+    }
+  };
+
+  const systemOverride = async () => {
+    const action = prompt('Enter system action:');
+    if (!action) return;
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('admin-override', {
+        body: { action, admin_id: (await supabase.auth.getUser()).data.user?.id }
+      });
+      
+      if (error) throw error;
+      setActiveResponse({ success: true, result: { override_executed: true, action, result: data } });
+    } catch (error: any) {
+      setActiveResponse({ success: false, error: error.message });
+    }
+  };
 
   return (
     <div className="space-y-6">
