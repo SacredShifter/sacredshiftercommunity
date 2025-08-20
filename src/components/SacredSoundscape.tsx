@@ -224,7 +224,7 @@ export const SacredSoundscape = () => {
         )}
         {/* Sacred Frequency Fan */}
         {showFrequencies && (
-          <div className="absolute top-16 left-0">
+          <div className="absolute top-16 -left-20">
             {sacredFrequencies.map((freq, index) => {
               const angle = (index * 360) / sacredFrequencies.length;
               const radius = 120;
