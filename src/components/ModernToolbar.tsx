@@ -11,43 +11,40 @@ import {
   MessageCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AIChatBubble } from '@/components/AIChatBubble';
-import { SacredSoundscape } from '@/components/SacredSoundscape';
-import BreathOfSource from '@/components/BreathOfSource';
 
-export const ModernToolbar = () => {
-  const [expandedTool, setExpandedTool] = useState<string | null>(null);
-  const [isToolbarExpanded, setIsToolbarExpanded] = useState(false);
+interface ModernToolbarProps {
+  onToolToggle: (tool: string, isActive: boolean) => void;
+  activeTool: string | null;
+}
 
+export const ModernToolbar = ({ onToolToggle, activeTool }: ModernToolbarProps) => {
   const tools = [
     {
       id: 'ai',
       name: 'AI Assistant',
       icon: Brain,
       color: 'from-blue-500 to-purple-600',
-      glowColor: 'rgba(59, 130, 246, 0.5)',
-      component: <AIChatBubble className="absolute top-full right-0 mt-2" />
+      glowColor: 'rgba(59, 130, 246, 0.5)'
     },
     {
       id: 'breath',
       name: 'Breath of Source',
       icon: Wind,
       color: 'from-emerald-500 to-teal-600', 
-      glowColor: 'rgba(16, 185, 129, 0.5)',
-      component: <BreathOfSource />
+      glowColor: 'rgba(16, 185, 129, 0.5)'
     },
     {
       id: 'frequency',
       name: 'Sacred Frequencies',
       icon: Waves,
       color: 'from-purple-500 to-pink-600',
-      glowColor: 'rgba(147, 51, 234, 0.5)',
-      component: <SacredSoundscape />
+      glowColor: 'rgba(147, 51, 234, 0.5)'
     }
   ];
 
   const handleToolClick = (toolId: string) => {
-    setExpandedTool(expandedTool === toolId ? null : toolId);
+    const isCurrentlyActive = activeTool === toolId;
+    onToolToggle(toolId, !isCurrentlyActive);
   };
 
   return (
@@ -65,7 +62,7 @@ export const ModernToolbar = () => {
             {/* Main Tools */}
             {tools.map((tool, index) => {
               const IconComponent = tool.icon;
-              const isActive = expandedTool === tool.id;
+              const isActive = activeTool === tool.id;
               
               return (
                 <motion.div
@@ -152,49 +149,13 @@ export const ModernToolbar = () => {
           </div>
         </div>
 
-        {/* Expanded Tool Content */}
-        <AnimatePresence>
-          {expandedTool && (
-            <motion.div
-              className="absolute top-full right-0 mt-3 z-50"
-              initial={{ opacity: 0, y: -10, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -10, scale: 0.95 }}
-              transition={{ duration: 0.2 }}
-            >
-              <div className="bg-background/95 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl overflow-hidden">
-                {/* Tool Header */}
-                <div className="px-4 py-3 border-b border-white/10">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-medium text-primary">
-                      {tools.find(t => t.id === expandedTool)?.name}
-                    </h3>
-                    <Button
-                      onClick={() => setExpandedTool(null)}
-                      variant="ghost"
-                      size="sm"
-                      className="h-6 w-6 p-0 hover:bg-white/10"
-                    >
-                      ✕
-                    </Button>
-                  </div>
-                </div>
-                
-                {/* Tool Content */}
-                <div className="p-4 min-w-[300px]">
-                  {tools.find(t => t.id === expandedTool)?.component}
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
 
         {/* Background Glow */}
         <motion.div
           className="absolute inset-0 rounded-2xl bg-gradient-to-r from-primary/20 to-secondary/20 blur-xl -z-10"
           animate={{
-            scale: expandedTool ? 1.1 : 1,
-            opacity: expandedTool ? 0.8 : 0.3
+            scale: activeTool ? 1.1 : 1,
+            opacity: activeTool ? 0.8 : 0.3
           }}
           transition={{ duration: 0.3 }}
         />
