@@ -172,7 +172,11 @@ export const SacredGroveEntry: React.FC<SacredGroveEntryProps> = ({ onPathSelect
                     </div>
 
                     <Button
-                      onClick={() => setShowWelcome(false)}
+                      onClick={() => {
+                        console.log('Ready button clicked, showWelcome:', showWelcome);
+                        setShowWelcome(false);
+                        console.log('setShowWelcome(false) called');
+                      }}
                       className="bg-primary/10 hover:bg-primary/20 text-primary border border-primary/30"
                       size="lg"
                     >
