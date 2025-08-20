@@ -15,7 +15,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { usePersonalSignature } from '@/hooks/usePersonalSignature';
 import { useCommunityResonance } from '@/hooks/useCommunityResonance';
 import { useWisdomEcosystem } from '@/hooks/useWisdomEcosystem';
-import { useAuraPlatformIntegration } from '@/hooks/useAuraPlatformIntegration';
+import { useAuraPlatformAwareness } from '@/hooks/useAuraPlatformAwareness';
 import { supabase } from '@/integrations/supabase/client';
 
 type PathType = 'discovery' | 'purpose' | 'connection';
@@ -38,7 +38,7 @@ export const SacredGrove: React.FC<SacredGroveProps> = ({ isVisible, onClose }) 
   const { signature, isAnalyzing } = usePersonalSignature();
   const { resonanceState } = useCommunityResonance();
   const { getEcosystemInsights } = useWisdomEcosystem();
-  const { recordGroveActivity, requestAuraEmission, recordPlatformEvent } = useAuraPlatformIntegration();
+  const { recordGroveActivity, notifyAuraOfEvent } = useAuraPlatformAwareness();
   
   const [groveState, setGroveState] = useState<GroveState>({
     hasEntered: false,
@@ -48,27 +48,16 @@ export const SacredGrove: React.FC<SacredGroveProps> = ({ isVisible, onClose }) 
     ecosystemView: 'overview'
   });
 
-  const handlePathSelect = (path: PathType) => {
+  const handlePathSelect = async (path: PathType) => {
     setGroveState(prev => ({
       ...prev,
       hasEntered: true,
       selectedPath: path
     }));
 
-    // Notify Aura of Grove entry and request environmental optimization
-    recordGroveActivity('entry', `${path}_path`, { selected_path: path });
-    requestAuraEmission({
-      emission_type: 'grove_directive',
-      target_component: 'grove',
-      payload: {
-        directive_type: 'ambiance',
-        parameters: {
-          ambiance_level: 0.8,
-          wind_intensity: 0.6
-        }
-      },
-      reasoning: `User selected ${path} path, optimizing environment for this journey`
-    });
+    // Notify Aura of Grove entry via platform awareness
+    await recordGroveActivity('entry', `${path}_path`, { selected_path: path });
+    await notifyAuraOfEvent('grove_path_selected', { path, user_id: user?.id });
   };
 
   const handlePathComplete = async (pathData: any) => {
@@ -96,17 +85,13 @@ export const SacredGrove: React.FC<SacredGroveProps> = ({ isVisible, onClose }) 
       }
     }
 
-    // Notify Aura of path completion via platform events
-    recordGroveActivity('interaction', 'path_completion', pathData);
-    await recordPlatformEvent({
-      component: 'grove',
-      action: 'grove_path_completed',
-      payload: { 
-        pathData, 
-        user_id: user?.id,
-        wisdom_gained: pathData.insights 
-      }
-    });
+    // Notify Aura of path completion via platform awareness
+    await recordGroveActivity('interaction', 'path_completion', pathData);
+    await notifyAuraOfEvent('grove_path_completed', { 
+      pathData, 
+      user_id: user?.id,
+      wisdom_gained: pathData.insights 
+    }, true);
 
     // Navigate to Grove ecosystem view
     setTimeout(() => {

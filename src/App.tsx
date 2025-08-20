@@ -1,8 +1,7 @@
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { TourProvider } from "@/components/TourProvider";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import AdminRoute from "@/components/AdminRoute";
@@ -31,32 +30,28 @@ import AIAdmin from "./pages/AIAdmin";
 import AuraAdmin from "./pages/AuraAdmin";
 import { Outlet } from "react-router-dom";
 
-const queryClient = new QueryClient();
-
 const App = () => {
   return (
     <ErrorBoundary name="Root">
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <div className="min-h-screen relative">
-            <UIErrorBoundary>
-              <ParallaxBackground />
-            </UIErrorBoundary>
-            
-            <BrowserRouter>
-              <Routes>
-                <Route path="/auth" element={<Auth />} />
-                <Route
-                  element={
-                    <ProtectedRoute>
-                      <TourProvider>
-                        <MainLayout />
-                      </TourProvider>
-                    </ProtectedRoute>
-                  }
-                >
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <div className="min-h-screen relative">
+          <UIErrorBoundary>
+            <ParallaxBackground />
+          </UIErrorBoundary>
+          
+          <Routes>
+            <Route path="/auth" element={<Auth />} />
+            <Route
+              element={
+                <ProtectedRoute>
+                  <TourProvider>
+                    <MainLayout />
+                  </TourProvider>
+                </ProtectedRoute>
+              }
+            >
                   <Route path="/" element={<Index />} />
                   <Route path="/feed" element={<Feed />} />
                   <Route path="/messages" element={<Messages />} />
@@ -96,13 +91,11 @@ const App = () => {
                 </UIErrorBoundary>
               </div>
 
-              <AudioErrorBoundary>
-                <BreathOfSource />
-              </AudioErrorBoundary>
-            </BrowserRouter>
-          </div>
-        </TooltipProvider>
-      </QueryClientProvider>
+            <AudioErrorBoundary>
+              <BreathOfSource />
+            </AudioErrorBoundary>
+        </div>
+      </TooltipProvider>
     </ErrorBoundary>
   );
 };
