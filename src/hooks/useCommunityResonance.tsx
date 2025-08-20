@@ -86,10 +86,12 @@ export function useCommunityResonance() {
 
       if (resonanceData && resonanceData.length > 0) {
         const latest = resonanceData[0].data;
-        setResonanceState(prev => ({
-          ...prev,
-          ...latest
-        }));
+        if (latest && typeof latest === 'object' && !Array.isArray(latest)) {
+          setResonanceState(prev => ({
+            ...prev,
+            ...latest as Partial<CommunityResonanceState>
+          }));
+        }
       }
 
       // Get active fields
@@ -110,7 +112,7 @@ export function useCommunityResonance() {
 
       if (error) throw error;
 
-      const fields = fieldsData?.map(f => f.data as ResonanceField) || [];
+      const fields = fieldsData?.map(f => f.data as unknown as ResonanceField) || [];
       setResonanceState(prev => ({
         ...prev,
         activeFields: fields
