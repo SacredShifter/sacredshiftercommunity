@@ -91,6 +91,19 @@ const sections = [
     ]
   },
   {
+    title: "Consciousness Constellation Mapper",
+    icon: Brain,
+    topics: [
+      "AI-powered consciousness cartography and pattern recognition",
+      "Tracking archetypal activation patterns across time",
+      "Visualizing synchronicity streams and meaningful coincidences",
+      "Understanding consciousness weather and evolutionary momentum",
+      "Sacred geometry visualization of awareness states",
+      "Predictive wisdom algorithms for optimal consciousness work timing",
+      "Community resonance mapping and collective field awareness"
+    ]
+  },
+  {
     title: "Advanced Practices",
     icon: Zap,
     topics: [

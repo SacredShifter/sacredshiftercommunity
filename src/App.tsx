@@ -26,6 +26,7 @@ import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import AIAdmin from "./pages/AIAdmin";
 import AuraAdmin from "./pages/AuraAdmin";
+import ConstellationMapper from "./pages/ConstellationMapper";
 
 function App() {
   return (
@@ -58,6 +59,7 @@ function App() {
                 <Route path="/registry" element={<Registry />} />
                 <Route path="/codex" element={<Codex />} />
                 <Route path="/guidebook" element={<Guidebook />} />
+                <Route path="/constellation" element={<ConstellationMapper />} />
                 <Route path="/support" element={<Support />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/settings" element={<Settings />} />
