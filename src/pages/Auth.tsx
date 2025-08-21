@@ -77,9 +77,18 @@ const Auth = () => {
     const { error } = await signUp(email, password);
     
     if (error) {
+      let title = "Sign Up Failed";
+      let description = error.message;
+      
+      // Handle specific error cases
+      if (error.message.includes("User already registered") || error.message.includes("already exists")) {
+        title = "Account Already Exists";
+        description = "This email is already registered. Try signing in instead, or use a different email address.";
+      }
+      
       toast({
-        title: "Sign Up Failed", 
-        description: error.message,
+        title,
+        description,
         variant: "destructive",
       });
     } else {
