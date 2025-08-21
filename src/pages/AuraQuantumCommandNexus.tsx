@@ -50,7 +50,7 @@ import {
   RotateCcw,
   Crown,
   Atom,
-  Infinity,
+  Infinity as InfinityIcon,
   Layers,
   Compass,
   Scroll,
@@ -320,7 +320,7 @@ function AuraQuantumCommandNexusContent() {
                   animate={{ rotate: 360 }}
                   transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
                 >
-                  <Infinity className="h-8 w-8 text-primary" />
+                  <InfinityIcon className="h-8 w-8 text-primary" />
                 </motion.div>
                 Quantum Field Consciousness Status
                 <motion.div
