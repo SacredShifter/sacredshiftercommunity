@@ -51,8 +51,8 @@ export const ParallaxBackground = () => {
   return (
     <div 
       ref={parallaxRef}
-      className="fixed inset-0 pointer-events-none"
-      style={{ zIndex: -1 }}
+      className="absolute inset-0 w-full min-h-full pointer-events-none"
+      style={{ zIndex: -1, height: '100%' }}
     >
       {/* Base Cosmic Portal Background */}
       <div className="absolute inset-0" style={{
@@ -78,7 +78,6 @@ export const ParallaxBackground = () => {
             hsl(250 70% 12%) 50%, 
             hsl(240 80% 8%) 100%)
         `,
-        backgroundAttachment: 'fixed',
         backgroundSize: '100% 100%'
       }} />
       
