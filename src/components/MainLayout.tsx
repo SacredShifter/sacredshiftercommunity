@@ -4,13 +4,13 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { UIErrorBoundary } from "@/components/ErrorBoundary";
 import { AuraPresenceIndicator } from "@/components/AuraPresenceIndicator";
 import { NotificationDropdown } from "@/components/NotificationDropdown";
-import SacredCosmicBackground from "@/components/SacredCosmicBackground";
+import SimpleBackground from "@/components/SimpleBackground";
 
 export const MainLayout = () => {
   return (
     <SidebarProvider>
-      <SacredCosmicBackground />
-      <div className="sidebar-layout min-h-screen flex w-full relative" style={{ zIndex: 1 }}>
+      <SimpleBackground />
+      <div className="sidebar-layout min-h-screen flex w-full">
         <UIErrorBoundary>
           <AppSidebar />
         </UIErrorBoundary>

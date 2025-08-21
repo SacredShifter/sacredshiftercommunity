@@ -10,7 +10,7 @@ import { Plus, Circle } from 'lucide-react';
 import CreatePostModal from '@/components/CreatePostModal';
 import { ChatBubble } from '@/components/ChatBubble';
 import { SacredSoundscape } from '@/components/SacredSoundscape';
-import { ParallaxBackground } from '@/components/ParallaxBackground';
+
 import { PostInteractionButtons } from '@/components/PostInteractionButtons';
 import { CircleDiscoveryPanel } from '@/components/CircleDiscoveryPanel';
 import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';

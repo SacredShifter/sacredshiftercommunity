@@ -7,7 +7,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import AdminRoute from "@/components/AdminRoute";
 import { MainLayout } from "@/components/MainLayout";
 import { ToolbarWithComponents } from "@/components/ToolbarWithComponents";
-import { ParallaxBackground } from "@/components/ParallaxBackground";
+
 import { ErrorBoundary, UIErrorBoundary } from "@/components/ErrorBoundary";
 
 import Index from "./pages/Index";
@@ -36,9 +36,6 @@ function App() {
         <Toaster />
         <Sonner />
         <div className="min-h-screen relative w-full">
-          <UIErrorBoundary>
-            <ParallaxBackground />
-          </UIErrorBoundary>
           
           <Routes>
             <Route path="/auth" element={<Auth />} />
