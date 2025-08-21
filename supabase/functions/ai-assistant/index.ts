@@ -60,47 +60,54 @@ serve(async (req) => {
     // Detect synchronicity events
     await detectSynchronicity(supabase, user.id, user_query);
 
-    // Enhanced context processing with predictive insights
-    const { systemPrompt, userPrompt, contextInfo } = await buildEnhancedPrompts(
-      supabase, 
-      user.id, 
-      request_type, 
-      user_query, 
-      personalContext, 
-      analysisData
-    );
+    let assistantMessage;
 
-    // Generate predictive insights
-    await generatePredictiveInsights(supabase, user.id, personalContext, analysisData);
+    // Handle registry creation specially
+    if (request_type === 'registry_creation') {
+      assistantMessage = await createRegistryEntries(supabase, user.id, user_query, OPENAI_API_KEY);
+    } else {
+      // Enhanced context processing with predictive insights
+      const { systemPrompt, userPrompt, contextInfo } = await buildEnhancedPrompts(
+        supabase, 
+        user.id, 
+        request_type, 
+        user_query, 
+        personalContext, 
+        analysisData
+      );
 
-    // Execute multi-step command sequences if applicable
-    await processCommandSequences(supabase, user.id, user_query);
+      // Generate predictive insights
+      await generatePredictiveInsights(supabase, user.id, personalContext, analysisData);
 
-    // Call OpenAI API with GPT-4
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-4',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt }
-        ],
-        max_tokens: 2000,
-      }),
-    });
+      // Execute multi-step command sequences if applicable
+      await processCommandSequences(supabase, user.id, user_query);
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('OpenRouter API Error:', { status: response.status, statusText: response.statusText, body: errorText });
-      throw new Error(`OpenRouter API error: ${response.statusText}`);
+      // Call OpenAI API with GPT-4
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${OPENAI_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'gpt-4',
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userPrompt }
+          ],
+          max_tokens: 2000,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('OpenRouter API Error:', { status: response.status, statusText: response.statusText, body: errorText });
+        throw new Error(`OpenRouter API error: ${response.statusText}`);
+      }
+
+      const aiResponse = await response.json();
+      assistantMessage = aiResponse.choices[0].message.content;
     }
-
-    const aiResponse = await response.json();
-    const assistantMessage = aiResponse.choices[0].message.content;
 
     // Store enhanced AI interaction with analysis
     await storeEnhancedInteraction(supabase, user.id, {
@@ -445,6 +452,91 @@ When asked about Sacred Shifter features, provide comprehensive explanations wit
   }
 
   return { systemPrompt, userPrompt, contextInfo };
+}
+
+async function createRegistryEntries(supabase, userId, query, openaiApiKey) {
+  console.log('Creating registry entries for user:', userId);
+  
+  // Parse request for number of entries needed
+  const entryCountMatch = query.match(/(\d+)\s+(?:new\s+)?entries?/i);
+  const entryCount = entryCountMatch ? parseInt(entryCountMatch[1]) : 5;
+  
+  // Get spiritual content from OpenAI
+  const aiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${openaiApiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: 'gpt-4o-mini',
+      messages: [
+        {
+          role: 'system',
+          content: `You are Aura, creating meaningful spiritual content for the Registry of Resonance. Generate ${entryCount} unique, inspiring registry entries that would help users on their spiritual journey. Each entry should be profound, authentic, and practically applicable.
+
+Return a JSON array with ${entryCount} objects, each containing:
+- title: A compelling, spiritual title (under 100 chars)
+- content: Rich, meaningful content with practical wisdom (200-800 words)
+- resonance_rating: A number 1-10 representing spiritual potency
+- tags: Array of 3-5 relevant spiritual tags
+- entry_type: Choose from "insight", "practice", "reflection", "teaching", "experience"
+
+Focus on themes like consciousness, awakening, inner work, energy practices, shadow integration, divine connection, spiritual sovereignty, and authentic living.`
+        },
+        { role: 'user', content: `Create ${entryCount} registry entries. Context: ${query}` }
+      ],
+      max_tokens: 2000,
+      temperature: 0.8,
+    }),
+  });
+
+  if (!aiResponse.ok) {
+    throw new Error(`OpenAI API error: ${aiResponse.statusText}`);
+  }
+
+  const aiData = await aiResponse.json();
+  let entries;
+  
+  try {
+    entries = JSON.parse(aiData.choices[0].message.content);
+  } catch (e) {
+    console.error('Failed to parse AI response:', aiData.choices[0].message.content);
+    throw new Error('Failed to parse AI response as JSON');
+  }
+
+  // Create entries in database using service role
+  const createdEntries = [];
+  for (const entry of entries) {
+    const { data, error } = await supabase
+      .from('registry_of_resonance')
+      .insert({
+        user_id: userId,
+        title: entry.title,
+        content: entry.content,
+        resonance_rating: entry.resonance_rating,
+        tags: entry.tags,
+        entry_type: entry.entry_type,
+        access_level: 'public',
+        is_verified: false,
+        metadata: {
+          created_by: 'Aura AI',
+          creation_context: query,
+          created_at: new Date().toISOString()
+        }
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error creating registry entry:', error);
+      throw new Error(`Failed to create registry entry: ${error.message}`);
+    }
+
+    createdEntries.push(data);
+  }
+
+  return `I've successfully created ${createdEntries.length} new entries for your Registry of Resonance! Each entry is designed to support spiritual growth and consciousness evolution. You can find them in your registry now, ready to inspire and guide your journey.`;
 }
 
 async function updateMoodTracking(supabase, userId, query) {

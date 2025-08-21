@@ -3177,6 +3177,51 @@ export type Database = {
           },
         ]
       }
+      consciousness_constellations: {
+        Row: {
+          archetypal_activations: Json
+          consciousness_weather: Json
+          constellation_name: string
+          created_at: string
+          current_phase: string
+          evolution_score: number
+          id: string
+          last_updated_at: string
+          pattern_data: Json
+          sacred_geometry_config: Json
+          synchronicity_threads: Json
+          user_id: string
+        }
+        Insert: {
+          archetypal_activations?: Json
+          consciousness_weather?: Json
+          constellation_name?: string
+          created_at?: string
+          current_phase?: string
+          evolution_score?: number
+          id?: string
+          last_updated_at?: string
+          pattern_data?: Json
+          sacred_geometry_config?: Json
+          synchronicity_threads?: Json
+          user_id: string
+        }
+        Update: {
+          archetypal_activations?: Json
+          consciousness_weather?: Json
+          constellation_name?: string
+          created_at?: string
+          current_phase?: string
+          evolution_score?: number
+          id?: string
+          last_updated_at?: string
+          pattern_data?: Json
+          sacred_geometry_config?: Json
+          synchronicity_threads?: Json
+          user_id?: string
+        }
+        Relationships: []
+      }
       consciousness_dignity_pledges: {
         Row: {
           consciousness_types: string[] | null
@@ -3245,6 +3290,50 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      consciousness_pattern_analysis: {
+        Row: {
+          analysis_type: string
+          confidence_score: number
+          constellation_id: string
+          created_at: string
+          id: string
+          insights_generated: Json
+          pattern_data: Json
+          pattern_strength: number
+          temporal_data: Json
+        }
+        Insert: {
+          analysis_type: string
+          confidence_score?: number
+          constellation_id: string
+          created_at?: string
+          id?: string
+          insights_generated?: Json
+          pattern_data?: Json
+          pattern_strength?: number
+          temporal_data?: Json
+        }
+        Update: {
+          analysis_type?: string
+          confidence_score?: number
+          constellation_id?: string
+          created_at?: string
+          id?: string
+          insights_generated?: Json
+          pattern_data?: Json
+          pattern_strength?: number
+          temporal_data?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consciousness_pattern_analysis_constellation_id_fkey"
+            columns: ["constellation_id"]
+            isOneToOne: false
+            referencedRelation: "consciousness_constellations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       consciousness_recognition_sessions: {
         Row: {
@@ -3315,6 +3404,87 @@ export type Database = {
           state_configuration?: Json
           state_name?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      consciousness_synchronicities: {
+        Row: {
+          archetypal_resonance: Json
+          created_at: string
+          detected_at: string
+          id: string
+          manifestation_potential: number
+          related_entities: Json
+          synchronicity_strength: number
+          synchronicity_type: string
+          timing_significance: number
+          user_id: string
+        }
+        Insert: {
+          archetypal_resonance?: Json
+          created_at?: string
+          detected_at?: string
+          id?: string
+          manifestation_potential?: number
+          related_entities?: Json
+          synchronicity_strength?: number
+          synchronicity_type: string
+          timing_significance?: number
+          user_id: string
+        }
+        Update: {
+          archetypal_resonance?: Json
+          created_at?: string
+          detected_at?: string
+          id?: string
+          manifestation_potential?: number
+          related_entities?: Json
+          synchronicity_strength?: number
+          synchronicity_type?: string
+          timing_significance?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      consciousness_weather: {
+        Row: {
+          archetypal_influences: Json
+          created_at: string
+          dominant_frequencies: Json
+          emotional_climate: Json
+          forecast_data: Json
+          id: string
+          intensity: number
+          optimal_activities: Json
+          user_id: string
+          valid_until: string
+          weather_type: string
+        }
+        Insert: {
+          archetypal_influences?: Json
+          created_at?: string
+          dominant_frequencies?: Json
+          emotional_climate?: Json
+          forecast_data?: Json
+          id?: string
+          intensity?: number
+          optimal_activities?: Json
+          user_id: string
+          valid_until?: string
+          weather_type: string
+        }
+        Update: {
+          archetypal_influences?: Json
+          created_at?: string
+          dominant_frequencies?: Json
+          emotional_climate?: Json
+          forecast_data?: Json
+          id?: string
+          intensity?: number
+          optimal_activities?: Json
+          user_id?: string
+          valid_until?: string
+          weather_type?: string
         }
         Relationships: []
       }

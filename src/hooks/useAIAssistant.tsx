@@ -4,7 +4,7 @@ import { useAuth } from './useAuth';
 import { toast } from 'sonner';
 
 export interface AIAssistantRequest {
-  request_type: 'registry_analysis' | 'circle_guidance' | 'journal_reflection' | 'general_guidance';
+  request_type: 'registry_analysis' | 'circle_guidance' | 'journal_reflection' | 'registry_creation' | 'general_guidance';
   user_query: string;
   context_data?: any;
 }
@@ -82,6 +82,14 @@ export function useAIAssistant() {
     });
   };
 
+  const createRegistryEntries = async (query: string, count?: number) => {
+    const finalQuery = count ? `Create ${count} new entries. ${query}` : query;
+    return askAssistant({
+      request_type: 'registry_creation',
+      user_query: finalQuery
+    });
+  };
+
   const getGeneralGuidance = async (query: string) => {
     return askAssistant({
       request_type: 'general_guidance',
@@ -96,6 +104,7 @@ export function useAIAssistant() {
     analyzeRegistry,
     getCircleGuidance,
     reflectOnJournal,
+    createRegistryEntries,
     getGeneralGuidance,
   };
 }
