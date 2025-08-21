@@ -8556,7 +8556,6 @@ export type Database = {
           light_level: number | null
           light_points: number | null
           onboarding_completed: boolean
-          role: Database["public"]["Enums"]["app_role"] | null
           updated_at: string | null
           user_id: string | null
         }
@@ -8576,7 +8575,6 @@ export type Database = {
           light_level?: number | null
           light_points?: number | null
           onboarding_completed?: boolean
-          role?: Database["public"]["Enums"]["app_role"] | null
           updated_at?: string | null
           user_id?: string | null
         }
@@ -8596,7 +8594,6 @@ export type Database = {
           light_level?: number | null
           light_points?: number | null
           onboarding_completed?: boolean
-          role?: Database["public"]["Enums"]["app_role"] | null
           updated_at?: string | null
           user_id?: string | null
         }
@@ -16159,6 +16156,10 @@ export type Database = {
               p_table_name: string
               p_user_id: string
             }
+        Returns: undefined
+      }
+      log_security_event: {
+        Args: { details?: Json; event_type: string; user_id: string }
         Returns: undefined
       }
       log_user_activity: {
