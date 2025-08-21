@@ -170,7 +170,7 @@ export default function Messages() {
   }
 
   return (
-    <div className="h-screen max-h-screen flex bg-background/20 backdrop-blur-sm overflow-hidden">
+    <div className="h-[calc(100vh-8rem)] max-h-[calc(100vh-8rem)] flex bg-background/20 backdrop-blur-sm overflow-hidden -m-4 sm:-m-6 md:-m-8">
       {/* Conversations Sidebar */}
       <div className={`${selectedConversationId ? 'hidden lg:flex' : 'flex'} w-full lg:w-80 border-r border-border/30 flex-col`}>
         {/* Header */}
