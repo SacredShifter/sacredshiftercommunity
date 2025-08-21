@@ -1102,17 +1102,20 @@ Generate ${count} complete entries with full admin authority.`;
     if (jsonMatch) {
       const entries = JSON.parse(jsonMatch[0]);
       
-      // Insert all entries into database
+      // Insert all entries into database with correct column mapping
       const dbEntries = entries.map(entry => ({
         user_id: userId,
         title: entry.title,
         content: entry.content,
         tags: entry.tags || [],
-        category: entry.category || 'wisdom',
-        frequency_rating: entry.frequency_rating || 8,
-        resonance_factor: entry.resonance_factor || 0.8,
+        entry_type: entry.category || 'wisdom',
+        resonance_rating: entry.frequency_rating || 8,
+        access_level: 'public',
         is_verified: true,
-        created_at: new Date().toISOString()
+        aura_origin: true,
+        auto_generated: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       }));
 
       const { data, error } = await supabase
