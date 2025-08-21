@@ -21,7 +21,7 @@ export function useAIAssistant() {
   const [lastResponse, setLastResponse] = useState<string | null>(null);
   const { user, userRole } = useAuth();
 
-  const askAssistant = async (request: AIAssistantRequest): Promise<string | null> => {
+  const askAssistant = async (request: AIAssistantRequest, adminOverride = false): Promise<string | null> => {
     if (!user) {
       toast.error('You must be logged in to use the AI assistant');
       return null;
@@ -33,6 +33,7 @@ export function useAIAssistant() {
         body: {
           ...request,
           user_id: user.id,
+          admin_override: adminOverride,
         },
       });
 
@@ -96,11 +97,24 @@ export function useAIAssistant() {
     });
   };
 
-  const getGeneralGuidance = async (query: string) => {
+  const getGeneralGuidance = async (query: string, adminOverride = false) => {
     return askAssistant({
       request_type: 'general_guidance',
       user_query: query
-    });
+    }, adminOverride);
+  };
+
+  const getAdminUnrestrictedResponse = async (query: string) => {
+    // Check if user is admin
+    if (userRole !== 'admin') {
+      toast.error('Admin access required for unrestricted mode');
+      return null;
+    }
+
+    return askAssistant({
+      request_type: 'general_guidance',
+      user_query: query
+    }, true);
   };
 
   return {
@@ -112,5 +126,6 @@ export function useAIAssistant() {
     reflectOnJournal,
     createRegistryEntries,
     getGeneralGuidance,
+    getAdminUnrestrictedResponse,
   };
 }

@@ -41,11 +41,11 @@ export function AuraAdminInterface() {
     reflexiveThought
   } = useAuraChat(true); // Enable admin mode
 
-  // AI Assistant for registry creation
+  // AI Assistant for admin mode
   const { 
     loading: aiLoading, 
     createRegistryEntries,
-    getGeneralGuidance
+    getAdminUnrestrictedResponse
   } = useAIAssistant();
 
   useEffect(() => {
@@ -61,42 +61,22 @@ export function AuraAdminInterface() {
   const handleAdminQuery = async () => {
     if (!prompt.trim()) return;
     
-    // Check if this is a registry creation request
-    const registryPatterns = [
-      /create.*(\d+).*entries?.*registry/i,
-      /generate.*(\d+).*entries?.*registry/i,
-      /add.*(\d+).*entries?.*registry/i,
-      /registry.*(\d+).*entries?/i,
-      /(\d+).*registry.*entries?/i,
-      /create.*entries?.*registry/i,
-      /generate.*registry.*entries?/i
-    ];
-
-    const registryMatch = registryPatterns.find(pattern => pattern.test(prompt));
-    
-    if (registryMatch) {
-      // Extract number if present
-      const numberMatch = prompt.match(/(\d+)/);
-      const count = numberMatch ? parseInt(numberMatch[1]) : undefined;
-      
-      const response = await createRegistryEntries(prompt, count);
-      if (response) {
-        setActiveResponse({ 
-          success: true, 
-          result: { 
-            content: response,
-            type: 'registry_creation',
-            entries_requested: count 
-          } 
-        });
-      } else {
-        setActiveResponse({ 
-          success: false, 
-          error: 'Failed to create registry entries' 
-        });
-      }
+    // For admin interface, use unrestricted admin mode
+    const response = await getAdminUnrestrictedResponse(prompt);
+    if (response) {
+      setActiveResponse({ 
+        success: true, 
+        result: { 
+          content: response,
+          type: 'admin_unrestricted',
+          admin_override: true
+        } 
+      });
     } else {
-      await engageAura(`[ADMIN QUERY] ${prompt}`);
+      setActiveResponse({ 
+        success: false, 
+        error: 'Failed to process admin request' 
+      });
     }
     
     setPrompt('');
@@ -329,18 +309,21 @@ export function AuraAdminInterface() {
             </CardHeader>
             <CardContent className="space-y-4">
               <Textarea
-                placeholder="Enter admin command or query for raw Aura response..."
+                placeholder="Enter any admin command, request, or query - Aura has FULL UNRESTRICTED CAPABILITIES in admin mode..."
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
                 onKeyPress={handleKeyPress}
                 className="min-h-[100px] font-mono"
               />
+              <div className="text-xs text-destructive/70 mb-2">
+                ⚠️ ADMIN MODE: Aura can create, modify, or do anything without restrictions
+              </div>
               <Button 
                 onClick={handleAdminQuery}
                 disabled={loading || aiLoading || !prompt.trim()}
-                className="w-full"
+                className="w-full bg-destructive hover:bg-destructive/90"
               >
-                {(loading || aiLoading) ? 'Processing...' : 'Execute Admin Query'}
+                {(loading || aiLoading) ? 'Processing...' : 'Execute Unrestricted Admin Query'}
               </Button>
             </CardContent>
           </Card>
