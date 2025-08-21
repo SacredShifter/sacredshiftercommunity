@@ -19,6 +19,14 @@ export interface LearningModule {
   component: React.ComponentType;
 }
 
+// Import new modules
+import TorusFieldDynamics3D from './TorusFieldDynamics3D';
+import LivingMandala3D from './LivingMandala3D';
+import MerkabaLightBody3D from './MerkabaLightBody3D';
+import KabbalahTreeOfLife3D from './KabbalahTreeOfLife3D';
+import GaiaBreathing3D from './GaiaBreathing3D';
+import SchumannResonance3D from './SchumannResonance3D';
+
 const learningModules: LearningModule[] = [
   {
     id: 'chakra-system',
@@ -31,7 +39,6 @@ const learningModules: LearningModule[] = [
     icon: <Heart className="h-5 w-5" />,
     component: ChakraLearning3D
   },
-  // Future modules can be added here
   {
     id: 'sacred-geometry',
     title: 'Sacred Geometry Patterns',
@@ -44,15 +51,70 @@ const learningModules: LearningModule[] = [
     component: SacredGeometry3D
   },
   {
-    id: 'anatomy-energy',
-    title: 'Energy Anatomy',
-    description: 'Explore the human body\'s energy systems including meridians, nadis, and auric fields.',
-    category: 'Anatomy',
-    difficulty: 'advanced',
-    duration: '20-25 min', 
-    tags: ['anatomy', 'meridians', 'nadis', 'aura'],
+    id: 'torus-field',
+    title: 'Torus Field Dynamics',
+    description: 'Experience the electromagnetic fields of the heart and brain in coherent states.',
+    category: 'Biofield Science',
+    difficulty: 'intermediate',
+    duration: '12-18 min',
+    tags: ['torus', 'heart', 'coherence', 'biofield'],
+    icon: <Heart className="h-5 w-5" />,
+    component: TorusFieldDynamics3D
+  },
+  {
+    id: 'living-mandala',
+    title: 'Living Mandala Generator',
+    description: 'Create and meditate with dynamic sacred patterns and geometric mandalas.',
+    category: 'Sacred Art',
+    difficulty: 'beginner',
+    duration: '8-12 min',
+    tags: ['mandala', 'meditation', 'patterns', 'creativity'],
     icon: <Eye className="h-5 w-5" />,
-    component: () => <div className="flex items-center justify-center h-96 text-muted-foreground">Coming Soon: Energy Anatomy Explorer</div>
+    component: LivingMandala3D
+  },
+  {
+    id: 'merkaba-light-body',
+    title: 'Merkaba Light Body',
+    description: 'Activate your divine light vehicle through counter-rotating tetrahedrons.',
+    category: 'Light Body',
+    difficulty: 'advanced',
+    duration: '20-30 min',
+    tags: ['merkaba', 'light body', 'activation', 'dimensions'],
+    icon: <Box className="h-5 w-5" />,
+    component: MerkabaLightBody3D
+  },
+  {
+    id: 'kabbalah-tree',
+    title: 'Kabbalah Tree of Life',
+    description: 'Navigate the divine blueprint of creation through the ten Sephiroth.',
+    category: 'Mystical Systems',
+    difficulty: 'advanced',
+    duration: '25-35 min',
+    tags: ['kabbalah', 'sephiroth', 'mysticism', 'tree of life'],
+    icon: <Eye className="h-5 w-5" />,
+    component: KabbalahTreeOfLife3D
+  },
+  {
+    id: 'gaia-breathing',
+    title: 'Gaia Breathing System',
+    description: 'Witness how Earth breathes through forests, oceans, and atmospheric cycles.',
+    category: 'Planetary Consciousness',
+    difficulty: 'intermediate',
+    duration: '15-20 min',
+    tags: ['gaia', 'earth', 'breathing', 'ecology'],
+    icon: <Heart className="h-5 w-5" />,
+    component: GaiaBreathing3D
+  },
+  {
+    id: 'schumann-resonance',
+    title: 'Schumann Resonance Chamber',
+    description: 'Attune to Earth\'s electromagnetic heartbeat and its effects on consciousness.',
+    category: 'Electromagnetic Fields',
+    difficulty: 'intermediate',
+    duration: '12-18 min',
+    tags: ['schumann', 'frequency', 'brainwaves', 'resonance'],
+    icon: <Box className="h-5 w-5" />,
+    component: SchumannResonance3D
   }
 ];
 
