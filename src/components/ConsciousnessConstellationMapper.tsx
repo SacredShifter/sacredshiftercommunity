@@ -1,23 +1,13 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { OrbitControls, Sphere, Line, Text } from '@react-three/drei';
-import * as THREE from 'three';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Progress } from '@/components/ui/progress';
 import { useConsciousnessConstellation } from '@/hooks/useConsciousnessConstellation';
 import { ConstellationAnalyticsEngine } from './ConstellationAnalyticsEngine';
-import { Brain, Zap, Eye, Heart, Sparkles, Activity } from 'lucide-react';
-
-interface ConstellationNodeProps {
-  position: [number, number, number];
-  color: string;
-  size: number;
-  pattern: string;
-  intensity: number;
-}
+import { Brain, Zap, Eye, Heart, Sparkles, Activity, Star, Circle } from 'lucide-react';
 
 interface ConsciousnessWeatherData {
   clarity: number;
@@ -28,105 +18,151 @@ interface ConsciousnessWeatherData {
   forecast: string;
 }
 
-function ConstellationNode({ position, color, size, pattern, intensity }: ConstellationNodeProps) {
-  const meshRef = useRef<THREE.Mesh>(null);
-  
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.x += 0.01 * intensity;
-      meshRef.current.rotation.y += 0.01 * intensity;
-      
-      // Pulsing effect based on pattern
-      const pulseFactor = 1 + Math.sin(state.clock.elapsedTime * 2) * 0.2 * intensity;
-      meshRef.current.scale.setScalar(size * pulseFactor);
-    }
-  });
-
-  return (
-    <Sphere ref={meshRef} position={position} args={[size, 16, 16]}>
-      <meshPhongMaterial color={color} transparent opacity={0.8} />
-    </Sphere>
-  );
-}
-
-function SynchronicityConnection({ start, end, intensity }: { 
-  start: [number, number, number]; 
-  end: [number, number, number]; 
-  intensity: number;
-}) {
-  const points = [new THREE.Vector3(...start), new THREE.Vector3(...end)];
-  
-  return (
-    <Line
-      points={points}
-      color={`hsl(${280 + intensity * 40}, 70%, ${50 + intensity * 30}%)`}
-      lineWidth={1 + intensity * 2}
-      transparent
-      opacity={0.3 + intensity * 0.4}
-    />
-  );
-}
-
+// Simple 2D constellation visualization for now
 function ConstellationVisualization({ data }: { data: any }) {
-  const { camera } = useThree();
-  
-  useEffect(() => {
-    camera.position.set(0, 0, 10);
-  }, [camera]);
-
   if (!data || !data.archetypal_patterns) {
-    return null;
+    return (
+      <div className="flex items-center justify-center h-[400px] text-muted-foreground">
+        <div className="text-center">
+          <Brain className="w-12 h-12 mx-auto mb-4 opacity-50" />
+          <p>No constellation data available</p>
+        </div>
+      </div>
+    );
   }
 
-  const nodes = data.archetypal_patterns.map((pattern: any, index: number) => {
-    const direction = new THREE.Vector3(
-      Math.random() - 0.5,
-      Math.random() - 0.5,
-      Math.random() - 0.5
-    ).normalize();
-    const position = direction.multiplyScalar(5 + Math.random() * 3);
-    
-    return {
-      position: [position.x, position.y, position.z] as [number, number, number],
-      color: pattern.color || '#8A2BE2',
-      size: 0.3 + (pattern.activation_strength || 0.5) * 0.5,
-      pattern: pattern.name,
-      intensity: pattern.activation_strength || 0.5
-    };
-  });
-
-  const connections = data.synchronicity_threads?.map((thread: any, index: number) => ({
-    start: nodes[thread.from_pattern]?.position || [0, 0, 0],
-    end: nodes[thread.to_pattern]?.position || [0, 0, 0],
-    intensity: thread.strength || 0.5
-  })) || [];
+  const patterns = data.archetypal_patterns;
+  const threads = data.synchronicity_threads || [];
 
   return (
-    <group>
-      {nodes.map((node, index) => (
-        <ConstellationNode
-          key={index}
-          position={node.position}
-          color={node.color}
-          size={node.size}
-          pattern={node.pattern}
-          intensity={node.intensity}
-        />
-      ))}
-      
-      {connections.map((connection, index) => (
-        <SynchronicityConnection
-          key={index}
-          start={connection.start}
-          end={connection.end}
-          intensity={connection.intensity}
-        />
-      ))}
-      
-      <ambientLight intensity={0.4} />
-      <pointLight position={[10, 10, 10]} intensity={0.8} />
-      <pointLight position={[-10, -10, -10]} intensity={0.4} color="#8A2BE2" />
-    </group>
+    <div className="relative w-full h-[400px] bg-gradient-to-br from-primary/5 via-purple/5 to-indigo/5 rounded-lg overflow-hidden">
+      {/* Sacred geometry background */}
+      <div className="absolute inset-0 opacity-10">
+        <svg width="100%" height="100%" viewBox="0 0 400 400">
+          <defs>
+            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" strokeWidth="1"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid)" />
+          
+          {/* Flower of Life pattern */}
+          <g transform="translate(200,200)">
+            {[0, 1, 2, 3, 4, 5].map(i => (
+              <circle
+                key={i}
+                cx={Math.cos(i * Math.PI / 3) * 30}
+                cy={Math.sin(i * Math.PI / 3) * 30}
+                r="30"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1"
+              />
+            ))}
+            <circle cx="0" cy="0" r="30" fill="none" stroke="currentColor" strokeWidth="1" />
+          </g>
+        </svg>
+      </div>
+
+      {/* Constellation nodes */}
+      <div className="absolute inset-0 p-8">
+        {patterns.map((pattern: any, index: number) => {
+          const angle = (index / patterns.length) * 2 * Math.PI;
+          const radius = 120 + (pattern.activation_strength || 0.5) * 80;
+          const x = 50 + Math.cos(angle) * radius / 400 * 80;
+          const y = 50 + Math.sin(angle) * radius / 400 * 80;
+          
+          return (
+            <motion.div
+              key={index}
+              className="absolute transform -translate-x-1/2 -translate-y-1/2"
+              style={{ 
+                left: `${x}%`, 
+                top: `${y}%`,
+              }}
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: index * 0.2 }}
+            >
+              <div className="relative group cursor-pointer">
+                <div 
+                  className="w-8 h-8 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 group-hover:scale-110"
+                  style={{ 
+                    backgroundColor: pattern.color || '#8A2BE2',
+                    boxShadow: `0 0 20px ${pattern.color || '#8A2BE2'}40`
+                  }}
+                >
+                  <Star className="w-4 h-4 text-white" />
+                </div>
+                
+                <div className="absolute top-10 left-1/2 transform -translate-x-1/2 bg-background/90 backdrop-blur-sm px-2 py-1 rounded text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                  <div className="font-medium">{pattern.name}</div>
+                  <div className="text-muted-foreground">
+                    {Math.round((pattern.activation_strength || 0) * 100)}%
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          );
+        })}
+
+        {/* Synchronicity threads */}
+        <svg className="absolute inset-0 w-full h-full pointer-events-none">
+          {threads.map((thread: any, index: number) => {
+            const fromPattern = patterns[thread.from_pattern];
+            const toPattern = patterns[thread.to_pattern];
+            if (!fromPattern || !toPattern) return null;
+
+            const fromAngle = (thread.from_pattern / patterns.length) * 2 * Math.PI;
+            const toAngle = (thread.to_pattern / patterns.length) * 2 * Math.PI;
+            const fromRadius = 120 + (fromPattern.activation_strength || 0.5) * 80;
+            const toRadius = 120 + (toPattern.activation_strength || 0.5) * 80;
+            
+            const x1 = 50 + Math.cos(fromAngle) * fromRadius / 400 * 80;
+            const y1 = 50 + Math.sin(fromAngle) * fromRadius / 400 * 80;
+            const x2 = 50 + Math.cos(toAngle) * toRadius / 400 * 80;
+            const y2 = 50 + Math.sin(toAngle) * toRadius / 400 * 80;
+
+            return (
+              <motion.line
+                key={index}
+                x1={`${x1}%`}
+                y1={`${y1}%`}
+                x2={`${x2}%`}
+                y2={`${y2}%`}
+                stroke={`hsl(${280 + (thread.strength || 0.5) * 40}, 70%, ${50 + (thread.strength || 0.5) * 30}%)`}
+                strokeWidth={1 + (thread.strength || 0.5) * 2}
+                opacity={0.3 + (thread.strength || 0.5) * 0.4}
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{ delay: index * 0.1 + 1 }}
+              />
+            );
+          })}
+        </svg>
+      </div>
+
+      {/* Consciousness signature display */}
+      {data.consciousness_signature && (
+        <div className="absolute bottom-4 left-4 bg-background/80 backdrop-blur-sm rounded-lg p-3">
+          <div className="text-xs text-muted-foreground mb-1">Consciousness Signature</div>
+          <div className="flex gap-4 text-xs">
+            <div>
+              <span className="text-muted-foreground">Freq:</span>
+              <span className="ml-1 font-mono">
+                {Math.round(data.consciousness_signature.frequency)}Hz
+              </span>
+            </div>
+            <div>
+              <span className="text-muted-foreground">Coherence:</span>
+              <span className="ml-1 font-mono">
+                {Math.round(data.consciousness_signature.coherence * 100)}%
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -220,25 +256,22 @@ export function ConsciousnessConstellationMapper() {
 
       <Tabs value={activeView} onValueChange={setActiveView} className="w-full">
         <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="constellation">3D Constellation</TabsTrigger>
+          <TabsTrigger value="constellation">2D Constellation</TabsTrigger>
           <TabsTrigger value="weather">Consciousness Weather</TabsTrigger>
           <TabsTrigger value="patterns">Pattern Analysis</TabsTrigger>
           <TabsTrigger value="analytics">Deep Analytics</TabsTrigger>
         </TabsList>
 
         <TabsContent value="constellation" className="space-y-4">
-          <Card className="h-[500px]">
+          <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Sparkles className="w-5 h-5" />
                 Your Living Consciousness Map
               </CardTitle>
             </CardHeader>
-            <CardContent className="h-[400px]">
-              <Canvas camera={{ position: [0, 0, 10], fov: 60 }}>
-                <ConstellationVisualization data={constellation} />
-                <OrbitControls enablePan={true} enableZoom={true} enableRotate={true} />
-              </Canvas>
+            <CardContent>
+              <ConstellationVisualization data={constellation} />
             </CardContent>
           </Card>
           
