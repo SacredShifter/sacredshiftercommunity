@@ -30,7 +30,8 @@ export function EntryForm({ open, onClose, onSuccess, editEntry }: EntryFormProp
     uploadImage, 
     deleteImage,
     calculateWordCount,
-    calculateReadingTime 
+    calculateReadingTime,
+    categories 
   } = useRegistryOfResonance();
   const [isLoading, setIsLoading] = useState(false);
   const [imageUploading, setImageUploading] = useState(false);
@@ -42,6 +43,7 @@ export function EntryForm({ open, onClose, onSuccess, editEntry }: EntryFormProp
     tags: editEntry?.tags || [],
     entry_type: editEntry?.entry_type || 'Personal',
     access_level: editEntry?.access_level || 'Private',
+    category_id: editEntry?.category_id || '',
     resonance_signature: editEntry?.resonance_signature || '',
     image_url: editEntry?.image_url || '',
     image_alt_text: editEntry?.image_alt_text || '',
@@ -258,8 +260,8 @@ export function EntryForm({ open, onClose, onSuccess, editEntry }: EntryFormProp
 
             <Separator />
 
-            {/* Entry Type, Content Type & Access Level */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Entry Type, Category, Content Type & Access Level */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="space-y-2">
                 <Label>Entry Type</Label>
                 <Select
@@ -273,6 +275,26 @@ export function EntryForm({ open, onClose, onSuccess, editEntry }: EntryFormProp
                     <SelectItem value="Personal">Personal</SelectItem>
                     <SelectItem value="Collective">Collective</SelectItem>
                     <SelectItem value="Transmission">Transmission</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Category</Label>
+                <Select
+                  value={formData.category_id || ''}
+                  onValueChange={(value: string) => setFormData(prev => ({ ...prev, category_id: value || undefined }))}
+                >
+                  <SelectTrigger className="bg-background/50">
+                    <SelectValue placeholder="Select category..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">No Category</SelectItem>
+                    {categories.map((category) => (
+                      <SelectItem key={category.id} value={category.id}>
+                        {category.level > 0 ? '  ' : ''}{category.name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>

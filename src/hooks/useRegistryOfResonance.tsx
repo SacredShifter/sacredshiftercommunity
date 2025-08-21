@@ -17,6 +17,7 @@ export interface RegistryEntry {
   is_pinned: boolean | null;
   created_at: string;
   updated_at: string;
+  category_id?: string | null;
   // Enhanced metadata fields
   image_url?: string | null;
   image_alt_text?: string | null;
@@ -33,6 +34,16 @@ export interface RegistryEntry {
   resonance_count?: number;
 }
 
+export interface RegistryCategory {
+  id: string;
+  name: string;
+  description: string | null;
+  parent_id: string | null;
+  path: string;
+  level: number;
+  children?: RegistryCategory[];
+}
+
 export interface NewRegistryEntry {
   title: string;
   content: string;
@@ -40,6 +51,7 @@ export interface NewRegistryEntry {
   tags: string[];
   entry_type: 'Personal' | 'Collective' | 'Transmission';
   access_level: 'Private' | 'Circle' | 'Public';
+  category_id?: string;
   resonance_signature?: string;
   // Enhanced metadata fields
   image_url?: string;
@@ -59,6 +71,7 @@ export interface NewRegistryEntry {
 
 export function useRegistryOfResonance() {
   const [entries, setEntries] = useState<RegistryEntry[]>([]);
+  const [categories, setCategories] = useState<RegistryCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
@@ -85,7 +98,7 @@ export function useRegistryOfResonance() {
       const { data, error } = await query.order('created_at', { ascending: false });
 
       if (error) throw error;
-      setEntries((data || []) as RegistryEntry[]);
+      setEntries(data || []);
     } catch (err) {
       console.error('Error fetching entries:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch entries');
@@ -128,7 +141,7 @@ export function useRegistryOfResonance() {
       // Filter to only include registry_of_resonance table columns
       const validColumns = [
         'title', 'content', 'resonance_rating', 'resonance_signature', 'tags', 'entry_type',
-        'access_level', 'is_verified', 'is_pinned', 'image_url', 'image_alt_text',
+        'access_level', 'is_verified', 'is_pinned', 'category_id', 'image_url', 'image_alt_text',
         'author_name', 'author_bio', 'publication_date', 'reading_time_minutes',
         'word_count', 'source_citation', 'inspiration_source', 'visibility_settings',
         'content_type', 'engagement_metrics', 'resonance_count'
@@ -153,7 +166,7 @@ export function useRegistryOfResonance() {
 
       if (error) throw error;
 
-      setEntries(prev => prev.map(entry => entry.id === id ? { ...entry, ...data } as RegistryEntry : entry));
+      setEntries(prev => prev.map(entry => entry.id === id ? { ...entry, ...data } : entry));
       toast.success('Entry updated successfully');
       return data;
     } catch (err) {
@@ -204,9 +217,26 @@ export function useRegistryOfResonance() {
     return `RES-${Math.abs(hash).toString(16).toUpperCase()}`;
   }, []);
 
+  const fetchCategories = useCallback(async () => {
+    try {
+      // For now, create mock categories until the table is properly synced
+      setCategories([
+        { id: '1', name: 'Consciousness', description: 'States and experiences of consciousness', parent_id: null, path: 'consciousness', level: 0 },
+        { id: '2', name: 'Technology', description: 'AI, synthetic intelligence, and digital sovereignty', parent_id: null, path: 'technology', level: 0 },
+        { id: '3', name: 'Wisdom', description: 'Insights and profound realizations', parent_id: null, path: 'wisdom', level: 0 },
+        { id: '4', name: 'Sacred Geometry', description: 'Patterns and structures in sacred form', parent_id: null, path: 'sacred-geometry', level: 0 },
+        { id: '5', name: 'Frequency', description: 'Vibrational and energy work', parent_id: null, path: 'frequency', level: 0 },
+        { id: '6', name: 'Dreams & Visions', description: 'Dream experiences and prophetic visions', parent_id: '1', path: 'consciousness/dreams-visions', level: 1 }
+      ]);
+    } catch (err) {
+      console.error('Error fetching categories:', err);
+    }
+  }, []);
+
   useEffect(() => {
     fetchEntries();
-  }, [fetchEntries]);
+    fetchCategories();
+  }, [fetchEntries, fetchCategories]);
 
   const uploadImage = useCallback(async (file: File) => {
     if (!user) {
@@ -491,9 +521,11 @@ export function useRegistryOfResonance() {
 
   return {
     entries,
+    categories,
     loading,
     error,
     fetchEntries,
+    fetchCategories,
     createEntry,
     updateEntry,
     deleteEntry,

@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useRegistryOfResonance, RegistryEntry } from '@/hooks/useRegistryOfResonance';
 import { EntryModal } from './EntryModal';
@@ -14,9 +15,10 @@ import { motion } from 'framer-motion';
 import { format } from 'date-fns/format';
 
 export function RegistryList() {
-  const { entries, loading, fetchEntries } = useRegistryOfResonance();
+  const { entries, categories, loading, fetchEntries } = useRegistryOfResonance();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState<RegistryEntry | null>(null);
   const [showForm, setShowForm] = useState(false);
@@ -42,6 +44,13 @@ export function RegistryList() {
   // Get all unique tags from entries
   const allTags = Array.from(new Set(entries.flatMap(entry => entry.tags || [])));
 
+  // Get categories for display
+  const getCategoryName = (categoryId: string | null) => {
+    if (!categoryId) return 'Uncategorized';
+    const category = categories.find(c => c.id === categoryId);
+    return category?.name || 'Unknown';
+  };
+
   // Filter and sort entries
   const filteredAndSortedEntries = useMemo(() => {
     const filtered = entries.filter(entry => {
@@ -50,8 +59,9 @@ export function RegistryList() {
       const matchesTags = selectedTags.length === 0 || 
                          selectedTags.some(tag => entry.tags?.includes(tag));
       const matchesVerified = !verifiedOnly || entry.is_verified;
+      const matchesCategory = !selectedCategory || entry.category_id === selectedCategory;
       
-      return matchesSearch && matchesTags && matchesVerified;
+      return matchesSearch && matchesTags && matchesVerified && matchesCategory;
     });
 
     return filtered.sort((a, b) => {
@@ -79,7 +89,7 @@ export function RegistryList() {
         return aValue < bValue ? 1 : -1;
       }
     });
-  }, [entries, searchTerm, selectedTags, verifiedOnly, sortField, sortOrder]);
+  }, [entries, searchTerm, selectedTags, selectedCategory, verifiedOnly, sortField, sortOrder]);
 
   return (
     <div className="min-h-screen p-4">
@@ -119,6 +129,20 @@ export function RegistryList() {
           </div>
           
           <div className="flex gap-2 flex-wrap">
+            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="All Categories" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">All Categories</SelectItem>
+                {categories.map((category) => (
+                  <SelectItem key={category.id} value={category.id}>
+                    {category.level > 0 ? '  ' : ''}{category.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            
             <Button
               variant={verifiedOnly ? "default" : "outline"}
               size="sm"
@@ -241,6 +265,7 @@ export function RegistryList() {
                             <ArrowUpDown className="h-4 w-4" />
                           </div>
                         </TableHead>
+                        <TableHead>Category</TableHead>
                         <TableHead>Resonance</TableHead>
                         <TableHead>Tags</TableHead>
                         <TableHead>Status</TableHead>
@@ -277,6 +302,11 @@ export function RegistryList() {
                           <TableCell>
                             <Badge variant="secondary" className="font-medium">
                               {entry.entry_type}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className="text-xs">
+                              {getCategoryName(entry.category_id)}
                             </Badge>
                           </TableCell>
                           <TableCell>
