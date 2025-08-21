@@ -26,3 +26,12 @@ verify_jwt = true
 
 [functions.aura-autonomous-platform]
 verify_jwt = true
+
+[functions.admin-broadcast]
+verify_jwt = true
+
+[functions.admin-override]
+verify_jwt = true
+
+[functions.ai-assistant]
+verify_jwt = true
