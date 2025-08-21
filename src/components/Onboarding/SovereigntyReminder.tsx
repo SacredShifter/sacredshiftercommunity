@@ -127,12 +127,23 @@ export const SovereigntyReminder: React.FC<SovereigntyReminderProps> = ({ onNext
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.3, duration: 0.8 }}
-        className="flex justify-center"
+        className="flex justify-center z-10 relative"
       >
         <Button
-          onClick={onNext}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Sovereignty button clicked!');
+            if (onNext) {
+              console.log('Calling onNext from Sovereignty...');
+              onNext();
+            } else {
+              console.error('onNext is undefined in Sovereignty!');
+            }
+          }}
           size="lg"
-          className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-white font-medium px-8"
+          className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-white font-medium px-8 cursor-pointer pointer-events-auto z-10 relative"
+          style={{ pointerEvents: 'auto' }}
         >
           I Honor My Sovereignty
         </Button>
