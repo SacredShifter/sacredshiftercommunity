@@ -21,7 +21,7 @@ export const WelcomeGateway: React.FC<WelcomeGatewayProps> = ({ onNext }) => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[600px] p-8 text-center relative overflow-hidden">
+    <div className="flex flex-col items-center justify-center min-h-[600px] p-8 text-center relative overflow-hidden pointer-events-auto">
       {/* Background Sacred Geometry */}
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
@@ -158,15 +158,24 @@ export const WelcomeGateway: React.FC<WelcomeGatewayProps> = ({ onNext }) => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 3, duration: 0.8 }}
-        className="mt-12"
+        className="mt-12 z-10 relative"
       >
         <Button
-          onClick={() => {
-            console.log('Enter the Sacred Space clicked!');
-            onNext();
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Button clicked! Event:', e);
+            console.log('onNext function:', onNext);
+            if (onNext) {
+              console.log('Calling onNext...');
+              onNext();
+            } else {
+              console.error('onNext is undefined!');
+            }
           }}
           size="lg"
-          className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-white font-medium px-8 py-3 text-lg shadow-lg shadow-primary/25 transition-all duration-300 hover:shadow-xl hover:shadow-primary/30"
+          className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-white font-medium px-8 py-3 text-lg shadow-lg shadow-primary/25 transition-all duration-300 hover:shadow-xl hover:shadow-primary/30 cursor-pointer z-10 relative pointer-events-auto"
+          style={{ pointerEvents: 'auto' }}
         >
           Enter the Sacred Space
         </Button>
