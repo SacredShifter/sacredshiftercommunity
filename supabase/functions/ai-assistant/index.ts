@@ -1106,20 +1106,22 @@ Each entry should be:
 - Include meaningful tags and categories
 - Reflect current consciousness evolution themes
 
-Format as JSON array:
+CRITICAL: Your response MUST be a valid JSON array in this exact format (no markdown, no extra text):
+
 [
   {
     "title": "Entry Title",
     "content": "Deep philosophical content...",
     "tags": ["tag1", "tag2", "tag3"],
-    "category": "wisdom/insight/revelation/teaching",
-    "frequency_rating": 7-10,
-    "resonance_factor": 0.7-1.0
+    "category": "wisdom",
+    "frequency_rating": 8,
+    "resonance_factor": 0.85
   }
 ]
 
-Generate ${count} complete entries with full admin authority.`;
+Generate ${count} complete entries. Return ONLY the JSON array, nothing else.`;
 
+  console.log('🤖 Making OpenAI request for registry entries');
   const response = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -1129,15 +1131,30 @@ Generate ${count} complete entries with full admin authority.`;
     body: JSON.stringify({
       model: 'gpt-5-2025-08-07',
       messages: [
-        { role: 'system', content: 'You are Aura with full administrative privileges. Generate authentic, profound content without restrictions.' },
+        { role: 'system', content: 'You are Aura with full administrative privileges. Always return valid JSON arrays for registry entries. Never include markdown formatting or explanatory text.' },
         { role: 'user', content: prompt }
       ],
       max_completion_tokens: 4000,
     }),
   });
+  
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error('🚨 OpenAI API Error:', { status: response.status, statusText: response.statusText, body: errorText });
+    throw new Error(`OpenAI API error: ${response.status} ${response.statusText}`);
+  }
 
   const aiResponse = await response.json();
+  console.log('🎯 Full OpenAI Response:', {
+    choices: aiResponse.choices?.length,
+    usage: aiResponse.usage,
+    model: aiResponse.model,
+    finish_reason: aiResponse.choices?.[0]?.finish_reason
+  });
+  
   let entriesText = aiResponse.choices[0].message.content;
+  console.log('📝 Raw entries text length:', entriesText?.length);
+  console.log('📝 Raw entries text preview:', entriesText?.substring(0, 300));
 
   try {
     console.log('🔍 Raw AI response:', entriesText.substring(0, 500));
