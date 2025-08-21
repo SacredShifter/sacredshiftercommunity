@@ -160,7 +160,6 @@ const SacredRingComponent = ({ ring, isActive, selectedName, onNameSelect, breat
               color={isSelected || isHovered ? '#000000' : '#FFFFFF'}
               anchorX="center"
               anchorY="middle"
-              font="/fonts/helvetiker_regular.typeface.json"
             >
               {angelName.name}
             </Text>
@@ -218,9 +217,8 @@ const CentralSymbol = ({ isActive, selectedFrequency }: {
         color="#000000"
         anchorX="center"
         anchorY="middle"
-        font="/fonts/helvetiker_bold.typeface.json"
       >
-        יהוה
+        YHWH
       </Text>
 
       {/* Four Divine Names around center */}
