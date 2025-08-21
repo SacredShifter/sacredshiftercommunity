@@ -94,6 +94,7 @@ export function useFrequencyTool() {
       if (result) {
         oscillatorRef.current = result.oscillator;
         gainNodeRef.current = result.gainNode;
+        setIsPlaying(true);
       } else {
         setIsPlaying(false);
       }
