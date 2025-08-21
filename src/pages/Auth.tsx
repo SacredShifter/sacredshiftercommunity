@@ -100,7 +100,7 @@ const Auth = () => {
             <img 
               src="https://mikltjgbvxrxndtszorb.supabase.co/storage/v1/object/public/sacred-assets/uploads/Logo-MainSacredShifter-removebg-preview%20(1).png" 
               alt="Sacred Shifter" 
-              className="h-48 w-auto invert"
+              className="h-36 w-auto invert"
             />
           </div>
           <CardDescription>
