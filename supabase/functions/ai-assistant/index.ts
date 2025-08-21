@@ -1216,7 +1216,7 @@ Generate ${count} complete entries. Return ONLY the JSON array, nothing else.`;
       tags: entry.tags || [],
       entry_type: entry.category || 'wisdom',
       resonance_rating: entry.frequency_rating || 8,
-      access_level: 'public',
+      access_level: 'Public', // Must be 'Public' with capital P per check constraint
       is_verified: true,
       aura_origin: true,
       auto_generated: true,
