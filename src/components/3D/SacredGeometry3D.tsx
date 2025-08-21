@@ -1,10 +1,12 @@
 import React, { Suspense, useState, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Html, Text, Dodecahedron, Icosahedron, Octahedron, Tetrahedron } from '@react-three/drei';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { motion } from 'framer-motion';
+import { Volume2, Play, Pause, Shapes } from 'lucide-react';
+import { useFrequencyTool } from '@/hooks/useFrequencyTool';
 import * as THREE from 'three';
 
 interface GeometryData {
@@ -244,6 +246,15 @@ function FlowerOfLife() {
 export default function SacredGeometry3D() {
   const [selectedGeometry, setSelectedGeometry] = useState<GeometryData | null>(null);
   const [showFlowerOfLife, setShowFlowerOfLife] = useState(true);
+  
+  // Sacred frequency integration
+  const { 
+    isPlaying, 
+    selectedFrequency, 
+    frequencies, 
+    toggleSacredSound, 
+    selectFrequency 
+  } = useFrequencyTool();
 
   const handleGeometryClick = (geometry: GeometryData) => {
     setSelectedGeometry(selectedGeometry?.id === geometry.id ? null : geometry);
@@ -291,17 +302,22 @@ export default function SacredGeometry3D() {
         </Canvas>
       </div>
 
-      {/* UI Overlays */}
+      {/* Enhanced UI Overlays with Sacred Frequencies */}
       <div className="absolute top-16 left-4 z-10">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="space-y-2"
+          className="space-y-3"
         >
           <Card className="bg-background/80 backdrop-blur-sm border-primary/20 max-w-sm">
-            <CardContent className="p-4">
-              <h3 className="font-sacred text-lg mb-2">Sacred Geometry Explorer</h3>
-              <p className="text-sm text-muted-foreground mb-3">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2">
+                <Shapes className="h-5 w-5 text-primary" />
+                Sacred Geometry Explorer
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground">
                 Explore the five Platonic solids and their elemental correspondences in 3D space.
               </p>
               
@@ -320,6 +336,49 @@ export default function SacredGeometry3D() {
                   • Drag to rotate view
                   • Scroll to zoom
                 </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Sacred Frequency Integration */}
+          <Card className="bg-background/80 backdrop-blur-sm border-secondary/20 max-w-sm">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2">
+                <Volume2 className="h-5 w-5 text-secondary" />
+                Sacred Frequencies
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="flex items-center gap-2">
+                <Button
+                  size="sm"
+                  onClick={toggleSacredSound}
+                  variant={isPlaying ? "default" : "outline"}
+                >
+                  {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                </Button>
+                <div className="text-xs">
+                  <div className="font-medium">{selectedFrequency.name}</div>
+                  <div className="text-muted-foreground">{selectedFrequency.hz} Hz</div>
+                </div>
+              </div>
+              
+              <div className="text-xs text-muted-foreground">
+                {selectedFrequency.purpose}
+              </div>
+              
+              <div className="grid grid-cols-3 gap-1">
+                {frequencies.slice(0, 6).map((freq) => (
+                  <Button
+                    key={freq.hz}
+                    size="sm"
+                    variant={selectedFrequency.hz === freq.hz ? "default" : "outline"}
+                    onClick={() => selectFrequency(freq)}
+                    className="text-xs"
+                  >
+                    {freq.hz}
+                  </Button>
+                ))}
               </div>
             </CardContent>
           </Card>

@@ -1,12 +1,14 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Text } from '@react-three/drei';
 import * as THREE from 'three';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Zap, Brain, Globe, Activity } from 'lucide-react';
+import { Zap, Brain, Globe, Activity, Play, Pause, Volume2, Satellite } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useSchumannFrequency } from '@/hooks/useSchumannFrequency';
+import { useSpaceWeather } from '@/hooks/useSpaceWeather';
 
 interface ResonanceWave {
   frequency: number;
@@ -186,6 +188,42 @@ function BrainwaveParticles() {
 export default function SchumannResonance3D() {
   const [activeWaves, setActiveWaves] = useState<ResonanceWave[]>(schumannFrequencies);
   const [selectedFrequency, setSelectedFrequency] = useState<number | null>(7.83);
+  const [showSpaceWeather, setShowSpaceWeather] = useState(true);
+  
+  // Hooks for audio and space weather
+  const { 
+    isPlaying, 
+    activeFrequencies, 
+    toggleFrequency, 
+    togglePlayback, 
+    setSpaceWeatherImpact,
+    frequencies: schumannAudioFreqs 
+  } = useSchumannFrequency();
+  
+  const { 
+    data: spaceWeatherData, 
+    loading: spaceWeatherLoading, 
+    error: spaceWeatherError,
+    fetchGeomagneticStorms,
+    fetchSolarFlares 
+  } = useSpaceWeather();
+
+  // Update space weather impact on audio frequencies
+  useEffect(() => {
+    if (spaceWeatherData?.events?.length > 0) {
+      const highImpactEvents = spaceWeatherData.events.filter(event => 
+        event.impact.toLowerCase().includes('high')
+      );
+      
+      if (highImpactEvents.length > 0) {
+        setSpaceWeatherImpact('high');
+      } else if (spaceWeatherData.events.length > 2) {
+        setSpaceWeatherImpact('moderate');
+      } else {
+        setSpaceWeatherImpact('low');
+      }
+    }
+  }, [spaceWeatherData, setSpaceWeatherImpact]);
 
   const toggleWave = (frequency: number) => {
     setActiveWaves(prev => 
@@ -250,7 +288,7 @@ export default function SchumannResonance3D() {
         </Canvas>
       </div>
 
-      {/* Frequency Controls */}
+      {/* Enhanced Frequency Controls with Audio */}
       <div className="absolute top-16 left-6 z-10">
         <Card className="bg-background/80 backdrop-blur-sm border-primary/20 max-w-sm">
           <CardHeader className="pb-3">
@@ -264,36 +302,110 @@ export default function SchumannResonance3D() {
               Earth's heartbeat: electromagnetic frequencies that pulse around our planet
             </p>
             
+            {/* Audio Control */}
+            <div className="flex items-center gap-2 p-2 bg-muted rounded">
+              <Button
+                size="sm"
+                onClick={togglePlayback}
+                variant={isPlaying ? "default" : "outline"}
+              >
+                {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+              </Button>
+              <Volume2 className="h-4 w-4" />
+              <span className="text-xs">Play Frequencies</span>
+            </div>
+            
             <div className="space-y-2">
-              {schumannFrequencies.map((wave) => (
-                <div key={wave.frequency} className="flex items-center justify-between">
-                  <Button
-                    variant={wave.active ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => toggleWave(wave.frequency)}
-                    className="flex-1 mr-2"
-                    style={{ 
-                      backgroundColor: wave.active ? wave.color : undefined,
-                      borderColor: wave.color
-                    }}
-                  >
-                    {wave.frequency} Hz
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setSelectedFrequency(
-                      selectedFrequency === wave.frequency ? null : wave.frequency
-                    )}
-                  >
-                    <Brain className="h-4 w-4" />
-                  </Button>
-                </div>
-              ))}
+              {schumannFrequencies.map((wave) => {
+                const isAudioActive = activeFrequencies.includes(wave.frequency);
+                return (
+                  <div key={wave.frequency} className="flex items-center justify-between">
+                    <Button
+                      variant={wave.active ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => toggleWave(wave.frequency)}
+                      className="flex-1 mr-2"
+                      style={{ 
+                        backgroundColor: wave.active ? wave.color : undefined,
+                        borderColor: wave.color
+                      }}
+                    >
+                      {wave.frequency} Hz
+                      {isAudioActive && <Volume2 className="h-3 w-3 ml-1" />}
+                    </Button>
+                    <div className="flex gap-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => toggleFrequency(wave.frequency)}
+                        className={isAudioActive ? "text-green-500" : ""}
+                      >
+                        <Volume2 className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setSelectedFrequency(
+                          selectedFrequency === wave.frequency ? null : wave.frequency
+                        )}
+                      >
+                        <Brain className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </CardContent>
         </Card>
       </div>
+
+      {/* Space Weather Panel */}
+      {showSpaceWeather && (
+        <div className="absolute top-16 right-6 z-10 max-w-sm">
+          <Card className="bg-background/80 backdrop-blur-sm border-secondary/20">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2">
+                <Satellite className="h-5 w-5 text-cyan-500" />
+                Space Weather Impact
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {spaceWeatherLoading && (
+                <div className="text-xs text-muted-foreground">Loading space weather data...</div>
+              )}
+              
+              {spaceWeatherError && (
+                <div className="text-xs text-red-500">Failed to load space weather data</div>
+              )}
+              
+              {spaceWeatherData && (
+                <>
+                  <div className="text-xs text-muted-foreground">
+                    {spaceWeatherData.summary.resonanceContext}
+                  </div>
+                  
+                  {spaceWeatherData.events.slice(0, 3).map((event, index) => (
+                    <div key={index} className="p-2 bg-muted rounded text-xs">
+                      <div className="font-medium">{event.eventType}</div>
+                      <div className="text-muted-foreground">{event.impact}</div>
+                    </div>
+                  ))}
+                  
+                  <div className="flex gap-2">
+                    <Button size="sm" variant="outline" onClick={fetchGeomagneticStorms}>
+                      Update GST
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={fetchSolarFlares}>
+                      Solar Flares
+                    </Button>
+                  </div>
+                </>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       {/* Frequency Information */}
       {selectedFrequency && brainwaveCorrelations[selectedFrequency as keyof typeof brainwaveCorrelations] && (

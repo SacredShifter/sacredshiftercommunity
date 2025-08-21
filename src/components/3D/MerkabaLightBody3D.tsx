@@ -1,12 +1,13 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Text } from '@react-three/drei';
 import * as THREE from 'three';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Zap, Play, Pause, Star } from 'lucide-react';
+import { Zap, Play, Pause, Star, Volume2 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useFrequencyTool } from '@/hooks/useFrequencyTool';
 
 interface TetrahedronProps {
   position: [number, number, number];
@@ -131,6 +132,27 @@ function EnergyParticles() {
 export default function MerkabaLightBody3D() {
   const [isActivated, setIsActivated] = useState(false);
   const [selectedPhase, setSelectedPhase] = useState<string | null>(null);
+  
+  // Sacred frequency integration for Merkaba resonance
+  const { 
+    isPlaying, 
+    selectedFrequency, 
+    frequencies, 
+    toggleSacredSound, 
+    selectFrequency 
+  } = useFrequencyTool();
+
+  // Auto-select appropriate frequencies for Merkaba activation
+  useEffect(() => {
+    if (isActivated && !isPlaying) {
+      // Use Love frequency (528 Hz) for Merkaba activation
+      const loveFreq = frequencies.find(f => f.hz === 528);
+      if (loveFreq) {
+        selectFrequency(loveFreq);
+        toggleSacredSound();
+      }
+    }
+  }, [isActivated]);
 
   const activationPhases = {
     preparation: {
@@ -227,6 +249,40 @@ export default function MerkabaLightBody3D() {
                 </>
               )}
             </Button>
+
+            {/* Sacred Frequency Control */}
+            <div className="p-3 bg-muted rounded space-y-2">
+              <div className="flex items-center gap-2">
+                <Volume2 className="h-4 w-4" />
+                <span className="text-sm font-medium">Sacred Resonance</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  size="sm"
+                  onClick={toggleSacredSound}
+                  variant={isPlaying ? "default" : "outline"}
+                >
+                  {isPlaying ? <Pause className="h-3 w-3" /> : <Play className="h-3 w-3" />}
+                </Button>
+                <div className="text-xs">
+                  <div className="font-medium">{selectedFrequency.name}</div>
+                  <div className="text-muted-foreground">{selectedFrequency.hz} Hz</div>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-1">
+                {frequencies.filter(f => [528, 741, 852].includes(f.hz)).map((freq) => (
+                  <Button
+                    key={freq.hz}
+                    size="sm"
+                    variant={selectedFrequency.hz === freq.hz ? "default" : "outline"}
+                    onClick={() => selectFrequency(freq)}
+                    className="text-xs"
+                  >
+                    {freq.hz}
+                  </Button>
+                ))}
+              </div>
+            </div>
 
             <div className="space-y-2">
               <h4 className="text-sm font-medium">Activation Phases:</h4>

@@ -12,7 +12,7 @@ serve(async (req) => {
 
   try {
     const url = new URL(req.url)
-    const eventType = url.searchParams.get('type') || 'GST' // Geomagnetic Storm by default
+    const eventType = url.searchParams.get('type') || 'GST' // Default to Geomagnetic Storm
     const startDate = url.searchParams.get('startDate') || new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
     const endDate = url.searchParams.get('endDate') || new Date().toISOString().split('T')[0]
     
@@ -21,13 +21,19 @@ serve(async (req) => {
       throw new Error('NASA API key not configured')
     }
 
+    // Supported DONKI endpoints: GST, FLR, CME, HSS, SEP, IPS, WSAEnlilSimulations
+    const validTypes = ['GST', 'FLR', 'CME', 'HSS', 'SEP', 'IPS', 'WSAEnlilSimulations']
+    const safeType = validTypes.includes(eventType) ? eventType : 'GST'
+    
     // NASA DONKI API endpoint
-    const nasaUrl = `https://api.nasa.gov/DONKI/${eventType}?startDate=${startDate}&endDate=${endDate}&api_key=${apiKey}`
+    const nasaUrl = `https://api.nasa.gov/DONKI/${safeType}?startDate=${startDate}&endDate=${endDate}&api_key=${apiKey}`
+    
+    console.log(`Fetching ${safeType} data from NASA DONKI API for ${startDate} to ${endDate}`)
     
     const response = await fetch(nasaUrl)
     
     if (!response.ok) {
-      throw new Error(`NASA API error: ${response.status}`)
+      throw new Error(`NASA API error: ${response.status} - ${response.statusText}`)
     }
 
     const data = await response.json()
