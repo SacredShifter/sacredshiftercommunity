@@ -78,7 +78,11 @@ const SacredRingComponent = ({ ring, isActive, selectedName, onNameSelect, breat
     }
   });
 
-  const ringGeometry = useMemo(() => new THREE.RingGeometry(ring.radius - 0.05, ring.radius + 0.05, 64), [ring.radius]);
+  const ringGeometry = useMemo(() => {
+    const geometry = new THREE.RingGeometry(ring.radius - 0.05, ring.radius + 0.05, 64);
+    geometry.morphAttributes = geometry.morphAttributes || {};
+    return geometry;
+  }, [ring.radius]);
 
   return (
     <group ref={ringRef}>

@@ -206,6 +206,7 @@ function TreePaths() {
         ];
         
         const geometry = new THREE.BufferGeometry().setFromPoints(points);
+        geometry.morphAttributes = geometry.morphAttributes || {};
 
         return (
           <mesh key={index}>

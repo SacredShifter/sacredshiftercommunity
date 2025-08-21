@@ -33,7 +33,11 @@ function TorusField({ radius, tubeRadius, color, position, rotationSpeed, pulseI
     }
   });
 
-  const geometry = useMemo(() => new THREE.TorusGeometry(radius, tubeRadius, 16, 100), [radius, tubeRadius]);
+  const geometry = useMemo(() => {
+    const geom = new THREE.TorusGeometry(radius, tubeRadius, 16, 100);
+    geom.morphAttributes = geom.morphAttributes || {};
+    return geom;
+  }, [radius, tubeRadius]);
 
   return (
     <mesh ref={meshRef} geometry={geometry} position={position}>
