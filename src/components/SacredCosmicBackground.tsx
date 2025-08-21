@@ -28,7 +28,7 @@ export const SacredCosmicBackground = () => {
   }, []);
 
   return (
-    <div className="sacred-cosmic-orbs">
+    <div className="fixed inset-0 sacred-cosmic-orbs pointer-events-none" style={{ zIndex: 0 }}>
       {orbs.map((orb) => (
         <div
           key={orb.id}
@@ -38,11 +38,10 @@ export const SacredCosmicBackground = () => {
             top: `${orb.y}%`,
             width: `${orb.size}px`,
             height: `${orb.size}px`,
-            background: `radial-gradient(circle, hsl(${orb.color} / 0.15) 0%, hsl(${orb.color} / 0.05) 50%, transparent 70%)`,
-            filter: 'blur(2px)',
+            background: `radial-gradient(circle, hsl(${orb.color} / 0.2) 0%, hsl(${orb.color} / 0.08) 50%, transparent 70%)`,
+            filter: 'blur(1px)',
             animation: `orb-float ${orb.duration}s ease-in-out infinite`,
-            animationDelay: `${orb.id * -4}s`,
-            zIndex: -1
+            animationDelay: `${orb.id * -4}s`
           }}
         />
       ))}

@@ -10,7 +10,7 @@ export const MainLayout = () => {
   return (
     <SidebarProvider>
       <SacredCosmicBackground />
-      <div className="sidebar-layout min-h-screen flex w-full">
+      <div className="sidebar-layout min-h-screen flex w-full relative" style={{ zIndex: 1 }}>
         <UIErrorBoundary>
           <AppSidebar />
         </UIErrorBoundary>
