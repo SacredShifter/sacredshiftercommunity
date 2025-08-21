@@ -93,27 +93,27 @@ const Auth = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <Card className="w-full max-w-md mx-auto bg-background/80 backdrop-blur-sm">
-        <CardHeader className="space-y-1 text-center">
-          <div className="flex justify-center mb-4">
+    <div className="min-h-screen flex items-center justify-center p-3 md:p-4">
+      <Card className="w-full max-w-sm sm:max-w-md mx-auto bg-background/80 backdrop-blur-sm">
+        <CardHeader className="space-y-1 text-center p-4 md:p-6">
+          <div className="flex justify-center mb-3 md:mb-4">
             <img 
               src="https://mikltjgbvxrxndtszorb.supabase.co/storage/v1/object/public/sacred-assets/uploads/Logo-MainSacredShifter-removebg-preview%20(1).png" 
               alt="Sacred Shifter" 
-              className="h-36 w-auto invert"
+              className="h-24 sm:h-32 md:h-36 w-auto invert"
             />
           </div>
-          <CardDescription>
+          <CardDescription className="text-sm md:text-base">
             Transform your consciousness through sacred technology
           </CardDescription>
         </CardHeader>
         
-        <CardContent>
-          <div className="space-y-4">
+        <CardContent className="p-4 md:p-6">
+          <div className="space-y-3 md:space-y-4">
             <Button 
               onClick={handleGoogleSignIn}
               variant="outline"
-              className="w-full"
+              className="w-full h-10 md:h-11 text-sm md:text-base"
               disabled={isLoading}
             >
               <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
@@ -137,34 +137,36 @@ const Auth = () => {
             </div>
           </div>
           
-          <Tabs defaultValue="signin" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="signin">Sign In</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
+          <Tabs defaultValue="signin" className="w-full mt-4">
+            <TabsList className="grid w-full grid-cols-2 h-9 md:h-10">
+              <TabsTrigger value="signin" className="text-xs md:text-sm">Sign In</TabsTrigger>
+              <TabsTrigger value="signup" className="text-xs md:text-sm">Sign Up</TabsTrigger>
             </TabsList>
             
-            <TabsContent value="signin" className="space-y-4">
-              <form onSubmit={handleSignIn} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="signin-email">Email</Label>
+            <TabsContent value="signin" className="space-y-3 md:space-y-4 mt-4">
+              <form onSubmit={handleSignIn} className="space-y-3 md:space-y-4">
+                <div className="space-y-1 md:space-y-2">
+                  <Label htmlFor="signin-email" className="text-sm">Email</Label>
                   <Input
                     id="signin-email"
                     type="email"
                     placeholder="your@email.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    className="h-9 md:h-10 text-sm md:text-base"
                     required
                   />
                 </div>
                 
-                <div className="space-y-2">
-                  <Label htmlFor="signin-password">Password</Label>
+                <div className="space-y-1 md:space-y-2">
+                  <Label htmlFor="signin-password" className="text-sm">Password</Label>
                   <Input
                     id="signin-password"
                     type="password"
                     placeholder="Your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    className="h-9 md:h-10 text-sm md:text-base"
                     required
                     minLength={6}
                   />
@@ -172,7 +174,7 @@ const Auth = () => {
                 
                 <Button 
                   type="submit" 
-                  className="w-full" 
+                  className="w-full h-9 md:h-10 text-sm md:text-base" 
                   disabled={!validateForm() || isLoading}
                 >
                   {isLoading ? "Signing In..." : "Sign In"}
@@ -180,28 +182,30 @@ const Auth = () => {
               </form>
             </TabsContent>
             
-            <TabsContent value="signup" className="space-y-4">
-              <form onSubmit={handleSignUp} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="signup-email">Email</Label>
+            <TabsContent value="signup" className="space-y-3 md:space-y-4 mt-4">
+              <form onSubmit={handleSignUp} className="space-y-3 md:space-y-4">
+                <div className="space-y-1 md:space-y-2">
+                  <Label htmlFor="signup-email" className="text-sm">Email</Label>
                   <Input
                     id="signup-email"
                     type="email"
                     placeholder="your@email.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    className="h-9 md:h-10 text-sm md:text-base"
                     required
                   />
                 </div>
                 
-                <div className="space-y-2">
-                  <Label htmlFor="signup-password">Password</Label>
+                <div className="space-y-1 md:space-y-2">
+                  <Label htmlFor="signup-password" className="text-sm">Password</Label>
                   <Input
                     id="signup-password"
                     type="password"
                     placeholder="Create a password (min 6 characters)"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    className="h-9 md:h-10 text-sm md:text-base"
                     required
                     minLength={6}
                   />
@@ -212,7 +216,7 @@ const Auth = () => {
                 
                 <Button 
                   type="submit" 
-                  className="w-full" 
+                  className="w-full h-9 md:h-10 text-sm md:text-base" 
                   disabled={!validateForm() || isLoading}
                 >
                   {isLoading ? "Creating Account..." : "Create Account"}
