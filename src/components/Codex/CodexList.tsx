@@ -1,12 +1,13 @@
 import { useState, useMemo } from 'react';
-import { Search, Plus, Filter, Calendar, Sparkles } from 'lucide-react';
+import { Search, Plus, Filter, Calendar, Sparkles, MoreHorizontal, Edit, Trash2, Eye, ArrowUpDown } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useCodex } from '@/hooks/useCodex';
-import { CodexEntryCard } from './CodexEntryCard';
 import { CodexEntryModal } from './CodexEntryModal';
 import { format } from 'date-fns/format';
 import { TooltipWrapper } from '@/components/HelpSystem/TooltipWrapper';
@@ -27,10 +28,11 @@ export function CodexList() {
   const [sourceFilter, setSourceFilter] = useState('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState(null);
-  const [viewMode, setViewMode] = useState<'grid' | 'timeline'>('grid');
+  const [sortField, setSortField] = useState<'created_at' | 'title' | 'type'>('created_at');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
-  const filteredEntries = useMemo(() => {
-    return entries.filter(entry => {
+  const filteredAndSortedEntries = useMemo(() => {
+    const filtered = entries.filter(entry => {
       const matchesSearch = !searchQuery || 
         entry.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         entry.content?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -41,7 +43,33 @@ export function CodexList() {
       
       return matchesSearch && matchesType && matchesSource;
     });
-  }, [entries, searchQuery, typeFilter, sourceFilter]);
+
+    return filtered.sort((a, b) => {
+      let aValue, bValue;
+      
+      switch (sortField) {
+        case 'title':
+          aValue = a.title.toLowerCase();
+          bValue = b.title.toLowerCase();
+          break;
+        case 'type':
+          aValue = a.type;
+          bValue = b.type;
+          break;
+        case 'created_at':
+        default:
+          aValue = new Date(a.created_at);
+          bValue = new Date(b.created_at);
+          break;
+      }
+      
+      if (sortOrder === 'asc') {
+        return aValue > bValue ? 1 : -1;
+      } else {
+        return aValue < bValue ? 1 : -1;
+      }
+    });
+  }, [entries, searchQuery, typeFilter, sourceFilter, sortField, sortOrder]);
 
   const handleCreateEntry = async (data) => {
     await createEntry(data);
@@ -59,6 +87,15 @@ export function CodexList() {
   const handleEditEntry = (entry) => {
     setSelectedEntry(entry);
     setIsModalOpen(true);
+  };
+
+  const handleSort = (field: 'created_at' | 'title' | 'type') => {
+    if (sortField === field) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortOrder('asc');
+    }
   };
 
   const clearFilters = () => {
@@ -94,30 +131,12 @@ export function CodexList() {
             <p className="text-muted-foreground mt-2">Your sacred memory archive and metaphysical metadata system</p>
           </div>
           
-          <div className="flex items-center gap-3">
-            <Button
-              variant={viewMode === 'grid' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setViewMode('grid')}
-            >
-              Grid
+          <TooltipWrapper content={HelpTooltips.create}>
+            <Button onClick={() => setIsModalOpen(true)} className="gap-2">
+              <Plus className="h-4 w-4" />
+              New Entry
             </Button>
-            <Button
-              variant={viewMode === 'timeline' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setViewMode('timeline')}
-            >
-              <Calendar className="h-4 w-4 mr-2" />
-              Timeline
-            </Button>
-            
-            <TooltipWrapper content={HelpTooltips.create}>
-              <Button onClick={() => setIsModalOpen(true)} className="gap-2">
-                <Plus className="h-4 w-4" />
-                New Entry
-              </Button>
-            </TooltipWrapper>
-          </div>
+          </TooltipWrapper>
         </div>
       </motion.div>
 
@@ -181,10 +200,10 @@ export function CodexList() {
           </div>
         </div>
         
-        {filteredEntries.length !== entries.length && (
+        {filteredAndSortedEntries.length !== entries.length && (
           <div className="mt-4 flex flex-wrap gap-2">
             <Badge variant="secondary">
-              {filteredEntries.length} of {entries.length} entries
+              {filteredAndSortedEntries.length} of {entries.length} entries
             </Badge>
             {searchQuery && <Badge variant="outline">Search: "{searchQuery}"</Badge>}
             {typeFilter !== 'all' && <Badge variant="outline">Type: {typeFilter}</Badge>}
@@ -229,7 +248,7 @@ export function CodexList() {
             </Button>
           </div>
         </motion.div>
-      ) : filteredEntries.length === 0 ? (
+      ) : filteredAndSortedEntries.length === 0 ? (
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -242,54 +261,120 @@ export function CodexList() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
+          className="bg-card/30 backdrop-blur border rounded-lg overflow-hidden"
         >
-          {viewMode === 'grid' ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredEntries.map((entry, index) => (
-                <motion.div
+          <Table>
+            <TableHeader>
+              <TableRow className="border-border/30">
+                <TableHead 
+                  className="cursor-pointer hover:bg-muted/30 transition-colors"
+                  onClick={() => handleSort('title')}
+                >
+                  <div className="flex items-center gap-2">
+                    Title
+                    <ArrowUpDown className="h-4 w-4" />
+                  </div>
+                </TableHead>
+                <TableHead 
+                  className="cursor-pointer hover:bg-muted/30 transition-colors"
+                  onClick={() => handleSort('type')}
+                >
+                  <div className="flex items-center gap-2">
+                    Type
+                    <ArrowUpDown className="h-4 w-4" />
+                  </div>
+                </TableHead>
+                <TableHead>Source</TableHead>
+                <TableHead>Tags</TableHead>
+                <TableHead 
+                  className="cursor-pointer hover:bg-muted/30 transition-colors"
+                  onClick={() => handleSort('created_at')}
+                >
+                  <div className="flex items-center gap-2">
+                    Created
+                    <ArrowUpDown className="h-4 w-4" />
+                  </div>
+                </TableHead>
+                <TableHead className="w-[50px]"></TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredAndSortedEntries.map((entry, index) => (
+                <motion.tr
                   key={entry.id}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
+                  transition={{ delay: index * 0.03 }}
+                  className="border-border/30 hover:bg-muted/20 transition-colors"
                 >
-                  <CodexEntryCard
-                    entry={entry}
-                    onEdit={handleEditEntry}
-                    onDelete={deleteEntry}
-                  />
-                </motion.div>
-              ))}
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {filteredEntries.map((entry, index) => (
-                <motion.div
-                  key={entry.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  className="flex items-start gap-4 p-4 rounded-lg border bg-card/30 backdrop-blur hover:bg-card/50 transition-colors"
-                >
-                  <div className="flex-shrink-0 w-16 text-center">
-                    <div className="text-sm font-medium text-primary">
-                      {format(new Date(entry.created_at), 'MMM')}
+                  <TableCell className="font-medium">
+                    <div className="max-w-[300px]">
+                      <div className="font-semibold truncate">{entry.title}</div>
+                      {entry.content && (
+                        <div className="text-sm text-muted-foreground truncate mt-1">
+                          {entry.content.substring(0, 100)}...
+                        </div>
+                      )}
                     </div>
-                    <div className="text-2xl font-bold">
-                      {format(new Date(entry.created_at), 'd')}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="secondary" className="font-medium">
+                      {entry.type}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <span className="text-sm text-muted-foreground">
+                      {entry.source_module || 'Manual'}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex flex-wrap gap-1 max-w-[200px]">
+                      {entry.resonance_tags.slice(0, 3).map((tag, idx) => (
+                        <Badge key={idx} variant="outline" className="text-xs">
+                          {tag}
+                        </Badge>
+                      ))}
+                      {entry.resonance_tags.length > 3 && (
+                        <Badge variant="outline" className="text-xs">
+                          +{entry.resonance_tags.length - 3}
+                        </Badge>
+                      )}
                     </div>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <CodexEntryCard
-                      entry={entry}
-                      onEdit={handleEditEntry}
-                      onDelete={deleteEntry}
-                      compact
-                    />
-                  </div>
-                </motion.div>
+                  </TableCell>
+                  <TableCell>
+                    <span className="text-sm text-muted-foreground">
+                      {format(new Date(entry.created_at), 'MMM d, yyyy')}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="bg-background/95 backdrop-blur border-border/50">
+                        <DropdownMenuItem 
+                          onClick={() => handleEditEntry(entry)}
+                          className="cursor-pointer"
+                        >
+                          <Edit className="h-4 w-4 mr-2" />
+                          Edit
+                        </DropdownMenuItem>
+                        <DropdownMenuItem 
+                          onClick={() => deleteEntry(entry.id)}
+                          className="cursor-pointer text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </motion.tr>
               ))}
-            </div>
-          )}
+            </TableBody>
+          </Table>
         </motion.div>
       )}
 
