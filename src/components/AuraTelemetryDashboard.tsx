@@ -101,7 +101,7 @@ export const AuraTelemetryDashboard: React.FC = () => {
       setSystemHealth('online');
     } catch (error) {
       console.error('Resync failed:', error);
-      setSystemHealth('degraded');
+      setSystemHealth('offline');
     } finally {
       setIsResyncing(false);
     }
