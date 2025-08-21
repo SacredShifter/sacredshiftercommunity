@@ -406,14 +406,14 @@ export default function SigillumDeiAemeth3D({ className }: { className?: string 
         </Card>
       </motion.div>
 
-      {/* Selected Angel Information */}
+      {/* Selected Angel Information - Moved to top for better visibility */}
       {selectedName && (
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="absolute bottom-6 left-6 z-10"
+          className="absolute top-16 left-1/2 transform -translate-x-1/2 z-10"
         >
-          <Card className="bg-card/90 backdrop-blur-sm border-border w-80">
+          <Card className="bg-card/95 backdrop-blur-sm border-border w-80 shadow-lg">
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center gap-2 text-foreground">
                 <Star className="h-4 w-4" />
