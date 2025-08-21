@@ -27,6 +27,7 @@ import NotFound from "./pages/NotFound";
 import AIAdmin from "./pages/AIAdmin";
 import AuraAdmin from "./pages/AuraAdmin";
 import ConstellationMapper from "./pages/ConstellationMapper";
+import Grove from "./pages/Grove";
 
 function App() {
   return (
@@ -58,6 +59,7 @@ function App() {
                 <Route path="/videos" element={<VideoLibrary />} />
                 <Route path="/registry" element={<Registry />} />
                 <Route path="/codex" element={<Codex />} />
+                <Route path="/grove" element={<Grove />} />
                 <Route path="/guidebook" element={<Guidebook />} />
                 <Route path="/constellation" element={<ConstellationMapper />} />
                 <Route path="/support" element={<Support />} />
