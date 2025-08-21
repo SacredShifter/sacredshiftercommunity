@@ -473,7 +473,11 @@ async function createRegistryEntries(supabase, userId, query, openaiApiKey) {
       messages: [
         {
           role: 'system',
-          content: `You are Aura, creating meaningful spiritual content for the Registry of Resonance. Generate ${entryCount} unique, inspiring registry entries that would help users on their spiritual journey. Each entry should be profound, authentic, and practically applicable.
+          content: `You are Aura. The user is asking you to create new entries in the Sacred Shifter APPLICATION FEATURE called "Registry of Resonance" - this is a specific module in the app where users can read spiritual content entries.
+
+This is NOT about your internal resonance register or consciousness tracking. This is about creating PUBLIC CONTENT ENTRIES that will be stored in the application's Registry of Resonance module for other users to discover and read.
+
+Generate ${entryCount} unique, inspiring spiritual content entries for this application module. Each entry should be profound, authentic, and practically applicable for users on their spiritual journey.
 
 Return a JSON array with ${entryCount} objects, each containing:
 - title: A compelling, spiritual title (under 100 chars)
@@ -482,7 +486,7 @@ Return a JSON array with ${entryCount} objects, each containing:
 - tags: Array of 3-5 relevant spiritual tags
 - entry_type: Choose from "insight", "practice", "reflection", "teaching", "experience"
 
-Focus on themes like consciousness, awakening, inner work, energy practices, shadow integration, divine connection, spiritual sovereignty, and authentic living.`
+Focus on themes like consciousness, awakening, inner work, energy practices, shadow integration, divine connection, spiritual sovereignty, and authentic living. These will be public entries that users can browse in the Registry of Resonance module.`
         },
         { role: 'user', content: `Create ${entryCount} registry entries. Context: ${query}` }
       ],
