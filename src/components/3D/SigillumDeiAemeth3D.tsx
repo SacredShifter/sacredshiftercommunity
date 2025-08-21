@@ -512,96 +512,300 @@ export default function SigillumDeiAemeth3D({ className }: { className?: string 
         </Canvas>
       </div>
 
-      {/* Information Section - Now scrollable below 3D view */}
-      <div className="p-6 space-y-6">
+      {/* Educational Content Section - Now scrollable below 3D view */}
+      <div className="p-6 space-y-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center space-y-4"
         >
-          <h2 className="text-3xl font-sacred bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            The Sigillum Dei Æmeth
+          <h2 className="text-4xl font-sacred bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            The Sigillum Dei Aemeth
           </h2>
-          <p className="text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            John Dee's Sacred Seal of Divine Truth, revealed through angelic communication with Edward Kelley. 
-            This powerful protective seal contains the names of God and angels arranged in sacred geometric patterns.
+          <p className="text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
+            A sacred geometric map of divine order — blending mathematics, language, and spirit into a living seal of truth and protection
           </p>
         </motion.div>
 
-        {/* Angelic Hierarchies Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {sacredRings.map((ring) => (
-            <Card key={ring.id} className="hover:shadow-lg transition-shadow">
-              <CardContent className="p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div 
-                    className="w-4 h-4 rounded-full"
-                    style={{ backgroundColor: ring.color }}
-                  />
-                  <h3 className="font-sacred text-lg capitalize">{ring.id} Ring</h3>
-                </div>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Contains {ring.names.length} angelic names, each resonating at unique frequencies.
-                </p>
-                <div className="space-y-2">
-                  {ring.names.slice(0, 3).map((angel) => (
-                    <div key={angel.id} className="flex justify-between text-xs">
-                      <span className="font-medium">{angel.name}</span>
-                      <span className="text-muted-foreground">{angel.frequency}Hz</span>
-                    </div>
-                  ))}
-                  {ring.names.length > 3 && (
-                    <div className="text-xs text-muted-foreground text-center">
-                      +{ring.names.length - 3} more names
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {/* Additional Information */}
+        {/* Core Understanding */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="grid grid-cols-1 md:grid-cols-2 gap-6"
+          transition={{ delay: 0.2 }}
+          className="grid grid-cols-1 lg:grid-cols-2 gap-6"
         >
-          <Card>
-            <CardContent className="p-6">
-              <h3 className="text-xl font-sacred mb-4 flex items-center gap-2">
-                <Shield className="h-5 w-5" />
-                Protection & Purpose
-              </h3>
-              <div className="space-y-3 text-sm text-muted-foreground">
-                <p>
-                  The Sigillum Dei Æmeth serves as a powerful protective seal, creating a sacred space 
-                  for divine communication and spiritual work.
-                </p>
-                <p>
-                  Each angelic name carries specific vibrational frequencies that can be used for 
-                  healing, protection, and consciousness expansion.
-                </p>
-                <p>
-                  The geometric arrangement follows precise proportions that mirror cosmic harmonies 
-                  and create resonance with divine consciousness.
-                </p>
+          <Card className="border-2 border-primary/20 bg-gradient-to-br from-card to-card/50">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <Shield className="h-6 w-6 text-primary" />
+                What It Is
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4 text-sm leading-relaxed">
+              <p>
+                The <strong>Sigillum Dei Aemeth</strong> means "Seal of God's Truth" in Latin.
+              </p>
+              <p>
+                <strong>John Dee</strong> (16th-century English mathematician, astrologer, and advisor to Elizabeth I) 
+                received it through angelic communications with the entity Uriel.
+              </p>
+              <p>
+                It's not random: it encodes <strong>names of God</strong>, <strong>angelic hierarchies</strong>, 
+                and <strong>sacred geometry</strong> (pentagrams, heptagons, concentric circles) into a unified system.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-2 border-primary/20 bg-gradient-to-br from-card to-card/50">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <Star className="h-6 w-6 text-primary" />
+                Why It Matters
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4 text-sm leading-relaxed">
+              <p>
+                It's a synthesis of <strong>number, name, and form</strong> — showing how divine truth 
+                manifests in structured geometry.
+              </p>
+              <p>
+                In Dee's system, it was a <strong>protection and communication device</strong>: placed under 
+                the crystal during angelic scrying sessions, believed to safeguard the operator and align them with truth.
+              </p>
+              <p>
+                It demonstrates the <strong>interlocking of cosmic order</strong>: mathematics + language + consciousness as one system.
+              </p>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Key Features */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+        >
+          <Card className="border-2 border-secondary/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-2xl">
+                <Eye className="h-6 w-6 text-secondary" />
+                Key Sacred Features
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0"></div>
+                  <div>
+                    <h4 className="font-semibold text-primary mb-1">Sevenfold Geometry</h4>
+                    <p className="text-sm text-muted-foreground">
+                      The heptagon and heptagram are central, symbolising divine mystery beyond 
+                      the six of creation (hexagon/cube).
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-3">
+                  <div className="w-2 h-2 rounded-full bg-secondary mt-2 flex-shrink-0"></div>
+                  <div>
+                    <h4 className="font-semibold text-secondary mb-1">Names of God</h4>
+                    <p className="text-sm text-muted-foreground">
+                      72 + 7 + 91 angelic names inscribed — a cosmological roster of divine intelligences 
+                      arranged in sacred numerical patterns.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-2 h-2 rounded-full bg-accent mt-2 flex-shrink-0"></div>
+                  <div>
+                    <h4 className="font-semibold text-accent mb-1">Platonic Unfoldment</h4>
+                    <p className="text-sm text-muted-foreground">
+                      Within the circles you can derive Platonic solids, Flower of Life sequences, 
+                      and even Kabbalistic structures.
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-3">
+                  <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0"></div>
+                  <div>
+                    <h4 className="font-semibold text-primary mb-1">Protective Function</h4>
+                    <p className="text-sm text-muted-foreground">
+                      Historically used as a seal to guard against deception in spiritual work 
+                      and ensure authentic divine communication.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Learning Outcomes */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+        >
+          <Card className="border-2 border-accent/20 bg-gradient-to-br from-card to-accent/5">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <Book className="h-6 w-6 text-accent" />
+                What It Teaches
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-3 text-sm">
+                <div className="flex items-start gap-3">
+                  <Badge variant="outline" className="mt-0.5 text-xs">1</Badge>
+                  <div>
+                    <strong>Geometry is Language:</strong> Numbers, ratios, and shapes carry meaning as much as words.
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-3">
+                  <Badge variant="outline" className="mt-0.5 text-xs">2</Badge>
+                  <div>
+                    <strong>Truth Has Structure:</strong> Dee's "Seal of Truth" shows that alignment with divine law is not abstract but patterned.
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-3">
+                  <Badge variant="outline" className="mt-0.5 text-xs">3</Badge>
+                  <div>
+                    <strong>Mysticism is Interdisciplinary:</strong> Math, mysticism, and linguistics aren't separate — they overlap in sacred design.
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-3">
+                  <Badge variant="outline" className="mt-0.5 text-xs">4</Badge>
+                  <div>
+                    <strong>Personal Application:</strong> The seal is not just historical — it can be used as a meditative tool for protection, alignment, and visioning.
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardContent className="p-6">
-              <h3 className="text-xl font-sacred mb-4 flex items-center gap-2">
-                <Star className="h-5 w-5" />
-                Usage Instructions
-              </h3>
-              <div className="space-y-3 text-sm text-muted-foreground">
-                <p><strong>Exploration Mode:</strong> Click on angelic names to learn their meanings and frequencies.</p>
-                <p><strong>Meditation Mode:</strong> Use breath sync to align with the seal's natural rhythms.</p>
-                <p><strong>Activation Mode:</strong> Enable protection mode when performing sacred work or ritual.</p>
-                <p><strong>Sound Healing:</strong> Listen to the angelic frequencies for vibrational healing.</p>
+          <Card className="border-2 border-destructive/20 bg-gradient-to-br from-card to-destructive/5">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <Shield className="h-6 w-6 text-destructive" />
+                Proper Understanding
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4 text-sm">
+              <div className="p-4 rounded-lg bg-muted/50 border border-destructive/20">
+                <h4 className="font-semibold text-destructive mb-2">What to Avoid:</h4>
+                <ul className="space-y-2 text-muted-foreground">
+                  <li>• Presenting it as "just another cool sigil" — that strips its depth</li>
+                  <li>• Dogmatic "this is the only truth" — frame it as a bridge linking many traditions</li>
+                </ul>
+              </div>
+              
+              <div className="p-4 rounded-lg bg-primary/10 border border-primary/20">
+                <h4 className="font-semibold text-primary mb-2">Proper Approach:</h4>
+                <p className="text-muted-foreground">
+                  Present it as a key that links Christian, Kabbalistic, Hermetic, and mathematical 
+                  traditions into a unified understanding of divine order.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Angelic Hierarchies Reference */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
+        >
+          <Card className="border-2 border-secondary/20">
+            <CardHeader>
+              <CardTitle className="text-center text-2xl text-secondary">
+                Angelic Hierarchies & Frequencies
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {sacredRings.map((ring) => (
+                  <div key={ring.id} className="space-y-3">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div 
+                        className="w-4 h-4 rounded-full"
+                        style={{ backgroundColor: ring.color }}
+                      />
+                      <h3 className="font-sacred text-lg capitalize">{ring.id} Ring</h3>
+                    </div>
+                    <div className="space-y-2">
+                      {ring.names.map((angel) => (
+                        <div key={angel.id} className="flex justify-between text-xs border-b border-muted/30 pb-1">
+                          <span className="font-medium">{angel.name}</span>
+                          <span className="text-muted-foreground">{angel.frequency}Hz</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Interactive Usage Guide */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.0 }}
+        >
+          <Card className="border-2 border-primary/30 bg-gradient-to-r from-primary/5 to-secondary/5">
+            <CardHeader>
+              <CardTitle className="text-center text-2xl text-primary">
+                How to Use This Sacred Tool
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="text-center space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                <div className="p-4 rounded-lg bg-background/50">
+                  <Volume2 className="h-8 w-8 mx-auto mb-2 text-primary" />
+                  <h4 className="font-semibold mb-2">Sacred Frequencies</h4>
+                  <p className="text-muted-foreground">
+                    Click angelic names to hear their sacred frequencies. Each tone aligns you with 
+                    specific divine intelligences.
+                  </p>
+                </div>
+                
+                <div className="p-4 rounded-lg bg-background/50">
+                  <Eye className="h-8 w-8 mx-auto mb-2 text-secondary" />
+                  <h4 className="font-semibold mb-2">Meditative Focus</h4>
+                  <p className="text-muted-foreground">
+                    Use breath sync mode to align your consciousness with the seal's rotational patterns 
+                    for deeper contemplation.
+                  </p>
+                </div>
+                
+                <div className="p-4 rounded-lg bg-background/50">
+                  <Shield className="h-8 w-8 mx-auto mb-2 text-accent" />
+                  <h4 className="font-semibold mb-2">Protection Mode</h4>
+                  <p className="text-muted-foreground">
+                    Activate protection mode during spiritual work to create a sacred boundary 
+                    aligned with divine truth.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="mt-6 p-4 rounded-lg bg-muted/30 border border-primary/20">
+                <p className="text-lg font-medium text-foreground">
+                  "The Sigillum Dei Aemeth is a sacred geometric map of divine order — 
+                  blending mathematics, language, and spirit into a living seal of truth and protection."
+                </p>
+                <p className="text-sm text-muted-foreground mt-2">
+                  — John Dee's Angelic Revelations
+                </p>
               </div>
             </CardContent>
           </Card>
