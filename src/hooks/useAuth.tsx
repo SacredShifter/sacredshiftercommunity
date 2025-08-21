@@ -197,16 +197,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const signUp = async (email: string, password: string) => {
+    console.log('🚀 useAuth signUp called with:', email);
     const redirectUrl = `${window.location.origin}/`;
+    console.log('🔗 Redirect URL:', redirectUrl);
     
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: redirectUrl
-      }
-    });
-    return { error };
+    try {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: redirectUrl
+        }
+      });
+      console.log('✅ Supabase signUp response:', { error: error?.message || 'success' });
+      return { error };
+    } catch (err) {
+      console.error('❌ Supabase signUp error:', err);
+      return { error: err };
+    }
   };
 
   const signIn = async (email: string, password: string) => {

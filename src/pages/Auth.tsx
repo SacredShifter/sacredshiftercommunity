@@ -72,29 +72,43 @@ const Auth = () => {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('🔄 Starting sign up process for:', email);
     setIsLoading(true);
     
-    const { error } = await signUp(email, password);
-    
-    if (error) {
-      let title = "Sign Up Failed";
-      let description = error.message;
+    try {
+      const { error } = await signUp(email, password);
+      console.log('📝 Sign up result:', { error: error?.message || 'success' });
       
-      // Handle specific error cases
-      if (error.message.includes("User already registered") || error.message.includes("already exists")) {
-        title = "Account Already Exists";
-        description = "This email is already registered. Try signing in instead, or use a different email address.";
+      if (error) {
+        let title = "Sign Up Failed";
+        let description = error.message;
+        
+        // Handle specific error cases
+        if (error.message.includes("User already registered") || error.message.includes("already exists")) {
+          title = "Account Already Exists";
+          description = "This email is already registered. Try signing in instead, or use a different email address.";
+        }
+        
+        toast({
+          title,
+          description,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Welcome to Sacred Shifter",
+          description: "Please check your email to confirm your account",
+        });
+        // Clear form on success
+        setEmail('');
+        setPassword('');
       }
-      
+    } catch (err) {
+      console.error('❌ Sign up error:', err);
       toast({
-        title,
-        description,
+        title: "Sign Up Error",
+        description: "An unexpected error occurred. Please try again.",
         variant: "destructive",
-      });
-    } else {
-      toast({
-        title: "Welcome to Sacred Shifter",
-        description: "Please check your email to confirm your account",
       });
     }
     
