@@ -19,7 +19,7 @@ export interface AIAssistantResponse {
 export function useAIAssistant() {
   const [loading, setLoading] = useState(false);
   const [lastResponse, setLastResponse] = useState<string | null>(null);
-  const { user } = useAuth();
+  const { user, userRole } = useAuth();
 
   const askAssistant = async (request: AIAssistantRequest): Promise<string | null> => {
     if (!user) {
@@ -83,6 +83,12 @@ export function useAIAssistant() {
   };
 
   const createRegistryEntries = async (query: string, count?: number) => {
+    // Check if user is admin
+    if (userRole !== 'admin') {
+      toast.error('Registry creation is restricted to administrators only');
+      return null;
+    }
+
     const finalQuery = count ? `Create ${count} new entries. ${query}` : query;
     return askAssistant({
       request_type: 'registry_creation',

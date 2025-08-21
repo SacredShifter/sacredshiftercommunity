@@ -62,8 +62,27 @@ serve(async (req) => {
 
     let assistantMessage;
 
-    // Handle registry creation specially
+    // Handle registry creation specially - Admin only
     if (request_type === 'registry_creation') {
+      // Check if user is admin
+      const { data: userRoles, error: roleError } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id);
+
+      const isAdmin = userRoles?.some(r => r.role === 'admin');
+      
+      if (!isAdmin) {
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: 'Registry creation is restricted to administrators only',
+            request_type: 'registry_creation'
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
       assistantMessage = await createRegistryEntries(supabase, user.id, user_query, OPENAI_API_KEY);
     } else {
       // Enhanced context processing with predictive insights
