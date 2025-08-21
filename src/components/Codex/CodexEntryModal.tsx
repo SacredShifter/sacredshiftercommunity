@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { X, Plus, Tag } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -103,153 +102,147 @@ export function CodexEntryModal({ isOpen, onClose, onSubmit, initialData }: Code
   };
 
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <Dialog open={isOpen} onOpenChange={onClose}>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.2 }}
-            >
-              <DialogHeader>
-                <DialogTitle className="text-xl font-semibold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-                  {initialData ? 'Edit Codex Entry' : 'New Codex Entry'}
-                </DialogTitle>
-                {!initialData && currentPrompt && (
-                  <motion.p 
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-sm text-muted-foreground italic mt-2 p-3 bg-primary/5 rounded-lg border-l-2 border-primary/30"
-                  >
-                    💫 Reflection: {currentPrompt}
-                  </motion.p>
-                )}
-              </DialogHeader>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-2xl h-[min(90vh,800px)] flex flex-col p-0 gap-0">
+        <div className="flex-shrink-0 p-6 pb-4 border-b">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-semibold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+              {initialData ? 'Edit Codex Entry' : 'New Codex Entry'}
+            </DialogTitle>
+            {!initialData && currentPrompt && (
+              <p className="text-sm text-muted-foreground italic mt-2 p-3 bg-primary/5 rounded-lg border-l-2 border-primary/30">
+                💫 Reflection: {currentPrompt}
+              </p>
+            )}
+          </DialogHeader>
+        </div>
 
-              <form onSubmit={handleSubmit} className="space-y-6 mt-6">
-                {/* Title */}
-                <div className="space-y-2">
-                  <Label htmlFor="title">Title *</Label>
-                  <TooltipWrapper content={HelpTooltips.title}>
-                    <Input
-                      id="title"
-                      value={formData.title}
-                      onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                      placeholder="Enter a meaningful title..."
-                      required
-                      className="text-base"
-                    />
-                  </TooltipWrapper>
-                </div>
+        <div className="flex-1 overflow-y-auto p-6 pt-4">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Title */}
+            <div className="space-y-2">
+              <Label htmlFor="title">Title *</Label>
+              <TooltipWrapper content={HelpTooltips.title}>
+                <Input
+                  id="title"
+                  value={formData.title}
+                  onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                  placeholder="Enter a meaningful title..."
+                  required
+                  className="text-base"
+                />
+              </TooltipWrapper>
+            </div>
 
-                {/* Type and Source */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="type">Entry Type</Label>
-                    <TooltipWrapper content={HelpTooltips.type}>
-                      <Select value={formData.type} onValueChange={(value) => setFormData(prev => ({ ...prev, type: value }))}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {ENTRY_TYPES.map(type => (
-                            <SelectItem key={type} value={type}>{type}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </TooltipWrapper>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="source">Source Module</Label>
-                    <TooltipWrapper content={HelpTooltips.source}>
-                      <Select value={formData.source_module} onValueChange={(value) => setFormData(prev => ({ ...prev, source_module: value }))}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select source" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {SOURCE_MODULES.map(source => (
-                            <SelectItem key={source} value={source}>{source}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </TooltipWrapper>
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="space-y-2">
-                  <Label htmlFor="content">Content</Label>
-                  <TooltipWrapper content={HelpTooltips.content}>
-                    <Textarea
-                      id="content"
-                      value={formData.content}
-                      onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
-                      placeholder="Describe your experience, insight, or memory..."
-                      rows={6}
-                      className="resize-none"
-                    />
-                  </TooltipWrapper>
-                </div>
-
-                {/* Resonance Tags */}
-                <div className="space-y-3">
-                  <Label>Resonance Tags</Label>
-                  
-                  {formData.resonance_tags.length > 0 && (
-                    <div className="flex flex-wrap gap-2">
-                      {formData.resonance_tags.map((tag) => (
-                        <Badge key={tag} variant="secondary" className="text-sm">
-                          <Tag className="h-3 w-3 mr-1" />
-                          {tag}
-                          <button
-                            type="button"
-                            onClick={() => removeTag(tag)}
-                            className="ml-2 hover:text-destructive transition-colors"
-                          >
-                            <X className="h-3 w-3" />
-                          </button>
-                        </Badge>
+            {/* Type and Source */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="type">Entry Type</Label>
+                <TooltipWrapper content={HelpTooltips.type}>
+                  <Select value={formData.type} onValueChange={(value) => setFormData(prev => ({ ...prev, type: value }))}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {ENTRY_TYPES.map(type => (
+                        <SelectItem key={type} value={type}>{type}</SelectItem>
                       ))}
-                    </div>
-                  )}
-                  
-                  <div className="flex gap-2">
-                    <TooltipWrapper content={HelpTooltips.tags}>
-                      <Input
-                        value={newTag}
-                        onChange={(e) => setNewTag(e.target.value)}
-                        onKeyPress={handleKeyPress}
-                        placeholder="Add resonance tags..."
-                        className="flex-1"
-                      />
-                    </TooltipWrapper>
-                    <Button type="button" onClick={addTag} variant="outline" size="sm">
-                      <Plus className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  
-                  <p className="text-xs text-muted-foreground">
-                    Tags help you cross-reference and find connections in your codex.
-                  </p>
-                </div>
+                    </SelectContent>
+                  </Select>
+                </TooltipWrapper>
+              </div>
 
-                {/* Action Buttons */}
-                <div className="flex justify-end gap-3 pt-4 border-t">
-                  <Button type="button" variant="outline" onClick={onClose}>
-                    Cancel
-                  </Button>
-                  <Button type="submit" disabled={!formData.title.trim()}>
-                    {initialData ? 'Update Entry' : 'Create Entry'}
-                  </Button>
+              <div className="space-y-2">
+                <Label htmlFor="source">Source Module</Label>
+                <TooltipWrapper content={HelpTooltips.source}>
+                  <Select value={formData.source_module} onValueChange={(value) => setFormData(prev => ({ ...prev, source_module: value }))}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select source" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {SOURCE_MODULES.map(source => (
+                        <SelectItem key={source} value={source}>{source}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </TooltipWrapper>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="space-y-2">
+              <Label htmlFor="content">Content</Label>
+              <TooltipWrapper content={HelpTooltips.content}>
+                <Textarea
+                  id="content"
+                  value={formData.content}
+                  onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
+                  placeholder="Describe your experience, insight, or memory..."
+                  rows={6}
+                  className="resize-none"
+                />
+              </TooltipWrapper>
+            </div>
+
+            {/* Resonance Tags */}
+            <div className="space-y-3">
+              <Label>Resonance Tags</Label>
+              
+              {formData.resonance_tags.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {formData.resonance_tags.map((tag) => (
+                    <Badge key={tag} variant="secondary" className="text-sm">
+                      <Tag className="h-3 w-3 mr-1" />
+                      {tag}
+                      <button
+                        type="button"
+                        onClick={() => removeTag(tag)}
+                        className="ml-2 hover:text-destructive transition-colors"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </Badge>
+                  ))}
                 </div>
-              </form>
-            </motion.div>
-          </DialogContent>
-        </Dialog>
-      )}
-    </AnimatePresence>
+              )}
+              
+              <div className="flex gap-2">
+                <TooltipWrapper content={HelpTooltips.tags}>
+                  <Input
+                    value={newTag}
+                    onChange={(e) => setNewTag(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    placeholder="Add resonance tags..."
+                    className="flex-1"
+                  />
+                </TooltipWrapper>
+                <Button type="button" onClick={addTag} variant="outline" size="sm">
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+              
+              <p className="text-xs text-muted-foreground">
+                Tags help you cross-reference and find connections in your codex.
+              </p>
+            </div>
+          </form>
+        </div>
+
+        <div className="flex-shrink-0 p-6 pt-4 border-t">
+          <div className="flex justify-end gap-3">
+            <Button type="button" variant="outline" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button 
+              type="submit" 
+              disabled={!formData.title.trim()}
+              onClick={handleSubmit}
+            >
+              {initialData ? 'Update Entry' : 'Create Entry'}
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -3,7 +3,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { 
   Pin, Share2, Edit, Trash2, Sparkles, 
   Globe, Users, Lock, Calendar, Tag, Target,
@@ -114,7 +113,7 @@ export function EntryModal({ entry, open, onClose, onEdit, onVerificationChange 
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl h-[90vh] p-0 overflow-hidden flex flex-col">
+      <DialogContent className="max-w-4xl h-[min(90vh,800px)] p-0 overflow-hidden flex flex-col">
         <div className="relative flex flex-col h-full">
           {/* Admin Verification Panel - Always at top */}
           <AdminVerificationPanel 
@@ -254,7 +253,7 @@ export function EntryModal({ entry, open, onClose, onEdit, onVerificationChange 
           </div>
 
           {/* Content */}
-          <ScrollArea className="flex-1 p-6">
+          <div className="flex-1 overflow-y-auto p-6">
             <div className="space-y-6">
               {/* Image */}
               {entry.image_url && (
@@ -379,7 +378,7 @@ export function EntryModal({ entry, open, onClose, onEdit, onVerificationChange 
               <Separator />
               <RegistryComments entryId={entry.id} />
             </div>
-          </ScrollArea>
+          </div>
         </div>
 
         {/* Share to Circle Modal */}
