@@ -118,10 +118,10 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ isVisible, onCom
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
         transition={{ duration: 0.3 }}
-        className="w-full max-w-4xl max-h-[90vh] overflow-hidden"
+        className="w-full max-w-5xl max-h-[95vh] flex flex-col"
       >
-        <Card className="bg-background/98 backdrop-blur-xl border-primary/20 shadow-2xl shadow-primary/10">
-          <CardContent className="p-0">
+        <Card className="bg-background/98 backdrop-blur-xl border-primary/20 shadow-2xl shadow-primary/10 flex-1 flex flex-col overflow-hidden">
+          <CardContent className="p-0 flex-1 overflow-y-auto">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentStep}
@@ -129,7 +129,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ isVisible, onCom
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.3 }}
-                className="min-h-[600px] flex flex-col"
+                className="flex flex-col h-full"
               >
                 {renderCurrentStep()}
               </motion.div>
