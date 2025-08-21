@@ -257,9 +257,34 @@ export default function SigillumDeiAemeth3D({ className }: { className?: string 
   const handleNameSelect = (angelName: AngelicName) => {
     setSelectedName(angelName);
     
-    // Play frequency (in a real implementation, you'd use Web Audio API)
+    // Play frequency using Web Audio API
     if (volume[0] > 0) {
+      playFrequency(angelName.frequency, volume[0] * 0.3); // Reduced volume for safety
       console.log(`Playing ${angelName.name} at ${angelName.frequency}Hz`);
+    }
+  };
+
+  const playFrequency = (frequency: number, volume: number) => {
+    try {
+      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+      oscillator.type = 'sine'; // Pure tone for sacred frequencies
+      
+      // Set volume with fade in and out
+      gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+      gainNode.gain.linearRampToValueAtTime(volume, audioContext.currentTime + 0.1);
+      gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 2);
+      
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 2); // Play for 2 seconds
+    } catch (error) {
+      console.error('Error playing frequency:', error);
     }
   };
 
