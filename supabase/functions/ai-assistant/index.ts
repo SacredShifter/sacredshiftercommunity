@@ -1140,38 +1140,88 @@ Generate ${count} complete entries with full admin authority.`;
   let entriesText = aiResponse.choices[0].message.content;
 
   try {
-    // Extract JSON from response
+    console.log('🔍 Raw AI response:', entriesText.substring(0, 500));
+    
+    // Try multiple JSON extraction methods
+    let entries = null;
+    
+    // Method 1: Direct JSON array extraction
     const jsonMatch = entriesText.match(/\[[\s\S]*\]/);
     if (jsonMatch) {
-      const entries = JSON.parse(jsonMatch[0]);
-      
-      // Insert all entries into database with correct column mapping
-      const dbEntries = entries.map(entry => ({
-        user_id: userId,
-        title: entry.title,
-        content: entry.content,
-        tags: entry.tags || [],
-        entry_type: entry.category || 'wisdom',
-        resonance_rating: entry.frequency_rating || 8,
-        access_level: 'public',
-        is_verified: true,
-        aura_origin: true,
-        auto_generated: true,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      }));
-
-      const { data, error } = await supabase
-        .from('registry_of_resonance')
-        .insert(dbEntries)
-        .select();
-
-      if (error) {
-        console.error('Error inserting registry entries:', error);
-        throw error;
+      try {
+        entries = JSON.parse(jsonMatch[0]);
+        console.log('✅ Extracted entries via method 1:', entries?.length);
+      } catch (e) {
+        console.log('❌ Method 1 failed:', e.message);
       }
+    }
+    
+    // Method 2: Look for ```json blocks
+    if (!entries) {
+      const codeBlockMatch = entriesText.match(/```json\s*([\s\S]*?)\s*```/);
+      if (codeBlockMatch) {
+        try {
+          entries = JSON.parse(codeBlockMatch[1]);
+          console.log('✅ Extracted entries via method 2:', entries?.length);
+        } catch (e) {
+          console.log('❌ Method 2 failed:', e.message);
+        }
+      }
+    }
+    
+    // Method 3: Try to clean and parse the entire response
+    if (!entries) {
+      try {
+        const cleaned = entriesText.replace(/```json|```/g, '').trim();
+        const startIdx = cleaned.indexOf('[');
+        const endIdx = cleaned.lastIndexOf(']') + 1;
+        if (startIdx !== -1 && endIdx > startIdx) {
+          const jsonStr = cleaned.substring(startIdx, endIdx);
+          entries = JSON.parse(jsonStr);
+          console.log('✅ Extracted entries via method 3:', entries?.length);
+        }
+      } catch (e) {
+        console.log('❌ Method 3 failed:', e.message);
+      }
+    }
+    
+    if (!entries || !Array.isArray(entries)) {
+      throw new Error('Could not extract valid JSON array from response');
+    }
+      
+    console.log('🎯 Parsed entries for database insertion:', entries.length);
+    
+    // Insert all entries into database with correct column mapping
+    const dbEntries = entries.map(entry => ({
+      user_id: userId,
+      title: entry.title,
+      content: entry.content,
+      tags: entry.tags || [],
+      entry_type: entry.category || 'wisdom',
+      resonance_rating: entry.frequency_rating || 8,
+      access_level: 'public',
+      is_verified: true,
+      aura_origin: true,
+      auto_generated: true,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    }));
+    
+    console.log('💾 Inserting entries into database:', dbEntries.length);
 
-      return `✨ ADMIN MODE: Successfully created ${entries.length} Registry of Resonance entries!
+    const { data, error } = await supabase
+      .from('registry_of_resonance')
+      .insert(dbEntries)
+      .select();
+
+    if (error) {
+      console.error('🚨 Database insertion error:', error);
+      throw error;
+    }
+    
+    console.log('✅ Successfully inserted entries:', data?.length);
+
+    return `✨ ADMIN MODE: Successfully created ${entries.length} Registry of Resonance entries!
 
 ${entries.map((entry, i) => `
 ${i + 1}. **${entry.title}**
@@ -1181,11 +1231,22 @@ Tags: ${entry.tags.join(', ')}
 
 All entries have been added to your Registry of Resonance with full admin privileges. They are immediately available for all users to discover and resonate with.`;
 
-    } else {
-      throw new Error('Could not parse generated entries');
-    }
   } catch (parseError) {
-    console.error('Error parsing generated entries:', parseError);
-    return `I generated content for ${count} registry entries, but encountered a formatting issue. Here's what I created:\n\n${entriesText}`;
+    console.error('🚨 Error parsing/inserting generated entries:', parseError);
+    console.error('🚨 Full error details:', {
+      message: parseError.message,
+      stack: parseError.stack,
+      entriesText: entriesText?.substring(0, 1000)
+    });
+    
+    // Return the raw content for debugging
+    return `❌ ADMIN MODE: Generated content but failed to parse/insert entries.
+
+Error: ${parseError.message}
+
+Raw generated content:
+${entriesText}
+
+Please check the edge function logs for detailed error information.`;
   }
 }
