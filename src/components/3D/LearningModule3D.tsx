@@ -2,7 +2,7 @@ import React, { Suspense } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Box, Eye, Heart } from 'lucide-react';
+import { Loader2, Box, Eye, Heart, Shield } from 'lucide-react';
 import { motion } from 'framer-motion';
 import ChakraLearning3D from './ChakraLearning3D';
 import SacredGeometry3D from './SacredGeometry3D';
@@ -26,6 +26,7 @@ import MerkabaLightBody3D from './MerkabaLightBody3D';
 import KabbalahTreeOfLife3D from './KabbalahTreeOfLife3D';
 import GaiaBreathing3D from './GaiaBreathing3D';
 import SchumannResonance3D from './SchumannResonance3D';
+import SigillumDeiAemeth3D from './SigillumDeiAemeth3D';
 
 const learningModules: LearningModule[] = [
   {
@@ -115,6 +116,17 @@ const learningModules: LearningModule[] = [
     tags: ['schumann', 'frequency', 'brainwaves', 'resonance'],
     icon: <Box className="h-5 w-5" />,
     component: SchumannResonance3D
+  },
+  {
+    id: 'sigillum-dei-aemeth',
+    title: 'Sigillum Dei Aemeth',
+    description: 'Explore John Dee\'s Sacred Seal of Divine Truth with interactive angelic names and frequencies.',
+    category: 'Enochian Magick',
+    difficulty: 'advanced',
+    duration: '30-45 min',
+    tags: ['enochian', 'angels', 'protection', 'divine', 'frequencies'],
+    icon: <Shield className="h-5 w-5" />,
+    component: SigillumDeiAemeth3D
   }
 ];
 
