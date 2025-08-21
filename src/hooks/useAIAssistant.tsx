@@ -22,13 +22,28 @@ export function useAIAssistant() {
   const { user, userRole } = useAuth();
 
   const askAssistant = async (request: AIAssistantRequest, adminOverride = false): Promise<string | null> => {
+    console.log('🔍 askAssistant called:', { 
+      user: user?.id, 
+      userRole, 
+      request, 
+      adminOverride,
+      timestamp: new Date().toISOString()
+    });
+    
     if (!user) {
+      console.error('❌ No user found in askAssistant');
       toast.error('You must be logged in to use the AI assistant');
       return null;
     }
 
     setLoading(true);
     try {
+      console.log('📤 Invoking ai-assistant function with:', {
+        ...request,
+        user_id: user.id,
+        admin_override: adminOverride,
+      });
+      
       const { data, error } = await supabase.functions.invoke('ai-assistant', {
         body: {
           ...request,
@@ -37,21 +52,32 @@ export function useAIAssistant() {
         },
       });
 
+      console.log('📥 ai-assistant function response:', { data, error });
+
       if (error) {
+        console.error('💥 Supabase function error:', error);
         throw new Error(error.message || 'Failed to get AI response');
       }
 
       const response = data as AIAssistantResponse;
       
+      console.log('🔍 Parsed response:', { 
+        success: response.success, 
+        responseLength: response.response?.length,
+        error: response.error 
+      });
+      
       if (!response.success) {
+        console.error('❌ AI assistant request failed:', response.error);
         throw new Error(response.error || 'AI assistant request failed');
       }
 
+      console.log('✅ Setting last response:', response.response?.substring(0, 100));
       setLastResponse(response.response);
       return response.response;
 
     } catch (error) {
-      console.error('AI Assistant error:', error);
+      console.error('💥 AI Assistant error:', error);
       toast.error(error instanceof Error ? error.message : 'Failed to get AI response');
       return null;
     } finally {

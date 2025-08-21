@@ -33,6 +33,16 @@ serve(async (req) => {
       admin_override = false
     } = await req.json();
 
+    console.log('🚨 AI ASSISTANT FUNCTION CALLED:', { 
+      request_type, 
+      user_id, 
+      admin_override,
+      query_preview: user_query?.substring(0, 100),
+      timestamp: new Date().toISOString(),
+      method: req.method,
+      url: req.url
+    });
+
     console.log('Enhanced AI Assistant Request:', { request_type, user_id, admin_override });
 
     // Authenticate user

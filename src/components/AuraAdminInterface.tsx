@@ -61,21 +61,44 @@ export function AuraAdminInterface() {
   const handleAdminQuery = async () => {
     if (!prompt.trim()) return;
     
-    // For admin interface, use unrestricted admin mode
-    const response = await getAdminUnrestrictedResponse(prompt);
-    if (response) {
-      setActiveResponse({ 
-        success: true, 
-        result: { 
-          content: response,
-          type: 'admin_unrestricted',
-          admin_override: true
-        } 
+    console.log('🚀 Admin Query Starting:', { 
+      prompt: prompt.trim(),
+      aiLoading,
+      hasGetAdminUnrestrictedResponse: !!getAdminUnrestrictedResponse
+    });
+    
+    try {
+      // For admin interface, use unrestricted admin mode
+      const response = await getAdminUnrestrictedResponse(prompt);
+      
+      console.log('📥 Admin Response Received:', { 
+        response: response?.substring(0, 200),
+        responseLength: response?.length,
+        responseType: typeof response
       });
-    } else {
+      
+      if (response) {
+        setActiveResponse({ 
+          success: true, 
+          result: { 
+            content: response,
+            type: 'admin_unrestricted',
+            admin_override: true
+          } 
+        });
+        console.log('✅ Admin response set successfully');
+      } else {
+        console.error('❌ No response received from admin function');
+        setActiveResponse({ 
+          success: false, 
+          error: 'Failed to process admin request' 
+        });
+      }
+    } catch (error) {
+      console.error('💥 Admin Query Error:', error);
       setActiveResponse({ 
         success: false, 
-        error: 'Failed to process admin request' 
+        error: `Admin request failed: ${error.message}` 
       });
     }
     
