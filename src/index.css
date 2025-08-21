@@ -698,3 +698,31 @@ body, body::before, body::after {
   backface-visibility: hidden;
   transform-style: preserve-3d;
 }
+
+/* Ensure full height coverage */
+html, body {
+  height: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  background: hsl(var(--background));
+}
+
+#root {
+  min-height: 100vh;
+  height: 100%;
+  background: hsl(var(--background));
+}
+
+/* Ensure sidebar and main content take full height */
+.sidebar-layout {
+  min-height: 100vh;
+  height: 100%;
+  background: hsl(var(--background));
+}
+
+/* Prevent horizontal overflow */
+* {
+  box-sizing: border-box;
+}
