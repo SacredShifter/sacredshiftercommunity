@@ -35,7 +35,18 @@ const geometryData: GeometryData[] = [
     edges: 6,
     color: '#FF4500',
     position: [-3, 2, 0],
-    component: Tetrahedron
+    component: React.forwardRef<THREE.Mesh, any>((props, ref) => 
+      <Tetrahedron ref={ref} {...props}>
+        <meshStandardMaterial
+          color="#FF4500"
+          emissive="#FF4500"
+          emissiveIntensity={props.isSelected ? 0.2 : 0.05}
+          transparent
+          opacity={0.8}
+          wireframe={props.isSelected}
+        />
+      </Tetrahedron>
+    )
   },
   {
     id: 'cube',
@@ -49,7 +60,19 @@ const geometryData: GeometryData[] = [
     edges: 12,
     color: '#8B4513',
     position: [-1, 2, 0],
-    component: ({ geometry, ...props }) => <mesh {...props}><boxGeometry /></mesh>
+    component: React.forwardRef<THREE.Mesh, any>((props, ref) => 
+      <mesh ref={ref} {...props}>
+        <boxGeometry />
+        <meshStandardMaterial
+          color="#8B4513"
+          emissive="#8B4513"
+          emissiveIntensity={props.isSelected ? 0.2 : 0.05}
+          transparent
+          opacity={0.8}
+          wireframe={props.isSelected}
+        />
+      </mesh>
+    )
   },
   {
     id: 'octahedron',
@@ -63,7 +86,18 @@ const geometryData: GeometryData[] = [
     edges: 12,
     color: '#87CEEB',
     position: [1, 2, 0],
-    component: Octahedron
+    component: React.forwardRef<THREE.Mesh, any>((props, ref) => 
+      <Octahedron ref={ref} {...props}>
+        <meshStandardMaterial
+          color="#87CEEB"
+          emissive="#87CEEB"
+          emissiveIntensity={props.isSelected ? 0.2 : 0.05}
+          transparent
+          opacity={0.8}
+          wireframe={props.isSelected}
+        />
+      </Octahedron>
+    )
   },
   {
     id: 'icosahedron',
@@ -77,7 +111,18 @@ const geometryData: GeometryData[] = [
     edges: 30,
     color: '#4169E1',
     position: [3, 2, 0],
-    component: Icosahedron
+    component: React.forwardRef<THREE.Mesh, any>((props, ref) => 
+      <Icosahedron ref={ref} {...props}>
+        <meshStandardMaterial
+          color="#4169E1"
+          emissive="#4169E1"
+          emissiveIntensity={props.isSelected ? 0.2 : 0.05}
+          transparent
+          opacity={0.8}
+          wireframe={props.isSelected}
+        />
+      </Icosahedron>
+    )
   },
   {
     id: 'dodecahedron',
@@ -91,7 +136,18 @@ const geometryData: GeometryData[] = [
     edges: 30,
     color: '#9370DB',
     position: [0, 0, 0],
-    component: Dodecahedron
+    component: React.forwardRef<THREE.Mesh, any>((props, ref) => 
+      <Dodecahedron ref={ref} {...props}>
+        <meshStandardMaterial
+          color="#9370DB"
+          emissive="#9370DB"
+          emissiveIntensity={props.isSelected ? 0.2 : 0.05}
+          transparent
+          opacity={0.8}
+          wireframe={props.isSelected}
+        />
+      </Dodecahedron>
+    )
   }
 ];
 
@@ -125,18 +181,10 @@ function AnimatedGeometry({ geometry, isSelected, onClick }: GeometryShapeProps)
         onClick={() => onClick(geometry)}
         onPointerOver={() => document.body.style.cursor = 'pointer'}
         onPointerOut={() => document.body.style.cursor = 'auto'}
-      >
-        <meshStandardMaterial
-          color={geometry.color}
-          emissive={geometry.color}
-          emissiveIntensity={isSelected ? 0.2 : 0.05}
-          transparent
-          opacity={0.8}
-          wireframe={isSelected}
-        />
-      </GeometryComponent>
+        isSelected={isSelected}
+      />
 
-      {/* Element Label */}
+      {/* Element Label - Removed font reference */}
       {geometry.element && (
         <Text
           position={[0, -2, 0]}
