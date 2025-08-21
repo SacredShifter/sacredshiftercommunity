@@ -10,6 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { AuraTelemetryDashboard } from './AuraTelemetryDashboard';
 import { AuraLiveTelemetry } from './AuraLiveTelemetry';
+import { AuraCodeGenerationInterface } from './AuraCodeGenerationInterface';
 import { 
   Terminal, 
   Cpu, 
@@ -19,7 +20,8 @@ import {
   Brain,
   Zap,
   Eye,
-  RefreshCw
+  RefreshCw,
+  Code2
 } from 'lucide-react';
 
 export function AuraAdminInterface() {
@@ -321,8 +323,9 @@ export function AuraAdminInterface() {
       </Card>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="console">Admin Console</TabsTrigger>
+          <TabsTrigger value="codegen">Code Generation</TabsTrigger>
           <TabsTrigger value="telemetry">Telemetry</TabsTrigger>
           <TabsTrigger value="registry">Registry Creation</TabsTrigger>
           <TabsTrigger value="actions">System Actions</TabsTrigger>
@@ -354,6 +357,10 @@ export function AuraAdminInterface() {
               </Button>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="codegen" className="space-y-4">
+          <AuraCodeGenerationInterface />
         </TabsContent>
 
         <TabsContent value="telemetry" className="space-y-6">
