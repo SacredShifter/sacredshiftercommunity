@@ -223,33 +223,35 @@ export default function SchumannResonance3D() {
   };
 
   return (
-    <div className="w-full h-screen bg-gradient-to-br from-background via-blue-950/20 to-purple-950/20 relative overflow-hidden">
-      {/* 3D Scene */}
-      <Canvas camera={{ position: [0, 0, 8], fov: 60 }}>
-        <ambientLight intensity={0.3} />
-        <pointLight position={[10, 10, 10]} intensity={1} />
-        
-        <EarthSphere />
-        <IonosphereLayers />
-        <ResonanceField waves={activeWaves} />
-        <LightningFlash />
-        <BrainwaveParticles />
-        
-        <Text
-          position={[0, 5, 0]}
-          fontSize={0.4}
-          color="#ffffff"
-          anchorX="center"
-          anchorY="middle"
-        >
-          Schumann Resonance Chamber
-        </Text>
-        
-        <OrbitControls enablePan={false} maxDistance={12} minDistance={4} />
-      </Canvas>
+    <div className="w-full min-h-screen bg-gradient-to-br from-background via-blue-950/20 to-purple-950/20 relative overflow-hidden">
+      {/* 3D Scene - Reduced height for better scrolling */}
+      <div className="h-[70vh] relative">
+        <Canvas camera={{ position: [0, 0, 8], fov: 60 }}>
+          <ambientLight intensity={0.3} />
+          <pointLight position={[10, 10, 10]} intensity={1} />
+          
+          <EarthSphere />
+          <IonosphereLayers />
+          <ResonanceField waves={activeWaves} />
+          <LightningFlash />
+          <BrainwaveParticles />
+          
+          <Text
+            position={[0, 5, 0]}
+            fontSize={0.4}
+            color="#ffffff"
+            anchorX="center"
+            anchorY="middle"
+          >
+            Schumann Resonance Chamber
+          </Text>
+          
+          <OrbitControls enablePan={false} maxDistance={12} minDistance={4} />
+        </Canvas>
+      </div>
 
       {/* Frequency Controls */}
-      <div className="absolute top-6 left-6 z-10">
+      <div className="absolute top-16 left-6 z-10">
         <Card className="bg-background/80 backdrop-blur-sm border-primary/20 max-w-sm">
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2">
@@ -299,7 +301,7 @@ export default function SchumannResonance3D() {
           initial={{ opacity: 0, x: 300 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: 300 }}
-          className="absolute top-6 right-6 z-10 max-w-md"
+          className="absolute top-16 right-6 z-10 max-w-md"
         >
           <Card className="bg-background/90 backdrop-blur-sm border-primary/20">
             <CardHeader>
@@ -323,51 +325,252 @@ export default function SchumannResonance3D() {
         </motion.div>
       )}
 
-      {/* Schumann Information */}
-      <div className="absolute bottom-6 right-6 z-10 max-w-md">
-        <Card className="bg-background/90 backdrop-blur-sm border-primary/20">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Globe className="h-5 w-5 text-blue-500" />
-              Earth's Electromagnetic Heartbeat
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="text-xs space-y-2">
-              <div>
-                <strong>Discovery:</strong> {resonanceInfo.discovery}
-              </div>
-              <div>
-                <strong>Mechanism:</strong> {resonanceInfo.mechanism}
-              </div>
-              <div>
-                <strong>Biological Connection:</strong> {resonanceInfo.biological}
-              </div>
-            </div>
-            
-            <div>
-              <h4 className="text-sm font-medium mb-2">Potential Benefits:</h4>
-              <div className="flex flex-wrap gap-1">
-                {resonanceInfo.effects.map((effect) => (
-                  <Badge key={effect} variant="secondary" className="text-xs">
-                    {effect}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      {/* Educational Content Section - Now scrollable below 3D view */}
+      <div className="p-6 space-y-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center space-y-4"
+        >
+          <h2 className="text-4xl font-sacred bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            Schumann Resonance
+          </h2>
+          <p className="text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
+            Earth's electromagnetic heartbeat — a natural frequency that synchronizes with our brainwaves, linking human consciousness to the living planet
+          </p>
+        </motion.div>
 
-      {/* Instructions */}
-      <div className="absolute bottom-6 left-6 z-10">
-        <Card className="bg-background/80 backdrop-blur-sm border-primary/20">
-          <CardContent className="p-4">
-            <p className="text-sm text-muted-foreground">
-              Toggle frequencies • Click brain icon for correlations • Watch lightning create resonances
-            </p>
-          </CardContent>
-        </Card>
+        {/* Core Understanding */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+        >
+          <Card className="border-2 border-primary/20 bg-gradient-to-br from-card to-card/50">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <Globe className="h-6 w-6 text-primary" />
+                What It Is
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4 text-sm leading-relaxed">
+              <p>
+                <strong>Discovered by physicist Winfried Otto Schumann in 1952.</strong>
+              </p>
+              <p>
+                It's Earth's <strong>"electromagnetic heartbeat"</strong> — standing waves trapped between the Earth's surface and the ionosphere.
+              </p>
+              <p>
+                Generated by <strong>global lightning activity</strong> (around 50 flashes per second worldwide).
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-2 border-primary/20 bg-gradient-to-br from-card to-card/50">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <Zap className="h-6 w-6 text-primary" />
+                The Frequencies
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4 text-sm leading-relaxed">
+              <p>
+                <strong>Fundamental = 7.83 Hz</strong> (the "Earth's heartbeat")
+              </p>
+              <p>
+                <strong>Harmonics:</strong> 14.3 Hz, 20.8 Hz, 27.3 Hz, 33.8 Hz, etc.
+              </p>
+              <p>
+                These correspond to <strong>human brainwave bands</strong>:
+                <br />• 7.83 Hz ≈ Theta/Alpha (meditative, relaxed, creativity)
+                <br />• 14.3 Hz ≈ Beta (alertness, concentration)
+                <br />• Higher harmonics ≈ High Beta/Gamma (analytical problem-solving)
+              </p>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Biological Connection */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+        >
+          <Card className="border-2 border-secondary/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-2xl">
+                <Brain className="h-6 w-6 text-secondary" />
+                Biological & Spiritual Connection
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0"></div>
+                  <div>
+                    <h4 className="font-semibold text-primary mb-1">Neural Entrainment</h4>
+                    <p className="text-sm text-muted-foreground">
+                      Human nervous systems and circadian rhythms naturally entrain to these frequencies.
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-3">
+                  <div className="w-2 h-2 rounded-full bg-secondary mt-2 flex-shrink-0"></div>
+                  <div>
+                    <h4 className="font-semibold text-secondary mb-1">Wellness Effects</h4>
+                    <p className="text-sm text-muted-foreground">
+                      People often report deeper meditation, improved sleep, and reduced stress when in resonance with the fundamental frequency.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-2 h-2 rounded-full bg-accent mt-2 flex-shrink-0"></div>
+                  <div>
+                    <h4 className="font-semibold text-accent mb-1">Gateway Frequency</h4>
+                    <p className="text-sm text-muted-foreground">
+                      Some traditions equate 7.83 Hz to the "gateway frequency" — the border between waking consciousness and deep meditation.
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-3">
+                  <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0"></div>
+                  <div>
+                    <h4 className="font-semibold text-primary mb-1">Planetary Connection</h4>
+                    <p className="text-sm text-muted-foreground">
+                      Shows humans are literally wired to Earth electromagnetically — a measurable bridge between physics and consciousness.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Why It Matters */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+        >
+          <Card className="border-2 border-accent/20 bg-gradient-to-br from-card to-accent/5">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <Activity className="h-6 w-6 text-accent" />
+                Why It Matters
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-3 text-sm">
+                <div className="flex items-start gap-3">
+                  <Badge variant="outline" className="mt-0.5 text-xs">1</Badge>
+                  <div>
+                    <strong>Electromagnetic Unity:</strong> Shows humans are literally wired to Earth electromagnetically.
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-3">
+                  <Badge variant="outline" className="mt-0.5 text-xs">2</Badge>
+                  <div>
+                    <strong>Mood & Health:</strong> Variations in Schumann Resonance (e.g., during geomagnetic storms) can influence sleep, mood, and even collective coherence.
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-3">
+                  <Badge variant="outline" className="mt-0.5 text-xs">3</Badge>
+                  <div>
+                    <strong>Science Meets Spirit:</strong> It's a bridge between physics and consciousness — measurable science that overlaps with ancient wisdom about planetary resonance.
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-2 border-destructive/20 bg-gradient-to-br from-card to-destructive/5">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <Zap className="h-6 w-6 text-destructive" />
+                Space Weather Effects
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4 text-sm">
+              <div className="p-4 rounded-lg bg-muted/50 border border-destructive/20">
+                <h4 className="font-semibold text-destructive mb-2">Solar Influence:</h4>
+                <ul className="space-y-2 text-muted-foreground">
+                  <li>• Solar flares and coronal mass ejections affect the ionosphere</li>
+                  <li>• Geomagnetic storms alter Schumann resonance patterns</li>
+                  <li>• These changes can influence human biorhythms</li>
+                </ul>
+              </div>
+              
+              <div className="p-4 rounded-lg bg-primary/10 border border-primary/20">
+                <h4 className="font-semibold text-primary mb-2">Real-Time Connection:</h4>
+                <p className="text-muted-foreground">
+                  NASA's space weather data shows how solar activity ripples through Earth's electromagnetic field, 
+                  affecting the very frequencies our consciousness resonates with.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Interactive Features Guide */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
+        >
+          <Card className="border-2 border-primary/30 bg-gradient-to-r from-primary/5 to-secondary/5">
+            <CardHeader>
+              <CardTitle className="text-center text-2xl text-primary">
+                How to Use This Resonance Chamber
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="text-center space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                <div className="p-4 rounded-lg bg-background/50">
+                  <Zap className="h-8 w-8 mx-auto mb-2 text-primary" />
+                  <h4 className="font-semibold mb-2">Frequency Activation</h4>
+                  <p className="text-muted-foreground">
+                    Toggle each harmonic to visualize how Earth's electromagnetic field pulses at different frequencies.
+                  </p>
+                </div>
+                
+                <div className="p-4 rounded-lg bg-background/50">
+                  <Brain className="h-8 w-8 mx-auto mb-2 text-secondary" />
+                  <h4 className="font-semibold mb-2">Brainwave Correlation</h4>
+                  <p className="text-muted-foreground">
+                    Click the brain icon to see how each frequency corresponds to human consciousness states.
+                  </p>
+                </div>
+                
+                <div className="p-4 rounded-lg bg-background/50">
+                  <Activity className="h-8 w-8 mx-auto mb-2 text-accent" />
+                  <h4 className="font-semibold mb-2">Lightning Generation</h4>
+                  <p className="text-muted-foreground">
+                    Watch how global lightning activity creates these standing waves between Earth and sky.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="mt-6 p-4 rounded-lg bg-muted/30 border border-primary/20">
+                <p className="text-lg font-medium text-foreground">
+                  "The Schumann Resonance is Earth's electromagnetic heartbeat — 
+                  a natural frequency that synchronizes with our brainwaves, linking human consciousness to the living planet."
+                </p>
+                <p className="text-sm text-muted-foreground mt-2">
+                  — Scientific Research & Ancient Wisdom United
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
       </div>
     </div>
   );
