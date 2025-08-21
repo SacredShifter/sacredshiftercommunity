@@ -1142,3 +1142,4 @@ All entries have been added to your Registry of Resonance with full admin privil
     console.error('Error parsing generated entries:', parseError);
     return `I generated content for ${count} registry entries, but encountered a formatting issue. Here's what I created:\n\n${entriesText}`;
   }
+}
