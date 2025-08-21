@@ -2,8 +2,9 @@ import React, { Suspense } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Box, Eye, Heart, Shield } from 'lucide-react';
+import { Loader2, Box, Eye, Heart, Shield, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import ChakraLearning3D from './ChakraLearning3D';
 import SacredGeometry3D from './SacredGeometry3D';
 
@@ -157,29 +158,38 @@ export default function LearningModule3D({ moduleId, onBack, className }: Learni
     const ModuleComponent = selectedModule.component;
     
     return (
-      <div className={`relative ${className}`}>
-        {/* Back Button */}
-        <div className="absolute top-4 left-4 z-20">
+      <div className={`min-h-screen bg-background ${className}`}>
+        {/* Fixed Back Button */}
+        <div className="fixed top-4 left-4 z-50">
           <Button
-            variant="outline" 
+            variant="default"
             onClick={handleBack}
-            className="bg-background/80 backdrop-blur-sm"
+            className="bg-primary text-primary-foreground shadow-lg hover:bg-primary/90 transition-all"
+            size="sm"
           >
-            ← Back to Modules
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Modules
           </Button>
         </div>
 
-        {/* Module Component */}
-        <Suspense 
-          fallback={
-            <div className="flex items-center justify-center h-screen">
-              <Loader2 className="h-8 w-8 animate-spin" />
-              <span className="ml-2">Loading 3D Learning Module...</span>
-            </div>
-          }
-        >
-          <ModuleComponent />
-        </Suspense>
+        {/* Module Component with Error Boundary */}
+        <ErrorBoundary name={`3D-Module-${selectedModule.id}`}>
+          <Suspense 
+            fallback={
+              <div className="flex items-center justify-center h-[70vh]">
+                <div className="text-center space-y-4">
+                  <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
+                  <div className="space-y-2">
+                    <p className="font-sacred text-lg">Loading {selectedModule.title}</p>
+                    <p className="text-sm text-muted-foreground">Preparing 3D visualization...</p>
+                  </div>
+                </div>
+              </div>
+            }
+          >
+            <ModuleComponent />
+          </Suspense>
+        </ErrorBoundary>
       </div>
     );
   }

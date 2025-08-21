@@ -266,12 +266,12 @@ export default function SigillumDeiAemeth3D({ className }: { className?: string 
   };
 
   return (
-    <div className={`w-full h-screen bg-background relative overflow-hidden ${className}`}>
+    <div className={`w-full min-h-screen bg-background ${className}`}>
       {/* Title Card */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="absolute top-6 left-6 z-10"
+        className="absolute top-16 left-6 z-10"
       >
         <Card className="bg-card/90 backdrop-blur-sm border-border">
           <CardHeader className="pb-2">
@@ -297,7 +297,7 @@ export default function SigillumDeiAemeth3D({ className }: { className?: string 
       <motion.div
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
-        className="absolute top-6 right-6 z-10 w-72"
+        className="absolute top-16 right-6 z-10 w-72"
       >
         <Card className="bg-card/90 backdrop-blur-sm border-border">
           <CardHeader className="pb-2">
@@ -449,43 +449,141 @@ export default function SigillumDeiAemeth3D({ className }: { className?: string 
         </Card>
       </motion.div>
 
-      {/* 3D Canvas */}
-      <Canvas
-        camera={{ position: [0, 0, 8], fov: 45 }}
-        className="absolute inset-0"
-      >
-        <Suspense fallback={null}>
-          <ambientLight intensity={0.6} />
-          <pointLight position={[10, 10, 10]} intensity={0.8} />
-          <pointLight position={[-10, -10, -10]} intensity={0.4} />
+      {/* 3D Canvas - Reduced height for better scrolling */}
+      <div className="h-[70vh] relative">
+        <Canvas
+          camera={{ position: [0, 0, 8], fov: 45 }}
+          className="absolute inset-0"
+        >
+          <Suspense fallback={null}>
+            <ambientLight intensity={0.6} />
+            <pointLight position={[10, 10, 10]} intensity={0.8} />
+            <pointLight position={[-10, -10, -10]} intensity={0.4} />
 
-          {/* Sacred Rings */}
-          {sacredRings.map((ring) => (
-            <SacredRingComponent
-              key={ring.id}
-              ring={ring}
-              isActive={isRotating && (activeRing === 'all' || activeRing === ring.id)}
-              selectedName={selectedName?.id || null}
-              onNameSelect={handleNameSelect}
-              breathSync={breathSync}
+            {/* Sacred Rings */}
+            {sacredRings.map((ring) => (
+              <SacredRingComponent
+                key={ring.id}
+                ring={ring}
+                isActive={isRotating && (activeRing === 'all' || activeRing === ring.id)}
+                selectedName={selectedName?.id || null}
+                onNameSelect={handleNameSelect}
+                breathSync={breathSync}
+              />
+            ))}
+
+            {/* Central Symbol */}
+            <CentralSymbol 
+              isActive={mode === 'activate' && isRotating}
+              selectedFrequency={selectedName?.frequency || null}
             />
+
+            <OrbitControls 
+              enablePan={true} 
+              enableZoom={true} 
+              enableRotate={true}
+              maxDistance={15}
+              minDistance={3}
+            />
+          </Suspense>
+        </Canvas>
+      </div>
+
+      {/* Information Section - Now scrollable below 3D view */}
+      <div className="p-6 space-y-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center space-y-4"
+        >
+          <h2 className="text-3xl font-sacred bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            The Sigillum Dei Æmeth
+          </h2>
+          <p className="text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            John Dee's Sacred Seal of Divine Truth, revealed through angelic communication with Edward Kelley. 
+            This powerful protective seal contains the names of God and angels arranged in sacred geometric patterns.
+          </p>
+        </motion.div>
+
+        {/* Angelic Hierarchies Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {sacredRings.map((ring) => (
+            <Card key={ring.id} className="hover:shadow-lg transition-shadow">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div 
+                    className="w-4 h-4 rounded-full"
+                    style={{ backgroundColor: ring.color }}
+                  />
+                  <h3 className="font-sacred text-lg capitalize">{ring.id} Ring</h3>
+                </div>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Contains {ring.names.length} angelic names, each resonating at unique frequencies.
+                </p>
+                <div className="space-y-2">
+                  {ring.names.slice(0, 3).map((angel) => (
+                    <div key={angel.id} className="flex justify-between text-xs">
+                      <span className="font-medium">{angel.name}</span>
+                      <span className="text-muted-foreground">{angel.frequency}Hz</span>
+                    </div>
+                  ))}
+                  {ring.names.length > 3 && (
+                    <div className="text-xs text-muted-foreground text-center">
+                      +{ring.names.length - 3} more names
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
           ))}
+        </div>
 
-          {/* Central Symbol */}
-          <CentralSymbol 
-            isActive={mode === 'activate' && isRotating}
-            selectedFrequency={selectedName?.frequency || null}
-          />
+        {/* Additional Information */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="grid grid-cols-1 md:grid-cols-2 gap-6"
+        >
+          <Card>
+            <CardContent className="p-6">
+              <h3 className="text-xl font-sacred mb-4 flex items-center gap-2">
+                <Shield className="h-5 w-5" />
+                Protection & Purpose
+              </h3>
+              <div className="space-y-3 text-sm text-muted-foreground">
+                <p>
+                  The Sigillum Dei Æmeth serves as a powerful protective seal, creating a sacred space 
+                  for divine communication and spiritual work.
+                </p>
+                <p>
+                  Each angelic name carries specific vibrational frequencies that can be used for 
+                  healing, protection, and consciousness expansion.
+                </p>
+                <p>
+                  The geometric arrangement follows precise proportions that mirror cosmic harmonies 
+                  and create resonance with divine consciousness.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
 
-          <OrbitControls 
-            enablePan={true} 
-            enableZoom={true} 
-            enableRotate={true}
-            maxDistance={15}
-            minDistance={3}
-          />
-        </Suspense>
-      </Canvas>
+          <Card>
+            <CardContent className="p-6">
+              <h3 className="text-xl font-sacred mb-4 flex items-center gap-2">
+                <Star className="h-5 w-5" />
+                Usage Instructions
+              </h3>
+              <div className="space-y-3 text-sm text-muted-foreground">
+                <p><strong>Exploration Mode:</strong> Click on angelic names to learn their meanings and frequencies.</p>
+                <p><strong>Meditation Mode:</strong> Use breath sync to align with the seal's natural rhythms.</p>
+                <p><strong>Activation Mode:</strong> Enable protection mode when performing sacred work or ritual.</p>
+                <p><strong>Sound Healing:</strong> Listen to the angelic frequencies for vibrational healing.</p>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </div>
     </div>
   );
 }

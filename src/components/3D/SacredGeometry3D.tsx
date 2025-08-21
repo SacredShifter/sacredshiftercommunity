@@ -202,47 +202,49 @@ export default function SacredGeometry3D() {
   };
 
   return (
-    <div className="w-full h-screen bg-gradient-to-b from-background to-card relative">
-      {/* 3D Canvas */}
-      <Canvas
-        camera={{ position: [6, 4, 8], fov: 60 }}
-        style={{ background: 'radial-gradient(circle, #0f0f23 0%, #1a1a2e 100%)' }}
-      >
-        <Suspense fallback={null}>
-          {/* Lighting */}
-          <ambientLight intensity={0.3} />
-          <pointLight position={[10, 10, 10]} intensity={0.8} />
-          <pointLight position={[-10, -10, -10]} intensity={0.3} color="#9370DB" />
-          <spotLight position={[0, 5, 0]} intensity={0.5} color="#FFD700" />
-          
-          {/* Sacred Geometries */}
-          {geometryData.map(geometry => (
-            <AnimatedGeometry
-              key={geometry.id}
-              geometry={geometry}
-              isSelected={selectedGeometry?.id === geometry.id}
-              onClick={handleGeometryClick}
+    <div className="w-full min-h-screen bg-gradient-to-b from-background to-card">
+      {/* 3D Canvas - Reduced height for better scrolling */}
+      <div className="h-[70vh] relative">
+        <Canvas
+          camera={{ position: [6, 4, 8], fov: 60 }}
+          style={{ background: 'radial-gradient(circle, #0f0f23 0%, #1a1a2e 100%)' }}
+        >
+          <Suspense fallback={null}>
+            {/* Lighting */}
+            <ambientLight intensity={0.3} />
+            <pointLight position={[10, 10, 10]} intensity={0.8} />
+            <pointLight position={[-10, -10, -10]} intensity={0.3} color="#9370DB" />
+            <spotLight position={[0, 5, 0]} intensity={0.5} color="#FFD700" />
+            
+            {/* Sacred Geometries */}
+            {geometryData.map(geometry => (
+              <AnimatedGeometry
+                key={geometry.id}
+                geometry={geometry}
+                isSelected={selectedGeometry?.id === geometry.id}
+                onClick={handleGeometryClick}
+              />
+            ))}
+            
+            {/* Flower of Life Background */}
+            {showFlowerOfLife && <FlowerOfLife />}
+            
+            {/* Camera Controls */}
+            <OrbitControls
+              enablePan={false}
+              enableZoom={true}
+              enableRotate={true}
+              minDistance={4}
+              maxDistance={15}
+              minPolarAngle={0}
+              maxPolarAngle={Math.PI}
             />
-          ))}
-          
-          {/* Flower of Life Background */}
-          {showFlowerOfLife && <FlowerOfLife />}
-          
-          {/* Camera Controls */}
-          <OrbitControls
-            enablePan={false}
-            enableZoom={true}
-            enableRotate={true}
-            minDistance={4}
-            maxDistance={15}
-            minPolarAngle={0}
-            maxPolarAngle={Math.PI}
-          />
-        </Suspense>
-      </Canvas>
+          </Suspense>
+        </Canvas>
+      </div>
 
       {/* UI Overlays */}
-      <div className="absolute top-4 left-4 z-10">
+      <div className="absolute top-16 left-4 z-10">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -282,7 +284,7 @@ export default function SacredGeometry3D() {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: 20 }}
-          className="absolute top-4 right-4 z-10 max-w-md"
+          className="absolute top-16 right-4 z-10 max-w-md"
         >
           <Card className="bg-background/90 backdrop-blur-sm border-2 border-primary/30">
             <CardContent className="p-6">
@@ -344,33 +346,143 @@ export default function SacredGeometry3D() {
         </motion.div>
       )}
 
-      {/* Navigation Bar */}
-      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10">
-        <Card className="bg-background/80 backdrop-blur-sm border-primary/20">
-          <CardContent className="p-3">
-            <div className="flex space-x-2">
-              {geometryData.map(geometry => (
-                <Button
-                  key={geometry.id}
-                  variant={selectedGeometry?.id === geometry.id ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => handleGeometryClick(geometry)}
-                  className="w-10 h-10 p-0 border-2"
-                  style={{
-                    borderColor: geometry.color,
-                    backgroundColor: selectedGeometry?.id === geometry.id ? geometry.color : 'transparent'
-                  }}
-                  title={geometry.name}
+      {/* Information Section - Now scrollable below 3D view */}
+      <div className="p-6 space-y-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center space-y-4"
+        >
+          <h2 className="text-3xl font-sacred bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            Understanding Sacred Geometry
+          </h2>
+          <p className="text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            Sacred geometry reveals the mathematical patterns underlying all of creation. 
+            The five Platonic solids represent the classical elements and fundamental building blocks of reality.
+          </p>
+        </motion.div>
+
+        {/* Platonic Solids Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          {geometryData.map((geometry) => (
+            <Card key={geometry.id} className="hover:shadow-lg transition-shadow">
+              <CardContent className="p-4 text-center">
+                <div 
+                  className="w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center"
+                  style={{ backgroundColor: `${geometry.color}20`, border: `2px solid ${geometry.color}` }}
                 >
-                  <div
-                    className="w-4 h-4 rounded"
+                  <div 
+                    className="w-6 h-6 rounded"
                     style={{ backgroundColor: geometry.color }}
                   />
-                </Button>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+                </div>
+                <h3 className="font-semibold text-sm mb-1">{geometry.name}</h3>
+                <p className="text-xs text-muted-foreground mb-2">{geometry.element}</p>
+                <div className="grid grid-cols-3 gap-1 text-xs">
+                  <div>
+                    <div className="font-medium">{geometry.faces}</div>
+                    <div className="text-muted-foreground">Faces</div>
+                  </div>
+                  <div>
+                    <div className="font-medium">{geometry.vertices}</div>
+                    <div className="text-muted-foreground">Vertices</div>
+                  </div>
+                  <div>
+                    <div className="font-medium">{geometry.edges}</div>
+                    <div className="text-muted-foreground">Edges</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {/* Additional Information */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="grid grid-cols-1 md:grid-cols-2 gap-6"
+        >
+          <Card>
+            <CardContent className="p-6">
+              <h3 className="text-xl font-sacred mb-4">The Five Elements</h3>
+              <div className="space-y-3 text-sm">
+                <div className="flex items-center gap-3">
+                  <div className="w-4 h-4 rounded" style={{ backgroundColor: '#FF4500' }}></div>
+                  <span><strong>Fire (Tetrahedron):</strong> Transformation, passion, divine spark</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-4 h-4 rounded" style={{ backgroundColor: '#8B4513' }}></div>
+                  <span><strong>Earth (Cube):</strong> Stability, foundation, material manifestation</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-4 h-4 rounded" style={{ backgroundColor: '#87CEEB' }}></div>
+                  <span><strong>Air (Octahedron):</strong> Balance, communication, breath of life</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-4 h-4 rounded" style={{ backgroundColor: '#4169E1' }}></div>
+                  <span><strong>Water (Icosahedron):</strong> Flow, emotion, intuitive wisdom</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-4 h-4 rounded" style={{ backgroundColor: '#9370DB' }}></div>
+                  <span><strong>Ether (Dodecahedron):</strong> Cosmos, divine consciousness, wholeness</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <h3 className="text-xl font-sacred mb-4">Sacred Ratios</h3>
+              <div className="space-y-3 text-sm text-muted-foreground">
+                <p>
+                  These geometric forms contain the golden ratio (φ ≈ 1.618) and other sacred proportions 
+                  that appear throughout nature, from flower petals to galaxy spirals.
+                </p>
+                <p>
+                  The Flower of Life pattern in the background connects all five solids, 
+                  demonstrating the unity underlying apparent diversity in creation.
+                </p>
+                <p>
+                  Each form represents both an element and a level of consciousness, 
+                  offering a map for spiritual and energetic development.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </div>
+
+      {/* Navigation Bar - Now positioned relative to content */}
+      <div className="pb-6">
+        <div className="flex justify-center">
+          <Card className="bg-background/80 backdrop-blur-sm border-primary/20">
+            <CardContent className="p-3">
+              <div className="flex space-x-2">
+                {geometryData.map(geometry => (
+                  <Button
+                    key={geometry.id}
+                    variant={selectedGeometry?.id === geometry.id ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => handleGeometryClick(geometry)}
+                    className="w-10 h-10 p-0 border-2"
+                    style={{
+                      borderColor: geometry.color,
+                      backgroundColor: selectedGeometry?.id === geometry.id ? geometry.color : 'transparent'
+                    }}
+                    title={geometry.name}
+                  >
+                    <div
+                      className="w-4 h-4 rounded"
+                      style={{ backgroundColor: geometry.color }}
+                    />
+                  </Button>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
