@@ -8,7 +8,8 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  userRole?: string;
+  userRole: string | undefined;
+  roleLoading: boolean;
   signUp: (email: string, password: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signInWithGoogle: () => Promise<{ error: any }>;
@@ -29,7 +30,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  const [userRole, setUserRole] = useState<string>();
+  const [userRole, setUserRole] = useState<string | undefined>(undefined);
+  const [roleLoading, setRoleLoading] = useState(false);
   const { handleAuthError } = useErrorHandler();
   
   logger.debug('AuthProvider state change', { 
@@ -54,11 +56,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         
         // Fetch user role if logged in
         if (session?.user) {
-          // Set loading to false immediately and fetch roles in background
+          // Set loading to false immediately but keep role loading true
           setLoading(false);
+          setRoleLoading(true);
           
-          // Fetch roles in background with timeout
-          setTimeout(async () => {
+          // Fetch roles immediately (not in timeout)
+          (async () => {
             try {
               const { data: roles, error } = await supabase
                 .from('user_roles')
@@ -75,12 +78,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               } else {
                 // Check if user is admin
                 const isAdmin = roles?.some(r => r.role === 'admin');
-                setUserRole(isAdmin ? 'admin' : 'user');
+                const finalRole = isAdmin ? 'admin' : 'user';
+                setUserRole(finalRole);
+                
+                // Add debugging
+                console.log('Role fetch result:', {
+                  userId: session.user.id,
+                  roles: roles,
+                  isAdmin,
+                  finalRole,
+                  timestamp: new Date().toISOString()
+                });
                 
                 logger.debug('User roles fetched successfully', {
                   component: 'AuthProvider',
                   userId: session.user.id,
-                  metadata: { isAdmin, roleCount: roles?.length }
+                  metadata: { isAdmin, roleCount: roles?.length, finalRole }
                 });
               }
             } catch (error) {
@@ -90,10 +103,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 userId: session.user.id
               });
               setUserRole('user'); // Default to user role on error
+            } finally {
+              setRoleLoading(false);
             }
-          }, 0);
+          })();
         } else {
           setUserRole(undefined);
+          setRoleLoading(false);
           setLoading(false);
         }
       }
@@ -128,9 +144,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       // Set loading to false immediately for initial session
       setLoading(false);
       
-      // Fetch user role if logged in (in background)
+      // Fetch user role if logged in (immediately, not in background)
       if (session?.user) {
-        setTimeout(async () => {
+        setRoleLoading(true);
+        (async () => {
           try {
             const { data: roles, error } = await supabase
               .from('user_roles')
@@ -146,7 +163,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               setUserRole('user'); // Default to user role on error
             } else {
               const isAdmin = roles?.some(r => r.role === 'admin');
-              setUserRole(isAdmin ? 'admin' : 'user');
+              const finalRole = isAdmin ? 'admin' : 'user';
+              setUserRole(finalRole);
+              
+              // Add debugging for initial load
+              console.log('Initial role fetch result:', {
+                userId: session.user.id,
+                roles: roles,
+                isAdmin,
+                finalRole,
+                timestamp: new Date().toISOString()
+              });
             }
           } catch (error) {
             handleAuthError(error, {
@@ -155,10 +182,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               userId: session?.user?.id
             });
             setUserRole('user'); // Default to user role on error
+          } finally {
+            setRoleLoading(false);
           }
-        }, 0);
+        })();
       } else {
         setUserRole(undefined);
+        setRoleLoading(false);
       }
     });
 
@@ -206,6 +236,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     session,
     loading,
     userRole,
+    roleLoading,
     signUp,
     signIn,
     signInWithGoogle,

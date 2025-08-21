@@ -7,15 +7,26 @@ interface AdminRouteProps {
 }
 
 const AdminRoute = ({ children }: AdminRouteProps) => {
-  const { user, loading, userRole } = useAuth();
+  const { user, loading, userRole, roleLoading } = useAuth();
+  
+  // Add detailed logging for debugging
+  console.log('AdminRoute Debug:', {
+    user: user?.id,
+    loading,
+    userRole,
+    roleLoading,
+    hasUser: !!user,
+    timestamp: new Date().toISOString()
+  });
   
   logger.debug('AdminRoute state check', {
     component: 'AdminRoute',
     userId: user?.id,
-    metadata: { loading, userRole, hasUser: !!user }
+    metadata: { loading, userRole, roleLoading, hasUser: !!user }
   });
 
-  if (loading) {
+  // Show loading if auth is loading OR role is still being fetched
+  if (loading || roleLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
