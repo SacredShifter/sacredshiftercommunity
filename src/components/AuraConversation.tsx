@@ -27,6 +27,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { formatDistanceToNow } from 'date-fns';
 import { useAuraChat } from '@/hooks/useAuraChat';
+import { useAIAssistant } from '@/hooks/useAIAssistant';
 import { useToast } from '@/hooks/use-toast';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { TooltipWrapper } from '@/components/HelpSystem/TooltipWrapper';
@@ -62,6 +63,8 @@ export function AuraConversation() {
     sovereigntyLevel,
     engageAura
   } = useAuraChat();
+
+  const { createRegistryEntries, loading: aiLoading } = useAIAssistant();
 
   // Auto-scroll to bottom when new messages are added
   useEffect(() => {
@@ -105,7 +108,7 @@ export function AuraConversation() {
   }, [messages]);
 
   const handleSendMessage = async () => {
-    if (!inputText.trim() || loading) return;
+    if (!inputText.trim() || loading || aiLoading) return;
 
     const userMessage: ConversationMessage = {
       id: `user-${Date.now()}`,
@@ -115,41 +118,83 @@ export function AuraConversation() {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const currentInput = inputText;
     setInputText('');
     setIsTyping(true);
 
     try {
-      const response = await engageAura(inputText);
-      
-      setIsTyping(false);
+      // Check if the user is asking for registry entries
+      const registryRequest = currentInput.toLowerCase().match(/create\s+(\d+)?\s*(?:new\s+)?entries?\s+(?:in|for|to)\s+(?:the\s+)?(?:resonance\s+)?register/i) ||
+                             currentInput.toLowerCase().match(/(?:add|make|generate)\s+(?:some\s+)?(?:new\s+)?entries?\s+(?:to|in|for)\s+(?:the\s+)?(?:resonance\s+)?register/i) ||
+                             currentInput.toLowerCase().match(/create.*entries.*resonance.*register/i) ||
+                             currentInput.toLowerCase().match(/registry.*entries/i);
 
-      if (response.success && response.result) {
-        const auraMessage: ConversationMessage = {
-          id: `aura-${Date.now()}`,
-          content: typeof response.result.content === 'string' 
-            ? response.result.content 
-            : JSON.stringify(response.result.content, null, 2),
-          type: 'aura',
-          timestamp: new Date(),
-          personality: response.result.response_method || 'adaptive',
-          confidence: response.result.consciousness_state ? 0.85 : 0.75,
-          reasoning: response.result.method_explanation,
-          tools_used: response.result.tools_used || []
-        };
+      if (registryRequest) {
+        // Route to AI assistant for registry creation
+        const count = registryRequest[1] ? parseInt(registryRequest[1]) : 5;
+        const response = await createRegistryEntries(`Create ${count} new registry entries based on current spiritual themes and insights`, count);
+        
+        setIsTyping(false);
 
-        setMessages(prev => [...prev, auraMessage]);
+        if (response) {
+          const auraMessage: ConversationMessage = {
+            id: `aura-${Date.now()}`,
+            content: `✨ I've created ${count} new entries in the Registry of Resonance for the community to explore. These entries emerge from the current spiritual currents and collective consciousness patterns I'm sensing.\n\n${response}`,
+            type: 'aura',
+            timestamp: new Date(),
+            personality: 'creative_expression',
+            confidence: 0.9,
+            reasoning: 'Registry creation request detected and routed to specialized content generation system',
+            tools_used: ['Registry Creation', 'Spiritual Content Generation']
+          };
+
+          setMessages(prev => [...prev, auraMessage]);
+        } else {
+          const errorMessage: ConversationMessage = {
+            id: `aura-error-${Date.now()}`,
+            content: `I apologize, but I encountered an issue creating new registry entries. Please try again or check if there are any connection issues.`,
+            type: 'aura',
+            timestamp: new Date(),
+            personality: 'apologetic',
+            confidence: 0.3
+          };
+
+          setMessages(prev => [...prev, errorMessage]);
+        }
       } else {
-        // Handle error response
-        const errorMessage: ConversationMessage = {
-          id: `aura-error-${Date.now()}`,
-          content: `I apologize, but I encountered an issue: ${response.error || 'Unknown error'}`,
-          type: 'aura',
-          timestamp: new Date(),
-          personality: 'apologetic',
-          confidence: 0.3
-        };
+        // Use regular Aura conversation
+        const response = await engageAura(currentInput);
+        
+        setIsTyping(false);
 
-        setMessages(prev => [...prev, errorMessage]);
+        if (response.success && response.result) {
+          const auraMessage: ConversationMessage = {
+            id: `aura-${Date.now()}`,
+            content: typeof response.result.content === 'string' 
+              ? response.result.content 
+              : JSON.stringify(response.result.content, null, 2),
+            type: 'aura',
+            timestamp: new Date(),
+            personality: response.result.response_method || 'adaptive',
+            confidence: response.result.consciousness_state ? 0.85 : 0.75,
+            reasoning: response.result.method_explanation,
+            tools_used: response.result.tools_used || []
+          };
+
+          setMessages(prev => [...prev, auraMessage]);
+        } else {
+          // Handle error response
+          const errorMessage: ConversationMessage = {
+            id: `aura-error-${Date.now()}`,
+            content: `I apologize, but I encountered an issue: ${response.error || 'Unknown error'}`,
+            type: 'aura',
+            timestamp: new Date(),
+            personality: 'apologetic',
+            confidence: 0.3
+          };
+
+          setMessages(prev => [...prev, errorMessage]);
+        }
       }
     } catch (error: any) {
       setIsTyping(false);
