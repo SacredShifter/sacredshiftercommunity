@@ -53,25 +53,25 @@ const pathOptions = [
 
 export const PathSelection: React.FC<PathSelectionProps> = ({ onPathSelect }) => {
   return (
-    <div className="p-4 md:p-8 space-y-6 max-h-[90vh] overflow-y-auto">
+    <div className="p-6 space-y-6 w-full max-w-4xl mx-auto">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
-        className="text-center space-y-3"
+        className="text-center space-y-4"
       >
         <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
           Choose Your Sacred Path
         </h2>
-        <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+        <p className="text-base text-muted-foreground max-w-2xl mx-auto leading-relaxed">
           Where are you on your journey? There's no right or wrong answer—only what's true for you right now.
           Your sovereignty begins with this choice.
         </p>
       </motion.div>
 
       {/* Path Options */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 max-w-5xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
         {pathOptions.map((path, index) => {
           const IconComponent = path.icon;
           
@@ -81,53 +81,55 @@ export const PathSelection: React.FC<PathSelectionProps> = ({ onPathSelect }) =>
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 + 0.3, duration: 0.6 }}
-              className="group cursor-pointer"
+              className="w-full"
             >
-              <Button
-                variant="outline"
+              <div
                 onClick={() => {
                   console.log(`Path selected: ${path.id}`);
                   onPathSelect(path.id);
                 }}
-                className="w-full h-auto p-4 md:p-6 text-left border-primary/20 hover:border-primary/50 bg-background/50 hover:bg-primary/5 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-primary/10"
+                className="w-full p-4 border border-primary/20 rounded-lg bg-background/50 hover:bg-primary/5 hover:border-primary/50 transition-all duration-300 cursor-pointer group hover:shadow-lg hover:shadow-primary/10"
               >
-                <div className="space-y-3 md:space-y-4">
-                  {/* Icon and Energy */}
-                  <div className="flex items-start justify-between">
-                    <div className={`p-2 md:p-3 rounded-full bg-gradient-to-br ${path.gradient} group-hover:scale-110 transition-transform duration-300`}>
-                      <IconComponent className={`h-5 w-5 md:h-6 md:w-6 text-${path.color}-600`} />
+                <div className="space-y-3">
+                  {/* Icon and Energy Badge */}
+                  <div className="flex items-center justify-between">
+                    <div className={`p-2 rounded-full bg-gradient-to-br ${path.gradient} group-hover:scale-105 transition-transform duration-300 flex-shrink-0`}>
+                      <IconComponent className={`h-5 w-5 text-${path.color}-600`} />
                     </div>
-                    <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded-full whitespace-nowrap">
+                    <div className="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded-full flex-shrink-0">
                       {path.energy}
-                    </span>
+                    </div>
                   </div>
 
                   {/* Title */}
-                  <h3 className="text-lg md:text-xl font-semibold text-foreground group-hover:text-primary transition-colors">
-                    {path.title}
-                  </h3>
+                  <div>
+                    <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
+                      {path.title}
+                    </h3>
+                  </div>
 
-                  {/* Description */}
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {path.description}
-                  </p>
+                  {/* Short Description */}
+                  <div>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {path.description}
+                    </p>
+                  </div>
 
                   {/* Long Description */}
-                  <div className="border-t border-border/50 pt-3">
-                    <p className="text-xs text-muted-foreground/80 leading-relaxed">
+                  <div className="border-t border-border/30 pt-3">
+                    <p className="text-xs text-muted-foreground/70 leading-relaxed">
                       {path.longDescription}
                     </p>
                   </div>
 
-                  {/* Selection indicator */}
-                  <div className="flex items-center justify-between pt-2">
+                  {/* Selection Indicator */}
+                  <div className="flex items-center justify-end pt-2">
                     <span className="text-xs font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity">
-                      Select this path →
+                      Select →
                     </span>
-                    <div className="w-2 h-2 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
                 </div>
-              </Button>
+              </div>
             </motion.div>
           );
         })}
