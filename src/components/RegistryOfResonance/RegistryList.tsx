@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
-import { Search, Filter, Plus, Sparkles } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Search, Filter, Plus, Sparkles, MoreHorizontal, Edit, Trash2, ArrowUpDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useRegistryOfResonance, RegistryEntry } from '@/hooks/useRegistryOfResonance';
-import { RegistryEntryCard } from './RegistryEntryCard';
 import { EntryModal } from './EntryModal';
 import { EntryForm } from './EntryForm';
 import { motion } from 'framer-motion';
+import { format } from 'date-fns/format';
 
 export function RegistryList() {
   const { entries, loading, fetchEntries } = useRegistryOfResonance();
@@ -20,25 +22,64 @@ export function RegistryList() {
   const [showForm, setShowForm] = useState(false);
   const [editEntry, setEditEntry] = useState<RegistryEntry | null>(null);
   const [activeTab, setActiveTab] = useState('my');
+  const [sortField, setSortField] = useState<'created_at' | 'title' | 'type'>('created_at');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
     fetchEntries(value as 'my' | 'collective' | 'drafts');
   };
 
+  const handleSort = (field: 'created_at' | 'title' | 'type') => {
+    if (sortField === field) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortOrder('asc');
+    }
+  };
+
   // Get all unique tags from entries
   const allTags = Array.from(new Set(entries.flatMap(entry => entry.tags || [])));
 
-  // Filter entries based on search and filters
-  const filteredEntries = entries.filter(entry => {
-    const matchesSearch = entry.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         entry.content.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesTags = selectedTags.length === 0 || 
-                       selectedTags.some(tag => entry.tags?.includes(tag));
-    const matchesVerified = !verifiedOnly || entry.is_verified;
-    
-    return matchesSearch && matchesTags && matchesVerified;
-  });
+  // Filter and sort entries
+  const filteredAndSortedEntries = useMemo(() => {
+    const filtered = entries.filter(entry => {
+      const matchesSearch = entry.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           entry.content.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesTags = selectedTags.length === 0 || 
+                         selectedTags.some(tag => entry.tags?.includes(tag));
+      const matchesVerified = !verifiedOnly || entry.is_verified;
+      
+      return matchesSearch && matchesTags && matchesVerified;
+    });
+
+    return filtered.sort((a, b) => {
+      let aValue, bValue;
+      
+      switch (sortField) {
+        case 'title':
+          aValue = a.title.toLowerCase();
+          bValue = b.title.toLowerCase();
+          break;
+        case 'type':
+          aValue = a.entry_type || '';
+          bValue = b.entry_type || '';
+          break;
+        case 'created_at':
+        default:
+          aValue = new Date(a.created_at);
+          bValue = new Date(b.created_at);
+          break;
+      }
+      
+      if (sortOrder === 'asc') {
+        return aValue > bValue ? 1 : -1;
+      } else {
+        return aValue < bValue ? 1 : -1;
+      }
+    });
+  }, [entries, searchTerm, selectedTags, verifiedOnly, sortField, sortOrder]);
 
   return (
     <div className="min-h-screen p-4">
@@ -146,20 +187,13 @@ export function RegistryList() {
 
             <TabsContent value={activeTab} className="mt-6">
               {loading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {Array.from({ length: 6 }).map((_, i) => (
-                    <Card key={i} className="animate-pulse">
-                      <CardHeader>
-                        <div className="h-4 bg-muted rounded w-3/4"></div>
-                        <div className="h-3 bg-muted rounded w-1/2"></div>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="h-20 bg-muted rounded"></div>
-                      </CardContent>
-                    </Card>
-                  ))}
+                <div className="flex items-center justify-center min-h-[400px]">
+                  <div className="animate-pulse flex flex-col items-center space-y-4">
+                    <Sparkles className="h-8 w-8 text-primary animate-spin" />
+                    <p className="text-muted-foreground">Loading collective archive...</p>
+                  </div>
                 </div>
-              ) : filteredEntries.length === 0 ? (
+              ) : filteredAndSortedEntries.length === 0 ? (
                 <Card className="text-center py-12">
                   <CardContent>
                     <div className="space-y-4">
@@ -183,22 +217,140 @@ export function RegistryList() {
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ delay: 0.4 }}
-                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                  transition={{ delay: 0.2 }}
+                  className="bg-card/30 backdrop-blur border rounded-lg overflow-hidden"
                 >
-                  {filteredEntries.map((entry, index) => (
-                    <motion.div
-                      key={entry.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                    >
-                      <RegistryEntryCard
-                        entry={entry}
-                        onClick={() => setSelectedEntry(entry)}
-                      />
-                    </motion.div>
-                  ))}
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="border-border/30">
+                        <TableHead 
+                          className="cursor-pointer hover:bg-muted/30 transition-colors"
+                          onClick={() => handleSort('title')}
+                        >
+                          <div className="flex items-center gap-2">
+                            Title
+                            <ArrowUpDown className="h-4 w-4" />
+                          </div>
+                        </TableHead>
+                        <TableHead 
+                          className="cursor-pointer hover:bg-muted/30 transition-colors"
+                          onClick={() => handleSort('type')}
+                        >
+                          <div className="flex items-center gap-2">
+                            Type
+                            <ArrowUpDown className="h-4 w-4" />
+                          </div>
+                        </TableHead>
+                        <TableHead>Resonance</TableHead>
+                        <TableHead>Tags</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead 
+                          className="cursor-pointer hover:bg-muted/30 transition-colors"
+                          onClick={() => handleSort('created_at')}
+                        >
+                          <div className="flex items-center gap-2">
+                            Created
+                            <ArrowUpDown className="h-4 w-4" />
+                          </div>
+                        </TableHead>
+                        <TableHead className="w-[50px]"></TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredAndSortedEntries.map((entry, index) => (
+                        <motion.tr
+                          key={entry.id}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.03 }}
+                          className="border-border/30 hover:bg-muted/20 transition-colors cursor-pointer"
+                          onClick={() => setSelectedEntry(entry)}
+                        >
+                          <TableCell className="font-medium">
+                            <div className="max-w-[300px]">
+                              <div className="font-semibold truncate">{entry.title}</div>
+                              <div className="text-sm text-muted-foreground truncate mt-1">
+                                {entry.content.substring(0, 100)}...
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="secondary" className="font-medium">
+                              {entry.entry_type}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <div className="w-12 h-2 bg-muted rounded-full">
+                                <div 
+                                  className="h-full bg-primary rounded-full transition-all"
+                                  style={{ width: `${(entry.resonance_rating / 10) * 100}%` }}
+                                />
+                              </div>
+                              <span className="text-sm font-medium">
+                                {entry.resonance_rating}/10
+                              </span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex flex-wrap gap-1 max-w-[200px]">
+                              {entry.tags?.slice(0, 3).map((tag, idx) => (
+                                <Badge key={idx} variant="outline" className="text-xs">
+                                  {tag}
+                                </Badge>
+                              ))}
+                              {entry.tags && entry.tags.length > 3 && (
+                                <Badge variant="outline" className="text-xs">
+                                  +{entry.tags.length - 3}
+                                </Badge>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              {entry.is_verified && (
+                                <Badge variant="default" className="text-xs">
+                                  Verified
+                                </Badge>
+                              )}
+                              {entry.is_pinned && (
+                                <Badge variant="outline" className="text-xs">
+                                  Pinned
+                                </Badge>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <span className="text-sm text-muted-foreground">
+                              {format(new Date(entry.created_at), 'MMM d, yyyy')}
+                            </span>
+                          </TableCell>
+                          <TableCell>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                                  <MoreHorizontal className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end" className="bg-background/95 backdrop-blur border-border/50">
+                                <DropdownMenuItem 
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setEditEntry(entry);
+                                    setShowForm(true);
+                                  }}
+                                  className="cursor-pointer"
+                                >
+                                  <Edit className="h-4 w-4 mr-2" />
+                                  Edit
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
+                        </motion.tr>
+                      ))}
+                    </TableBody>
+                  </Table>
                 </motion.div>
               )}
             </TabsContent>
