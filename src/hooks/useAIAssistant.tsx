@@ -105,12 +105,16 @@ export function useAIAssistant() {
   };
 
   const getAdminUnrestrictedResponse = async (query: string) => {
+    console.log('🔧 Admin check:', { userRole, user: user?.id });
+    
     // Check if user is admin
     if (userRole !== 'admin') {
+      console.error('❌ Admin access denied:', { userRole, user: user?.id });
       toast.error('Admin access required for unrestricted mode');
       return null;
     }
 
+    console.log('✅ Admin access granted, sending unrestricted request');
     return askAssistant({
       request_type: 'general_guidance',
       user_query: query
