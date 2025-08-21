@@ -15,6 +15,10 @@ export const SimpleBackground = () => {
       <div className="absolute bottom-20 right-20 w-80 h-80 bg-secondary/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
       <div className="absolute top-1/2 right-10 w-64 h-64 bg-accent/15 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '4s' }} />
       <div className="absolute bottom-10 left-20 w-72 h-72 bg-primary/15 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '6s' }} />
+      
+      {/* Bottom gradient fade for polished look */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background via-background/80 to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-background/95 to-transparent" />
     </div>
   );
 };
