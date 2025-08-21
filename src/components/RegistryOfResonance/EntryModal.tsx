@@ -113,7 +113,7 @@ export function EntryModal({ entry, open, onClose, onEdit, onVerificationChange 
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl h-[min(90vh,800px)] p-0 overflow-hidden flex flex-col">
+      <DialogContent className="max-w-4xl h-[min(90vh,800px)] p-0 overflow-hidden flex flex-col data-[state=open]:overflow-hidden">
         <div className="relative flex flex-col h-full">
           {/* Admin Verification Panel - Always at top */}
           <AdminVerificationPanel 

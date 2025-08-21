@@ -103,7 +103,7 @@ export function CodexEntryModal({ isOpen, onClose, onSubmit, initialData }: Code
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl h-[min(90vh,800px)] flex flex-col p-0 gap-0">
+      <DialogContent className="max-w-2xl h-[min(90vh,800px)] flex flex-col p-0 gap-0 data-[state=open]:overflow-hidden">
         <div className="flex-shrink-0 p-6 pb-4 border-b">
           <DialogHeader>
             <DialogTitle className="text-xl font-semibold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">

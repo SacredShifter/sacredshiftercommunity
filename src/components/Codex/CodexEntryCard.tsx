@@ -53,12 +53,13 @@ export function CodexEntryCard({ entry, onEdit, onDelete, compact = false }: Cod
   return (
     <>
       <motion.div
-        whileHover={{ scale: compact ? 1.01 : 1.02 }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
         onHoverStart={() => setIsHovered(true)}
         onHoverEnd={() => setIsHovered(false)}
         className="h-full"
       >
-        <Card className={`h-full transition-all duration-300 hover:shadow-lg ${isHovered ? typeGlow : ''} backdrop-blur border-border/50 bg-gradient-to-br ${typeGradient} group relative overflow-hidden`}>
+        <Card className={`h-full transition-all duration-200 hover:scale-[1.01] hover:shadow-lg ${isHovered ? typeGlow : ''} backdrop-blur border-border/50 bg-gradient-to-br ${typeGradient} group relative overflow-hidden`}>
           {/* Animated border */}
           <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary/20 via-transparent to-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           

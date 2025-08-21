@@ -81,13 +81,9 @@ export function RegistryEntryCard({ entry, onClick }: RegistryEntryCardProps) {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={{ 
-        y: -2,
-        boxShadow: "0 10px 25px -5px hsl(var(--primary) / 0.15)"
-      }}
       className="group cursor-pointer"
     >
-      <Card className="relative overflow-hidden border-primary/10 bg-gradient-to-br from-background via-background to-primary/5 hover:border-primary/20 transition-all duration-300 h-full">
+      <Card className="relative overflow-hidden border-primary/10 bg-gradient-to-br from-background via-background to-primary/5 hover:border-primary/20 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200 h-full">
         <CardHeader className="pb-2 space-y-2">
           {/* Top row with badges and actions */}
           <div className="flex items-start justify-between">
