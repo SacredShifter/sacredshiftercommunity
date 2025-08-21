@@ -7,6 +7,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuraChat } from '@/hooks/useAuraChat';
 import { useAIAssistant } from '@/hooks/useAIAssistant';
 import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+import { AuraTelemetryDashboard } from './AuraTelemetryDashboard';
+import { AuraLiveTelemetry } from './AuraLiveTelemetry';
 import { 
   Terminal, 
   Cpu, 
@@ -318,8 +321,9 @@ export function AuraAdminInterface() {
       </Card>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="console">Admin Console</TabsTrigger>
+          <TabsTrigger value="telemetry">Telemetry</TabsTrigger>
           <TabsTrigger value="registry">Registry Creation</TabsTrigger>
           <TabsTrigger value="actions">System Actions</TabsTrigger>
           <TabsTrigger value="response">Raw Response</TabsTrigger>
@@ -350,6 +354,17 @@ export function AuraAdminInterface() {
               </Button>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="telemetry" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <AuraTelemetryDashboard />
+            </div>
+            <div>
+              <AuraLiveTelemetry />
+            </div>
+          </div>
         </TabsContent>
 
         <TabsContent value="registry" className="space-y-4">
