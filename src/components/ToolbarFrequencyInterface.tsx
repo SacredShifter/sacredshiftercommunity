@@ -83,12 +83,12 @@ export const ToolbarFrequencyInterface = () => {
 
           {/* Frequency Wheel */}
           {showFrequencies && (
-            <div className="relative w-full h-48 mt-4">
-              <Label className="text-xs mb-2 block text-center">Sacred Frequencies</Label>
-              <div className="relative w-full h-full flex items-center justify-center">
-                {frequencies.map((freq, index) => {
-                  const angle = (index * 360) / frequencies.length;
-                  const radius = 70;
+             <div className="relative w-full h-64 mt-4">
+               <Label className="text-xs mb-2 block text-center">Sacred Frequencies</Label>
+               <div className="relative w-full h-full flex items-center justify-center">
+                 {frequencies.map((freq, index) => {
+                   const angle = (index * 360) / frequencies.length;
+                   const radius = 90;
                   const x = Math.cos((angle - 90) * Math.PI / 180) * radius;
                   const y = Math.sin((angle - 90) * Math.PI / 180) * radius;
                   
