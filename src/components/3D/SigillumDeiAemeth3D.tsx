@@ -131,21 +131,28 @@ const SacredRingComponent = ({ ring, isActive, selectedName, onNameSelect, breat
       {/* Angelic Names */}
       {ring.names.map((angelName, i) => {
         const angle = (angelName.position / 360) * Math.PI * 2;
-        const x = Math.cos(angle) * (ring.radius + 0.5);
-        const y = Math.sin(angle) * (ring.radius + 0.5);
+        const nameRadius = ring.radius + (ring.id === 'inner' ? 0.8 : 0.5); // Increased distance for inner ring
+        const x = Math.cos(angle) * nameRadius;
+        const y = Math.sin(angle) * nameRadius;
         const isSelected = selectedName === angelName.id;
         const isHovered = hovered === angelName.id;
 
         return (
           <group key={angelName.id}>
-            {/* Name Background */}
+            {/* Larger clickable background for better interaction */}
             <mesh 
               position={[x, y, 0.02]}
               onPointerEnter={() => setHovered(angelName.id)}
               onPointerLeave={() => setHovered(null)}
-              onClick={() => onNameSelect(angelName)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onNameSelect(angelName);
+              }}
             >
-              <planeGeometry args={[0.8, 0.2]} />
+              <planeGeometry args={[
+                ring.id === 'inner' ? 1.2 : 1.0, // Larger click area for inner ring
+                ring.id === 'inner' ? 0.3 : 0.25  // Taller click area for inner ring
+              ]} />
               <meshBasicMaterial 
                 color={isSelected || isHovered ? '#FFFFFF' : ring.color}
                 transparent 
@@ -156,7 +163,7 @@ const SacredRingComponent = ({ ring, isActive, selectedName, onNameSelect, breat
             {/* Name Text */}
             <Text
               position={[x, y, 0.03]}
-              fontSize={0.08}
+              fontSize={ring.id === 'inner' ? 0.1 : 0.08} // Larger font for inner ring
               color={isSelected || isHovered ? '#000000' : '#FFFFFF'}
               anchorX="center"
               anchorY="middle"
@@ -175,6 +182,18 @@ const SacredRingComponent = ({ ring, isActive, selectedName, onNameSelect, breat
               >
                 {angelName.frequency}Hz
               </Text>
+            )}
+
+            {/* Connection line to ring for clarity */}
+            {(isSelected || isHovered) && (
+              <mesh position={[
+                Math.cos(angle) * ((ring.radius + nameRadius) / 2),
+                Math.sin(angle) * ((ring.radius + nameRadius) / 2),
+                0.01
+              ]}>
+                <cylinderGeometry args={[0.005, 0.005, nameRadius - ring.radius]} />
+                <meshBasicMaterial color={ring.color} transparent opacity={0.6} />
+              </mesh>
             )}
           </group>
         );
