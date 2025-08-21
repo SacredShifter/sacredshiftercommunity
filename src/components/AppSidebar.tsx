@@ -113,11 +113,11 @@ export function AppSidebar() {
 
   return (
     <Sidebar 
-      className={`${isCollapsed ? "w-16" : "w-64"} min-h-screen bg-background border-r border-border/30`} 
+      className={`${isCollapsed ? "w-16" : "w-64"} min-h-screen border-r border-border/30`} 
       collapsible="icon" 
       data-tour="navigation-sidebar"
     >
-      <SidebarContent className="bg-background">
+      <SidebarContent className="bg-background/20 backdrop-blur-sm">
         {/* Core Navigation */}
         <SidebarGroup>
           <SidebarGroupLabel>Core Navigation</SidebarGroupLabel>

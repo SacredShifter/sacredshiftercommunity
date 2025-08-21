@@ -6,14 +6,20 @@ export const SacredCosmicBackground = () => {
   useEffect(() => {
     // Create floating sacred orbs
     const createOrbs = () => {
-      const colors = ['var(--primary)', 'var(--secondary)', 'var(--accent)'];
-      const newOrbs = Array.from({ length: 5 }, (_, i) => ({
+      const colors = [
+        '269 69% 58%', // primary violet
+        '196 83% 60%', // secondary aqua  
+        '324 78% 54%', // accent magenta
+        '143 25% 86%', // truth mint
+        '60 100% 50%'  // pulse yellow
+      ];
+      const newOrbs = Array.from({ length: 8 }, (_, i) => ({
         id: i,
         x: Math.random() * 100,
         y: Math.random() * 100,
-        size: Math.random() * 200 + 100,
+        size: Math.random() * 300 + 150,
         color: colors[Math.floor(Math.random() * colors.length)],
-        duration: Math.random() * 20 + 15
+        duration: Math.random() * 25 + 20
       }));
       setOrbs(newOrbs);
     };
@@ -32,10 +38,11 @@ export const SacredCosmicBackground = () => {
             top: `${orb.y}%`,
             width: `${orb.size}px`,
             height: `${orb.size}px`,
-            background: `radial-gradient(circle, hsl(${orb.color} / 0.1) 0%, transparent 70%)`,
+            background: `radial-gradient(circle, hsl(${orb.color} / 0.15) 0%, hsl(${orb.color} / 0.05) 50%, transparent 70%)`,
             filter: 'blur(2px)',
             animation: `orb-float ${orb.duration}s ease-in-out infinite`,
-            animationDelay: `${orb.id * -3}s`
+            animationDelay: `${orb.id * -4}s`,
+            zIndex: -1
           }}
         />
       ))}
