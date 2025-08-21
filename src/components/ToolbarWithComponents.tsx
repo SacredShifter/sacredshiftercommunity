@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Brain, Wind, Waves, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AIChatBubble } from '@/components/AIChatBubble';
-import BreathOfSource from '@/components/BreathOfSource';
-import { SacredSoundscape } from '@/components/SacredSoundscape';
+import { ToolbarAIInterface } from '@/components/ToolbarAIInterface';
+import { ToolbarBreathingInterface } from '@/components/ToolbarBreathingInterface';
+import { ToolbarFrequencyInterface } from '@/components/ToolbarFrequencyInterface';
 import { UIErrorBoundary, AudioErrorBoundary } from '@/components/ErrorBoundary';
 
 export const ToolbarWithComponents = () => {
@@ -81,21 +81,21 @@ export const ToolbarWithComponents = () => {
                       {/* Breath of Source Component */}
                       {tool.id === 'breath' && (
                         <AudioErrorBoundary>
-                          <BreathOfSource autoOpen={true} />
+                          <ToolbarBreathingInterface />
                         </AudioErrorBoundary>
                       )}
 
                       {/* AI Assistant Component */}
                       {tool.id === 'ai' && (
                         <UIErrorBoundary>
-                          <AIChatBubble autoOpen={true} />
+                          <ToolbarAIInterface />
                         </UIErrorBoundary>
                       )}
 
                       {/* Sacred Soundscape Component */}
                       {tool.id === 'frequency' && (
                         <AudioErrorBoundary>
-                          <SacredSoundscape autoOpen={true} />
+                          <ToolbarFrequencyInterface />
                         </AudioErrorBoundary>
                       )}
                     </div>
