@@ -27,6 +27,7 @@ const AdminRoute = ({ children }: AdminRouteProps) => {
     return <Navigate to="/auth" replace />;
   }
 
+  // Explicitly check for admin role - reject if undefined, null, or not 'admin'
   if (userRole !== 'admin') {
     return (
       <div className="min-h-screen flex items-center justify-center">
