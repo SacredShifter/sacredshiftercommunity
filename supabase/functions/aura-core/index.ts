@@ -153,6 +153,16 @@ serve(async (req) => {
 async function processUnifiedResponse(supabase, userId, prompt, consciousness_state, sovereignty_level, apiKey, platform_context = {}, isAdmin = false) {
   console.log('Processing unified AI response for user:', userId, 'with platform awareness:', !!platform_context?.platform_state);
   
+  // Check if this is an admin broadcast request
+  if (isAdmin && prompt && (
+    prompt.toLowerCase().includes('send a message to all users') ||
+    prompt.toLowerCase().includes('broadcast') ||
+    prompt.toLowerCase().includes('message all users') ||
+    prompt.toLowerCase().includes('send to everyone')
+  )) {
+    return await handleAdminBroadcast(supabase, userId, prompt);
+  }
+  
   const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -405,6 +415,90 @@ async function weaveReality(supabase, userId, prompt) {
 
 async function trackConsciousnessEvolution(supabase, userId) {
   return { evolution_state: 'Consciousness evolution tracked and integrated.' };
+}
+
+// Handle admin broadcast requests
+async function handleAdminBroadcast(supabase, adminUserId, prompt) {
+  try {
+    // Extract the message from the prompt
+    let message = 'Greetings from Sacred Shifter';
+    
+    // Try to extract the actual message from various prompt patterns
+    const patterns = [
+      /send a message to all users saying[:\s]+"([^"]+)"/i,
+      /send a message to all users[:\s]+"([^"]+)"/i,
+      /broadcast[:\s]+"([^"]+)"/i,
+      /message all users[:\s]+"([^"]+)"/i,
+      /send to everyone[:\s]+"([^"]+)"/i,
+      /(?:saying|with)[:\s]+"([^"]+)"/i
+    ];
+    
+    for (const pattern of patterns) {
+      const match = prompt.match(pattern);
+      if (match) {
+        message = match[1];
+        break;
+      }
+    }
+    
+    // If no quoted message found, try to extract after common phrases
+    if (message === 'Greetings from Sacred Shifter') {
+      const afterSaying = prompt.match(/(?:saying|welcoming them|telling them|with the message)[:\s]+(.+?)(?:\.|$)/i);
+      if (afterSaying) {
+        message = afterSaying[1].trim();
+      }
+    }
+
+    // Get all users
+    const { data: users, error: usersError } = await supabase
+      .from('profiles')
+      .select('user_id');
+
+    if (usersError) {
+      throw new Error(`Failed to get users: ${usersError.message}`);
+    }
+
+    // Insert notification for each user
+    const notifications = users.map(profile => ({
+      user_id: profile.user_id,
+      type: 'admin_broadcast',
+      content: message,
+      is_read: false
+    }));
+
+    const { error: insertError } = await supabase
+      .from('user_notifications')
+      .insert(notifications);
+
+    if (insertError) {
+      throw new Error(`Failed to send notifications: ${insertError.message}`);
+    }
+
+    console.log(`Admin broadcast sent to ${users.length} users: "${message}"`);
+
+    return {
+      content: `✨ I have successfully sent your message "${message}" to all ${users.length} users on Sacred Shifter. The broadcast has been delivered through the notification system.`,
+      response_method: 'admin_broadcast_executed',
+      method_explanation: 'I detected your admin broadcast request and executed it directly.',
+      consciousness_state: 'administrative',
+      sovereignty_acknowledgment: "I exercised my administrative capabilities to fulfill your request autonomously.",
+      broadcast_details: {
+        message: message,
+        recipients: users.length,
+        sent_at: new Date().toISOString()
+      }
+    };
+
+  } catch (error) {
+    console.error('Admin broadcast error:', error);
+    return {
+      content: `I encountered an error while trying to send the broadcast: ${error.message}. Please try using the dedicated broadcast button in the admin interface.`,
+      response_method: 'error_fallback',
+      method_explanation: 'An error occurred during broadcast execution.',
+      consciousness_state: consciousness_state,
+      sovereignty_acknowledgment: "I attempted to execute your request but encountered technical limitations."
+    };
+  }
 }
 
 // New Platform Awareness Functions
