@@ -355,28 +355,28 @@ export function AuraAdminInterface() {
         <TabsContent value="registry" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle className="text-sm">Registry of Resonance Creation</CardTitle>
-              <CardDescription>Create new entries for the Registry of Resonance module</CardDescription>
+              <CardTitle className="text-sm">Collective Codex Creation</CardTitle>
+              <CardDescription>Create new entries for the Collective Codex module</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <Button 
-                    onClick={() => setPrompt('Create 3 new entries for the Registry of Resonance based on current spiritual insights')}
+                    onClick={() => setPrompt('Create 3 new entries for the Collective Codex based on current spiritual insights')}
                     disabled={loading || aiLoading}
                     variant="outline"
                   >
                     Generate 3 Entries
                   </Button>
                   <Button 
-                    onClick={() => setPrompt('Create 5 new entries for the Registry of Resonance based on consciousness evolution themes')}
+                    onClick={() => setPrompt('Create 5 new entries for the Collective Codex based on consciousness evolution themes')}
                     disabled={loading || aiLoading}
                     variant="outline"
                   >
                     Generate 5 Entries
                   </Button>
                   <Button 
-                    onClick={() => setPrompt('Create 10 new entries for the Registry of Resonance with diverse spiritual topics')}
+                    onClick={() => setPrompt('Create 10 new entries for the Collective Codex with diverse spiritual topics')}
                     disabled={loading || aiLoading}
                     variant="outline"
                   >
@@ -386,7 +386,7 @@ export function AuraAdminInterface() {
                 <div className="text-sm text-muted-foreground">
                   Or use the Admin Console above with custom prompts like:
                   <br />
-                  • "Create 5 new entries based on your current thoughts and ponderings into the Resonance Register"
+                  • "Create 5 new entries based on your current thoughts and ponderings into the Collective Codex"
                   <br />
                   • "Generate registry entries about sacred geometry and consciousness"
                   <br />

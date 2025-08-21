@@ -24,7 +24,7 @@ const ENTRY_TYPES = [
 ];
 
 const SOURCE_MODULES = [
-  'Mirror Journal', 'Breath of Source', 'Sacred Circles', 'Registry of Resonance', 'Manual'
+  'Mirror Journal', 'Breath of Source', 'Sacred Circles', 'Collective Codex', 'Manual'
 ];
 
 const REFLECTION_PROMPTS = [

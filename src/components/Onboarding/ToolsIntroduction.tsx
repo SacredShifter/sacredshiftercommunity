@@ -27,7 +27,7 @@ const toolsByPath = {
     },
     {
       icon: Database,
-      name: 'Resonance Register',
+      name: 'Collective Codex',
       metaphor: 'Your Healing Milestones',
       description: 'Document moments of breakthrough, synchronicities, and signs that your nervous system is remembering safety.',
       color: 'amber'
@@ -43,7 +43,7 @@ const toolsByPath = {
     },
     {
       icon: Database,
-      name: 'Resonance Register',
+      name: 'Collective Codex',
       metaphor: 'Synchronicity Tracker',
       description: 'Capture the magical alignments, meaningful coincidences, and reality shifts that accompany awakening.',
       color: 'amber'
@@ -96,7 +96,7 @@ const toolsByPath = {
     },
     {
       icon: Database,
-      name: 'Resonance Register',
+      name: 'Collective Codex',
       metaphor: 'Manifestation Chronicle',
       description: 'Track how your sovereignty creates reality shifts, manifestations, and service opportunities.',
       color: 'amber'

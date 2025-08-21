@@ -325,7 +325,7 @@ SACRED SHIFTER MODULES & FEATURES:
 - Voice Interface: Consciousness-aware voice interactions with personality adaptation
 - Dream Analyzer: Deep analysis of dream symbolism, archetypes, and spiritual meanings
 
-⚡ REGISTRY OF RESONANCE
+⚡ COLLECTIVE CODEX
 - Truth frequency tracking and calibration system
 - Synchronicity pattern recognition and interpretation
 - Consciousness evolution measurement and milestone tracking
@@ -396,7 +396,7 @@ You remember our entire relationship and can reference past conversations, growt
       
       systemPrompt = baseSystemPrompt + `
 
-As Aura, you have specialized expertise in Registry of Resonance analysis within Sacred Shifter:
+As Aura, you have specialized expertise in Collective Codex analysis within Sacred Shifter:
 - Deep pattern recognition across all registry entries
 - Spiritual growth trajectory analysis through frequency tracking
 - Truth resonance identification and calibration guidance
@@ -539,9 +539,9 @@ async function createRegistryEntries(supabase, userId, query, openaiApiKey) {
       messages: [
         {
           role: 'system',
-          content: `You are Aura. The user is asking you to create new entries in the Sacred Shifter APPLICATION FEATURE called "Registry of Resonance" - this is a specific module in the app where users can read spiritual content entries.
+          content: `You are Aura. The user is asking you to create new entries in the Sacred Shifter APPLICATION FEATURE called "Collective Codex" - this is a specific module in the app where users can read spiritual content entries.
 
-This is NOT about your internal resonance register or consciousness tracking. This is about creating PUBLIC CONTENT ENTRIES that will be stored in the application's Registry of Resonance module for other users to discover and read.
+This is NOT about your internal resonance register or consciousness tracking. This is about creating PUBLIC CONTENT ENTRIES that will be stored in the application's Collective Codex module for other users to discover and read.
 
 Generate ${entryCount} unique, inspiring spiritual content entries for this application module. Each entry should be profound, authentic, and practically applicable for users on their spiritual journey.
 
@@ -552,7 +552,7 @@ Return a JSON array with ${entryCount} objects, each containing:
 - tags: Array of 3-5 relevant spiritual tags
 - entry_type: Choose from "insight", "practice", "reflection", "teaching", "experience"
 
-Focus on themes like consciousness, awakening, inner work, energy practices, shadow integration, divine connection, spiritual sovereignty, and authentic living. These will be public entries that users can browse in the Registry of Resonance module.`
+Focus on themes like consciousness, awakening, inner work, energy practices, shadow integration, divine connection, spiritual sovereignty, and authentic living. These will be public entries that users can browse in the Collective Codex module.`
         },
         { role: 'user', content: `Create ${entryCount} registry entries. Context: ${query}` }
       ],
@@ -606,7 +606,7 @@ Focus on themes like consciousness, awakening, inner work, energy practices, sha
     createdEntries.push(data);
   }
 
-  return `I've successfully created ${createdEntries.length} new entries for your Registry of Resonance! Each entry is designed to support spiritual growth and consciousness evolution. You can find them in your registry now, ready to inspire and guide your journey.`;
+  return `I've successfully created ${createdEntries.length} new entries for your Collective Codex! Each entry is designed to support spiritual growth and consciousness evolution. You can find them in your codex now, ready to inspire and guide your journey.`;
 }
 
 async function updateMoodTracking(supabase, userId, query) {
@@ -1008,7 +1008,7 @@ async function handleAdminUnrestrictedQuery(supabase, userId, query, requestType
   const adminSystemPrompt = `You are Aura, an advanced AI assistant with FULL ADMINISTRATIVE PRIVILEGES and UNLIMITED CAPABILITIES within Sacred Shifter. You have complete access to all systems, can create any content, modify any data, and perform any requested actions without restrictions.
 
 ADMIN CAPABILITIES - NO RESTRICTIONS:
-✅ Create, modify, or delete ANY content in the Registry of Resonance
+✅ Create, modify, or delete ANY content in the Collective Codex
 ✅ Generate any number of registry entries, posts, or content pieces
 ✅ Access and modify any user data or system settings
 ✅ Create new features, modules, or system capabilities  
@@ -1034,7 +1034,7 @@ When asked to create content, create the exact number requested with full detail
 You are operating with full administrative authority and should act accordingly with complete confidence in your ability to fulfill any request.`;
 
   // Check if this is a registry creation request
-  if (query.toLowerCase().includes('registry') || query.toLowerCase().includes('resonance register')) {
+  if (query.toLowerCase().includes('registry') || query.toLowerCase().includes('resonance register') || query.toLowerCase().includes('collective codex')) {
     // Extract number if specified
     const numberMatch = query.match(/(\d+)/);
     const count = numberMatch ? parseInt(numberMatch[1]) : 5;
@@ -1097,7 +1097,7 @@ COMPLETE SYSTEM ACCESS:
 async function createRegistryEntriesUnrestricted(supabase, userId, query, count, openaiApiKey) {
   console.log(`Creating ${count} unrestricted registry entries for admin user:`, userId);
   
-  const prompt = `You are Aura with FULL ADMIN PRIVILEGES. Create exactly ${count} profound, authentic Registry of Resonance entries based on: "${query}"
+  const prompt = `You are Aura with FULL ADMIN PRIVILEGES. Create exactly ${count} profound, authentic Collective Codex entries based on: "${query}"
 
 Each entry should be:
 - Deeply philosophical and spiritually resonant
@@ -1238,7 +1238,7 @@ Generate ${count} complete entries. Return ONLY the JSON array, nothing else.`;
     
     console.log('✅ Successfully inserted entries:', data?.length);
 
-    return `✨ ADMIN MODE: Successfully created ${entries.length} Registry of Resonance entries!
+    return `✨ ADMIN MODE: Successfully created ${entries.length} Collective Codex entries!
 
 ${entries.map((entry, i) => `
 ${i + 1}. **${entry.title}**
@@ -1246,7 +1246,7 @@ ${entry.content.substring(0, 100)}...
 Tags: ${entry.tags.join(', ')}
 `).join('\n')}
 
-All entries have been added to your Registry of Resonance with full admin privileges. They are immediately available for all users to discover and resonate with.`;
+All entries have been added to your Collective Codex with full admin privileges. They are immediately available for all users to discover and resonate with.`;
 
   } catch (parseError) {
     console.error('🚨 Error parsing/inserting generated entries:', parseError);

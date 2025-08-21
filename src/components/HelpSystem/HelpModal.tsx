@@ -158,7 +158,7 @@ export function HelpModal() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-sm">
                     <Database className="h-4 w-4" />
-                    Registry of Resonance
+                    Collective Codex
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="text-sm">

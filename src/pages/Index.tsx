@@ -126,7 +126,7 @@ const Index = () => {
       pulseColor: "143 25% 86%" // truth light
     },
     {
-      title: "Resonance Register",
+      title: "Collective Codex",
       description: "Document meaningful synchronicities and spiritual experiences",
       icon: Database,
       path: "/registry",
@@ -285,7 +285,7 @@ const Index = () => {
                       <rect width="100" height="100" fill="url(#journal-pattern)" />
                     </svg>
                   ),
-                  4: ( // Resonance Register - Synchronized grid pattern
+                  4: ( // Collective Codex - Synchronized grid pattern
                     <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
                       <defs>
                         <pattern id="register-pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">

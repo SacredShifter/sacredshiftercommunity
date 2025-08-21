@@ -80,7 +80,7 @@ const sections = [
     ]
   },
   {
-    title: "Registry of Resonance",
+    title: "Collective Codex",
     icon: Star,
     topics: [
       "How to track and measure frequency shifts in your consciousness",

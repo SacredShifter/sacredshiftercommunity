@@ -33,7 +33,7 @@ const firstStepsByPath = {
     {
       icon: Database,
       title: 'Document the Download',
-      subtitle: 'Capture a recent synchronicity in your Resonance Register',
+      subtitle: 'Capture a recent synchronicity in your Collective Codex',
       description: 'Record that meaningful coincidence, dream, or "coincidence" that\'s been calling your attention.',
       path: '/registry',
       cta: 'Record Synchronicity'

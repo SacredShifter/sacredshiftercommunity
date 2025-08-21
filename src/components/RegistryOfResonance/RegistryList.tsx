@@ -51,7 +51,7 @@ export function RegistryList() {
         >
           <div className="relative">
             <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-primary via-purple-500 to-blue-500 bg-clip-text text-transparent">
-              Resonance Register
+              Collective Codex
             </h1>
             <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-purple-500/20 to-blue-500/20 blur-3xl -z-10" />
           </div>

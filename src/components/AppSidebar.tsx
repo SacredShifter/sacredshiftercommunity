@@ -28,7 +28,7 @@ const sacredToolsItems = [
   { title: "Sacred Grove", url: "/grove", icon: TreePine, tooltip: "Sacred Grove - Your living wisdom ecosystem for consciousness exploration" },
   { title: "Journal", url: "/journal", icon: BookOpen, tooltip: HelpTooltips.journal },
   { title: "Circles", url: "/circles", icon: Users, tooltip: HelpTooltips.circles },
-  { title: "Resonance Register", url: "/registry", icon: Database, tooltip: HelpTooltips.registry },
+  { title: "Collective Codex", url: "/registry", icon: Database, tooltip: HelpTooltips.registry },
   { title: "Personal Codex", url: "/codex", icon: Archive, tooltip: HelpTooltips.codex },
   { title: "Consciousness Mapper", url: "/constellation", icon: Stars, tooltip: "Consciousness Constellation Mapper - AI-powered consciousness cartography and pattern recognition" },
 ];
