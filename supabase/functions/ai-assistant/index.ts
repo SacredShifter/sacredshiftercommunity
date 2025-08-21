@@ -14,9 +14,9 @@ serve(async (req) => {
   }
 
   try {
-    const OPENROUTER_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
-    if (!OPENROUTER_API_KEY) {
-      throw new Error('OpenRouter API key not configured');
+    const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
+    if (!OPENAI_API_KEY) {
+      throw new Error('OpenAI API key not configured');
     }
 
     // Initialize Supabase client
@@ -76,17 +76,15 @@ serve(async (req) => {
     // Execute multi-step command sequences if applicable
     await processCommandSequences(supabase, user.id, user_query);
 
-    // Call OpenRouter API with enhanced model
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    // Call OpenAI API with GPT-4
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+        'Authorization': `Bearer ${OPENAI_API_KEY}`,
         'Content-Type': 'application/json',
-        'HTTP-Referer': 'https://mikltjgbvxrxndtszorb.supabase.co',
-        'X-Title': 'Sacred Shifter AI Assistant',
       },
       body: JSON.stringify({
-        model: 'anthropic/claude-3.5-sonnet',
+        model: 'gpt-4',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt }
