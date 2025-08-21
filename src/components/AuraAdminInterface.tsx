@@ -11,6 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { AuraTelemetryDashboard } from './AuraTelemetryDashboard';
 import { AuraLiveTelemetry } from './AuraLiveTelemetry';
 import { AuraCodeGenerationInterface } from './AuraCodeGenerationInterface';
+import { AuraFullStackInterface } from './AuraFullStackInterface';
 import { 
   Terminal, 
   Cpu, 
@@ -323,13 +324,14 @@ export function AuraAdminInterface() {
       </Card>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-6">
+        <TabsList className="grid w-full grid-cols-7">
           <TabsTrigger value="console">Admin Console</TabsTrigger>
-          <TabsTrigger value="codegen">Code Generation</TabsTrigger>
+          <TabsTrigger value="codegen">Code Gen</TabsTrigger>
+          <TabsTrigger value="fullstack">Full Stack</TabsTrigger>
           <TabsTrigger value="telemetry">Telemetry</TabsTrigger>
-          <TabsTrigger value="registry">Registry Creation</TabsTrigger>
-          <TabsTrigger value="actions">System Actions</TabsTrigger>
-          <TabsTrigger value="response">Raw Response</TabsTrigger>
+          <TabsTrigger value="registry">Registry</TabsTrigger>
+          <TabsTrigger value="actions">Actions</TabsTrigger>
+          <TabsTrigger value="response">Response</TabsTrigger>
         </TabsList>
 
         <TabsContent value="console" className="space-y-4">
@@ -361,6 +363,10 @@ export function AuraAdminInterface() {
 
         <TabsContent value="codegen" className="space-y-4">
           <AuraCodeGenerationInterface />
+        </TabsContent>
+
+        <TabsContent value="fullstack" className="space-y-4">
+          <AuraFullStackInterface />
         </TabsContent>
 
         <TabsContent value="telemetry" className="space-y-6">
