@@ -391,4 +391,4 @@ export function EntryModal({ entry, open, onClose, onEdit, onVerificationChange 
       </DialogContent>
     </Dialog>
   );
-  }
+}

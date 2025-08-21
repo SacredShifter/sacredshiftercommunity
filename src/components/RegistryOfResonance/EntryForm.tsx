@@ -282,14 +282,14 @@ export function EntryForm({ open, onClose, onSuccess, editEntry }: EntryFormProp
               <div className="space-y-2">
                 <Label>Category</Label>
                 <Select
-                  value={formData.category_id || ''}
-                  onValueChange={(value: string) => setFormData(prev => ({ ...prev, category_id: value || undefined }))}
+                  value={formData.category_id || 'none'}
+                  onValueChange={(value: string) => setFormData(prev => ({ ...prev, category_id: value === 'none' ? undefined : value }))}
                 >
                   <SelectTrigger className="bg-background/50">
                     <SelectValue placeholder="Select category..." />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">No Category</SelectItem>
+                    <SelectItem value="none">No Category</SelectItem>
                     {categories.map((category) => (
                       <SelectItem key={category.id} value={category.id}>
                         {category.level > 0 ? '  ' : ''}{category.name}

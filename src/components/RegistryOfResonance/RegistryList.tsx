@@ -18,7 +18,7 @@ export function RegistryList() {
   const { entries, categories, loading, fetchEntries } = useRegistryOfResonance();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState<RegistryEntry | null>(null);
   const [showForm, setShowForm] = useState(false);
@@ -59,7 +59,7 @@ export function RegistryList() {
       const matchesTags = selectedTags.length === 0 || 
                          selectedTags.some(tag => entry.tags?.includes(tag));
       const matchesVerified = !verifiedOnly || entry.is_verified;
-      const matchesCategory = !selectedCategory || entry.category_id === selectedCategory;
+      const matchesCategory = selectedCategory === 'all' || !selectedCategory || entry.category_id === selectedCategory;
       
       return matchesSearch && matchesTags && matchesVerified && matchesCategory;
     });
@@ -134,7 +134,7 @@ export function RegistryList() {
                 <SelectValue placeholder="All Categories" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Categories</SelectItem>
+                <SelectItem value="all">All Categories</SelectItem>
                 {categories.map((category) => (
                   <SelectItem key={category.id} value={category.id}>
                     {category.level > 0 ? '  ' : ''}{category.name}
