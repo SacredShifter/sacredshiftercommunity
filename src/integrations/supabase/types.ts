@@ -8822,6 +8822,53 @@ export type Database = {
         }
         Relationships: []
       }
+      registry_categories: {
+        Row: {
+          color: string | null
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          parent_id: string | null
+          sort_order: number | null
+          updated_at: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          parent_id?: string | null
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          parent_id?: string | null
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "registry_categories_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "registry_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       registry_entry_comments: {
         Row: {
           content: string
@@ -8919,6 +8966,7 @@ export type Database = {
           author_name: string | null
           auto_generated: boolean | null
           bio: string | null
+          category_id: string | null
           community_review_status: string | null
           content: string
           content_type: string | null
@@ -8951,6 +8999,7 @@ export type Database = {
           author_name?: string | null
           auto_generated?: boolean | null
           bio?: string | null
+          category_id?: string | null
           community_review_status?: string | null
           content: string
           content_type?: string | null
@@ -8983,6 +9032,7 @@ export type Database = {
           author_name?: string | null
           auto_generated?: boolean | null
           bio?: string | null
+          category_id?: string | null
           community_review_status?: string | null
           content?: string
           content_type?: string | null
@@ -9008,7 +9058,15 @@ export type Database = {
           visibility_settings?: Json | null
           word_count?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "registry_of_resonance_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "registry_categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       reminders: {
         Row: {
@@ -15828,6 +15886,19 @@ export type Database = {
       get_audio_url: {
         Args: { filename: string }
         Returns: string
+      }
+      get_category_path: {
+        Args: { category_id: string }
+        Returns: string
+      }
+      get_child_categories: {
+        Args: { parent_category_id: string }
+        Returns: {
+          description: string
+          full_path: string
+          id: string
+          name: string
+        }[]
       }
       get_co_occurring_modules: {
         Args: { limit_param?: number; module_id_param: string }
