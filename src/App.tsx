@@ -24,8 +24,7 @@ import Guidebook from "./pages/Guidebook";
 import Support from "./pages/Support";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
-import AIAdmin from "./pages/AIAdmin";
-import AuraAdmin from "./pages/AuraAdmin";
+import AuraQuantumCommandNexus from '@/pages/AuraQuantumCommandNexus';
 import ConstellationMapper from "./pages/ConstellationMapper";
 import Grove from "./pages/Grove";
 
@@ -62,16 +61,9 @@ function App() {
                 <Route path="/support" element={<Support />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/settings" element={<Settings />} />
-                <Route path="/ai-admin" element={
-                  <AdminRoute>
-                    <AIAdmin />
-                  </AdminRoute>
-                } />
-                <Route path="/aura-admin" element={
-                  <AdminRoute>
-                    <AuraAdmin />
-                  </AdminRoute>
-                } />
+                <Route path="/ai-admin" element={<AdminRoute><AuraQuantumCommandNexus /></AdminRoute>} />
+                <Route path="/aura-admin" element={<AdminRoute><AuraQuantumCommandNexus /></AdminRoute>} />
+                <Route path="/aura-command" element={<AdminRoute><AuraQuantumCommandNexus /></AdminRoute>} />
               </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>
