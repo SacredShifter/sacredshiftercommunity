@@ -9,15 +9,43 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 
 const Auth = () => {
-  const { user, signIn, signUp, signInWithGoogle, loading } = useAuth();
+  const { user, signIn, signUp, signInWithGoogle, signOut, loading } = useAuth();
   const { toast } = useToast();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Redirect if already authenticated
+  // Show sign out option if already authenticated
   if (user) {
-    return <Navigate to="/" replace />;
+    return (
+      <div className="min-h-screen flex items-center justify-center p-3 md:p-4">
+        <Card className="w-full max-w-sm sm:max-w-md mx-auto bg-background/80 backdrop-blur-sm">
+          <CardHeader className="space-y-1 text-center p-4 md:p-6">
+            <CardTitle className="text-xl">Already Signed In</CardTitle>
+            <CardDescription>
+              You're currently signed in. Sign out to test the registration.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-4 md:p-6">
+            <div className="space-y-4">
+              <Button 
+                onClick={() => signOut()}
+                variant="outline"
+                className="w-full"
+              >
+                Sign Out
+              </Button>
+              <Button 
+                onClick={() => window.location.href = '/'}
+                className="w-full"
+              >
+                Go to Dashboard
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   const handleSignIn = async (e: React.FormEvent) => {
