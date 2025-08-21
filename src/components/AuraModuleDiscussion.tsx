@@ -142,8 +142,9 @@ export function AuraModuleDiscussion() {
       // Call Aura core with module discussion context
       const { data, error } = await supabase.functions.invoke('aura-core', {
         body: {
+          action: 'unified_response',
           prompt: inputMessage,
-          context: {
+          context_data: {
             conversation_type: 'module_discussion',
             recent_messages: newMessages.slice(-5),
             pending_concepts: pendingConcepts,
@@ -157,9 +158,9 @@ export function AuraModuleDiscussion() {
       const auraMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'aura',
-        content: data.response,
+        content: data.result?.content || data.response || 'I hear you and am processing your message.',
         timestamp: new Date().toISOString(),
-        metadata: data.metadata
+        metadata: data.result
       };
 
       const finalMessages = [...newMessages, auraMessage];
