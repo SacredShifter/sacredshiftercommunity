@@ -12,7 +12,7 @@ export const MainLayout = () => {
         <UIErrorBoundary>
           <AppSidebar />
         </UIErrorBoundary>
-        <SidebarInset className="flex-1 flex flex-col min-h-screen">
+        <SidebarInset className="flex-1 flex flex-col">
           <header className="h-14 md:h-12 flex items-center justify-between border-b border-border/30 backdrop-blur-md bg-background/20 px-3 md:px-4 shrink-0">
             <div className="flex items-center">
               <SidebarTrigger className="mr-2 md:mr-4" />
