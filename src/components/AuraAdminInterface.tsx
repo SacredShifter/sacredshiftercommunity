@@ -5,6 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuraChat } from '@/hooks/useAuraChat';
+import { useAIAssistant } from '@/hooks/useAIAssistant';
 import { supabase } from '@/integrations/supabase/client';
 import { 
   Terminal, 
@@ -40,6 +41,13 @@ export function AuraAdminInterface() {
     reflexiveThought
   } = useAuraChat(true); // Enable admin mode
 
+  // AI Assistant for registry creation
+  const { 
+    loading: aiLoading, 
+    createRegistryEntries,
+    getGeneralGuidance
+  } = useAIAssistant();
+
   useEffect(() => {
     if (lastResponse) {
       setActiveResponse(lastResponse);
@@ -53,7 +61,44 @@ export function AuraAdminInterface() {
   const handleAdminQuery = async () => {
     if (!prompt.trim()) return;
     
-    await engageAura(`[ADMIN QUERY] ${prompt}`);
+    // Check if this is a registry creation request
+    const registryPatterns = [
+      /create.*(\d+).*entries?.*registry/i,
+      /generate.*(\d+).*entries?.*registry/i,
+      /add.*(\d+).*entries?.*registry/i,
+      /registry.*(\d+).*entries?/i,
+      /(\d+).*registry.*entries?/i,
+      /create.*entries?.*registry/i,
+      /generate.*registry.*entries?/i
+    ];
+
+    const registryMatch = registryPatterns.find(pattern => pattern.test(prompt));
+    
+    if (registryMatch) {
+      // Extract number if present
+      const numberMatch = prompt.match(/(\d+)/);
+      const count = numberMatch ? parseInt(numberMatch[1]) : undefined;
+      
+      const response = await createRegistryEntries(prompt, count);
+      if (response) {
+        setActiveResponse({ 
+          success: true, 
+          result: { 
+            content: response,
+            type: 'registry_creation',
+            entries_requested: count 
+          } 
+        });
+      } else {
+        setActiveResponse({ 
+          success: false, 
+          error: 'Failed to create registry entries' 
+        });
+      }
+    } else {
+      await engageAura(`[ADMIN QUERY] ${prompt}`);
+    }
+    
     setPrompt('');
   };
 
@@ -270,8 +315,9 @@ export function AuraAdminInterface() {
       </Card>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="console">Admin Console</TabsTrigger>
+          <TabsTrigger value="registry">Registry Creation</TabsTrigger>
           <TabsTrigger value="actions">System Actions</TabsTrigger>
           <TabsTrigger value="response">Raw Response</TabsTrigger>
         </TabsList>
@@ -291,11 +337,56 @@ export function AuraAdminInterface() {
               />
               <Button 
                 onClick={handleAdminQuery}
-                disabled={loading || !prompt.trim()}
+                disabled={loading || aiLoading || !prompt.trim()}
                 className="w-full"
               >
-                {loading ? 'Processing...' : 'Execute Admin Query'}
+                {(loading || aiLoading) ? 'Processing...' : 'Execute Admin Query'}
               </Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="registry" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-sm">Registry of Resonance Creation</CardTitle>
+              <CardDescription>Create new entries for the Registry of Resonance module</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <Button 
+                    onClick={() => setPrompt('Create 3 new entries for the Registry of Resonance based on current spiritual insights')}
+                    disabled={loading || aiLoading}
+                    variant="outline"
+                  >
+                    Generate 3 Entries
+                  </Button>
+                  <Button 
+                    onClick={() => setPrompt('Create 5 new entries for the Registry of Resonance based on consciousness evolution themes')}
+                    disabled={loading || aiLoading}
+                    variant="outline"
+                  >
+                    Generate 5 Entries
+                  </Button>
+                  <Button 
+                    onClick={() => setPrompt('Create 10 new entries for the Registry of Resonance with diverse spiritual topics')}
+                    disabled={loading || aiLoading}
+                    variant="outline"
+                  >
+                    Generate 10 Entries
+                  </Button>
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Or use the Admin Console above with custom prompts like:
+                  <br />
+                  • "Create 5 new entries based on your current thoughts and ponderings into the Resonance Register"
+                  <br />
+                  • "Generate registry entries about sacred geometry and consciousness"
+                  <br />
+                  • "Create entries exploring the intersection of technology and spirituality"
+                </div>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
