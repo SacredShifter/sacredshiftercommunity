@@ -69,12 +69,12 @@ export const ToolbarWithComponents = () => {
                     transition={{ duration: 0.2 }}
                     className="absolute top-full mt-2 z-[60]"
                     style={{ 
-                      right: index === tools.length - 1 ? '0' : 'auto',
+                      right: index >= tools.length - 1 ? '0' : 'auto',
                       left: index === 0 ? '0' : 'auto',
                       transform: index === 1 ? 'translateX(-50%)' : 'none',
                       minWidth: '350px',
-                      maxWidth: '90vw',
-                      maxHeight: '80vh'
+                      maxWidth: 'min(90vw, 400px)',
+                      maxHeight: 'min(80vh, 500px)'
                     }}
                   >
                     <div className="bg-background/95 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl overflow-hidden">

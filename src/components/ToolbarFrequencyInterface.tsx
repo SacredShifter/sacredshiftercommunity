@@ -81,34 +81,55 @@ export const ToolbarFrequencyInterface = () => {
             {showFrequencies ? 'Hide' : 'Choose'} Frequencies
           </Button>
 
-          {/* Frequency List */}
+          {/* Frequency Wheel */}
           {showFrequencies && (
-            <div className="space-y-2 max-h-40 overflow-y-auto">
-              <Label className="text-xs">Sacred Frequencies</Label>
-              <div className="grid gap-1">
-                {frequencies.map((freq) => (
-                  <button
-                    key={freq.hz}
-                    onClick={() => selectFrequency(freq)}
-                    className={`p-2 rounded text-left text-xs transition-all duration-200 border ${
-                      selectedFrequency.hz === freq.hz
-                        ? 'border-primary bg-primary/20'
-                        : 'border-border bg-background/50 hover:bg-background/70'
-                    }`}
-                    style={{
-                      borderColor: selectedFrequency.hz === freq.hz ? freq.color : undefined,
-                      backgroundColor: selectedFrequency.hz === freq.hz ? `${freq.color}20` : undefined
-                    }}
-                  >
-                    <div className="flex justify-between items-center">
-                      <span className="font-medium" style={{ color: freq.color }}>
-                        {freq.hz}Hz {freq.name}
-                      </span>
-                      <span className="text-[10px] text-muted-foreground">{freq.chakra}</span>
-                    </div>
-                    <div className="text-[10px] text-muted-foreground mt-0.5">{freq.purpose}</div>
-                  </button>
-                ))}
+            <div className="relative w-full h-48 mt-4">
+              <Label className="text-xs mb-2 block text-center">Sacred Frequencies</Label>
+              <div className="relative w-full h-full flex items-center justify-center">
+                {frequencies.map((freq, index) => {
+                  const angle = (index * 360) / frequencies.length;
+                  const radius = 70;
+                  const x = Math.cos((angle - 90) * Math.PI / 180) * radius;
+                  const y = Math.sin((angle - 90) * Math.PI / 180) * radius;
+                  
+                  return (
+                    <button
+                      key={freq.hz}
+                      onClick={() => selectFrequency(freq)}
+                      className={`absolute w-12 h-12 rounded-full border-2 transition-all duration-300 flex flex-col items-center justify-center text-[8px] font-bold ${
+                        selectedFrequency.hz === freq.hz
+                          ? 'scale-125 shadow-lg'
+                          : 'hover:scale-110'
+                      }`}
+                      style={{
+                        left: `calc(50% + ${x}px - 24px)`,
+                        top: `calc(50% + ${y}px - 24px)`,
+                        borderColor: freq.color,
+                        backgroundColor: selectedFrequency.hz === freq.hz ? `${freq.color}40` : `${freq.color}10`,
+                        color: freq.color,
+                        boxShadow: selectedFrequency.hz === freq.hz ? `0 0 15px ${freq.color}60` : `0 0 5px ${freq.color}20`
+                      }}
+                      title={`${freq.hz}Hz ${freq.name} - ${freq.purpose}`}
+                    >
+                      <span className="leading-none">{freq.hz}</span>
+                      <span className="leading-none text-[6px] opacity-80">{freq.name.slice(0,3)}</span>
+                    </button>
+                  );
+                })}
+                
+                {/* Center indicator */}
+                <div 
+                  className="absolute w-6 h-6 rounded-full border-2 flex items-center justify-center"
+                  style={{
+                    left: 'calc(50% - 12px)',
+                    top: 'calc(50% - 12px)',
+                    borderColor: selectedFrequency.color,
+                    backgroundColor: `${selectedFrequency.color}20`,
+                    boxShadow: isPlaying ? `0 0 10px ${selectedFrequency.color}40` : 'none'
+                  }}
+                >
+                  <Waves className="h-3 w-3" style={{ color: selectedFrequency.color }} />
+                </div>
               </div>
             </div>
           )}
