@@ -10,7 +10,7 @@ import { OnboardingFlow } from "@/components/Onboarding/OnboardingFlow";
 import { SacredGrove } from "@/components/SacredGrove/SacredGrove";
 import { 
   Home, Users, User, Rss, Settings, LogOut, BookOpen, Video, 
-  Database, Archive, Scroll, Heart, Sparkles, Crown, Zap 
+  Database, Archive, Scroll, Heart, Sparkles, Crown, Zap, Map 
 } from "lucide-react";
 
 const Index = () => {
@@ -164,6 +164,16 @@ const Index = () => {
       glowColor: "indigo",
       cta: "Walk the Path of Living Wisdom",
       pulseColor: "257 65% 70%" // deep indigo light
+    },
+    {
+      title: "Consciousness Constellation",
+      description: "Map the cosmic connections between your experiences",
+      icon: Map,
+      path: "/constellation",
+      gradient: "from-purple-500/20 to-indigo-500/20",
+      glowColor: "purple",
+      cta: "Chart Your Soul's Stellar Map",
+      pulseColor: "280 100% 70%" // cosmic purple
     },
     {
       title: "Support Sacred Shifter",
@@ -335,7 +345,25 @@ const Index = () => {
                       <rect width="100" height="100" fill="url(#guidebook-pattern)" />
                     </svg>
                   ),
-                  8: ( // Support - Heart frequency pattern
+                  8: ( // Consciousness Constellation - Star map pattern
+                    <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
+                      <defs>
+                        <pattern id="constellation-pattern" x="0" y="0" width="30" height="30" patternUnits="userSpaceOnUse">
+                          <circle cx="5" cy="5" r="2" fill="currentColor" />
+                          <circle cx="20" cy="8" r="1.5" fill="currentColor" />
+                          <circle cx="12" cy="15" r="2.5" fill="currentColor" />
+                          <circle cx="25" cy="20" r="1" fill="currentColor" />
+                          <circle cx="8" cy="25" r="1.5" fill="currentColor" />
+                          <line x1="5" y1="5" x2="12" y2="15" stroke="currentColor" strokeWidth="0.5" />
+                          <line x1="12" y1="15" x2="20" y2="8" stroke="currentColor" strokeWidth="0.5" />
+                          <line x1="20" y1="8" x2="25" y2="20" stroke="currentColor" strokeWidth="0.5" />
+                          <line x1="12" y1="15" x2="8" y2="25" stroke="currentColor" strokeWidth="0.5" />
+                        </pattern>
+                      </defs>
+                      <rect width="100" height="100" fill="url(#constellation-pattern)" />
+                    </svg>
+                  ),
+                  9: ( // Support - Heart frequency pattern
                     <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
                       <defs>
                         <pattern id="support-pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
