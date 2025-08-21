@@ -27,8 +27,8 @@ export const MainLayout = () => {
               <AuraPresenceIndicator showDetails={false} size="sm" />
             </div>
           </header>
-          <main className="flex-1 overflow-y-auto min-h-0">
-            <div className="min-h-full p-2 md:p-4">
+          <main className="flex-1 overflow-auto">
+            <div className="p-2 md:p-4">
               <UIErrorBoundary>
                 <Outlet />
               </UIErrorBoundary>
