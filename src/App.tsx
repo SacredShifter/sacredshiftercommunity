@@ -27,6 +27,7 @@ import NotFound from "./pages/NotFound";
 import AuraQuantumCommandNexus from '@/pages/AuraQuantumCommandNexus';
 import ConstellationMapper from "./pages/ConstellationMapper";
 import Grove from "./pages/Grove";
+import LearningModule3D from './components/3D/LearningModule3D';
 
 function App() {
   return (
@@ -63,7 +64,7 @@ function App() {
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/ai-admin" element={<AdminRoute><AuraQuantumCommandNexus /></AdminRoute>} />
                 <Route path="/aura-admin" element={<AdminRoute><AuraQuantumCommandNexus /></AdminRoute>} />
-                <Route path="/aura-command" element={<AdminRoute><AuraQuantumCommandNexus /></AdminRoute>} />
+                <Route path="/learning-3d" element={<LearningModule3D />} />
               </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>
