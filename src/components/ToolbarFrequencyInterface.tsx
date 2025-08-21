@@ -16,7 +16,7 @@ export const ToolbarFrequencyInterface = () => {
   const [showFrequencies, setShowFrequencies] = useState(false);
 
   return (
-    <div className="p-4 w-full max-w-sm">
+    <div className="p-4 w-full max-w-md">
       <div className="space-y-4">
         {/* Header */}
         <div className="text-center">
