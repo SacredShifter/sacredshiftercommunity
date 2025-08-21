@@ -13,6 +13,7 @@ import { useAura } from '@/aura/useAura';
 import { usePersonalAI } from '@/hooks/usePersonalAI';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import SacredShifterRoute from '@/components/SacredShifterRoute';
 import { 
   Brain, 
   Activity, 
@@ -61,7 +62,7 @@ interface SynchronicityEvent {
   created_at: string;
 }
 
-export default function AIAdmin() {
+function AIAdminContent() {
   const [confirmingJob, setConfirmingJob] = useState<AuraJob | null>(null);
   const [consciousnessMetrics, setConsciousnessMetrics] = useState<ConsciousnessMetrics | null>(null);
   const [predictiveInsights, setPredictiveInsights] = useState<PredictiveInsight[]>([]);
@@ -542,10 +543,20 @@ export default function AIAdmin() {
         </TabsContent>
       </Tabs>
 
-      <AuraConfirm 
-        job={confirmingJob}
-        onClose={() => setConfirmingJob(null)}
-      />
+      {confirmingJob && (
+        <AuraConfirm 
+          job={confirmingJob} 
+          onClose={() => setConfirmingJob(null)} 
+        />
+      )}
     </div>
+  );
+}
+
+export default function AIAdmin() {
+  return (
+    <SacredShifterRoute>
+      <AIAdminContent />
+    </SacredShifterRoute>
   );
 }

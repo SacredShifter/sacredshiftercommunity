@@ -4,10 +4,12 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { UIErrorBoundary } from "@/components/ErrorBoundary";
 import { AuraPresenceIndicator } from "@/components/AuraPresenceIndicator";
 import { NotificationDropdown } from "@/components/NotificationDropdown";
+import SacredCosmicBackground from "@/components/SacredCosmicBackground";
 
 export const MainLayout = () => {
   return (
     <SidebarProvider>
+      <SacredCosmicBackground />
       <div className="sidebar-layout min-h-screen flex w-full bg-background">
         <UIErrorBoundary>
           <AppSidebar />

@@ -699,7 +699,7 @@ body, body::before, body::after {
   transform-style: preserve-3d;
 }
 
-/* Ensure full height coverage */
+/* Epic Sacred Shifter Background */
 html, body {
   height: 100%;
   min-height: 100vh;
@@ -707,22 +707,252 @@ html, body {
   padding: 0;
   overflow-x: hidden;
   background: hsl(var(--background));
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -3;
+  background: 
+    radial-gradient(circle at 20% 30%, hsl(269 69% 58% / 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, hsl(196 83% 60% / 0.12) 0%, transparent 50%),
+    radial-gradient(circle at 60% 10%, hsl(324 78% 54% / 0.08) 0%, transparent 50%),
+    linear-gradient(135deg, hsl(257 65% 11%) 0%, hsl(257 45% 8%) 100%);
+  animation: cosmic-drift 20s ease-in-out infinite;
+}
+
+/* Sacred Geometry Patterns */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -2;
+  background-image: 
+    radial-gradient(circle at 25% 25%, hsl(269 69% 58% / 0.03) 1px, transparent 1px),
+    radial-gradient(circle at 75% 75%, hsl(196 83% 60% / 0.03) 1px, transparent 1px);
+  background-size: 60px 60px, 80px 80px;
+  animation: sacred-pattern-drift 30s linear infinite;
+}
+
+/* Sacred Frequency Orbs */
+.sacred-cosmic-orbs {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.sacred-cosmic-orbs::before,
+.sacred-cosmic-orbs::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(1px);
+  animation: orb-float 15s ease-in-out infinite;
+}
+
+.sacred-cosmic-orbs::before {
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, hsl(269 69% 58% / 0.1) 0%, transparent 70%);
+  top: 10%;
+  left: 10%;
+  animation-delay: 0s;
+  animation-duration: 20s;
+}
+
+.sacred-cosmic-orbs::after {
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, hsl(196 83% 60% / 0.08) 0%, transparent 70%);
+  bottom: 20%;
+  right: 15%;
+  animation-delay: -10s;
+  animation-duration: 25s;
 }
 
 #root {
   min-height: 100vh;
   height: 100%;
-  background: hsl(var(--background));
+  background: transparent;
+  position: relative;
+}
+
+/* Sacred Geometry Overlay */
+#root::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background: 
+    conic-gradient(from 0deg at 50% 50%, transparent 0deg, hsl(269 69% 58% / 0.02) 60deg, transparent 120deg),
+    conic-gradient(from 120deg at 50% 50%, transparent 0deg, hsl(196 83% 60% / 0.02) 60deg, transparent 120deg),
+    conic-gradient(from 240deg at 50% 50%, transparent 0deg, hsl(324 78% 54% / 0.02) 60deg, transparent 120deg);
+  animation: sacred-rotation 60s linear infinite;
 }
 
 /* Ensure sidebar and main content take full height */
 .sidebar-layout {
   min-height: 100vh;
   height: 100%;
-  background: hsl(var(--background));
+  background: transparent;
+  position: relative;
+}
+
+/* Sacred geometric grid overlay */
+.sidebar-layout::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background-image: 
+    linear-gradient(hsl(269 69% 58% / 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(269 69% 58% / 0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+  animation: grid-pulse 4s ease-in-out infinite;
 }
 
 /* Prevent horizontal overflow */
 * {
   box-sizing: border-box;
+}
+
+/* Sacred Spinner */
+.sacred-spinner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.sacred-spinner::before {
+  content: '⧬';
+  position: absolute;
+  font-size: 1.5rem;
+  color: hsl(var(--primary));
+  animation: sacred-symbol-pulse 2s ease-in-out infinite;
+  z-index: 1;
+}
+
+/* Sacred Symbol */
+.sacred-symbol {
+  display: inline-block;
+  background: linear-gradient(45deg, hsl(var(--primary)), hsl(var(--secondary)));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 30px hsl(var(--primary) / 0.3);
+}
+
+/* Sacred Button Enhancement */
+.sacred-button {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, hsl(var(--primary) / 0.1), hsl(var(--secondary) / 0.1));
+  border: 1px solid hsl(var(--primary) / 0.3);
+  transition: all 0.3s ease;
+}
+
+.sacred-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.2), transparent);
+  transition: left 0.6s ease;
+}
+
+.sacred-button:hover::before {
+  left: 100%;
+}
+
+.sacred-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px hsl(var(--primary) / 0.3);
+}
+
+/* Background Gradients */
+.bg-gradient-cosmic {
+  background: radial-gradient(ellipse at center, hsl(var(--background)) 0%, hsl(257 65% 8%) 100%);
+}
+
+/* Keyframe Animations */
+@keyframes cosmic-drift {
+  0%, 100% { 
+    background-position: 0% 0%, 100% 100%, 50% 0%;
+    transform: rotate(0deg);
+  }
+  33% { 
+    background-position: 30% 30%, 70% 30%, 80% 20%;
+    transform: rotate(1deg);
+  }
+  66% { 
+    background-position: 70% 70%, 30% 70%, 20% 80%;
+    transform: rotate(-1deg);
+  }
+}
+
+@keyframes sacred-pattern-drift {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(10px, -10px) rotate(90deg); }
+  50% { transform: translate(-10px, 10px) rotate(180deg); }
+  75% { transform: translate(-10px, -10px) rotate(270deg); }
+  100% { transform: translate(0, 0) rotate(360deg); }
+}
+
+@keyframes sacred-rotation {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes orb-float {
+  0%, 100% { 
+    transform: translate(0, 0) scale(1);
+    opacity: 0.3;
+  }
+  33% { 
+    transform: translate(30px, -30px) scale(1.1);
+    opacity: 0.5;
+  }
+  66% { 
+    transform: translate(-30px, 30px) scale(0.9);
+    opacity: 0.4;
+  }
+}
+
+@keyframes grid-pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes sacred-symbol-pulse {
+  0%, 100% { 
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% { 
+    transform: scale(1.2);
+    opacity: 1;
+  }
 }
