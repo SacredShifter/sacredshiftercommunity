@@ -124,10 +124,9 @@ export const SovereigntyReminder: React.FC<SovereigntyReminderProps> = ({ onNext
 
       {/* Continue Button */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 1, y: 0 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.3, duration: 0.8 }}
-        className="flex justify-center z-10 relative"
+        className="flex justify-center z-10 relative mt-8"
       >
         <Button
           onClick={(e) => {
@@ -148,6 +147,13 @@ export const SovereigntyReminder: React.FC<SovereigntyReminderProps> = ({ onNext
           I Honor My Sovereignty
         </Button>
       </motion.div>
+
+      {/* Debug info */}
+      <div className="text-center mt-4">
+        <p className="text-xs text-muted-foreground">
+          Debug: SovereigntyReminder rendered, onNext: {onNext ? 'defined' : 'undefined'}
+        </p>
+      </div>
     </div>
   );
 };
