@@ -2,14 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Sparkles, Compass, Heart, Crown } from 'lucide-react';
+import { Sparkles, Compass, Heart, Crown, Home } from 'lucide-react';
 
 interface SacredGroveEntryProps {
   onPathSelect: (path: 'discovery' | 'purpose' | 'connection') => void;
   isVisible: boolean;
+  onClose?: () => void;
 }
 
-export const SacredGroveEntry: React.FC<SacredGroveEntryProps> = ({ onPathSelect, isVisible }) => {
+export const SacredGroveEntry: React.FC<SacredGroveEntryProps> = ({ onPathSelect, isVisible, onClose }) => {
   const [showWelcome, setShowWelcome] = useState(true);
   const [ambientSoundPlaying, setAmbientSoundPlaying] = useState(false);
 
@@ -91,6 +92,20 @@ export const SacredGroveEntry: React.FC<SacredGroveEntryProps> = ({ onPathSelect
         className="w-full max-w-6xl max-h-[90vh] overflow-hidden"
       >
         <Card className="bg-background/98 backdrop-blur-xl border-primary/20 shadow-2xl shadow-primary/10">
+          {/* Home Button */}
+          {onClose && (
+            <div className="absolute top-4 right-4 z-10">
+              <Button
+                onClick={onClose}
+                variant="ghost"
+                size="sm"
+                className="bg-background/80 hover:bg-background/90 backdrop-blur-sm border border-border/20"
+              >
+                <Home className="w-4 h-4 mr-2" />
+                Home
+              </Button>
+            </div>
+          )}
           <CardContent className="p-0">
             <AnimatePresence mode="wait">
               {showWelcome ? (

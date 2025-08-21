@@ -348,6 +348,7 @@ export const SacredGrove: React.FC<SacredGroveProps> = ({ isVisible, onClose }) 
     <SacredGroveEntry
       isVisible={true}
       onPathSelect={handlePathSelect}
+      onClose={onClose}
     />
   );
 };
