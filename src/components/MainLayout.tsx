@@ -28,7 +28,7 @@ export const MainLayout = () => {
             </div>
           </header>
           <main className="flex-1 min-h-0">
-            <div className="h-full overflow-auto p-2 md:p-4">
+            <div className="h-full overflow-auto p-4 sm:p-6 md:p-8">
               <UIErrorBoundary>
                 <Outlet />
               </UIErrorBoundary>
