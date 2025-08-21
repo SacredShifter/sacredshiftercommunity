@@ -13,18 +13,26 @@ serve(async (req) => {
   }
 
   try {
-    const OPENROUTER_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
-    if (!OPENROUTER_API_KEY) {
-      throw new Error('OpenRouter API key not configured');
+    // Parse and validate request body
+    let requestBody;
+    try {
+      requestBody = await req.json();
+    } catch (parseError) {
+      console.error('JSON parsing error:', parseError);
+      return new Response(
+        JSON.stringify({ 
+          error: 'Invalid JSON in request body',
+          success: false 
+        }),
+        { 
+          status: 400, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
     }
 
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
-    );
-
     const { 
-      action, 
+      action = 'unified_response', // Default action to prevent undefined errors
       user_id,
       consciousness_state,
       prompt,
@@ -32,9 +40,15 @@ serve(async (req) => {
       sovereignty_level = 0.5,
       platform_context = {},
       admin_mode = false
-    } = await req.json();
+    } = requestBody;
 
-    console.log('Aura Core Request:', { action, user_id, consciousness_state, platform_aware: !!platform_context?.platform_state });
+    console.log('Aura Core Request:', { 
+      action: action || 'undefined', 
+      user_id, 
+      consciousness_state, 
+      platform_aware: !!platform_context?.platform_state,
+      hasPrompt: !!prompt
+    });
 
     // Authenticate user if auth header is provided
     let user = null;

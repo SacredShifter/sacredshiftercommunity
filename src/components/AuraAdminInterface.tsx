@@ -181,7 +181,7 @@ export function AuraAdminInterface() {
 
   const getPlatformStats = async () => {
     try {
-      const { data: userCount } = await supabase.from('active_user_count').select('count').single();
+      const { data: userCount } = await supabase.from('active_user_count').select('count').maybeSingle();
       const { data: recentMessages } = await supabase.from('direct_messages').select('created_at').gte('created_at', new Date(Date.now() - 24*60*60*1000).toISOString());
       const { data: auraJobs } = await supabase.from('aura_jobs').select('status, created_at').order('created_at', { ascending: false }).limit(10);
       
