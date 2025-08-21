@@ -38,13 +38,16 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ isVisible, onCom
   ];
 
   const handleNext = useCallback(() => {
+    console.log('handleNext called, currentStep:', currentStep, 'steps.length:', steps.length);
     if (currentStep < steps.length - 1) {
       setIsTransitioning(true);
       setTimeout(() => {
+        console.log('Moving to next step:', currentStep + 1);
         setCurrentStep(prev => prev + 1);
         setIsTransitioning(false);
       }, 300);
     } else {
+      console.log('Completing onboarding');
       handleComplete();
     }
   }, [currentStep, steps.length]);

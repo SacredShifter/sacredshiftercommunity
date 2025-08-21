@@ -161,7 +161,10 @@ export const WelcomeGateway: React.FC<WelcomeGatewayProps> = ({ onNext }) => {
         className="mt-12"
       >
         <Button
-          onClick={onNext}
+          onClick={() => {
+            console.log('Enter the Sacred Space clicked!');
+            onNext();
+          }}
           size="lg"
           className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-white font-medium px-8 py-3 text-lg shadow-lg shadow-primary/25 transition-all duration-300 hover:shadow-xl hover:shadow-primary/30"
         >
