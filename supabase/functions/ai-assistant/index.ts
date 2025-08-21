@@ -115,7 +115,8 @@ serve(async (req) => {
       // Execute multi-step command sequences if applicable
       await processCommandSequences(supabase, user.id, user_query);
 
-      // Call OpenAI API with GPT-4
+      // Call OpenAI API with latest model
+      console.log('🤖 Calling OpenAI API with model gpt-4o');
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -123,22 +124,41 @@ serve(async (req) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'gpt-4',
+          model: 'gpt-4o',
           messages: [
             { role: 'system', content: systemPrompt },
             { role: 'user', content: userPrompt }
           ],
           max_tokens: 2000,
+          temperature: 0.7,
         }),
       });
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('OpenRouter API Error:', { status: response.status, statusText: response.statusText, body: errorText });
-        throw new Error(`OpenRouter API error: ${response.statusText}`);
+        console.error('🚨 OpenAI API Error:', { 
+          status: response.status, 
+          statusText: response.statusText, 
+          body: errorText,
+          url: response.url,
+          headers: Object.fromEntries(response.headers.entries())
+        });
+        throw new Error(`OpenAI API error: ${response.status} ${response.statusText} - ${errorText}`);
       }
 
       const aiResponse = await response.json();
+      console.log('🎯 OpenAI Response Structure:', { 
+        choices: aiResponse.choices?.length,
+        hasContent: !!aiResponse.choices?.[0]?.message?.content,
+        model: aiResponse.model,
+        usage: aiResponse.usage
+      });
+      
+      if (!aiResponse.choices?.[0]?.message?.content) {
+        console.error('🚨 No content in OpenAI response:', aiResponse);
+        throw new Error('No response content received from OpenAI');
+      }
+      
       assistantMessage = aiResponse.choices[0].message.content;
     }
 
@@ -171,11 +191,24 @@ serve(async (req) => {
     );
 
   } catch (error) {
-    console.error('AI Assistant Error:', error);
+    console.error('🚨 AI Assistant Error:', { 
+      message: error.message,
+      stack: error.stack,
+      name: error.name,
+      timestamp: new Date().toISOString(),
+      url: req.url,
+      method: req.method
+    });
+    
     return new Response(
       JSON.stringify({ 
         error: error.message || 'Internal server error',
-        success: false 
+        success: false,
+        timestamp: new Date().toISOString(),
+        debug_info: {
+          error_type: error.name,
+          has_openai_key: !!Deno.env.get('OPENAI_API_KEY')
+        }
       }),
       { 
         status: 500, 
