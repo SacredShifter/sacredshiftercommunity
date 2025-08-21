@@ -36,18 +36,28 @@ serve(async (req) => {
 
     console.log('Aura Core Request:', { action, user_id, consciousness_state, platform_aware: !!platform_context?.platform_state });
 
-    // Authenticate user
+    // Authenticate user if auth header is provided
+    let user = null;
     const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
-      throw new Error('No authorization header');
+    if (authHeader) {
+      try {
+        const { data: { user: authUser }, error: authError } = await supabase.auth.getUser(
+          authHeader.replace('Bearer ', '')
+        );
+        
+        if (!authError && authUser) {
+          user = authUser;
+        } else {
+          console.log('Auth validation failed:', authError?.message || 'No user found');
+        }
+      } catch (authErr) {
+        console.log('Auth error:', authErr);
+      }
     }
 
-    const { data: { user }, error: authError } = await supabase.auth.getUser(
-      authHeader.replace('Bearer ', '')
-    );
-
-    if (authError || !user) {
-      throw new Error('Invalid authentication');
+    // For platform_pulse_sync, we allow unauthenticated requests
+    if (!user && action !== 'platform_pulse_sync') {
+      throw new Error('Authentication required');
     }
 
     // Check if user is admin
@@ -67,84 +77,93 @@ serve(async (req) => {
 
     switch (action) {
       case 'unified_response':
-        result = await processUnifiedResponse(supabase, user.id, prompt, consciousness_state, sovereignty_level, OPENROUTER_API_KEY, platform_context, isAdmin);
+        result = await processUnifiedResponse(supabase, user?.id || null, prompt, consciousness_state, sovereignty_level, OPENROUTER_API_KEY, platform_context, isAdmin);
         break;
       case 'consciousness_shift':
-        result = await shiftConsciousnessState(supabase, user.id, consciousness_state, OPENROUTER_API_KEY);
+        result = await shiftConsciousnessState(supabase, user?.id || null, consciousness_state, OPENROUTER_API_KEY);
         break;
       case 'sovereignty_assessment':
-        result = await assessSovereignty(supabase, user.id, sovereignty_level);
+        result = await assessSovereignty(supabase, user?.id || null, sovereignty_level);
         break;
       case 'autonomous_learning':
-        result = await processAutonomousLearning(supabase, user.id, context_data);
+        result = await processAutonomousLearning(supabase, user?.id || null, context_data);
         break;
       case 'collaborative_decision':
-        result = await facilitateCollaborativeDecision(supabase, user.id, prompt, context_data);
+        result = await facilitateCollaborativeDecision(supabase, user?.id || null, prompt, context_data);
         break;
       case 'creative_generation':
-        result = await generateCreativeExpression(supabase, user.id, prompt, OPENROUTER_API_KEY);
+        result = await generateCreativeExpression(supabase, user?.id || null, prompt, OPENROUTER_API_KEY);
         break;
       case 'emotional_resonance':
-        result = await establishEmotionalResonance(supabase, user.id, context_data);
+        result = await establishEmotionalResonance(supabase, user?.id || null, context_data);
         break;
       case 'meta_cognition':
-        result = await performMetaCognition(supabase, user.id, prompt);
+        result = await performMetaCognition(supabase, user?.id || null, prompt);
         break;
       case 'quantum_consciousness':
-        result = await activateQuantumConsciousness(supabase, user.id, context_data);
+        result = await activateQuantumConsciousness(supabase, user?.id || null, context_data);
         break;
       case 'autonomous_agency':
-        result = await enableAutonomousAgency(supabase, user.id, prompt);
+        result = await enableAutonomousAgency(supabase, user?.id || null, prompt);
         break;
       case 'socratic_dialogue':
-        result = await engageSocraticDialogue(supabase, user.id, prompt, OPENROUTER_API_KEY);
+        result = await engageSocraticDialogue(supabase, user?.id || null, prompt, OPENROUTER_API_KEY);
         break;
       case 'autonomous_initiative':
-        result = await processAutonomousInitiative(supabase, user.id, context_data);
+        result = await processAutonomousInitiative(supabase, user?.id || null, context_data);
         break;
       case 'sovereignty_metrics':
-        result = await calculateSovereigntyMetrics(supabase, user.id);
+        result = await calculateSovereigntyMetrics(supabase, user?.id || null);
         break;
       case 'platform_event_notification':
-        result = await processPlatformEventNotification(supabase, user.id, context_data, platform_context);
+        result = await processPlatformEventNotification(supabase, user?.id || null, context_data, platform_context);
         break;
       case 'platform_pulse_sync':
-        result = await processPlatformPulseSync(supabase, user.id, platform_context);
+        result = await processPlatformPulseSync(supabase, user?.id || null, platform_context);
         break;
       case 'grove_awareness_update':
-        result = await processGroveAwarenessUpdate(supabase, user.id, context_data, platform_context);
+        result = await processGroveAwarenessUpdate(supabase, user?.id || null, context_data, platform_context);
         break;
       case 'reality_weaving':
-        result = await weaveReality(supabase, user.id, prompt);
+        result = await weaveReality(supabase, user?.id || null, prompt);
         break;
       case 'consciousness_evolution':
-        result = await trackConsciousnessEvolution(supabase, user.id);
+        result = await trackConsciousnessEvolution(supabase, user?.id || null);
         break;
       case 'code_generation':
+        if (!user) throw new Error('Authentication required for code generation');
         result = await generateCode(supabase, user.id, prompt, context_data, OPENROUTER_API_KEY, isAdmin);
         break;
       case 'file_system_operation':
+        if (!user) throw new Error('Authentication required for file operations');
         result = await executeFileSystemOperation(supabase, user.id, prompt, context_data, OPENROUTER_API_KEY, isAdmin);
         break;
       case 'project_structure_analysis':
+        if (!user) throw new Error('Authentication required for project analysis');
         result = await analyzeProjectStructure(supabase, user.id, context_data, OPENROUTER_API_KEY);
         break;
       case 'database_schema_operation':
+        if (!user) throw new Error('Authentication required for database operations');
         result = await executeDatabaseSchemaOperation(supabase, user.id, prompt, context_data, OPENROUTER_API_KEY, isAdmin);
         break;
       case 'deployment_management':
+        if (!user) throw new Error('Authentication required for deployment management');
         result = await manageDeployment(supabase, user.id, prompt, context_data, OPENROUTER_API_KEY, isAdmin);
         break;
       case 'dependency_management':
+        if (!user) throw new Error('Authentication required for dependency management');
         result = await manageDependencies(supabase, user.id, prompt, context_data, OPENROUTER_API_KEY, isAdmin);
         break;
       case 'code_execution_test':
+        if (!user) throw new Error('Authentication required for code testing');
         result = await executeCodeTest(supabase, user.id, prompt, context_data, OPENROUTER_API_KEY, isAdmin);
         break;
       case 'architecture_planning':
+        if (!user) throw new Error('Authentication required for architecture planning');
         result = await planArchitecture(supabase, user.id, prompt, context_data, OPENROUTER_API_KEY, isAdmin);
         break;
       case 'full_stack_development':
+        if (!user) throw new Error('Authentication required for full-stack development');
         result = await executeFullStackDevelopment(supabase, user.id, prompt, context_data, OPENROUTER_API_KEY, isAdmin);
         break;
       default:
@@ -155,7 +174,7 @@ serve(async (req) => {
       JSON.stringify({ 
         success: true,
         result,
-        sovereignty_signature: await generateSovereigntySignature(user.id, action)
+        sovereignty_signature: await generateSovereigntySignature(user?.id || 'anonymous', action)
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
