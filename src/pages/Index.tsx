@@ -425,49 +425,188 @@ const Index = () => {
               };
 
               return (
-                <Card 
+                <div
                   key={section.path || section.title}
+                  className="group relative cursor-pointer"
                   onClick={() => section.action ? section.action() : navigate(section.path)}
-                  className={`group relative overflow-hidden bg-gradient-to-br ${section.gradient} 
-                            backdrop-blur-sm border-primary/20 hover:border-primary/40 
-                            transition-all duration-300 hover:scale-105 hover:shadow-2xl 
-                            hover:shadow-${section.glowColor}-500/20 cursor-pointer
-                            animate-fade-in`}
+                  data-tour={section.path ? `tile-${section.path.substring(1)}` : `tile-${section.title.toLowerCase().replace(/\s+/g, '-')}`}
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-br from-background/60 to-background/40 backdrop-blur-sm" />
-                  
-                  {/* Geometric Pattern */}
-                  <div className="absolute inset-0 text-primary/40 group-hover:text-primary/60 transition-colors duration-300">
-                    {getGeometricPattern(index)}
-                  </div>
-                  
-                  <CardContent className="relative p-6 h-full flex flex-col z-10">
-                    <div className="flex items-start justify-between mb-4">
-                      <div className={`p-3 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 
-                                     group-hover:from-primary/30 group-hover:to-primary/20 
-                                     transition-all duration-300`}>
-                        <section.icon className="h-6 w-6 text-primary group-hover:scale-110 transition-transform duration-300" />
+                  {/* Glassmorphic Container with Hexagonal Clip Path */}
+                  <div 
+                    className="relative overflow-hidden backdrop-blur-xl transition-all duration-700 hover:scale-[1.02] hover:rotate-1 group-hover:shadow-2xl animate-fade-in min-h-[280px]"
+                    style={{
+                      background: `
+                        linear-gradient(135deg, 
+                          hsl(${section.pulseColor} / 0.08) 0%, 
+                          hsl(${section.pulseColor} / 0.15) 50%, 
+                          hsl(${section.pulseColor} / 0.1) 100%
+                        ),
+                        radial-gradient(circle at 30% 30%, 
+                          hsl(${section.pulseColor} / 0.2) 0%, 
+                          transparent 60%
+                        )
+                      `,
+                      backdropFilter: 'blur(20px) saturate(180%)',
+                      WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+                      clipPath: index % 3 === 0 
+                        ? 'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)'
+                        : index % 3 === 1 
+                        ? 'polygon(20% 0%, 80% 0%, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0% 80%, 0% 20%)'
+                        : 'polygon(25% 0%, 75% 0%, 100% 25%, 100% 75%, 75% 100%, 25% 100%, 0% 75%, 0% 25%)',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      boxShadow: `
+                        0 8px 32px hsl(${section.pulseColor} / 0.15),
+                        inset 0 1px 0 hsl(${section.pulseColor} / 0.3),
+                        0 0 0 1px rgba(255,255,255,0.05)
+                      `
+                    }}
+                  >
+                    {/* Dynamic Plasma Glow Effect */}
+                    <div 
+                      className="absolute -inset-2 opacity-0 group-hover:opacity-50 transition-all duration-1000 blur-2xl"
+                      style={{
+                        background: `conic-gradient(from ${index * 45}deg, 
+                          hsl(${section.pulseColor}) 0deg, 
+                          transparent 120deg, 
+                          hsl(${section.pulseColor} / 0.7) 240deg,
+                          transparent 360deg
+                        )`,
+                        animation: `rotate 6s linear infinite`
+                      }}
+                    />
+                    
+                    {/* Animated Geometric Pattern */}
+                    <div className="absolute inset-0 text-white/8 group-hover:text-white/12 transition-all duration-700">
+                      {getGeometricPattern(index)}
+                    </div>
+                    
+                    {/* Floating Energy Particles */}
+                    <div className="absolute inset-0 overflow-hidden">
+                      {[...Array(8)].map((_, i) => (
+                        <div
+                          key={i}
+                          className="absolute w-1 h-1 rounded-full opacity-0 group-hover:opacity-70 transition-all duration-1000"
+                          style={{
+                            background: `hsl(${section.pulseColor})`,
+                            left: `${15 + i * 12}%`,
+                            top: `${20 + (i % 4) * 20}%`,
+                            animationDelay: `${i * 300}ms`,
+                            animation: 'float 4s ease-in-out infinite, pulse 2s ease-in-out infinite alternate',
+                            boxShadow: `0 0 10px hsl(${section.pulseColor})`
+                          }}
+                        />
+                      ))}
+                    </div>
+
+                    {/* Neural Network Lines */}
+                    <svg className="absolute inset-0 w-full h-full opacity-0 group-hover:opacity-20 transition-opacity duration-1000" viewBox="0 0 300 300">
+                      <defs>
+                        <linearGradient id={`neural-${index}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stopColor={`hsl(${section.pulseColor})`} stopOpacity="0" />
+                          <stop offset="50%" stopColor={`hsl(${section.pulseColor})`} stopOpacity="0.8" />
+                          <stop offset="100%" stopColor={`hsl(${section.pulseColor})`} stopOpacity="0" />
+                        </linearGradient>
+                      </defs>
+                      <path 
+                        d={`M50,50 Q150,${100 + index * 20} 250,150 T300,250`}
+                        stroke={`url(#neural-${index})`} 
+                        strokeWidth="2" 
+                        fill="none"
+                        style={{
+                          animation: `dashArray 3s ease-in-out infinite`
+                        }}
+                      />
+                    </svg>
+
+                    {/* Content Container */}
+                    <div className="relative p-6 h-full flex flex-col z-10">
+                      {/* Icon & Title */}
+                      <div className="flex items-start gap-4 mb-4">
+                        <div 
+                          className="flex-shrink-0 p-3 backdrop-blur-sm border border-white/20 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500"
+                          style={{
+                            background: `
+                              linear-gradient(135deg, 
+                                hsl(${section.pulseColor} / 0.3) 0%, 
+                                hsl(${section.pulseColor} / 0.15) 100%
+                              )
+                            `,
+                            borderRadius: index % 2 === 0 ? '20px' : '12px 20px 12px 20px',
+                            boxShadow: `
+                              0 0 30px hsl(${section.pulseColor} / 0.4),
+                              inset 0 1px 0 rgba(255,255,255,0.2)
+                            `
+                          }}
+                        >
+                          <section.icon 
+                            className="h-7 w-7 drop-shadow-lg transition-all duration-300 group-hover:drop-shadow-2xl"
+                            style={{ 
+                              color: `hsl(${section.pulseColor})`,
+                              filter: `drop-shadow(0 0 8px hsl(${section.pulseColor} / 0.8))`
+                            }}
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-bold text-xl text-white/95 mb-1 leading-tight group-hover:text-white transition-colors duration-300">
+                            {section.title}
+                          </h3>
+                        </div>
                       </div>
-                      <Zap className="h-4 w-4 text-primary/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    </div>
-                    
-                    <h3 className="text-lg font-semibold mb-2 group-hover:text-primary transition-colors duration-300">
-                      {section.title}
-                    </h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed flex-grow">
-                      {section.description}
-                    </p>
-                    
-                    <div className="mt-4 pt-4 border-t border-primary/10">
-                      <span 
-                        className="text-xs group-hover:text-primary transition-colors duration-300 resonance-flow text-center block font-medium"
+
+                      {/* Description */}
+                      <p className="text-white/75 text-sm leading-relaxed mb-6 flex-1 group-hover:text-white/85 transition-colors duration-300">
+                        {section.description}
+                      </p>
+
+                      {/* Futuristic CTA Button */}
+                      <div 
+                        className="relative backdrop-blur-sm border border-white/20 group-hover:border-white/40 transition-all duration-500 cursor-pointer overflow-hidden group/cta"
+                        style={{
+                          background: `linear-gradient(135deg, 
+                            hsl(${section.pulseColor} / 0.12) 0%, 
+                            hsl(${section.pulseColor} / 0.2) 100%
+                          )`,
+                          borderRadius: '16px',
+                          padding: '12px',
+                          boxShadow: `inset 0 1px 0 rgba(255,255,255,0.1)`
+                        }}
                       >
-                        → {section.cta}
-                      </span>
+                        {/* Animated Shimmer Effect */}
+                        <div 
+                          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover/cta:opacity-100 transition-opacity duration-500"
+                          style={{
+                            transform: 'translateX(-100%)',
+                            animation: 'shimmer 2.5s infinite'
+                          }}
+                        />
+                        
+                        {/* Holographic Border */}
+                        <div 
+                          className="absolute inset-0 rounded-2xl opacity-0 group-hover/cta:opacity-100 transition-opacity duration-500"
+                          style={{
+                            background: `conic-gradient(from 0deg, 
+                              hsl(${section.pulseColor} / 0.6), 
+                              transparent 40%, 
+                              hsl(${section.pulseColor} / 0.4) 80%, 
+                              transparent
+                            )`,
+                            mask: 'linear-gradient(white 0 0) content-box, linear-gradient(white 0 0)',
+                            maskComposite: 'xor',
+                            WebkitMask: 'linear-gradient(white 0 0) content-box, linear-gradient(white 0 0)',
+                            WebkitMaskComposite: 'xor',
+                            padding: '1px',
+                            animation: 'rotate 4s linear infinite'
+                          }}
+                        />
+                        
+                        <span className="relative text-white/95 font-medium text-sm text-center block group-hover/cta:text-white transition-colors duration-300">
+                          {section.cta}
+                        </span>
+                      </div>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               );
             })}
           </div>

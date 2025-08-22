@@ -498,6 +498,148 @@ All colors MUST be HSL.
 @media (prefers-reduced-motion: no-preference) {
   body:hover {
     animation-duration: 15s, 6s, 3s;
+    animation-timing-function: ease-in-out, ease-in-out, ease-in-out;
+  }
+}
+
+/* Futuristic Glassmorphic Animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px) scale(1);
+    opacity: 0.4;
+  }
+  25% {
+    transform: translateY(-8px) translateX(2px) scale(1.1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translateY(-12px) translateX(-1px) scale(1.2);
+    opacity: 1;
+  }
+  75% {
+    transform: translateY(-6px) translateX(3px) scale(1.1);
+    opacity: 0.9;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes dashArray {
+  0% {
+    stroke-dasharray: 0, 100;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 50, 50;
+    stroke-dashoffset: -25;
+  }
+  100% {
+    stroke-dasharray: 100, 0;
+    stroke-dashoffset: -50;
+  }
+}
+
+@keyframes holographic-border {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes neural-pulse {
+  0%, 100% {
+    opacity: 0.3;
+    stroke-width: 1;
+  }
+  50% {
+    opacity: 0.9;
+    stroke-width: 2;
+  }
+}
+
+@keyframes plasma-glow {
+  0%, 100% {
+    filter: brightness(1) hue-rotate(0deg);
+    opacity: 0.5;
+  }
+  25% {
+    filter: brightness(1.2) hue-rotate(90deg);
+    opacity: 0.7;
+  }
+  50% {
+    filter: brightness(1.4) hue-rotate(180deg);
+    opacity: 0.9;
+  }
+  75% {
+    filter: brightness(1.2) hue-rotate(270deg);
+    opacity: 0.7;
+  }
+}
+
+@keyframes energy-ripple {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+/* Particle field enhancement */
+@keyframes particle-drift {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  33% {
+    transform: translate(10px, -15px) rotate(120deg);
+  }
+  66% {
+    transform: translate(-5px, -30px) rotate(240deg);
+  }
+  100% {
+    transform: translate(0, -50px) rotate(360deg);
+  }
+}
+
+@keyframes hexagon-morph {
+  0% {
+    clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+  }
+  50% {
+    clip-path: polygon(25% 0%, 75% 0%, 100% 25%, 100% 75%, 75% 100%, 25% 100%, 0% 75%, 0% 25%);
+  }
+  100% {
+    clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+  }
+}
   }
   
   body:active {
