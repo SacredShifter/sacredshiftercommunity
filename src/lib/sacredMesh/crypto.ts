@@ -1,5 +1,5 @@
 // Sacred Mesh Cryptography
-// Using modern Web Crypto API for XChaCha20-Poly1305 and Ed25519
+// Using Web Crypto API with compatible algorithms for maximum browser support
 
 export class SacredMeshCrypto {
   private static instance: SacredMeshCrypto;
@@ -11,11 +11,12 @@ export class SacredMeshCrypto {
     return SacredMeshCrypto.instance;
   }
 
-  // Generate Ed25519 identity keypair
+  // Generate ECDSA keypair (browser-compatible alternative to Ed25519)
   async generateIdentityKeyPair(): Promise<CryptoKeyPair> {
     const keyPair = await crypto.subtle.generateKey(
       {
-        name: 'Ed25519',
+        name: 'ECDSA',
+        namedCurve: 'P-256',
       },
       true, // extractable
       ['sign', 'verify']
@@ -23,11 +24,12 @@ export class SacredMeshCrypto {
     return keyPair;
   }
 
-  // Generate X25519 ephemeral keypair for key agreement
+  // Generate ECDH ephemeral keypair for key agreement (browser-compatible alternative to X25519)
   async generateEphemeralKeyPair(): Promise<CryptoKeyPair> {
     const keyPair = await crypto.subtle.generateKey(
       {
-        name: 'X25519',
+        name: 'ECDH',
+        namedCurve: 'P-256',
       },
       true,
       ['deriveKey']
@@ -35,16 +37,16 @@ export class SacredMeshCrypto {
     return keyPair;
   }
 
-  // Derive shared secret using X25519
+  // Derive shared secret using ECDH
   async deriveSharedSecret(privateKey: CryptoKey, publicKey: CryptoKey): Promise<CryptoKey> {
     return await crypto.subtle.deriveKey(
       {
-        name: 'X25519',
+        name: 'ECDH',
         public: publicKey,
       },
       privateKey,
       {
-        name: 'ChaCha20-Poly1305',
+        name: 'AES-GCM',
         length: 256,
       },
       false,
@@ -52,23 +54,26 @@ export class SacredMeshCrypto {
     );
   }
 
-  // Encrypt message using ChaCha20-Poly1305
+  // Encrypt message using AES-GCM (browser-compatible alternative to ChaCha20-Poly1305)
   async encrypt(plaintext: Uint8Array, key: CryptoKey, nonce: Uint8Array): Promise<{
     ciphertext: Uint8Array;
     authTag: Uint8Array;
   }> {
     try {
+      // Use first 12 bytes of nonce for AES-GCM IV
+      const iv = nonce.slice(0, 12);
+      
       const encrypted = await crypto.subtle.encrypt(
         {
-          name: 'ChaCha20-Poly1305',
-          iv: nonce,
+          name: 'AES-GCM',
+          iv: iv,
         },
         key,
         plaintext
       );
 
       const encryptedArray = new Uint8Array(encrypted);
-      // ChaCha20-Poly1305 appends 16-byte auth tag
+      // AES-GCM appends 16-byte auth tag
       const ciphertext = encryptedArray.slice(0, -16);
       const authTag = encryptedArray.slice(-16);
 
@@ -79,9 +84,12 @@ export class SacredMeshCrypto {
     }
   }
 
-  // Decrypt message using ChaCha20-Poly1305
+  // Decrypt message using AES-GCM
   async decrypt(ciphertext: Uint8Array, authTag: Uint8Array, key: CryptoKey, nonce: Uint8Array): Promise<Uint8Array> {
     try {
+      // Use first 12 bytes of nonce for AES-GCM IV
+      const iv = nonce.slice(0, 12);
+      
       // Combine ciphertext and auth tag for Web Crypto API
       const combined = new Uint8Array(ciphertext.length + authTag.length);
       combined.set(ciphertext);
@@ -89,8 +97,8 @@ export class SacredMeshCrypto {
 
       const decrypted = await crypto.subtle.decrypt(
         {
-          name: 'ChaCha20-Poly1305',
-          iv: nonce,
+          name: 'AES-GCM',
+          iv: iv,
         },
         key,
         combined
@@ -103,16 +111,31 @@ export class SacredMeshCrypto {
     }
   }
 
-  // Sign data using Ed25519
+  // Sign data using ECDSA
   async sign(data: Uint8Array, privateKey: CryptoKey): Promise<Uint8Array> {
-    const signature = await crypto.subtle.sign('Ed25519', privateKey, data);
+    const signature = await crypto.subtle.sign(
+      {
+        name: 'ECDSA',
+        hash: 'SHA-256',
+      },
+      privateKey,
+      data
+    );
     return new Uint8Array(signature);
   }
 
-  // Verify signature using Ed25519
+  // Verify signature using ECDSA
   async verify(signature: Uint8Array, data: Uint8Array, publicKey: CryptoKey): Promise<boolean> {
     try {
-      return await crypto.subtle.verify('Ed25519', publicKey, signature, data);
+      return await crypto.subtle.verify(
+        {
+          name: 'ECDSA',
+          hash: 'SHA-256',
+        },
+        publicKey,
+        signature,
+        data
+      );
     } catch {
       return false;
     }
