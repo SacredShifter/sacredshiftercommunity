@@ -1,4 +1,5 @@
 import React, { Suspense } from 'react';
+import { Text } from '@react-three/drei';
 import { useEarthState } from '../context/EarthContext';
 
 export const SceneRouter: React.FC = () => {
@@ -14,7 +15,9 @@ export const SceneRouter: React.FC = () => {
           <planeGeometry args={[20, 20]} />
           <meshStandardMaterial color="#8B4513" />
         </mesh>
-        <text position={[0, 2, 0]} color="#FFFFFF">Earth Module - {currentScene}</text>
+        <Text position={[0, 2, 0]} color="#FFFFFF" fontSize={0.5} anchorX="center" anchorY="middle">
+          Earth Module - {currentScene}
+        </Text>
       </group>
     </Suspense>
   );

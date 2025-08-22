@@ -1,4 +1,5 @@
 import React, { Suspense } from 'react';
+import { Text } from '@react-three/drei';
 import { useCollectiveState } from '../context/CollectiveContext';
 
 export const SceneRouter: React.FC = () => {
@@ -15,7 +16,9 @@ export const SceneRouter: React.FC = () => {
           <ringGeometry args={[3, 3.5, 32]} />
           <meshBasicMaterial color="#9370DB" transparent opacity={0.6} />
         </mesh>
-        <text position={[0, 4, 0]} color="#FFFFFF">Collective Circle - {currentScene}</text>
+        <Text position={[0, 4, 0]} color="#FFFFFF" fontSize={0.5} anchorX="center" anchorY="middle">
+          Collective Circle - {currentScene}
+        </Text>
       </group>
     </Suspense>
   );

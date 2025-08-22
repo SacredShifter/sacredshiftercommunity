@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Play, Lock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { TrustIntroduction } from '@/components/Onboarding/TrustIntroduction';
 
 type ModulePhase = 'selection' | 'liberation' | 'unhooking' | 'earth' | 'collective';
 
@@ -48,6 +49,7 @@ const modules = [
 
 export default function Liberation() {
   const [currentModule, setCurrentModule] = useState<ModulePhase>('selection');
+  const [showTrustIntro, setShowTrustIntro] = useState(true);
   const navigate = useNavigate();
 
   const handleModuleSelect = (moduleId: string) => {
@@ -66,6 +68,10 @@ export default function Liberation() {
     }
     return null;
   };
+
+  if (showTrustIntro) {
+    return <TrustIntroduction onNext={() => setShowTrustIntro(false)} />;
+  }
 
   if (currentModule !== 'selection') {
     return getCurrentComponent();
@@ -92,8 +98,11 @@ export default function Liberation() {
           <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
             Sacred Shifter Liberation Modules
           </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-4">
             A four-phase journey through embodied transformation, from individual liberation to collective coherence.
+          </p>
+          <p className="text-sm text-primary/80 italic">
+            Learning at the speed of trust, not the speed of data.
           </p>
         </div>
 
