@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { Send, Smile, Mic, Heart, Brain, Eye, Zap, MoreHorizontal, ArrowLeft } from 'lucide-react';
 import { formatDistance } from 'date-fns/formatDistance';
 import { toast } from 'sonner';
+import { SacredVoiceInterface } from './SacredVoiceInterface';
 
 interface ConsciousnessState {
   energy: number; // 0-1
@@ -530,6 +531,30 @@ export const SacredQuantumMessageInterface: React.FC<SacredQuantumMessageProps> 
             </motion.div>
           </div>
         </Card>
+
+        {/* Sacred Voice Interface */}
+        <AnimatePresence>
+          {showQuantumView && (
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="fixed left-4 top-1/2 transform -translate-y-1/2 z-10"
+            >
+              <SacredVoiceInterface
+                biometricState={{
+                  heartRate: 60 + (consciousnessState.energy * 40),
+                  breathing: consciousnessState.breathing / 20,
+                  stress: consciousnessState.anxiety,
+                  focus: consciousnessState.clarity,
+                  coherence: consciousnessState.coherence
+                }}
+                consciousnessState={groupCoherence > 0.7 ? 'transcendent' : 'grounded'}
+                className="w-64"
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* CSS for Sacred Geometry */}
