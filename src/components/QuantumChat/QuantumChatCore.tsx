@@ -11,6 +11,9 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Send, Zap, Brain, Heart, Eye } from 'lucide-react';
 import { toast } from 'sonner';
+import { SacredSigilPicker } from '../SacredSigilPicker';
+import { useSacredSigilEngine } from '@/hooks/useSacredSigilEngine';
+import { SacredSigil } from '@/types/sacredSigils';
 
 interface QuantumMessage {
   id: string;
@@ -145,6 +148,7 @@ const UserPresenceOrb: React.FC<{ presence: UserPresence }> = ({ presence }) => 
 
 export const QuantumChatCore: React.FC<QuantumChatCoreProps> = ({ roomId, onClose }) => {
   const { user } = useAuth();
+  const { createSacredMessage, alchemizeMessage, consciousness, getRecommendedSigils } = useSacredSigilEngine();
   const [messages, setMessages] = useState<QuantumMessage[]>([]);
   const [userPresences, setUserPresences] = useState<UserPresence[]>([]);
   const [newMessage, setNewMessage] = useState('');
@@ -316,18 +320,21 @@ export const QuantumChatCore: React.FC<QuantumChatCoreProps> = ({ roomId, onClos
     }, 1000);
   };
 
-  // Send quantum message
+  // Send quantum message with sigil integration
   const sendQuantumMessage = async () => {
     if (!newMessage.trim() || !user) return;
 
+    // Transform emojis to sigils
+    const { content: alchemizedContent } = alchemizeMessage(newMessage.trim());
+    
     const position = generateMessagePosition();
-    const resonanceFreq = calculateResonanceFrequency(consciousnessState, newMessage);
-    const entanglementLevel = calculateEntanglementLevel(newMessage, messages);
+    const resonanceFreq = calculateResonanceFrequency(consciousnessState, alchemizedContent);
+    const entanglementLevel = calculateEntanglementLevel(alchemizedContent, messages);
 
     const quantumMessage = {
       room_id: roomId,
       sender_id: user.id,
-      content: newMessage.trim(),
+      content: alchemizedContent,
       position,
       consciousness_state: consciousnessState,
       resonance_frequency: resonanceFreq,
@@ -349,13 +356,17 @@ export const QuantumChatCore: React.FC<QuantumChatCoreProps> = ({ roomId, onClos
       setIsTyping(false);
       updateUserPresence();
       
-      toast.success('✨ Quantum message transmitted', {
-        description: `Resonating at ${resonanceFreq}Hz`
+      toast.success('✨ Quantum message transmitted with sacred resonance', {
+        description: `Resonating at ${resonanceFreq}Hz with sigil integration`
       });
     } catch (error) {
       console.error('Error sending quantum message:', error);
       toast.error('Failed to transmit quantum message');
     }
+  };
+
+  const handleSigilSelect = (sigil: SacredSigil) => {
+    setNewMessage(prev => prev + sigil.symbol);
   };
 
   return (
@@ -459,12 +470,13 @@ export const QuantumChatCore: React.FC<QuantumChatCoreProps> = ({ roomId, onClos
           </div>
         </div>
 
-        {/* Message Input */}
+        {/* Message Input with Sigil Support */}
         <div className="flex gap-2">
+          <SacredSigilPicker onSigilSelect={handleSigilSelect} />
           <Input
             value={newMessage}
             onChange={(e) => handleTyping(e.target.value)}
-            placeholder="Transmit your quantum thoughts..."
+            placeholder="Transmit your quantum thoughts with sacred sigils..."
             onKeyPress={(e) => e.key === 'Enter' && sendQuantumMessage()}
             className="flex-1"
           />

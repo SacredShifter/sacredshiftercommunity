@@ -8557,7 +8557,7 @@ export type Database = {
           light_points: number | null
           onboarding_completed: boolean
           updated_at: string | null
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           ascension_title?: string | null
@@ -8576,7 +8576,7 @@ export type Database = {
           light_points?: number | null
           onboarding_completed?: boolean
           updated_at?: string | null
-          user_id?: string | null
+          user_id: string
         }
         Update: {
           ascension_title?: string | null
@@ -8595,7 +8595,7 @@ export type Database = {
           light_points?: number | null
           onboarding_completed?: boolean
           updated_at?: string | null
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -8675,6 +8675,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      quantum_messages: {
+        Row: {
+          consciousness_state: string
+          content: string
+          created_at: string
+          emotional_tone: string
+          entanglement_level: number
+          id: string
+          position: number[]
+          resonance_frequency: number
+          room_id: string
+          sacred_geometry: string
+          sender_id: string
+          updated_at: string
+        }
+        Insert: {
+          consciousness_state: string
+          content: string
+          created_at?: string
+          emotional_tone: string
+          entanglement_level: number
+          id?: string
+          position: number[]
+          resonance_frequency: number
+          room_id: string
+          sacred_geometry: string
+          sender_id: string
+          updated_at?: string
+        }
+        Update: {
+          consciousness_state?: string
+          content?: string
+          created_at?: string
+          emotional_tone?: string
+          entanglement_level?: number
+          id?: string
+          position?: number[]
+          resonance_frequency?: number
+          room_id?: string
+          sacred_geometry?: string
+          sender_id?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       records_classifications: {
         Row: {
