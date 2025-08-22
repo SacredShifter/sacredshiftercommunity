@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Text } from '@react-three/drei';
+import { OrbitControls, Text, Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -166,25 +166,31 @@ function Sephirah({ sephirah, isSelected, onSelect }: SephirahProps) {
         />
       </mesh>
       
-      <Text
-        position={[0, -0.6, 0]}
-        fontSize={0.15}
-        color="#ffffff"
-        anchorX="center"
-        anchorY="middle"
-      >
-        {sephirah.name}
-      </Text>
+      <Html position={[0, -0.6, 0]} center>
+        <div 
+          className="font-semibold pointer-events-none text-center"
+          style={{ 
+            color: "#ffffff",
+            fontSize: '12px',
+            textShadow: '0 0 4px rgba(0,0,0,0.8)'
+          }}
+        >
+          {sephirah.name}
+        </div>
+      </Html>
       
-      <Text
-        position={[0, -0.8, 0]}
-        fontSize={0.12}
-        color="#cccccc"
-        anchorX="center"
-        anchorY="middle"
-      >
-        {sephirah.hebrew}
-      </Text>
+      <Html position={[0, -0.8, 0]} center>
+        <div 
+          className="font-medium pointer-events-none text-center"
+          style={{ 
+            color: "#cccccc",
+            fontSize: '10px',
+            textShadow: '0 0 4px rgba(0,0,0,0.8)'
+          }}
+        >
+          {sephirah.hebrew}
+        </div>
+      </Html>
     </group>
   );
 }
@@ -250,15 +256,18 @@ export default function KabbalahTreeOfLife3D() {
           />
         ))}
         
-        <Text
-          position={[0, 5.5, 0]}
-          fontSize={0.4}
-          color="#ffffff"
-          anchorX="center"
-          anchorY="middle"
-        >
-          Kabbalah Tree of Life
-        </Text>
+        <Html position={[0, 5.5, 0]} center>
+          <div 
+            className="font-bold pointer-events-none text-center"
+            style={{ 
+              color: "#ffffff",
+              fontSize: '20px',
+              textShadow: '0 0 8px rgba(0,0,0,0.8)'
+            }}
+          >
+            Kabbalah Tree of Life
+          </div>
+        </Html>
         
         <OrbitControls enablePan={false} maxDistance={12} minDistance={4} />
       </Canvas>

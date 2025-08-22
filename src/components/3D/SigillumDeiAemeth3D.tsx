@@ -1,6 +1,6 @@
 import React, { Suspense, useState, useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Html, Text, Ring, Circle } from '@react-three/drei';
+import { OrbitControls, Html } from '@react-three/drei';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -161,27 +161,33 @@ const SacredRingComponent = ({ ring, isActive, selectedName, onNameSelect, breat
             </mesh>
 
             {/* Name Text */}
-            <Text
-              position={[x, y, 0.03]}
-              fontSize={ring.id === 'inner' ? 0.1 : 0.08} // Larger font for inner ring
-              color={isSelected || isHovered ? '#000000' : '#FFFFFF'}
-              anchorX="center"
-              anchorY="middle"
-            >
-              {angelName.name}
-            </Text>
+            <Html position={[x, y, 0.03]} center>
+              <div 
+                className="font-semibold pointer-events-none text-center"
+                style={{ 
+                  color: isSelected || isHovered ? '#000000' : '#FFFFFF',
+                  fontSize: ring.id === 'inner' ? '10px' : '8px',
+                  textShadow: '0 0 4px rgba(0,0,0,0.8)'
+                }}
+              >
+                {angelName.name}
+              </div>
+            </Html>
 
             {/* Frequency Indicator */}
             {(isSelected || isHovered) && (
-              <Text
-                position={[x, y - 0.15, 0.03]}
-                fontSize={0.04}
-                color="#FFFF00"
-                anchorX="center"
-                anchorY="middle"
-              >
-                {angelName.frequency}Hz
-              </Text>
+              <Html position={[x, y - 0.15, 0.03]} center>
+                <div 
+                  className="font-semibold pointer-events-none text-center"
+                  style={{ 
+                    color: "#FFFF00",
+                    fontSize: '4px',
+                    textShadow: '0 0 4px rgba(0,0,0,0.8)'
+                  }}
+                >
+                  {angelName.frequency}Hz
+                </div>
+              </Html>
             )}
 
             {/* Connection line to ring for clarity */}
@@ -230,15 +236,18 @@ const CentralSymbol = ({ isActive, selectedFrequency }: {
       </mesh>
 
       {/* Sacred Tetragrammaton */}
-      <Text
-        position={[0, 0, 0.02]}
-        fontSize={0.15}
-        color="#000000"
-        anchorX="center"
-        anchorY="middle"
-      >
-        YHWH
-      </Text>
+      <Html position={[0, 0, 0.02]} center>
+        <div 
+          className="font-bold pointer-events-none text-center"
+          style={{ 
+            color: "#000000",
+            fontSize: '15px',
+            textShadow: '0 0 4px rgba(0,0,0,0.8)'
+          }}
+        >
+          YHWH
+        </div>
+      </Html>
 
       {/* Four Divine Names around center */}
       {['EL', 'ELOHIM', 'ADONAI', 'EHYEH'].map((name, i) => {
@@ -247,16 +256,22 @@ const CentralSymbol = ({ isActive, selectedFrequency }: {
         const y = Math.sin(angle) * 0.6;
 
         return (
-          <Text
+          <Html
             key={name}
-            position={[x, y, 0.02]}
-            fontSize={0.06}
-            color="#FFD700"
-            anchorX="center"
-            anchorY="middle"
+            position={[x, y, 0.02]} 
+            center
           >
-            {name}
-          </Text>
+            <div 
+              className="font-semibold pointer-events-none text-center"
+              style={{ 
+                color: "#FFD700",
+                fontSize: '6px',
+                textShadow: '0 0 4px rgba(0,0,0,0.8)'
+              }}
+            >
+              {name}
+            </div>
+          </Html>
         );
       })}
     </group>

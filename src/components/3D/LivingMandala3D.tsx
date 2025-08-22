@@ -1,6 +1,6 @@
 import React, { useRef, useMemo, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Text } from '@react-three/drei';
+import { OrbitControls, Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -153,15 +153,18 @@ export default function LivingMandala3D() {
           pattern={selectedPattern}
         />
         
-        <Text
-          position={[0, 4, 0]}
-          fontSize={0.4}
-          color="#ffffff"
-          anchorX="center"
-          anchorY="middle"
-        >
-          Living Mandala Generator
-        </Text>
+        <Html position={[0, 4, 0]} center>
+          <div 
+            className="font-bold pointer-events-none text-center"
+            style={{ 
+              color: "#ffffff",
+              fontSize: '20px',
+              textShadow: '0 0 8px rgba(0,0,0,0.8)'
+            }}
+          >
+            Living Mandala Generator
+          </div>
+        </Html>
         
         <OrbitControls enablePan={false} maxDistance={10} minDistance={3} />
       </Canvas>

@@ -163,26 +163,32 @@ function ChakraSphere({ chakra, isSelected, onClick }: ChakraSphereProps) {
       </mesh>
 
       {/* Sanskrit Label */}
-      <Text
-        position={[0.6, 0, 0]}
-        fontSize={0.1}
-        color={chakra.color}
-        anchorX="left"
-        anchorY="middle"
-      >
-        {chakra.sanskrit}
-      </Text>
+      <Html position={[0.6, 0, 0]} center>
+        <div 
+          className="font-semibold pointer-events-none text-left"
+          style={{ 
+            color: chakra.color,
+            fontSize: '10px',
+            textShadow: '0 0 4px rgba(0,0,0,0.8)'
+          }}
+        >
+          {chakra.sanskrit}
+        </div>
+      </Html>
 
       {/* Frequency Label */}
-      <Text
-        position={[-0.6, 0, 0]}
-        fontSize={0.08}
-        color="#ffffff"
-        anchorX="right"
-        anchorY="middle"
-      >
-        {chakra.frequency}
-      </Text>
+      <Html position={[-0.6, 0, 0]} center>
+        <div 
+          className="font-semibold pointer-events-none text-right"
+          style={{ 
+            color: "#ffffff",
+            fontSize: '8px',
+            textShadow: '0 0 4px rgba(0,0,0,0.8)'
+          }}
+        >
+          {chakra.frequency}
+        </div>
+      </Html>
     </group>
   );
 }
