@@ -31,7 +31,9 @@ export const SacredMeshTestInterface: React.FC = () => {
   // Set up message listener
   useEffect(() => {
     if (mesh) {
+      console.log('🕸️ Setting up message listener...');
       onMessage((message, senderId) => {
+        console.log('🕸️ Message received in UI:', message, 'from:', senderId);
         setReceivedMessages(prev => [...prev, {
           ...message,
           senderId,

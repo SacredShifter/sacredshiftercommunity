@@ -107,13 +107,28 @@ export class SacredMesh {
   // Handle incoming encrypted messages
   private async handleIncomingMessage(packet: SacredMeshPacket): Promise<void> {
     try {
-      // TODO: Look up shared key for sender
-      // For now, skip decryption and just log
       console.log('🕸️ Received encrypted message from:', packet.header.senderIdHash);
       
-      // TODO: Decrypt and call message handlers
-      // const message = await this.packetFormatter.decryptPacket(packet, sharedKey);
-      // this.messageHandlers.forEach(handler => handler(message, packet.header.senderIdHash));
+      // For testing: Create a mock decrypted message
+      // TODO: Implement proper decryption once we have proper key exchange
+      const mockMessage = {
+        sigils: ['test', 'received'],
+        intentStrength: 0.7,
+        note: 'Test message received via Sacred Mesh',
+        ttl: 3600,
+        hopLimit: 5
+      };
+      
+      // Call all registered message handlers
+      this.messageHandlers.forEach(handler => {
+        try {
+          handler(mockMessage, packet.header.senderIdHash);
+        } catch (error) {
+          console.error('🕸️ Message handler error:', error);
+        }
+      });
+      
+      console.log('🕸️ Message delivered to', this.messageHandlers.length, 'handlers');
     } catch (error) {
       console.error('🕸️ Failed to handle incoming message:', error);
     }

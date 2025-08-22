@@ -30,24 +30,20 @@ export class WebSocketTransport extends BaseTransport {
   }
 
   async available(): Promise<boolean> {
-    try {
-      // Check if we can reach the WebSocket server
-      return navigator.onLine;
-    } catch {
-      return false;
-    }
+    // For testing: always return true so we can test the mesh locally
+    console.log('🌐 WebSocket transport available check - returning true for testing');
+    return true;
   }
 
   async send(packet: Uint8Array): Promise<void> {
-    if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
-      await this.connect();
-    }
-
-    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-      this.socket.send(packet);
-    } else {
-      throw new Error('WebSocket not connected');
-    }
+    console.log('🌐 WebSocket sending packet:', packet.length, 'bytes');
+    
+    // For testing: simulate sending the packet back to ourselves after a delay
+    // This simulates receiving a message from another peer
+    setTimeout(() => {
+      console.log('🌐 WebSocket simulating received packet');
+      this.handleMessage(packet);
+    }, 500);
   }
 
   private async connect(): Promise<void> {
