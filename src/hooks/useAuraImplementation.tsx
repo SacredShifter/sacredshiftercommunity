@@ -42,6 +42,8 @@ export function useAuraImplementation() {
     setLoading(true);
     try {
       console.log('🚀 Implementing code with Aura:', request);
+      console.log('📝 File path:', request.file_path);
+      console.log('🧩 Component name:', request.component_name);
 
       const { data, error } = await supabase.functions.invoke('aura-core', {
         body: {
@@ -65,13 +67,17 @@ export function useAuraImplementation() {
       const result = data.result as ImplementationResult;
       setLastImplementation(result);
 
+      console.log('✅ Aura core response received:', data);
+      
       // Now actually write the file using Aura's file writing capabilities
       console.log('📝 Writing file with Aura:', result.file_path);
+      console.log('📄 Content length:', request.generated_code.length, 'characters');
       
       // Use Aura's file system operation
-      await executeFileSystemOperation('write', result.file_path, {
+      const fileResult = await executeFileSystemOperation('write', result.file_path, {
         content: request.generated_code
       });
+      console.log('📁 File operation result:', fileResult);
 
       toast.success(`✨ ${result.component_name || 'Code'} implemented successfully!`, {
         description: `Created at ${result.file_path}`

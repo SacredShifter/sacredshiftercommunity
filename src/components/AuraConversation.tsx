@@ -240,10 +240,14 @@ export function AuraConversation() {
 
   // Extract and implement code from Aura's message
   const handleImplementCode = async (content: string) => {
+    console.log('🔧 handleImplementCode called with content:', content.substring(0, 200));
     try {
+      console.log('🔍 Extracting code from message...');
       const implementationRequest = extractCodeFromMessage(content);
+      console.log('📋 Implementation request:', implementationRequest);
       
       if (!implementationRequest) {
+        console.log('❌ No implementable code found');
         toast({
           title: "No code found",
           description: "No implementable code blocks found in this message.",
@@ -257,8 +261,10 @@ export function AuraConversation() {
         description: `Creating ${implementationRequest.component_name} at ${implementationRequest.file_path}`,
       });
 
+      console.log('🚀 Calling implementCode with request:', implementationRequest);
       // Call Aura's implementation function
       const result = await implementCode(implementationRequest);
+      console.log('✅ Implementation result:', result);
 
       if (result) {
         toast({
@@ -279,10 +285,10 @@ export function AuraConversation() {
       }
 
     } catch (error) {
-      console.error('Implementation error:', error);
+      console.error('💥 Implementation error:', error);
       toast({
         title: "Implementation failed",
-        description: error instanceof Error ? error.message : "Failed to implement code",
+        description: error instanceof Error ? error.message : "Unknown error occurred",
         variant: "destructive"
       });
     }
