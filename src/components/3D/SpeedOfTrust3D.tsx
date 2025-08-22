@@ -42,15 +42,14 @@ function SpeedComparison({ mode, isActive, onAbsorptionChange }: SpeedComparison
     <group>
       {/* Central brain/consciousness */}
       <mesh ref={brainRef}>
-        <Sphere args={[2, 32, 32]}>
-          <meshStandardMaterial
-            color={brainColor}
-            transparent
-            opacity={0.7}
-            emissive={brainColor}
-            emissiveIntensity={0.2}
-          />
-        </Sphere>
+        <sphereGeometry args={[2, 32, 32]} />
+        <meshStandardMaterial
+          color={brainColor}
+          transparent
+          opacity={0.7}
+          emissive={brainColor}
+          emissiveIntensity={0.2}
+        />
       </mesh>
 
       {/* Information particles */}
@@ -67,27 +66,25 @@ function SpeedComparison({ mode, isActive, onAbsorptionChange }: SpeedComparison
               Math.sin(index * Math.PI / 4) * (6 + Math.cos(Date.now() * 0.001 * (index + 1)) * 2)
             ]}
           >
-            <Sphere args={[mode === 'trust' ? 0.15 : 0.08, 8, 8]}>
-              <meshStandardMaterial
-                color={mode === 'trust' ? '#34d399' : '#f87171'}
-                transparent
-                opacity={0.8}
-              />
-            </Sphere>
+            <sphereGeometry args={[mode === 'trust' ? 0.15 : 0.08, 8, 8]} />
+            <meshStandardMaterial
+              color={mode === 'trust' ? '#34d399' : '#f87171'}
+              transparent
+              opacity={0.8}
+            />
           </mesh>
         );
       })}
 
       {/* Absorption field visualization */}
       <mesh>
-        <Sphere args={[4, 16, 16]}>
-          <meshStandardMaterial
-            color={brainColor}
-            transparent
-            opacity={0.1}
-            wireframe
-          />
-        </Sphere>
+        <sphereGeometry args={[4, 16, 16]} />
+        <meshStandardMaterial
+          color={brainColor}
+          transparent
+          opacity={0.1}
+          wireframe
+        />
       </mesh>
 
       {/* Mode label */}

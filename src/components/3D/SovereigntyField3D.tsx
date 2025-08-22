@@ -35,15 +35,14 @@ function SovereigntyField({ strength, frequency, coherence }: SovereigntyFieldPr
     <group>
       {/* Core Sovereignty Sphere */}
       <mesh ref={meshRef}>
-        <Sphere args={[1, 32, 32]}>
-          <meshStandardMaterial
-            color="#10b981"
-            transparent
-            opacity={0.7}
-            emissive="#059669"
-            emissiveIntensity={0.2}
-          />
-        </Sphere>
+        <sphereGeometry args={[1, 32, 32]} />
+        <meshStandardMaterial
+          color="#10b981"
+          transparent
+          opacity={0.7}
+          emissive="#059669"
+          emissiveIntensity={0.2}
+        />
       </mesh>
 
       {/* Boundary Rings */}
@@ -73,13 +72,12 @@ function SovereigntyField({ strength, frequency, coherence }: SovereigntyFieldPr
             Math.sin(index * Math.PI / 3) * 5
           ]}
         >
-          <Sphere args={[0.2, 16, 16]}>
-            <meshStandardMaterial
-              color="#fbbf24"
-              emissive="#f59e0b"
-              emissiveIntensity={0.1}
-            />
-          </Sphere>
+          <sphereGeometry args={[0.2, 16, 16]} />
+          <meshStandardMaterial
+            color="#fbbf24"
+            emissive="#f59e0b"
+            emissiveIntensity={0.1}
+          />
         </mesh>
       ))}
 

@@ -48,7 +48,8 @@ function ChoicePath({ nodes, currentPath }: ChoicePathProps) {
                 />
               </Box>
             ) : (
-              <Sphere args={[0.4, 16, 16]}>
+              <>
+                <sphereGeometry args={[0.4, 16, 16]} />
                 <meshStandardMaterial
                   color={node.color}
                   emissive={node.active ? node.color : '#000000'}
@@ -56,7 +57,7 @@ function ChoicePath({ nodes, currentPath }: ChoicePathProps) {
                   transparent
                   opacity={node.active ? 1 : 0.4}
                 />
-              </Sphere>
+              </>
             )}
           </mesh>
           
