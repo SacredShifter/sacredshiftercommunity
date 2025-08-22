@@ -142,9 +142,14 @@ export function AuraConversation() {
         setIsTyping(false);
 
         if (response && response.result) {
+          // Handle the new response structure from aura-core
+          const responseContent = typeof response.result === 'object' && response.result.content 
+            ? response.result.content 
+            : response.result;
+
           const auraMessage: ConversationMessage = {
             id: (Date.now() + 1).toString(),
-            content: response.result,
+            content: responseContent,
             type: 'aura',
             timestamp: new Date(),
             personality: 'guidance',
@@ -157,7 +162,7 @@ export function AuraConversation() {
 
           // Auto voice response if enabled
           if (autoVoiceResponse && voiceInterfaceRef.current) {
-            voiceInterfaceRef.current.speak(response.result);
+            voiceInterfaceRef.current.speak(responseContent);
           }
 
           // Show a simple success toast
