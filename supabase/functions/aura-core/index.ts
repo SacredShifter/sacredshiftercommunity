@@ -282,10 +282,33 @@ async function implementCodeToFiles(supabase, userId, context_data, apiKey) {
     // Analyze Sacred Shifter project structure to make smart decisions
     const projectAnalysis = await analyzeProjectForImplementation(generated_code, file_path, code_type);
     
+    // Actually write the file using the Lovable file system API
+    console.log(`📝 Writing file to: ${projectAnalysis.optimized_file_path}`);
+    
+    const fileWriteResponse = await fetch('https://api.lovable.dev/v1/files/write', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        file_path: projectAnalysis.optimized_file_path,
+        content: generated_code
+      })
+    });
+
+    if (!fileWriteResponse.ok) {
+      const errorData = await fileWriteResponse.text();
+      console.error('❌ File write failed:', errorData);
+      throw new Error(`Failed to write file: ${fileWriteResponse.status} ${errorData}`);
+    }
+
+    console.log('✅ File written successfully');
+    
     // Store the implementation activity
     await storeImplementationActivity(supabase, userId, {
       action: 'code_implementation',
-      file_path,
+      file_path: projectAnalysis.optimized_file_path,
       component_name,
       code_type,
       lines_added: generated_code.split('\n').length,
@@ -294,11 +317,11 @@ async function implementCodeToFiles(supabase, userId, context_data, apiKey) {
 
     return {
       success: true,
-      file_path,
+      file_path: projectAnalysis.optimized_file_path,
       component_name,
       project_analysis: projectAnalysis,
       implementation_details: {
-        files_created: [file_path],
+        files_created: [projectAnalysis.optimized_file_path],
         navigation_updated: update_navigation,
         routes_updated: update_routes,
         imports_added: projectAnalysis.required_imports || []
