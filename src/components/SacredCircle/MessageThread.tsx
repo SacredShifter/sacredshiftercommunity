@@ -45,21 +45,8 @@ export const MessageThread = ({ parentMessageId, circleId, isOpen, onClose }: Me
   const fetchThreadMessages = async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('circle_message_threads')
-        .select(`
-          id,
-          content,
-          user_id,
-          created_at,
-          chakra_tag,
-          is_anonymous
-        `)
-        .eq('parent_message_id', parentMessageId)
-        .order('created_at', { ascending: true });
-
-      if (error) throw error;
-      setThreadMessages(data || []);
+      // For now, return empty array as threading isn't implemented in the schema
+      setThreadMessages([]);
     } catch (error) {
       console.error('Error fetching thread messages:', error);
     } finally {
@@ -72,26 +59,12 @@ export const MessageThread = ({ parentMessageId, circleId, isOpen, onClose }: Me
 
     setSending(true);
     try {
-      const { error } = await supabase
-        .from('circle_message_threads')
-        .insert({
-          parent_message_id: parentMessageId,
-          circle_id: circleId,
-          user_id: user.id,
-          content: newReply.trim(),
-          chakra_tag: 'heart',
-          is_anonymous: false
-        });
-
-      if (error) throw error;
-
-      setNewReply('');
-      await fetchThreadMessages();
-      
+      // Threading functionality not implemented in schema yet
       toast({
-        title: "Reply sent",
-        description: "Your message has been added to the thread.",
+        title: "Feature Coming Soon",
+        description: "Thread replies will be available soon.",
       });
+      setNewReply('');
     } catch (error) {
       console.error('Error sending reply:', error);
       toast({
