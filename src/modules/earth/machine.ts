@@ -157,7 +157,7 @@ export const earthMachine = setup({
     paused: {
       on: {
         RESUME: {
-          target: '#earth.hist',
+          target: 'intro',
         },
         ABORT: 'exit',
       },
@@ -169,6 +169,7 @@ export const earthMachine = setup({
       type: 'final',
     },
   },
+  history: 'shallow',
 });
 
 function getNextScene(currentScene: string): string {

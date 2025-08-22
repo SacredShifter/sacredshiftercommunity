@@ -160,7 +160,7 @@ export const collectiveMachine = setup({
     paused: {
       on: {
         RESUME: {
-          target: '#collective.hist',
+          target: 'intro',
         },
         ABORT: 'exit',
       },
@@ -172,6 +172,7 @@ export const collectiveMachine = setup({
       type: 'final',
     },
   },
+  history: 'shallow',
 });
 
 function getNextScene(currentScene: string): string {
