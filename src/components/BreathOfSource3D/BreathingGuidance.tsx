@@ -67,7 +67,7 @@ export default function BreathingGuidance({
   if (!isActive) return null;
 
   return (
-    <div className="absolute top-4 right-4 pointer-events-none z-30 w-64">{/* Smaller fixed width, positioned in viewport */}
+    <div className="absolute top-4 right-4 pointer-events-none z-30 w-60 max-w-[calc(100vw-theme(spacing.8))]">{/* Ensure it fits in viewport */}
       <AnimatePresence mode="wait">
         <motion.div
           key={currentPhase}
@@ -78,26 +78,26 @@ export default function BreathingGuidance({
         >
           <Card className={`
             ${phase.bgColor} ${phase.borderColor} border backdrop-blur-md
-            shadow-lg
+            shadow-lg w-full
           `}>
-            <CardContent className="p-4 space-y-3">
+            <CardContent className="p-3 space-y-2">{/* Compact padding */}
               {/* Compact header */}
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-2">
                 <div className={`${phase.color} flex-shrink-0`}>
                   {phase.icon}
                 </div>
-                <div className="min-w-0">
-                  <h3 className={`text-lg font-sacred ${phase.color} leading-tight`}>
+                <div className="min-w-0 flex-1">
+                  <h3 className={`text-base font-sacred ${phase.color} leading-tight`}>
                     {phase.label}
                   </h3>
-                  <p className="text-xs text-muted-foreground leading-tight">
+                  <p className="text-xs text-muted-foreground leading-tight truncate">
                     {phase.description}
                   </p>
                 </div>
               </div>
 
               {/* Compact progress */}
-              <div className="space-y-2">
+              <div className="space-y-1">{/* Reduced spacing */}
                 <div className="flex items-center justify-between text-xs">
                   <span>{presetLabels[preset]}</span>
                   <span className="font-mono">
