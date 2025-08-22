@@ -227,7 +227,7 @@ const Index = () => {
             to="/messages"
             className="group block"
           >
-            <Card className="crown-jewel portal-tile relative p-8 backdrop-blur-xl border-white/20 hover:border-primary/40 transition-all duration-500 group-hover:shadow-2xl overflow-hidden">
+            <Card className="crown-jewel portal-tile mesh-chain-overlay relative p-8 backdrop-blur-xl border-white/20 hover:border-primary/40 transition-all duration-500 group-hover:shadow-2xl overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 via-blue-500/10 to-emerald-500/10" />
               
               {/* Sacred geometry overlay */}
