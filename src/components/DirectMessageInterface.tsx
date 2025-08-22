@@ -162,9 +162,9 @@ export const DirectMessageInterface: React.FC<DirectMessageInterfaceProps> = ({
   };
 
   return (
-    <div className={`flex flex-col h-full bg-background/80 backdrop-blur-sm rounded-lg border ${className}`}>
+    <div className={`flex flex-col h-screen bg-background/80 backdrop-blur-sm rounded-lg border ${className}`}>
       {/* Header */}
-      <div className="flex items-center gap-3 p-4 border-b border-border/50">
+      <div className="flex items-center gap-3 p-4 border-b border-border/50 flex-shrink-0">
         {onClose && (
           <Button
             variant="ghost"
@@ -235,8 +235,8 @@ export const DirectMessageInterface: React.FC<DirectMessageInterfaceProps> = ({
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Message Input */}
-      <div className="p-4 border-t border-border/50 bg-background/50">
+      {/* Message Input - Always visible */}
+      <div className="p-4 border-t border-border/50 bg-background/50 flex-shrink-0">
         <div className="flex gap-2">
           <Input
             value={newMessage}
@@ -265,5 +265,5 @@ export const DirectMessageInterface: React.FC<DirectMessageInterfaceProps> = ({
         </p>
       </div>
     </div>
-  );
+  )
 };

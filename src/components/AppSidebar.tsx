@@ -122,7 +122,7 @@ export function AppSidebar() {
       collapsible="icon" 
       data-tour="navigation-sidebar"
     >
-      <SidebarContent className="bg-background/20 backdrop-blur-sm">
+      <SidebarContent className="bg-background/20 backdrop-blur-sm overflow-visible sidebar-no-scrollbar">
         {/* Core Navigation */}
         <SidebarGroup>
           <SidebarGroupLabel>Core Navigation</SidebarGroupLabel>
