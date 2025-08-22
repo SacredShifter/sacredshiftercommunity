@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
+import { useAuraCodeGeneration } from './useAuraCodeGeneration';
 import { toast } from 'sonner';
 
 export interface ImplementationRequest {
@@ -30,6 +31,7 @@ export function useAuraImplementation() {
   const [loading, setLoading] = useState(false);
   const [lastImplementation, setLastImplementation] = useState<ImplementationResult | null>(null);
   const { user } = useAuth();
+  const { executeFileSystemOperation } = useAuraCodeGeneration();
 
   const implementCode = async (request: ImplementationRequest): Promise<ImplementationResult | null> => {
     if (!user) {
@@ -63,6 +65,14 @@ export function useAuraImplementation() {
       const result = data.result as ImplementationResult;
       setLastImplementation(result);
 
+      // Now actually write the file using Aura's file writing capabilities
+      console.log('📝 Writing file with Aura:', result.file_path);
+      
+      // Use Aura's file system operation
+      await executeFileSystemOperation('write', result.file_path, {
+        content: request.generated_code
+      });
+
       toast.success(`✨ ${result.component_name || 'Code'} implemented successfully!`, {
         description: `Created at ${result.file_path}`
       });
@@ -77,6 +87,7 @@ export function useAuraImplementation() {
       setLoading(false);
     }
   };
+
 
   const extractCodeFromMessage = (content: string): ImplementationRequest | null => {
     // Extract code blocks from the message

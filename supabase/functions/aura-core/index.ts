@@ -139,7 +139,9 @@ serve(async (req) => {
       case 'unified_response':
         result = await processUnifiedResponse(supabase, user?.id || null, prompt, consciousness_state, sovereignty_level, OPENROUTER_API_KEY, platform_context, isAdmin, context_data);
         break;
-      case 'implement_code':
+    case 'write_file':
+      return await writeFile(body);
+    case 'implement_code':
         result = await implementCodeToFiles(supabase, user?.id || null, context_data, OPENROUTER_API_KEY);
         break;
         break;
@@ -357,6 +359,39 @@ async function analyzeProjectForImplementation(code, filePath, codeType) {
       'Verify responsive design'
     ]
   };
+}
+
+// Handler for writing files directly
+async function writeFile(body: any) {
+  try {
+    const { context_data } = body;
+    const { file_path, content } = context_data;
+
+    console.log(`📝 Writing file: ${file_path}`);
+
+    // Here you would integrate with Aura's file system
+    // For now, we'll return the content for the frontend to handle
+    return new Response(JSON.stringify({
+      success: true,
+      result: {
+        file_path,
+        content,
+        message: "File content prepared for writing"
+      }
+    }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+
+  } catch (error) {
+    console.error('Error in writeFile:', error);
+    return new Response(JSON.stringify({
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error'
+    }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
 }
 
 async function storeImplementationActivity(supabase, userId, activityData) {
