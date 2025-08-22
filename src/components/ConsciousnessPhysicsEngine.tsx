@@ -35,7 +35,7 @@ export const ConsciousnessPhysicsEngine: React.FC<PhysicsProps> = ({
           scale: 1, 
           rotate: 0,
           transition: {
-            type: "spring",
+            type: "spring" as const,
             stiffness: 400,
             damping: 10,
             duration: 0.3
@@ -44,7 +44,7 @@ export const ConsciousnessPhysicsEngine: React.FC<PhysicsProps> = ({
         whileHover: { 
           scale: 1.02,
           rotate: Math.random() * 4 - 2,
-          transition: { type: "spring", stiffness: 300 }
+          transition: { type: "spring" as const, stiffness: 300 }
         }
       };
     }
@@ -59,7 +59,7 @@ export const ConsciousnessPhysicsEngine: React.FC<PhysicsProps> = ({
           scale: 1,
           transition: {
             duration: 1.618, // Golden ratio
-            ease: [0.25, 0.1, 0.25, 1] // Custom bezier for harmony
+            ease: [0.25, 0.1, 0.25, 1] as const // Custom bezier for harmony
           }
         },
         whileHover: { 
@@ -78,14 +78,14 @@ export const ConsciousnessPhysicsEngine: React.FC<PhysicsProps> = ({
           opacity: 1, 
           x: 0,
           transition: {
-            type: "tween",
-            ease: "easeOut",
+            type: "tween" as const,
+            ease: "easeOut" as const,
             duration: 0.4
           }
         },
         whileHover: { 
           scale: 1.01,
-          transition: { type: "tween", duration: 0.2 }
+          transition: { type: "tween" as const, duration: 0.2 }
         }
       };
     }
@@ -99,7 +99,7 @@ export const ConsciousnessPhysicsEngine: React.FC<PhysicsProps> = ({
           y: 0, 
           scale: 1,
           transition: {
-            type: "spring",
+            type: "spring" as const,
             stiffness: 100,
             damping: 20,
             duration: 1.2
@@ -109,7 +109,7 @@ export const ConsciousnessPhysicsEngine: React.FC<PhysicsProps> = ({
           y: -2,
           scale: 1.03,
           transition: { 
-            type: "spring", 
+            type: "spring" as const, 
             stiffness: 150,
             damping: 15 
           }
@@ -123,7 +123,7 @@ export const ConsciousnessPhysicsEngine: React.FC<PhysicsProps> = ({
       animate: { 
         opacity: 1, 
         scale: 1,
-        transition: { duration: 0.5, ease: "easeOut" }
+        transition: { duration: 0.5, ease: "easeOut" as const }
       },
       whileHover: { scale: 1.02 }
     };
@@ -162,10 +162,6 @@ export const ConsciousnessPhysicsEngine: React.FC<PhysicsProps> = ({
       {...physics}
       style={{
         filter: getGlowIntensity()
-      }}
-      animate={{
-        ...physics.animate,
-        ...getBreathingAnimation()
       }}
     >
       {children}

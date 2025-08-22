@@ -150,39 +150,42 @@ export const SacredQuantumMessageInterface: React.FC<SacredQuantumMessageProps> 
 
   // Message physics based on consciousness state
   const getMessagePhysics = useCallback((isOwn: boolean) => {
-    const basePhysics = {
-      initial: { opacity: 0, y: 20, scale: 0.9 },
-      animate: { opacity: 1, y: 0, scale: 1 },
-      exit: { opacity: 0, y: -20, scale: 0.9 }
-    };
-
     if (consciousnessState.anxiety > 0.6) {
       return {
-        ...basePhysics,
-        animate: {
-          ...basePhysics.animate,
-          transition: { type: "spring", stiffness: 300, damping: 15 }
-        }
+        initial: { opacity: 0, y: 20, scale: 0.9 },
+        animate: { 
+          opacity: 1, 
+          y: 0, 
+          scale: 1,
+          transition: { type: "spring" as const, stiffness: 300, damping: 15 }
+        },
+        exit: { opacity: 0, y: -20, scale: 0.9 }
       };
     }
 
     if (consciousnessState.energy < 0.3) {
       return {
-        ...basePhysics,
-        animate: {
-          ...basePhysics.animate,
-          transition: { duration: 1.2, ease: [0.4, 0, 0.2, 1] }
-        }
+        initial: { opacity: 0, y: 20, scale: 0.9 },
+        animate: { 
+          opacity: 1, 
+          y: 0, 
+          scale: 1,
+          transition: { duration: 1.2, ease: [0.4, 0, 0.2, 1] as const }
+        },
+        exit: { opacity: 0, y: -20, scale: 0.9 }
       };
     }
 
     // Calm state - golden ratio timing
     return {
-      ...basePhysics,
-      animate: {
-        ...basePhysics.animate,
-        transition: { duration: 1.618, ease: "easeOut" }
-      }
+      initial: { opacity: 0, y: 20, scale: 0.9 },
+      animate: { 
+        opacity: 1, 
+        y: 0, 
+        scale: 1,
+        transition: { duration: 1.618, ease: "easeOut" as const }
+      },
+      exit: { opacity: 0, y: -20, scale: 0.9 }
     };
   }, [consciousnessState]);
 
@@ -381,20 +384,22 @@ export const SacredQuantumMessageInterface: React.FC<SacredQuantumMessageProps> 
           scrollbarWidth: 'thin'
         }}
       >
-        <AnimatePresence>
-          {messages.map((message) => {
-            const isOwn = message.sender_id === user?.id;
-            const physics = getMessagePhysics(isOwn);
-            const hasSync = synchronicityThreads.some(thread => 
-              message.content.toLowerCase().includes(thread.toLowerCase())
-            );
+          <AnimatePresence>
+            {messages.map((message) => {
+              const isOwn = message.sender_id === user?.id;
+              const physics = getMessagePhysics(isOwn);
+              const hasSync = synchronicityThreads.some(thread => 
+                message.content.toLowerCase().includes(thread.toLowerCase())
+              );
 
-            return (
-              <motion.div
-                key={message.id}
-                className={`flex mb-4 ${isOwn ? 'justify-end' : 'justify-start'}`}
-                {...physics}
-              >
+              return (
+                <motion.div
+                  key={message.id}
+                  className={`flex mb-4 ${isOwn ? 'justify-end' : 'justify-start'}`}
+                  initial={physics.initial}
+                  animate={physics.animate}
+                  exit={physics.exit}
+                >
                 <div className={`max-w-xs lg:max-w-md relative ${isOwn ? 'ml-8' : 'mr-8'}`}>
                   {/* Synchronicity Thread Indicator */}
                   {hasSync && (
