@@ -14,97 +14,80 @@ import { StartDirectMessageModal } from '@/components/StartDirectMessageModal';
 import { SacredQuantumMessageInterface } from '@/components/SacredQuantumMessageInterface';
 import { SynchronicityThreads } from '@/components/SynchronicityThreads';
 import { QuantumChatCore } from '@/components/QuantumChat/QuantumChatCore';
+import { ClassicChatInterface } from '@/components/ClassicChatInterface';
 import { toast } from 'sonner';
 
+type ViewMode = 'sacred' | 'quantum' | 'classic';
+
 export default function Messages() {
-  const { user } = useAuth();
-  const { signature } = usePersonalSignature();
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
   const [showStartMessageModal, setShowStartMessageModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [viewMode, setViewMode] = useState<'sacred' | 'quantum' | 'classic'>('sacred');
+  const [viewMode, setViewMode] = useState<ViewMode>('classic');
   const [showSynchronicity, setShowSynchronicity] = useState(false);
-  // Remove old refs as they're not needed for the new sacred interface
 
-  const {
-    messages,
-    conversations,
-    loading,
-    sendMessage,
-    markAsRead,
-    fetchMessages
-  } = useDirectMessages(selectedConversationId || undefined);
+  const { user } = useAuth();
+  const { signature } = usePersonalSignature();
+  const { conversations, messages, loading, fetchConversations, fetchMessages } = useDirectMessages();
 
-  const selectedConversation = conversations.find(c => 
-    selectedConversationId && (
-      (c.participant_1_id === user?.id && c.participant_2_id === selectedConversationId) ||
-      (c.participant_2_id === user?.id && c.participant_1_id === selectedConversationId)
-    )
-  );
-
-  // Enhanced view mode based on user's consciousness development
-  const getOptimalViewMode = () => {
-    if (!signature) return 'sacred';
+  // Determine optimal view mode based on user signature
+  const getOptimalViewMode = (signature: any): ViewMode => {
+    if (!signature) return 'classic';
     
-    const { temperament, cognitivePattern, preferences } = signature;
+    const spiritualityScore = (signature.spiritual_practice_frequency || 0) + 
+                             (signature.meditation_experience || 0) + 
+                             (signature.consciousness_exploration_interest || 0);
     
-    if (preferences.visualComplexity > 0.8 && cognitivePattern === 'quantum') {
-      return 'quantum';
-    }
-    
-    if (temperament === 'contemplative' || preferences.contemplationDepth > 0.7) {
-      return 'sacred';
-    }
-    
-    return 'sacred'; // Default to sacred experience
+    if (spiritualityScore >= 7) return 'sacred';
+    if (spiritualityScore >= 4) return 'quantum';
+    return 'classic';
   };
 
-  // Auto-adapt view mode to user's consciousness signature
+  // Auto-adapt view mode based on user signature
   useEffect(() => {
-    if (signature && viewMode === 'sacred') {
-      const optimalMode = getOptimalViewMode();
-      if (optimalMode !== viewMode) {
-        setViewMode(optimalMode);
-        toast.success(`Interface adapted to your consciousness signature: ${optimalMode} mode`);
-      }
+    if (signature) {
+      setViewMode(getOptimalViewMode(signature));
     }
-  }, [signature, viewMode]);
+  }, [signature]);
 
-  const getInitials = (name?: string) => {
-    if (!name) return 'SS';
-    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  useEffect(() => {
+    fetchConversations();
+  }, [fetchConversations]);
+
+  // Helper functions
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(word => word[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
   };
 
-  const formatTime = (dateString: string) => {
-    return formatDistance(new Date(dateString), new Date(), { addSuffix: true });
+  const formatTime = (timestamp: string) => {
+    return formatDistance(new Date(timestamp), new Date(), { addSuffix: true });
   };
 
-  const handleConversationSelect = (conversation: any) => {
-    const otherUserId = conversation.participant_1_id === user?.id 
-      ? conversation.participant_2_id 
-      : conversation.participant_1_id;
-    
-    setSelectedConversationId(otherUserId);
-    fetchMessages(otherUserId);
+  const handleConversationSelect = (conversationId: string) => {
+    setSelectedConversationId(conversationId);
+    fetchMessages(conversationId);
   };
 
-  const handleUserSelect = async (userId: string) => {
-    console.log('Selecting user:', userId);
+  const handleUserSelect = (userId: string) => {
     setSelectedConversationId(userId);
     setShowStartMessageModal(false);
-    
-    // Clear current messages and fetch new ones
-    await fetchMessages(userId);
   };
 
-  const filteredConversations = conversations.filter(conv => {
-    // Add search functionality for conversations
-    return true; // For now, show all conversations
+  // Filter conversations based on search query
+  const filteredConversations = conversations.filter((conversation) => {
+    if (!searchQuery) return true;
+    const otherParticipant = conversation.other_participant;
+    return otherParticipant?.display_name?.toLowerCase().includes(searchQuery.toLowerCase());
   });
 
   if (loading && conversations.length === 0) {
     return (
-      <div className="flex items-center justify-center h-full">
+      <div className="flex-1 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-muted-foreground">Loading conversations...</p>
@@ -114,123 +97,141 @@ export default function Messages() {
   }
 
   return (
-    <div className="h-[calc(100vh-8rem)] max-h-[calc(100vh-8rem)] flex bg-gradient-to-br from-background via-background/90 to-primary/5 backdrop-blur-sm overflow-hidden -m-4 sm:-m-6 md:-m-8 relative">
+    <div className="flex h-screen bg-background">
       {/* Conversations Sidebar */}
-      <div className={`${selectedConversationId ? 'hidden lg:flex' : 'flex'} w-full lg:w-80 border-r border-border/30 flex-col bg-background/40 backdrop-blur-md`}>
-        {/* Enhanced Header with View Mode Controls */}
-        <div className="p-4 border-b border-border/30">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-xl font-semibold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              Sacred Messages
-            </h2>
-            <div className="flex items-center gap-2">
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={() => setShowSynchronicity(!showSynchronicity)}
-                className="text-primary hover:text-primary/80"
-              >
-                <Eye className="h-4 w-4" />
-              </Button>
-              <Button 
-                variant="ghost" 
+      <div className={`${selectedConversationId ? 'hidden md:flex' : 'flex'} w-full md:w-80 flex-col border-r`}>
+        {/* Header */}
+        <Card className="rounded-none border-l-0 border-r-0 border-t-0">
+          <div className="p-4 space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold">Messages</h2>
+              <Button
+                variant="ghost"
                 size="sm"
                 onClick={() => setShowStartMessageModal(true)}
-                className="text-primary hover:text-primary/80"
               >
-                New Chat
+                <Send className="h-4 w-4" />
               </Button>
             </div>
-          </div>
-          
-          {/* View Mode Selector */}
-          <div className="flex items-center gap-1 mb-3 p-1 bg-muted/50 rounded-lg">
-            {['sacred', 'quantum', 'classic'].map((mode) => (
+
+            {/* View Mode Selector */}
+            <div className="flex space-x-1 bg-muted p-1 rounded-lg">
               <Button
-                key={mode}
-                variant={viewMode === mode ? 'default' : 'ghost'}
+                variant={viewMode === 'sacred' ? 'default' : 'ghost'}
                 size="sm"
-                onClick={() => setViewMode(mode as any)}
+                onClick={() => setViewMode('sacred')}
                 className="flex-1 text-xs"
               >
-                {mode === 'sacred' && <Heart className="w-3 h-3 mr-1" />}
-                {mode === 'quantum' && <Brain className="w-3 h-3 mr-1" />}
-                {mode === 'classic' && <Eye className="w-3 h-3 mr-1" />}
-                {mode.charAt(0).toUpperCase() + mode.slice(1)}
+                <Heart className="h-3 w-3 mr-1" />
+                Sacred
               </Button>
-            ))}
+              <Button
+                variant={viewMode === 'quantum' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setViewMode('quantum')}
+                className="flex-1 text-xs"
+              >
+                <Brain className="h-3 w-3 mr-1" />
+                Quantum
+              </Button>
+              <Button
+                variant={viewMode === 'classic' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setViewMode('classic')}
+                className="flex-1 text-xs"
+              >
+                <Send className="h-3 w-3 mr-1" />
+                Classic
+              </Button>
+            </div>
+
+            {/* Search */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search conversations..."
+                className="pl-9"
+              />
+            </div>
           </div>
-          
-          {/* Search */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-            <Input
-              placeholder="Search conversations..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-background/20 border-primary/20"
-            />
-          </div>
-        </div>
+        </Card>
 
         {/* Conversations List */}
         <ScrollArea className="flex-1">
-          {filteredConversations.length === 0 ? (
-            <div className="p-6 text-center">
-              <p className="text-muted-foreground mb-4">No conversations yet</p>
-              <Button onClick={() => setShowStartMessageModal(true)}>
-                Start a conversation
-              </Button>
-            </div>
-          ) : (
-            <div className="p-2">
-              {filteredConversations.map((conversation) => {
-                const otherUserId = conversation.participant_1_id === user?.id 
-                  ? conversation.participant_2_id 
-                  : conversation.participant_1_id;
-                const isSelected = selectedConversationId === otherUserId;
-                
-                return (
-                  <Card
-                    key={conversation.id}
-                    className={`p-3 mb-2 cursor-pointer transition-all hover:bg-accent/50 ${
-                      isSelected ? 'bg-primary/10 border-primary/20' : 'bg-background/10'
-                    }`}
-                    onClick={() => handleConversationSelect(conversation)}
-                  >
+          <div className="p-2 space-y-2">
+            {loading ? (
+              <div className="space-y-2">
+                {[...Array(5)].map((_, i) => (
+                  <div key={i} className="p-3 bg-muted/50 rounded-lg animate-pulse">
                     <div className="flex items-center space-x-3">
-                      <Avatar className="w-12 h-12">
-                        <AvatarImage src="" />
-                        <AvatarFallback className="bg-primary/10 text-primary">
-                          {getInitials('Sacred Seeker')}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
-                          <p className="font-medium truncate">Sacred Seeker</p>
-                          {conversation.last_message_at && (
-                            <span className="text-xs text-muted-foreground">
-                              {formatTime(conversation.last_message_at)}
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-sm text-muted-foreground truncate">
-                          {messages.length > 0 ? messages[messages.length - 1].content : 'Start a conversation...'}
-                        </p>
+                      <div className="w-12 h-12 bg-muted rounded-full" />
+                      <div className="flex-1 space-y-2">
+                        <div className="h-4 bg-muted rounded w-3/4" />
+                        <div className="h-3 bg-muted rounded w-1/2" />
                       </div>
                     </div>
-                  </Card>
-                );
-              })}
-            </div>
-          )}
+                  </div>
+                ))}
+              </div>
+            ) : filteredConversations.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground">No conversations yet</p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowStartMessageModal(true)}
+                  className="mt-2"
+                >
+                  Start a conversation
+                </Button>
+              </div>
+            ) : (
+              filteredConversations.map((conversation) => (
+                <Card
+                  key={conversation.id}
+                  className={`p-3 cursor-pointer transition-colors hover:bg-muted/50 ${
+                    selectedConversationId === conversation.id ? 'bg-muted border-primary' : ''
+                  }`}
+                  onClick={() => handleConversationSelect(conversation.id)}
+                >
+                  <div className="flex items-center space-x-3">
+                    <Avatar className="w-12 h-12">
+                      <AvatarImage src={conversation.other_participant?.avatar_url} />
+                      <AvatarFallback className="bg-primary/10 text-primary">
+                        {conversation.other_participant?.display_name 
+                          ? getInitials(conversation.other_participant.display_name)
+                          : '?'
+                        }
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <p className="font-medium truncate">
+                          {conversation.other_participant?.display_name || 'Unknown User'}
+                        </p>
+                        {conversation.last_message_at && (
+                          <span className="text-xs text-muted-foreground">
+                            {formatTime(conversation.last_message_at)}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-sm text-muted-foreground truncate">
+                        {conversation.last_message?.content || 'Start a conversation...'}
+                      </p>
+                    </div>
+                  </div>
+                </Card>
+              ))
+            )}
+          </div>
         </ScrollArea>
       </div>
 
-      {/* Sacred Communication Interface */}
+      {/* Chat Interface */}
       {selectedConversationId ? (
-        <div className="flex-1 relative">
-          {/* Render appropriate interface based on view mode */}
+        <div className="flex-1 flex flex-col">
           {viewMode === 'sacred' && (
             <SacredQuantumMessageInterface
               selectedUserId={selectedConversationId}
@@ -246,43 +247,29 @@ export default function Messages() {
           )}
           
           {viewMode === 'classic' && (
-            <div className="h-full flex items-center justify-center">
-              <Card className="p-8 text-center max-w-md">
-                <div className="w-20 h-20 rounded-full bg-muted/50 flex items-center justify-center mx-auto mb-4">
-                  <Send className="h-8 w-8 text-muted-foreground" />
-                </div>
-                <h3 className="text-xl font-medium mb-2">Classic Mode</h3>
-                <p className="text-muted-foreground mb-4">
-                  Classic messaging interface coming soon...
-                </p>
-                <Button 
-                  onClick={() => setViewMode('sacred')}
-                  className="bg-gradient-to-r from-primary to-secondary"
-                >
-                  Experience Sacred Mode
-                </Button>
-              </Card>
-            </div>
+            <ClassicChatInterface
+              selectedUserId={selectedConversationId}
+              onBack={() => setSelectedConversationId(null)}
+            />
           )}
         </div>
       ) : (
-        // Welcome Screen
         <div className="hidden lg:flex flex-1 items-center justify-center relative">
           <div className="text-center">
             <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center mx-auto mb-4 backdrop-blur-sm">
               <Heart className="h-8 w-8 text-primary" />
             </div>
             <h3 className="text-xl font-medium mb-2 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              Sacred Communication Portal
+              Communication Portal
             </h3>
             <p className="text-muted-foreground mb-4">
-              Select a soul to begin consciousness-synchronized communication
+              Select a conversation to begin messaging
             </p>
             <Button 
               onClick={() => setShowStartMessageModal(true)}
               className="bg-gradient-to-r from-primary to-secondary"
             >
-              Begin Sacred Connection
+              Start New Conversation
             </Button>
           </div>
         </div>
