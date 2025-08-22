@@ -25,17 +25,21 @@ export function useFrequencyTool() {
   const oscillatorRef = useRef<OscillatorNode | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
 
-  const createSacredTone = async (frequency: number, volume: number = 0.015) => {
-    try {
-      if (!audioContextRef.current) {
-        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-      }
+  const initializeAudioContext = async () => {
+    if (!audioContextRef.current) {
+      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+    }
+    
+    if (audioContextRef.current.state === 'suspended') {
+      await audioContextRef.current.resume();
+    }
+    
+    return audioContextRef.current;
+  };
 
-      const audioContext = audioContextRef.current;
-      
-      if (audioContext.state === 'suspended') {
-        await audioContext.resume();
-      }
+  const createSacredTone = async (frequency: number, volume: number = 0.1) => {
+    try {
+      const audioContext = await initializeAudioContext();
 
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
@@ -49,9 +53,11 @@ export function useFrequencyTool() {
       
       oscillator.start();
       
+      console.log(`🎵 Playing sacred frequency: ${frequency} Hz at volume ${volume}`);
+      
       return { oscillator, gainNode };
     } catch (error) {
-      console.warn('Sacred soundscape not available:', error);
+      console.error('Sacred soundscape error:', error);
       return null;
     }
   };
