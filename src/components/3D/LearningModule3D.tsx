@@ -28,8 +28,20 @@ import KabbalahTreeOfLife3D from './KabbalahTreeOfLife3D';
 import GaiaBreathing3D from './GaiaBreathing3D';
 import SchumannResonance3D from './SchumannResonance3D';
 import SigillumDeiAemeth3D from './SigillumDeiAemeth3D';
+import BreathOfSource3D from './BreathOfSource3D';
 
 const learningModules: LearningModule[] = [
+  {
+    id: 'breath-of-source',
+    title: 'Breath of Source Mastery',
+    description: 'Complete mastery learning path for sovereignty through breath. Mechanics, science, metaphysics, and visual biofeedback.',
+    category: 'Foundational Practice',
+    difficulty: 'beginner',
+    duration: '45-60 min',
+    tags: ['breath', 'sovereignty', 'mastery', 'biofeedback'],
+    icon: <Heart className="h-5 w-5" />,
+    component: BreathOfSource3D
+  },
   {
     id: 'chakra-system',
     title: 'Chakra Energy System',
