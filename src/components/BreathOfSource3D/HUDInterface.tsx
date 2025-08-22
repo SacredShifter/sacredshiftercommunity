@@ -65,7 +65,7 @@ export default function HUDInterface({
   const canComplete = required === 0 || cycleCount >= required;
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-15 flex flex-col">{/* Fixed positioning */}
+    <div className="absolute inset-0 pointer-events-none z-15 flex flex-col">{/* Absolute positioning within container */}
       {/* Top HUD - Lesson Info - Fixed to top */}
       <div className="absolute top-4 left-4 right-4 pointer-events-auto">
         <motion.div
