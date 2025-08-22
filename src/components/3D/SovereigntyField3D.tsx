@@ -432,11 +432,11 @@ export default function SovereigntyField3D() {
       </div>
 
       {/* 3D Canvas */}
-      <Canvas camera={{ position: [0, 0, 12], fov: 75 }}>
-        <ambientLight intensity={0.4} />
-        <pointLight position={[10, 10, 10]} intensity={1.2} />
-        <pointLight position={[-10, -10, -10]} intensity={0.8} color="#6366f1" />
-        <pointLight position={[0, 10, 0]} intensity={0.6} color="#10b981" />
+      <Canvas camera={{ position: [0, 0, 8], fov: 60 }} className="h-full w-full">
+        <ambientLight intensity={0.6} />
+        <pointLight position={[10, 10, 10]} intensity={1.5} />
+        <pointLight position={[-10, -10, -10]} intensity={1.0} color="#6366f1" />
+        <pointLight position={[0, 10, 0]} intensity={0.8} color="#10b981" />
         
         {isActive && (
           <SovereigntyField
@@ -448,11 +448,11 @@ export default function SovereigntyField3D() {
         
         <OrbitControls 
           enablePan={false} 
-          maxDistance={20} 
-          minDistance={8}
+          maxDistance={15} 
+          minDistance={5}
           target={[0, 0, 0]}
           autoRotate={isActive}
-          autoRotateSpeed={0.5}
+          autoRotateSpeed={0.3}
         />
       </Canvas>
 
