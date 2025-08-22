@@ -644,7 +644,6 @@ All colors MUST be HSL.
   body:active {
     animation-duration: 10s, 4s, 2s;
   }
-}
 
 /* Living Background Animations */
 @keyframes consciousness-breathe {
