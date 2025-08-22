@@ -229,13 +229,13 @@ export const QuantumChatCore: React.FC<QuantumChatCoreProps> = ({ roomId, onClos
   useEffect(() => {
     if (!user) return;
 
-    // Subscribe to messages
+    // Subscribe to messages - use any type until database types are updated
     const messagesChannel = supabase
       .channel(`quantum_chat_${roomId}`)
       .on('postgres_changes', {
         event: 'INSERT',
         schema: 'public',
-        table: 'quantum_messages',
+        table: 'quantum_messages' as any,
         filter: `room_id=eq.${roomId}`
       }, (payload) => {
         const newMsg = payload.new as QuantumMessage;
@@ -258,9 +258,21 @@ export const QuantumChatCore: React.FC<QuantumChatCoreProps> = ({ roomId, onClos
         const presences: UserPresence[] = [];
         
         Object.keys(state).forEach(key => {
-          const presence = state[key][0] as UserPresence;
-          if (presence.user_id !== user.id) {
-            presences.push(presence);
+          const presenceArray = state[key];
+          if (presenceArray && presenceArray.length > 0) {
+            const presenceData = presenceArray[0];
+            // Ensure we have valid UserPresence data with all required properties
+            if (presenceData && 
+                typeof presenceData === 'object' &&
+                'user_id' in presenceData && 
+                'position' in presenceData && 
+                'consciousness_state' in presenceData &&
+                'aura_color' in presenceData &&
+                'is_typing' in presenceData &&
+                'last_seen' in presenceData &&
+                presenceData.user_id !== user.id) {
+              presences.push(presenceData as UserPresence);
+            }
           }
         });
         
@@ -326,10 +338,11 @@ export const QuantumChatCore: React.FC<QuantumChatCoreProps> = ({ roomId, onClos
     };
 
     try {
+      // Direct insert using any type until database types are updated
       const { error } = await supabase
-        .from('quantum_messages')
+        .from('quantum_messages' as any)
         .insert(quantumMessage);
-
+      
       if (error) throw error;
 
       setNewMessage('');
