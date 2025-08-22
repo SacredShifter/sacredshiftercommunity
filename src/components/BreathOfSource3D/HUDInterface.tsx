@@ -65,7 +65,7 @@ export default function HUDInterface({
   const canComplete = required === 0 || cycleCount >= required;
 
   return (
-    <div className="absolute inset-0 pointer-events-none z-20">{/* Higher z-index */}
+    <div className="absolute inset-0 pointer-events-none z-15">{/* Lower z-index than breathing guidance */}
       {/* Top HUD - Lesson Info */}
       <div className="absolute top-6 left-6 right-6 pointer-events-auto">
         <motion.div
@@ -107,16 +107,12 @@ export default function HUDInterface({
                 </div>
               </div>
               
-              {/* Progress Bar for lessons with cycles */}
+              {/* Progress Bar for lessons with cycles - only show when breathing not active */}
               {required > 0 && (
                 <div className="mt-3">
-                  <Progress 
-                    value={progress} 
-                    className="h-2 bg-muted"
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Breath cycles completed
-                  </p>
+                  <div className="text-xs text-muted-foreground mb-1">
+                    Practice Progress: {Math.min(cycleCount, required)}/{required} cycles
+                  </div>
                 </div>
               )}
             </CardContent>
