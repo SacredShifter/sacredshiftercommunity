@@ -213,28 +213,26 @@ export default function SovereigntyField3D() {
         <pointLight position={[-10, -10, -10]} intensity={1.0} color="#6366f1" />
         <pointLight position={[0, 10, 0]} intensity={0.8} color="#10b981" />
         
-        {isActive && (
-          <SovereigntyField
-            strength={fieldStrength[0]}
-            frequency={fieldFrequency[0]}
-            coherence={fieldCoherence[0]}
-          />
-        )}
+        <SovereigntyField
+          strength={fieldStrength[0]}
+          frequency={fieldFrequency[0]}
+          coherence={fieldCoherence[0]}
+        />
         
         <OrbitControls 
           enablePan={false} 
           maxDistance={15} 
           minDistance={5}
           target={[0, 0, 0]}
-          autoRotate={isActive}
+          autoRotate={true}
           autoRotateSpeed={0.3}
         />
       </Canvas>
 
-      {/* Learning Panel - Small Overlay */}
+      {/* ALWAYS VISIBLE Learning Panel */}
       {currentPhase === 'learning' && (
-        <div className="absolute top-4 left-4 z-20 w-72">
-          <Card className="bg-black/60 backdrop-blur-md border-primary/30">
+        <div className="absolute top-4 left-4 z-50 w-72">
+          <Card className="bg-black/80 backdrop-blur-md border-primary/50 shadow-xl">
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center gap-2 text-primary text-sm">
                 <Shield className="h-4 w-4" />
