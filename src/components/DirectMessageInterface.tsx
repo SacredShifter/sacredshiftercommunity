@@ -101,10 +101,21 @@ export const DirectMessageInterface: React.FC<DirectMessageInterfaceProps> = ({
     };
   }, [user, recipientId, toast]);
 
-  // Disabled auto-scroll to prevent screen jumping
-  // useEffect(() => {
-  //   messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  // }, [messages]);
+  // Enable auto-scroll but control it to prevent jumping when users are reading
+  useEffect(() => {
+    if (messages.length > 0) {
+      // Only auto-scroll if user is near the bottom (within 100px)
+      const messagesContainer = messagesEndRef.current?.parentElement;
+      if (messagesContainer) {
+        const { scrollTop, scrollHeight, clientHeight } = messagesContainer;
+        const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
+        
+        if (isNearBottom) {
+          messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    }
+  }, [messages]);
 
   const sendMessage = async () => {
     if (!newMessage.trim() || !user || isLoading) return;

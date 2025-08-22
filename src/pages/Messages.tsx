@@ -15,10 +15,9 @@ import { SacredQuantumMessageInterface } from '@/components/SacredQuantumMessage
 import { SynchronicityThreads } from '@/components/SynchronicityThreads';
 import { QuantumChatCore } from '@/components/QuantumChat/QuantumChatCore';
 import { ClassicChatInterface } from '@/components/ClassicChatInterface';
-import { SacredMeshTestInterface } from '@/components/SacredMeshTestInterface';
 import { toast } from 'sonner';
 
-type ViewMode = 'sacred' | 'quantum' | 'classic' | 'mesh';
+type ViewMode = 'sacred' | 'quantum' | 'classic';
 
 export default function Messages() {
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
@@ -71,7 +70,14 @@ export default function Messages() {
 
   const handleConversationSelect = (conversationId: string) => {
     setSelectedConversationId(conversationId);
-    fetchMessages(conversationId);
+    // Get the other participant's ID for direct messaging
+    const conversation = conversations.find(c => c.id === conversationId);
+    if (conversation) {
+      const otherParticipantId = conversation.other_participant?.id;
+      if (otherParticipantId) {
+        fetchMessages(otherParticipantId);
+      }
+    }
   };
 
   const handleUserSelect = (userId: string) => {
@@ -115,44 +121,38 @@ export default function Messages() {
               </Button>
             </div>
 
-            {/* View Mode Selector */}
-            <div className="grid grid-cols-4 gap-1 bg-muted p-1 rounded-lg">
-              <Button
-                variant={viewMode === 'sacred' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setViewMode('sacred')}
-                className="text-xs px-2"
-              >
-                <Heart className="h-3 w-3 mr-1" />
-                Sacred
-              </Button>
-              <Button
-                variant={viewMode === 'quantum' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setViewMode('quantum')}
-                className="text-xs px-2"
-              >
-                <Brain className="h-3 w-3 mr-1" />
-                Quantum
-              </Button>
-              <Button
-                variant={viewMode === 'classic' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setViewMode('classic')}
-                className="text-xs px-2"
-              >
-                <Send className="h-3 w-3 mr-1" />
-                Classic
-              </Button>
-              <Button
-                variant={viewMode === 'mesh' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setViewMode('mesh')}
-                className="text-xs px-2"
-              >
-                <Wifi className="h-3 w-3 mr-1" />
-                Mesh
-              </Button>
+            {/* View Mode Selector - Vertical for mobile-friendly */}
+            <div className="space-y-2">
+              <div className="text-xs font-medium text-muted-foreground px-1">Message Mode</div>
+              <div className="flex flex-col gap-1">
+                <Button
+                  variant={viewMode === 'sacred' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setViewMode('sacred')}
+                  className="justify-start text-xs h-8"
+                >
+                  <Heart className="h-3 w-3 mr-2" />
+                  Sacred
+                </Button>
+                <Button
+                  variant={viewMode === 'quantum' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setViewMode('quantum')}
+                  className="justify-start text-xs h-8"
+                >
+                  <Brain className="h-3 w-3 mr-2" />
+                  Quantum
+                </Button>
+                <Button
+                  variant={viewMode === 'classic' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setViewMode('classic')}
+                  className="justify-start text-xs h-8"
+                >
+                  <Send className="h-3 w-3 mr-2" />
+                  Classic
+                </Button>
+              </div>
             </div>
 
             {/* Search */}
@@ -244,32 +244,24 @@ export default function Messages() {
         <div className="flex-1 flex flex-col">
           {viewMode === 'sacred' && (
             <SacredQuantumMessageInterface
-              selectedUserId={selectedConversationId}
+              selectedUserId={conversations.find(c => c.id === selectedConversationId)?.other_participant?.id || selectedConversationId}
               onBack={() => setSelectedConversationId(null)}
             />
           )}
           
           {viewMode === 'quantum' && (
             <QuantumChatCore
-              roomId={`dm_${[user?.id, selectedConversationId].sort().join('_')}`}
+              roomId={`dm_${[user?.id, conversations.find(c => c.id === selectedConversationId)?.other_participant?.id].sort().join('_')}`}
               onClose={() => setSelectedConversationId(null)}
             />
           )}
           
           {viewMode === 'classic' && (
             <ClassicChatInterface
-              selectedUserId={selectedConversationId}
+              selectedUserId={conversations.find(c => c.id === selectedConversationId)?.other_participant?.id || selectedConversationId}
               onBack={() => setSelectedConversationId(null)}
             />
           )}
-          
-          {viewMode === 'mesh' && (
-            <SacredMeshTestInterface />
-          )}
-        </div>
-      ) : viewMode === 'mesh' ? (
-        <div className="flex-1">
-          <SacredMeshTestInterface />
         </div>
       ) : (
         <div className="hidden lg:flex flex-1 items-center justify-center relative">

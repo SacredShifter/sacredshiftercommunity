@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Send, Users, Settings, UserPlus, Hash, ArrowLeft, Crown, Shield, BookOpen, Maximize2, Minimize2, Minus } from 'lucide-react';
+import { Send, Users, Settings, UserPlus, Hash, ArrowLeft, Crown, Shield, BookOpen, Maximize2, Minimize2, Minus, Heart, Brain } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -14,6 +14,11 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { CircleSettingsModal } from '@/components/CircleSettingsModal';
 import { AddMemberModal } from '@/components/AddMemberModal';
+import { CircleMessageModeSelector } from '@/components/CircleMessageModeSelector';
+import { SacredQuantumMessageInterface } from '@/components/SacredQuantumMessageInterface';
+import { QuantumChatCore } from '@/components/QuantumChat/QuantumChatCore';
+
+type MessageMode = 'sacred' | 'quantum' | 'classic';
 
 interface SacredCircleInterfaceProps {
   circleId?: string;
@@ -42,6 +47,7 @@ export const SacredCircleInterface = ({
   const { toast } = useToast();
   const [newMessage, setNewMessage] = useState('');
   const [activeTab, setActiveTab] = useState('messages');
+  const [messageMode, setMessageMode] = useState<MessageMode>('classic');
   const [sharedEntries, setSharedEntries] = useState<any[]>([]);
   const [loadingShares, setLoadingShares] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -150,17 +156,21 @@ export const SacredCircleInterface = ({
     }
 
     try {
-      await sendMessage(trimmed, 'circle', {
-        chakraTag: 'heart', // Default chakra
-        tone: 'harmonious',
+      const messageOptions = {
+        chakraTag: messageMode === 'sacred' ? 'heart' : messageMode === 'quantum' ? 'third_eye' : 'heart',
+        tone: messageMode === 'sacred' ? 'sacred' : messageMode === 'quantum' ? 'quantum' : 'harmonious',
         circleId,
-      });
+        messageMode // Add mode to metadata for special handling
+      };
+
+      await sendMessage(trimmed, 'circle', messageOptions);
       setNewMessage('');
       inputRef.current?.focus();
 
+      const modeText = messageMode === 'sacred' ? 'sacred' : messageMode === 'quantum' ? 'quantum' : '';
       toast({
         title: "Message sent",
-        description: "Your sacred message has been shared with the circle.",
+        description: `Your ${modeText} message has been shared with the circle.`,
       });
     } catch (error) {
       toast({
@@ -287,11 +297,75 @@ export const SacredCircleInterface = ({
         {/* Main Content */}
         <div className="flex-1 flex flex-col">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
-            <TabsList className="grid w-full grid-cols-3 mx-4 mt-2">
+            <TabsList className="grid w-full grid-cols-4 mx-4 mt-2">
               <TabsTrigger value="messages" className="text-xs">Messages</TabsTrigger>
+              <TabsTrigger value="modes" className="text-xs">Modes</TabsTrigger>
               <TabsTrigger value="shared" className="text-xs">Shared</TabsTrigger>
               <TabsTrigger value="members" className="text-xs">Members</TabsTrigger>
             </TabsList>
+
+            <TabsContent value="modes" className="flex-1 flex flex-col mt-2">
+              <div className="p-4">
+                <CircleMessageModeSelector
+                  mode={messageMode}
+                  onModeChange={setMessageMode}
+                />
+                
+                {/* Sacred/Quantum Interface for Circles */}
+                <div className="mt-4">
+                  {messageMode === 'sacred' && (
+                    <div className="p-4 border rounded-lg bg-gradient-to-br from-rose-50 to-pink-50 dark:from-rose-950/20 dark:to-pink-950/20">
+                      <div className="flex items-center gap-2 mb-3">
+                        <Heart className="h-4 w-4 text-rose-500" />
+                        <span className="text-sm font-medium">Sacred Circle Mode</span>
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-3">
+                        Engage in heart-centered communication with heightened consciousness and sacred intention.
+                      </p>
+                      <div className="text-xs text-muted-foreground">
+                        ✨ Messages carry energetic resonance<br/>
+                        💫 Enhanced synchronicity detection<br/>
+                        🌸 Chakra-aligned communication
+                      </div>
+                    </div>
+                  )}
+                  
+                  {messageMode === 'quantum' && (
+                    <div className="p-4 border rounded-lg bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-950/20 dark:to-indigo-950/20">
+                      <div className="flex items-center gap-2 mb-3">
+                        <Brain className="h-4 w-4 text-purple-500" />
+                        <span className="text-sm font-medium">Quantum Circle Mode</span>
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-3">
+                        Multi-dimensional communication with quantum entanglement and consciousness bridging.
+                      </p>
+                      <div className="text-xs text-muted-foreground">
+                        🌌 Non-local consciousness connection<br/>
+                        ⚡ Quantum field message threading<br/>
+                        🧬 Multidimensional awareness integration
+                      </div>
+                    </div>
+                  )}
+                  
+                  {messageMode === 'classic' && (
+                    <div className="p-4 border rounded-lg bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/20 dark:to-cyan-950/20">
+                      <div className="flex items-center gap-2 mb-3">
+                        <Send className="h-4 w-4 text-blue-500" />
+                        <span className="text-sm font-medium">Classic Circle Mode</span>
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-3">
+                        Traditional messaging with all the power of unified Sacred Shifter communication.
+                      </p>
+                      <div className="text-xs text-muted-foreground">
+                        💬 Standard text messaging<br/>
+                        🔄 Real-time synchronization<br/>
+                        🛡️ Encrypted & sovereign by default
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </TabsContent>
 
             <TabsContent value="messages" className="flex-1 flex flex-col mt-2">
               {/* Messages */}
@@ -405,28 +479,39 @@ export const SacredCircleInterface = ({
 
               {/* Input */}
               <div className="p-4 border-t bg-gradient-to-r from-muted/30 to-accent/10">
-                <div className="flex items-end gap-2">
-                  <div className="flex-1 relative">
-                    <Input
-                      ref={inputRef}
-                      value={newMessage}
-                      onChange={(e) => setNewMessage(e.target.value)}
-                      onKeyDown={handleKeyPress}
-                      placeholder="Share your sacred message..."
-                      className="pr-10 resize-none bg-background/80 border-muted"
-                      disabled={!user}
-                    />
-                  </div>
+                  <div className="flex items-end gap-2">
+                    <div className="flex-1 relative">
+                      <Input
+                        ref={inputRef}
+                        value={newMessage}
+                        onChange={(e) => setNewMessage(e.target.value)}
+                        onKeyDown={handleKeyPress}
+                        placeholder={
+                          messageMode === 'sacred' ? "Share your sacred message..." :
+                          messageMode === 'quantum' ? "Express your quantum awareness..." :
+                          "Type your message..."
+                        }
+                        className="pr-10 resize-none bg-background/80 border-muted"
+                        disabled={!user}
+                      />
+                    </div>
 
-                  <Button 
-                    onClick={handleSendMessage}
-                    disabled={!newMessage.trim() || !user || !circleId}
-                    size="sm"
-                    className="h-9 w-9 p-0 bg-gradient-to-br from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
-                  >
-                    <Send className="h-4 w-4" />
-                  </Button>
-                </div>
+                    <Button 
+                      onClick={handleSendMessage}
+                      disabled={!newMessage.trim() || !user || !circleId}
+                      size="sm" 
+                      className={cn(
+                        "h-9 w-9 p-0",
+                        messageMode === 'sacred' ? "bg-gradient-to-br from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600" :
+                        messageMode === 'quantum' ? "bg-gradient-to-br from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600" :
+                        "bg-gradient-to-br from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600"
+                      )}
+                    >
+                      {messageMode === 'sacred' ? <Heart className="h-4 w-4" /> :
+                       messageMode === 'quantum' ? <Brain className="h-4 w-4" /> :
+                       <Send className="h-4 w-4" />}
+                    </Button>
+                  </div>
               </div>
             </TabsContent>
 

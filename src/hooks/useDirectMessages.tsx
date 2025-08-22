@@ -72,7 +72,7 @@ export const useDirectMessages = (conversationUserId?: string) => {
     }
   }, [user]);
 
-  // Fetch all conversations for current user
+  // Fetch all conversations for current user with profile data
   const fetchConversations = useCallback(async () => {
     if (!user) return;
 
@@ -93,11 +93,28 @@ export const useDirectMessages = (conversationUserId?: string) => {
 
       console.log('Fetched conversations:', data);
 
-      // Transform conversations to basic format
-      const transformedConversations = (data || []).map(conv => ({
-        ...conv,
-        other_participant: undefined, // Will be populated later when needed
-        last_message: undefined // Will be populated later when needed
+      // Transform conversations and fetch participant profiles
+      const transformedConversations = await Promise.all((data || []).map(async (conv) => {
+        const otherParticipantId = conv.participant_1_id === user.id 
+          ? conv.participant_2_id 
+          : conv.participant_1_id;
+
+        // Fetch the other participant's profile
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('display_name, avatar_url')
+          .eq('user_id', otherParticipantId)
+          .single();
+
+        return {
+          ...conv,
+          other_participant: {
+            id: otherParticipantId,
+            display_name: profileData?.display_name || `User ${otherParticipantId.slice(0, 8)}`,
+            avatar_url: profileData?.avatar_url
+          },
+          last_message: undefined // Will be populated later when needed
+        };
       }));
 
       setConversations(transformedConversations as Conversation[]);
@@ -106,7 +123,7 @@ export const useDirectMessages = (conversationUserId?: string) => {
       console.error('Error fetching conversations:', err);
       setError('Failed to load conversations');
     } finally {
-      setLoading(false); // This was missing!
+      setLoading(false);
     }
   }, [user]);
 
