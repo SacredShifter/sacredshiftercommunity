@@ -77,32 +77,43 @@ export function useFrequencyTool() {
   };
 
   const toggleSacredSound = async () => {
+    console.log('🎵 Toggle sacred sound clicked, isPlaying:', isPlaying);
+    
     if (isPlaying) {
+      console.log('🔇 Stopping sound');
       stopSacredTone();
       setIsPlaying(false);
     } else {
+      console.log('🔊 Starting sound for frequency:', selectedFrequency.hz, 'Hz');
       const result = await createSacredTone(selectedFrequency.hz);
       if (result) {
         oscillatorRef.current = result.oscillator;
         gainNodeRef.current = result.gainNode;
         setIsPlaying(true);
+        console.log('✅ Sound started successfully');
+      } else {
+        console.error('❌ Failed to create sound');
       }
     }
   };
 
   const selectFrequency = async (frequency: SacredFrequency) => {
+    console.log('🎯 Frequency selected:', frequency.hz, 'Hz -', frequency.name);
     const wasPlaying = isPlaying;
     setSelectedFrequency(frequency);
     
     if (wasPlaying) {
+      console.log('🔄 Switching frequency while playing');
       stopSacredTone();
       const result = await createSacredTone(frequency.hz);
       if (result) {
         oscillatorRef.current = result.oscillator;
         gainNodeRef.current = result.gainNode;
         setIsPlaying(true);
+        console.log('✅ Frequency switched successfully');
       } else {
         setIsPlaying(false);
+        console.error('❌ Failed to switch frequency');
       }
     }
   };
