@@ -33,7 +33,7 @@ export const ToolbarBreathingInterface = () => {
             Breath of Source
           </h3>
           <p className="text-xs text-muted-foreground">
-            {isActive ? `${getPhaseLabel(currentPhase)} • Cycle ${cycleCount + 1}` : 'Find your center'}
+            {isActive ? `${getPhaseLabel(currentPhase)} • Cycle ${cycleCount + 1}` : 'Embrace the rhythm of sovereignty'}
           </p>
         </div>
 
@@ -126,12 +126,13 @@ export const ToolbarBreathingInterface = () => {
           </Button>
         </div>
 
-        {/* Session Stats */}
-        {isActive && (
-          <div className="text-center text-xs text-muted-foreground">
-            <div>Pattern: {currentPreset.inhale}s in • {currentPreset.hold1}s hold • {currentPreset.exhale}s out • {currentPreset.hold2}s hold</div>
-          </div>
-        )}
+                        {/* Session Stats */}
+                        {isActive && (
+                          <div className="text-center text-xs text-muted-foreground space-y-1">
+                            <div>Pattern: {currentPreset.inhale}s in • {currentPreset.hold1}s hold • {currentPreset.exhale}s out • {currentPreset.hold2}s hold</div>
+                            <div className="text-emerald-300/80 italic">The Rhythm - not to be feared, but embraced</div>
+                          </div>
+                        )}
       </div>
     </div>
   );

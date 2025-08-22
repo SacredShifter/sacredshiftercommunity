@@ -24,38 +24,38 @@ const BREATHING_PRESETS: BreathingPreset[] = [
   {
     id: 'box',
     name: 'Box Breathing',
+    description: 'Equal timing for centering',
     inhale: 4,
     hold1: 4,
     exhale: 4,
-    hold2: 4,
-    description: 'Equal timing for balance and focus'
+    hold2: 4
   },
   {
     id: 'relaxation',
     name: '4-7-8 Relaxation',
+    description: 'Extended exhale for calm',
     inhale: 4,
     hold1: 7,
     exhale: 8,
-    hold2: 0,
-    description: 'Deeply calming, reduces anxiety'
+    hold2: 0
   },
   {
     id: 'coherence',
     name: 'Coherence Breathing',
-    inhale: 5.5,
+    description: 'Heart-brain synchronization',
+    inhale: 5,
     hold1: 0,
-    exhale: 5.5,
-    hold2: 0,
-    description: 'Heart-brain coherence, 5.5 seconds each'
+    exhale: 5,
+    hold2: 0
   },
   {
-    id: 'resonant',
-    name: 'Resonant Breath',
+    id: 'liberation',
+    name: 'Liberation Breath',
+    description: 'Sovereignty through the life-death rhythm',
     inhale: 6,
-    hold1: 0,
-    exhale: 6,
-    hold2: 0,
-    description: 'Natural resonant frequency'
+    hold1: 6,
+    exhale: 8,
+    hold2: 4
   }
 ];
 
@@ -200,10 +200,20 @@ const BreathOfSource: React.FC<{ autoOpen?: boolean }> = ({ autoOpen = false }) 
 
   const getPhaseLabel = (phase: BreathPhase): string => {
     switch (phase) {
-      case 'inhale': return 'Breathe In';
-      case 'hold1': return 'Hold';
-      case 'exhale': return 'Breathe Out';
-      case 'hold2': return 'Hold';
+      case 'inhale': return 'Inhale (Life)';
+      case 'hold1': return 'Hold (Integration)';
+      case 'exhale': return 'Exhale (Death)';
+      case 'hold2': return 'Rest (Return to Source)';
+      default: return '';
+    }
+  };
+
+  const getPhaseMessage = (phase: BreathPhase): string => {
+    switch (phase) {
+      case 'inhale': return 'The chosen experience';
+      case 'hold1': return 'Embracing what comes';
+      case 'exhale': return 'The return to Source';
+      case 'hold2': return 'Rest in the void';
       default: return '';
     }
   };
@@ -273,8 +283,8 @@ const BreathOfSource: React.FC<{ autoOpen?: boolean }> = ({ autoOpen = false }) 
       
       if (cycleCount > 0) {
         toast({
-          title: "Breath Session Complete",
-          description: `You completed ${cycleCount} breathing cycles in ${Math.floor(duration / 60)}:${(duration % 60).toString().padStart(2, '0')}. You are here. You are safe.`,
+          title: "Sovereignty practice complete",
+          description: `${cycleCount} cycles of life-death rhythm embraced. When fear dissolves, the cycle no longer rules you.`,
         });
       }
     }
@@ -419,7 +429,7 @@ const BreathOfSource: React.FC<{ autoOpen?: boolean }> = ({ autoOpen = false }) 
                           Breath of Source
                         </h3>
                         <p className="text-xs text-muted-foreground">
-                          {isActive ? `${getPhaseLabel(currentPhase)} • Cycle ${cycleCount + 1}` : 'Find your center'}
+                          {isActive ? `${getPhaseLabel(currentPhase)} • Cycle ${cycleCount + 1}` : 'Embrace the rhythm of sovereignty'}
                         </p>
                       </div>
                     </div>
@@ -482,10 +492,15 @@ const BreathOfSource: React.FC<{ autoOpen?: boolean }> = ({ autoOpen = false }) 
                           <h4 className="text-lg font-light bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
                             {isActive ? getPhaseLabel(currentPhase) : 'Ready to Begin'}
                           </h4>
-                          {timeRemaining > 0 && (
-                            <p className="text-sm text-muted-foreground">
-                              {Math.ceil(timeRemaining / 1000)}s
-                            </p>
+                          {isActive && (
+                            <div className="space-y-1">
+                              <p className="text-sm text-muted-foreground">
+                                {Math.ceil(timeRemaining / 1000)}s
+                              </p>
+                              <p className="text-xs text-emerald-300/70 italic">
+                                {getPhaseMessage(currentPhase)}
+                              </p>
+                            </div>
                           )}
                         </motion.div>
 
@@ -722,9 +737,17 @@ const BreathOfSource: React.FC<{ autoOpen?: boolean }> = ({ autoOpen = false }) 
                         {isActive ? getPhaseLabel(currentPhase) : 'Ready to Begin'}
                       </h3>
                       {isActive && (
-                        <p className="text-muted-foreground">
-                          {Math.ceil(timeRemaining / 1000)}s remaining
-                        </p>
+                        <div className="space-y-2">
+                          <p className="text-muted-foreground">
+                            {Math.ceil(timeRemaining / 1000)}s remaining
+                          </p>
+                          <p className="text-emerald-300/80 italic text-sm">
+                            {getPhaseMessage(currentPhase)}
+                          </p>
+                          <p className="text-xs text-muted-foreground/60 italic mt-2">
+                            The Rhythm - not to be feared, but embraced
+                          </p>
+                        </div>
                       )}
                     </motion.div>
 
