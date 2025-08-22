@@ -96,19 +96,54 @@ export function useAuraImplementation() {
 
 
   const extractCodeFromMessage = (content: string): ImplementationRequest | null => {
-    // Extract code blocks from the message
-    const codeBlocks = content.match(/```[a-zA-Z]*\s*([\s\S]*?)```/g);
+    console.log('🔍 Extracting code from full content:', content.length, 'characters');
     
-    if (!codeBlocks || codeBlocks.length === 0) {
+    // First try to extract code blocks with proper markdown formatting
+    const codeBlocks = content.match(/```[a-zA-Z]*\s*([\s\S]*?)```/g);
+    let mainCodeBlock = '';
+    
+    if (codeBlocks && codeBlocks.length > 0) {
+      console.log('✅ Found', codeBlocks.length, 'code blocks with triple backticks');
+      mainCodeBlock = codeBlocks[0].replace(/```[a-zA-Z]*\s*/, '').replace(/```$/, '').trim();
+    } else {
+      console.log('❌ No triple backtick code blocks found, trying alternative extraction...');
+      
+      // Try to extract React component code patterns without proper markdown
+      const componentPattern = /(export default function \w+[\s\S]*?^}$)/gm;
+      const componentMatch = content.match(componentPattern);
+      
+      if (componentMatch) {
+        console.log('✅ Found component pattern without backticks');
+        mainCodeBlock = componentMatch[0].trim();
+      } else {
+        // Try to extract any function-like code
+        const functionPattern = /(function \w+[\s\S]*?^}$|const \w+ = [\s\S]*?^};?$)/gm;
+        const functionMatch = content.match(functionPattern);
+        
+        if (functionMatch) {
+          console.log('✅ Found function pattern without backticks');
+          mainCodeBlock = functionMatch[0].trim();
+        } else {
+          console.log('❌ No implementable code patterns found');
+          return null;
+        }
+      }
+    }
+    
+    if (!mainCodeBlock) {
+      console.log('❌ No code block extracted');
       return null;
     }
-
-    // Extract the main code block (usually the first one)
-    const mainCodeBlock = codeBlocks[0].replace(/```[a-zA-Z]*\s*/, '').replace(/```$/, '').trim();
+    
+    console.log('📄 Extracted code block:', mainCodeBlock.substring(0, 200) + '...');
     
     // Try to determine component name and file path
     const componentMatch = mainCodeBlock.match(/export default function (\w+)/);
-    const componentName = componentMatch ? componentMatch[1] : 'GeneratedComponent';
+    const functionMatch = mainCodeBlock.match(/function (\w+)/);
+    const constMatch = mainCodeBlock.match(/const (\w+) =/);
+    
+    const componentName = componentMatch?.[1] || functionMatch?.[1] || constMatch?.[1] || 'GeneratedComponent';
+    console.log('🏷️ Component name:', componentName);
     
     // Determine file path based on component name and type
     let filePath = `src/components/${componentName}.tsx`;
@@ -125,6 +160,9 @@ export function useAuraImplementation() {
       filePath = `src/hooks/${componentName}.tsx`;
       codeType = 'hook';
     }
+
+    console.log('📁 File path:', filePath);
+    console.log('🏷️ Code type:', codeType);
 
     return {
       generated_code: mainCodeBlock,
