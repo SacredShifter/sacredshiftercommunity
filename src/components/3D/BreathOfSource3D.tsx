@@ -231,10 +231,10 @@ export default function BreathOfSource3D() {
   };
 
   return (
-    <div className="relative h-screen w-full bg-silence overflow-hidden">
-      {/* 3D Canvas */}
+    <div className="fixed inset-0 w-full h-full bg-silence overflow-hidden">
+      {/* 3D Canvas - Full viewport */}
       <Canvas
-        className="absolute inset-0"
+        className="absolute inset-0 w-full h-full"
         shadows
         gl={{ 
           antialias: true, 

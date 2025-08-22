@@ -65,16 +65,16 @@ export default function HUDInterface({
   const canComplete = required === 0 || cycleCount >= required;
 
   return (
-    <div className="absolute inset-0 pointer-events-none z-15">{/* Lower z-index than breathing guidance */}
-      {/* Top HUD - Lesson Info - Compact */}
-      <div className="absolute top-6 left-6 right-6 pointer-events-auto">
+    <div className="fixed inset-0 pointer-events-none z-15 flex flex-col">{/* Fixed positioning */}
+      {/* Top HUD - Lesson Info - Fixed to top */}
+      <div className="absolute top-4 left-4 right-4 pointer-events-auto">
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           className="max-w-xl"
         >
-          <Card className="bg-background/70 backdrop-blur-md border-primary/20">
-            <CardContent className="p-3">
+          <Card className="bg-background/80 backdrop-blur-md border-primary/20">
+            <CardContent className="p-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <div className="text-primary text-sm">
@@ -109,22 +109,22 @@ export default function HUDInterface({
         </motion.div>
       </div>
 
-      {/* Bottom HUD - Controls - Compact */}
-      <div className="absolute bottom-6 left-6 right-6 pointer-events-auto">
+      {/* Bottom HUD - Fixed to bottom */}
+      <div className="absolute bottom-4 left-4 right-4 pointer-events-auto">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           className="max-w-sm mx-auto"
         >
-          <Card className="bg-background/70 backdrop-blur-md border-primary/20">
-            <CardContent className="p-3">
-              <div className="flex items-center justify-between space-x-3">
+          <Card className="bg-background/80 backdrop-blur-md border-primary/20">
+            <CardContent className="p-2">
+              <div className="flex items-center justify-between space-x-2">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={onPrevLesson}
                   disabled={currentLesson === 0}
-                  className="shrink-0 h-8 w-8 p-0"
+                  className="shrink-0 h-7 w-7 p-0"
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
@@ -133,7 +133,7 @@ export default function HUDInterface({
                   {!isLessonComplete ? (
                     <Button
                       onClick={onStartLesson}
-                      className="w-full h-8 text-xs"
+                      className="w-full h-7 text-xs"
                       size="sm"
                     >
                       <Play className="h-3 w-3 mr-1" />
@@ -143,7 +143,7 @@ export default function HUDInterface({
                     <Button
                       onClick={canComplete ? onCompleteLesson : undefined}
                       disabled={!canComplete}
-                      className="w-full h-8 text-xs sacred-button"
+                      className="w-full h-7 text-xs sacred-button"
                       size="sm"
                     >
                       <CheckCircle className="h-3 w-3 mr-1" />
@@ -157,7 +157,7 @@ export default function HUDInterface({
                   size="sm"
                   onClick={onNextLesson}
                   disabled={currentLesson >= 7 || !isLessonComplete}
-                  className="shrink-0 h-8 w-8 p-0"
+                  className="shrink-0 h-7 w-7 p-0"
                 >
                   <ChevronRight className="h-4 w-4" />
                 </Button>

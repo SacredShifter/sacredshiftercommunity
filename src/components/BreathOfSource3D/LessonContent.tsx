@@ -168,7 +168,7 @@ export default function LessonContent({
   }[trustSpeed];
 
   return (
-    <div className="absolute top-1/4 left-6 max-w-sm z-20">{/* Higher z-index */}
+    <div className="fixed top-1/4 left-4 max-w-sm z-20">{/* Fixed positioning */}
       <AnimatePresence mode="wait">
         <motion.div
           key={currentLesson}
@@ -184,10 +184,10 @@ export default function LessonContent({
           }}
         >
           <Card className={`
-            bg-background/70 backdrop-blur-md border-2 
+            bg-background/80 backdrop-blur-md border-2 
             ${speedConfig.className}
           `}>
-            <CardContent className="p-4 space-y-4">
+            <CardContent className="p-3 space-y-3">{/* Reduced padding */}
               {/* Lesson Header */}
               <div className="flex items-center space-x-3">
                 <div className="p-2 rounded-lg bg-primary/20 text-primary">
