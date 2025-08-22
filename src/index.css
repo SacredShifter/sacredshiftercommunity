@@ -1438,17 +1438,17 @@ body::after {
   }
 }
 
-@keyframes mesh-chain-flow {
+@keyframes mesh-pattern-flow {
   0% {
-    background-position: 0 0, 20px 20px;
+    background-position: 0 0, 8px 8px;
     transform: translateX(0) rotate(0deg);
   }
   50% {
-    background-position: 20px 20px, 40px 40px;
-    transform: translateX(5px) rotate(0.5deg);
+    background-position: 12px 12px, 20px 20px;
+    transform: translateX(2px) rotate(0.5deg);
   }
   100% {
-    background-position: 40px 40px, 60px 60px;
+    background-position: 25px 25px, 33px 33px;
     transform: translateX(0) rotate(0deg);
   }
 }

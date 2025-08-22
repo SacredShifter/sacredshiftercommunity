@@ -230,6 +230,30 @@ const Index = () => {
             <Card className="crown-jewel portal-tile mesh-chain-overlay relative p-8 backdrop-blur-xl border-white/20 hover:border-primary/40 transition-all duration-500 group-hover:shadow-2xl overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 via-blue-500/10 to-emerald-500/10" />
               
+              {/* Mesh Chain Overlay - Direct Implementation */}
+              <div className="absolute inset-0 z-10 pointer-events-none">
+                <div 
+                  className="w-full h-full opacity-60"
+                  style={{
+                    backgroundImage: `
+                      url("data:image/svg+xml,%3Csvg width='25' height='25' viewBox='0 0 25 25' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%2300ffff' stroke-width='1.5' stroke-opacity='0.8'%3E%3Cellipse cx='12.5' cy='6' rx='6' ry='3' transform='rotate(45 12.5 6)'/%3E%3Cellipse cx='12.5' cy='19' rx='6' ry='3' transform='rotate(-45 12.5 19)'/%3E%3Cellipse cx='6' cy='12.5' rx='6' ry='3' transform='rotate(45 6 12.5)'/%3E%3Cellipse cx='19' cy='12.5' rx='6' ry='3' transform='rotate(-45 19 12.5)'/%3E%3C/g%3E%3C/svg%3E"),
+                      url("data:image/svg+xml,%3Csvg width='15' height='15' viewBox='0 0 15 15' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='0.8' stroke-opacity='0.5'%3E%3Cpath d='M0,7.5 L15,7.5 M7.5,0 L7.5,15' /%3E%3Ccircle cx='7.5' cy='7.5' r='1.5' fill='%2300ffff' fill-opacity='0.4'/%3E%3C/g%3E%3C/svg%3E")
+                    `,
+                    backgroundSize: '25px 25px, 15px 15px',
+                    backgroundPosition: '0 0, 8px 8px',
+                    backgroundRepeat: 'repeat',
+                    animation: 'mesh-pattern-flow 8s linear infinite'
+                  }}
+                />
+                <div 
+                  className="absolute inset-0 bg-gradient-to-br from-cyan-400/20 via-transparent to-blue-400/20"
+                  style={{
+                    backdropFilter: 'blur(1px) brightness(1.2)',
+                    animation: 'glassy-shimmer 4s ease-in-out infinite'
+                  }}
+                />
+              </div>
+              
               {/* Sacred geometry overlay */}
               <div className="sacred-geometry">
                 <Hexagon className="w-full h-full text-primary/30" style={{ animation: 'merkaba-spin 8s linear infinite' }} />
