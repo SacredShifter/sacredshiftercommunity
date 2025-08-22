@@ -402,8 +402,8 @@ export const MirrorJournal: React.FC<MirrorJournalProps> = ({ className }) => {
               )}
             </div>
             
-            <ScrollArea className="h-[600px]">
-              <div className="space-y-4 pr-4">
+                   <ScrollArea className="h-[400px] md:h-[600px]">
+              <div className="space-y-4 pr-2 md:pr-4">
                 <AnimatePresence>
                   {entries.map((entry, index) => (
                     <motion.div

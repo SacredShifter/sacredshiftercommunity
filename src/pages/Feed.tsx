@@ -126,9 +126,9 @@ const Feed = () => {
   }
 
   return (
-    <div className="h-full">
+    <div className="min-h-screen">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-background/20 backdrop-blur-md border-b border-white/10">
+      <div className="sticky top-0 z-10 bg-background/20 backdrop-blur-md border-b border-white/10 -mt-4 sm:-mt-6 md:-mt-8 mb-4 sm:mb-6 md:mb-8">
         <div className="max-w-2xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
@@ -168,7 +168,8 @@ const Feed = () => {
       </div>
 
       {/* Feed Content */}
-      <div className="max-w-2xl mx-auto px-4 py-6 space-y-6 pb-32">
+      <div className="max-w-2xl mx-auto px-4 py-0 space-y-6 pb-8">
+        <div>
         {posts.length === 0 ? (
           <Card className="text-center py-12">
             <CardContent>
@@ -283,6 +284,7 @@ const Feed = () => {
             );
           })
         )}
+        </div>
       </div>
 
 

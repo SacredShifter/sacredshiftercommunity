@@ -282,14 +282,14 @@ export const SacredGrove: React.FC<SacredGroveProps> = ({ isVisible, onClose }) 
                   />
                 </TabsContent>
 
-                <TabsContent value="spirals" className="h-[600px] overflow-y-auto">
+                <TabsContent value="spirals" className="h-[400px] md:h-[600px] overflow-y-auto -webkit-overflow-scrolling-touch">
                   <EvolutionSpirals 
                     isVisible={true}
                     userId={user?.id}
                   />
                 </TabsContent>
 
-                <TabsContent value="gates" className="h-[600px] overflow-y-auto">
+                <TabsContent value="gates" className="h-[400px] md:h-[600px] overflow-y-auto -webkit-overflow-scrolling-touch">
                   <MysteryGates 
                     isVisible={true}
                     communityResonance={resonanceState.globalResonance}

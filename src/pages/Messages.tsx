@@ -104,7 +104,7 @@ export default function Messages() {
   }
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
+    <div className="flex h-full bg-background -m-4 sm:-m-6 md:-m-8">
       {/* Conversations Sidebar */}
       <div className={`${selectedConversationId ? 'hidden md:flex' : 'flex'} w-full md:w-80 flex-col border-r h-full`}>
         {/* Header */}
@@ -169,7 +169,7 @@ export default function Messages() {
         </Card>
 
         {/* Conversations List */}
-        <div className="flex-1 overflow-y-auto p-2 space-y-2">
+        <div className="flex-1 overflow-y-auto -webkit-overflow-scrolling-touch p-2 space-y-2 scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent">
           {loading ? (
             <div className="space-y-2">
               {[...Array(5)].map((_, i) => (

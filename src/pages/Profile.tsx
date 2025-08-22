@@ -187,8 +187,8 @@ const Profile = () => {
   }
 
   return (
-    <div className="h-full p-6">
-      <div className="max-w-2xl mx-auto space-y-6">
+    <div className="min-h-screen">
+      <div className="max-w-2xl mx-auto space-y-4 md:space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>

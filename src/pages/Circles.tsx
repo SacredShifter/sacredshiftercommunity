@@ -121,8 +121,8 @@ const Circles = () => {
   }
 
   return (
-    <div className="h-full p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="min-h-screen">
+      <div className="max-w-7xl mx-auto space-y-4 md:space-y-6">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>

@@ -5,7 +5,7 @@ import { YouTubeLibrary } from '@/components/YouTubeLibrary/YouTubeLibrary';
 
 const VideoLibrary: React.FC = () => {
   return (
-    <div className="h-full p-6">
+    <div className="min-h-screen">
       <div className="max-w-7xl mx-auto">
       <motion.div
         initial={{ opacity: 0 }}

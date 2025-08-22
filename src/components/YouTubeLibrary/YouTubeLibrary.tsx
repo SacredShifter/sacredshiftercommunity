@@ -130,7 +130,7 @@ export const YouTubeLibrary: React.FC = () => {
   const loading = apiLoading || metadataLoading;
 
   return (
-    <div className="container mx-auto px-4 py-6 space-y-8">
+    <div className="container mx-auto px-4 py-4 md:py-6 space-y-6 md:space-y-8 overflow-y-auto -webkit-overflow-scrolling-touch">
       {/* Channel Header */}
       <ChannelHeader channel={channel} loading={loading && !channel} />
 
