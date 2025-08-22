@@ -63,33 +63,68 @@ function SovereigntyField({ strength, frequency, coherence }: SovereigntyFieldPr
       </group>
 
       {/* Choice Points */}
-      {[0, 1, 2, 3, 4, 5].map((index) => (
+      {[0, 1, 2, 3, 4, 5, 6, 7].map((index) => (
         <mesh
           key={index}
           position={[
-            Math.cos(index * Math.PI / 3) * 5,
-            Math.sin(index * Math.PI / 4) * 2,
-            Math.sin(index * Math.PI / 3) * 5
+            Math.cos(index * Math.PI / 4) * 6,
+            Math.sin(index * Math.PI / 6) * 3,
+            Math.sin(index * Math.PI / 4) * 6
           ]}
         >
-          <sphereGeometry args={[0.2, 16, 16]} />
+          <sphereGeometry args={[0.3, 16, 16]} />
           <meshStandardMaterial
             color="#fbbf24"
             emissive="#f59e0b"
-            emissiveIntensity={0.1}
+            emissiveIntensity={0.3}
+            transparent
+            opacity={0.8}
+          />
+        </mesh>
+      ))}
+      
+      {/* Energy Connections */}
+      {[0, 1, 2, 3, 4, 5, 6, 7].map((index) => (
+        <mesh
+          key={`connection-${index}`}
+          position={[
+            Math.cos(index * Math.PI / 4) * 3,
+            0,
+            Math.sin(index * Math.PI / 4) * 3
+          ]}
+          rotation={[0, index * Math.PI / 4, 0]}
+        >
+          <cylinderGeometry args={[0.02, 0.02, 3, 8]} />
+          <meshStandardMaterial
+            color="#34d399"
+            emissive="#10b981"
+            emissiveIntensity={0.2}
+            transparent
+            opacity={0.6}
           />
         </mesh>
       ))}
 
       {/* Sovereignty Text */}
       <Text
-        position={[0, 6, 0]}
-        fontSize={0.5}
+        position={[0, 7, 0]}
+        fontSize={0.8}
+        color="#10b981"
+        anchorX="center"
+        anchorY="middle"
+        font="/fonts/inter-bold.woff"
+      >
+        SOVEREIGNTY FIELD
+      </Text>
+      
+      <Text
+        position={[0, -7, 0]}
+        fontSize={0.4}
         color="#ffffff"
         anchorX="center"
         anchorY="middle"
       >
-        SOVEREIGNTY FIELD ACTIVE
+        Strength: {(strength * 100).toFixed(0)}% | Frequency: {frequency.toFixed(1)} Hz | Coherence: {(coherence * 100).toFixed(0)}%
       </Text>
     </group>
   );
@@ -213,10 +248,11 @@ export default function SovereigntyField3D() {
       </div>
 
       {/* 3D Canvas */}
-      <Canvas camera={{ position: [8, 5, 8], fov: 60 }}>
-        <ambientLight intensity={0.3} />
-        <pointLight position={[10, 10, 10]} intensity={1} />
-        <pointLight position={[-10, -10, -10]} intensity={0.5} color="#6366f1" />
+      <Canvas camera={{ position: [0, 0, 12], fov: 75 }}>
+        <ambientLight intensity={0.4} />
+        <pointLight position={[10, 10, 10]} intensity={1.2} />
+        <pointLight position={[-10, -10, -10]} intensity={0.8} color="#6366f1" />
+        <pointLight position={[0, 10, 0]} intensity={0.6} color="#10b981" />
         
         {isActive && (
           <SovereigntyField
@@ -226,7 +262,14 @@ export default function SovereigntyField3D() {
           />
         )}
         
-        <OrbitControls enablePan={false} maxDistance={15} minDistance={5} />
+        <OrbitControls 
+          enablePan={false} 
+          maxDistance={20} 
+          minDistance={8}
+          target={[0, 0, 0]}
+          autoRotate={isActive}
+          autoRotateSpeed={0.5}
+        />
       </Canvas>
 
       {/* Bottom Panel */}
