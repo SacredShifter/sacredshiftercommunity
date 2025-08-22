@@ -115,7 +115,7 @@ export const SACRED_SIGIL_CODEX: SacredSigil[] = [
   {
     id: 'flow',
     name: 'Flow Sigil',
-    symbol: '卍',
+    symbol: '〜',
     intent: 'Marks messages aligned with synchronicity and effortless motion',
     category: 'consciousness_catalysts',
     resonanceFrequency: 7.83, // Schumann resonance
