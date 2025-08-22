@@ -28,10 +28,14 @@ const sacredToolsItems = [
   { title: "Sacred Grove", url: "/grove", icon: TreePine, tooltip: "Sacred Grove - Your living wisdom ecosystem for consciousness exploration" },
   { title: "Journal", url: "/journal", icon: BookOpen, tooltip: HelpTooltips.journal },
   { title: "Circles", url: "/circles", icon: Users, tooltip: HelpTooltips.circles },
-  { title: "3D Learning Modules", url: "/learning-3d", icon: Box, tooltip: "3D Learning Modules - Interactive sacred geometry and consciousness visualization library" },
-  { title: "Collective Codex", url: "/registry", icon: Database, tooltip: HelpTooltips.registry },
   { title: "Personal Codex", url: "/codex", icon: Archive, tooltip: HelpTooltips.codex },
   { title: "Consciousness Mapper", url: "/constellation", icon: Stars, tooltip: "Consciousness Constellation Mapper - AI-powered consciousness cartography and pattern recognition" },
+];
+
+const knowledgeItems = [
+  { title: "Guidebook", url: "/guidebook", icon: Scroll, tooltip: "Guidebook - Ancient wisdom for modern transformation" },
+  { title: "3D Learning Modules", url: "/learning-3d", icon: Box, tooltip: "3D Learning Modules - Interactive sacred geometry and consciousness visualization library" },
+  { title: "Collective Codex", url: "/registry", icon: Database, tooltip: HelpTooltips.registry },
 ];
 
 const mediaItems = [
@@ -215,25 +219,34 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Guidebook Section */}
+        {/* Knowledge Section */}
         <SidebarGroup>
           <SidebarGroupLabel>Knowledge</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              <SidebarMenuItem>
-                <TooltipWrapper 
-                  content="Guidebook - Ancient wisdom for modern transformation" 
-                  side="right"
-                  disabled={!isCollapsed}
-                >
-                  <SidebarMenuButton asChild>
-                    <Link to="/guidebook">
-                      <Scroll className="mr-2 h-4 w-4" />
-                      {!isCollapsed && <span>Guidebook</span>}
-                    </Link>
-                  </SidebarMenuButton>
-                </TooltipWrapper>
-              </SidebarMenuItem>
+              {knowledgeItems.map((item) => {
+                const isItemActive = isActive(item.url);
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <TooltipWrapper 
+                      content={item.tooltip} 
+                      side="right"
+                      disabled={!isCollapsed}
+                    >
+                      <SidebarMenuButton 
+                        asChild
+                        isActive={isItemActive}
+                        className={isItemActive ? "bg-primary/10 text-primary font-medium" : ""}
+                      >
+                        <Link to={item.url}>
+                          <item.icon className="mr-2 h-4 w-4" />
+                          {!isCollapsed && <span>{item.title}</span>}
+                        </Link>
+                      </SidebarMenuButton>
+                    </TooltipWrapper>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -257,6 +270,33 @@ export function AppSidebar() {
                     <Link to="/ai-admin">
                       <Brain className="mr-2 h-4 w-4" />
                       {!isCollapsed && <span>AI Admin</span>}
+                    </Link>
+                  </SidebarMenuButton>
+                </TooltipWrapper>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Support the Shift Section */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Support the Shift</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <TooltipWrapper 
+                  content="Support Sacred Shifter - Fuel the Frequency with donations and premium modules" 
+                  side="right"
+                  disabled={!isCollapsed}
+                >
+                  <SidebarMenuButton 
+                    asChild
+                    isActive={isActive("/support")}
+                    className={isActive("/support") ? "bg-primary/10 text-primary font-medium" : ""}
+                  >
+                    <Link to="/support">
+                      <Heart className="mr-2 h-4 w-4" />
+                      {!isCollapsed && <span>Support the Shift</span>}
                     </Link>
                   </SidebarMenuButton>
                 </TooltipWrapper>
@@ -290,25 +330,15 @@ export function AppSidebar() {
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <TooltipWrapper 
-                  content="Support Sacred Shifter - Fuel the Frequency with donations and premium modules" 
-                  side="right"
-                  disabled={!isCollapsed}
-                >
-                  <SidebarMenuButton asChild>
-                    <Link to="/support">
-                      <Heart className="mr-2 h-4 w-4" />
-                      {!isCollapsed && <span>Support the Shift</span>}
-                    </Link>
-                  </SidebarMenuButton>
-                </TooltipWrapper>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <TooltipWrapper 
                   content={HelpTooltips.settings} 
                   side="right"
                   disabled={!isCollapsed}
                 >
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton 
+                    asChild
+                    isActive={isActive("/settings")}
+                    className={isActive("/settings") ? "bg-primary/10 text-primary font-medium" : ""}
+                  >
                     <Link to="/settings">
                       <Settings className="mr-2 h-4 w-4" />
                       {!isCollapsed && <span>Settings</span>}
