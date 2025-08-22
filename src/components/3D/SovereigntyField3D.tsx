@@ -203,25 +203,25 @@ export default function SovereigntyField3D() {
     <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-black relative">
       {/* Learning Panel */}
       {currentPhase === 'learning' && (
-        <div className="absolute top-4 left-4 z-10 w-96">
-          <Card className="bg-black/30 backdrop-blur-md border-primary/20">
+        <div className="absolute top-4 left-4 z-20 w-80 max-w-[30vw]">
+          <Card className="bg-black/40 backdrop-blur-md border-primary/20">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-primary">
-                <Shield className="h-5 w-5" />
+              <CardTitle className="flex items-center gap-2 text-primary text-sm">
+                <Shield className="h-4 w-4" />
                 Sovereignty Learning
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-3">
               {(() => {
                 const currentLesson = getCurrentLesson();
                 return (
                   <>
                     <div>
-                      <h3 className="font-semibold text-lg mb-2">{currentLesson.title}</h3>
-                      <p className="text-sm text-muted-foreground mb-4">{currentLesson.content}</p>
+                      <h3 className="font-semibold text-base mb-2">{currentLesson.title}</h3>
+                      <p className="text-xs text-muted-foreground mb-3">{currentLesson.content}</p>
                       
-                      <div className="bg-primary/10 p-3 rounded-md">
-                        <p className="text-sm font-medium mb-1">Practice:</p>
+                      <div className="bg-primary/10 p-2 rounded-md">
+                        <p className="text-xs font-medium mb-1">Practice:</p>
                         <p className="text-xs text-muted-foreground">{currentLesson.practice}</p>
                       </div>
                     </div>
@@ -231,7 +231,7 @@ export default function SovereigntyField3D() {
                         onClick={() => completeLesson(currentLesson.id)}
                         variant="outline"
                         size="sm"
-                        className="flex-1"
+                        className="flex-1 text-xs"
                       >
                         Mark Complete
                       </Button>
@@ -239,7 +239,7 @@ export default function SovereigntyField3D() {
                         onClick={startPractice}
                         variant="default"
                         size="sm" 
-                        className="flex-1"
+                        className="flex-1 text-xs"
                       >
                         Start Practice
                       </Button>
@@ -396,26 +396,26 @@ export default function SovereigntyField3D() {
       )}
 
       {/* Sovereignty Principles */}
-      <div className="absolute top-4 right-4 z-10 w-80">
-        <Card className="bg-black/30 backdrop-blur-md border-primary/20">
+      <div className="absolute top-4 right-4 z-20 w-72 max-w-[25vw]">
+        <Card className="bg-black/40 backdrop-blur-md border-primary/20">
           <CardHeader>
             <CardTitle className="text-sm">Core Sovereignty Principles</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3 text-sm">
+          <CardContent className="space-y-2 text-sm">
             <div>
-              <p className="font-medium mb-1 text-emerald-400">Boundary Definition</p>
+              <p className="font-medium mb-1 text-emerald-400 text-xs">Boundary Definition</p>
               <p className="text-muted-foreground text-xs">Clear sense of where you end and others begin</p>
             </div>
             <div>
-              <p className="font-medium mb-1 text-blue-400">Choice Awareness</p>
+              <p className="font-medium mb-1 text-blue-400 text-xs">Choice Awareness</p>
               <p className="text-muted-foreground text-xs">Conscious participation in decision-making</p>
             </div>
             <div>
-              <p className="font-medium mb-1 text-purple-400">Embodied Power</p>
+              <p className="font-medium mb-1 text-purple-400 text-xs">Embodied Power</p>
               <p className="text-muted-foreground text-xs">Authority that lives in the body, not concepts</p>
             </div>
             <div>
-              <p className="font-medium mb-1 text-yellow-400">Compassionate Firmness</p>
+              <p className="font-medium mb-1 text-yellow-400 text-xs">Compassionate Firmness</p>
               <p className="text-muted-foreground text-xs">Clear boundaries with an open heart</p>
             </div>
             
