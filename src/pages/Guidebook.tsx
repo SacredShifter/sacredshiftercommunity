@@ -82,14 +82,29 @@ const sections = [
     ]
   },
   {
-    title: "Collective Codex",
-    icon: Star,
+    title: "Personal Codex",
+    icon: Heart,
     topics: [
       "How to track and measure frequency shifts in your consciousness",
-      "Recognizing synchronicities and their deeper meanings",
+      "Recognizing synchronicities and their deeper meanings", 
       "Calibrating your truth resonance through practice",
       "Understanding harmonic alignment with others",
       "Working with quantum field interactions in daily life"
+    ]
+  },
+  {
+    title: "Collective Codex",
+    icon: Star,
+    topics: [
+      "Accessing the living repository of ancient wisdom and sacred texts",
+      "Understanding the intersection of quantum physics and consciousness",
+      "Exploring metaphysical principles across cultures and traditions",
+      "Scientific research on consciousness, meditation, and spiritual phenomena",
+      "Sacred geometry patterns found in nature and cosmos",
+      "Archetypal wisdom from world mythology and depth psychology",
+      "Current discoveries in neuroscience and consciousness research",
+      "Contributing verified insights and knowledge to the collective",
+      "Navigating the community-verified wisdom database"
     ]
   },
   {
