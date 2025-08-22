@@ -170,7 +170,7 @@ export default function LearningModule3D({ moduleId, onBack, className }: Learni
     const ModuleComponent = selectedModule.component;
     
     return (
-      <div className={`min-h-screen bg-background ${className}`}>
+      <div className={`h-full w-full relative bg-background ${className}`}>
         {/* Fixed Back Button */}
         <div className="fixed top-4 left-4 z-50">
           <Button
@@ -193,7 +193,7 @@ export default function LearningModule3D({ moduleId, onBack, className }: Learni
   }
 
   return (
-    <div className={`p-6 space-y-6 ${className}`}>
+    <div className={`p-6 space-y-6 h-full overflow-y-auto ${className}`}>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
