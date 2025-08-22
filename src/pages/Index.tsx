@@ -10,7 +10,7 @@ import { OnboardingFlow } from "@/components/Onboarding/OnboardingFlow";
 import { SacredGrove } from "@/components/SacredGrove/SacredGrove";
 import { 
   Home, Users, User, Rss, Settings, LogOut, BookOpen, Video, 
-  Database, Archive, Scroll, Heart, Sparkles, Crown, Zap, Map 
+  Database, Archive, Scroll, Heart, Sparkles, Crown, Zap, Map, MessageCircle, Wifi 
 } from "lucide-react";
 
 const Index = () => {
@@ -94,6 +94,16 @@ const Index = () => {
       glowColor: "yellow",
       cta: "Enter the Living Wisdom Portal",
       pulseColor: "45 93% 47%" // sacred gold
+    },
+    {
+      title: "Sacred Messages",
+      description: "Sovereign mesh communication beyond towers—encrypted, resilient, unstoppable",
+      icon: MessageCircle,
+      path: "/messages",
+      gradient: "from-cyan-500/20 to-blue-500/20",
+      glowColor: "cyan",
+      cta: "Access the Sacred Mesh Network",
+      pulseColor: "180 100% 50%" // sovereign cyan
     },
     {
       title: "Sacred Feed",
@@ -215,12 +225,21 @@ const Index = () => {
               </div>
             </div>
             
+            <h1 className="text-3xl font-bold mb-4 bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent">
+              Sacred Shifter
+            </h1>
             <p className="text-xl text-muted-foreground mb-2">
-              Your consciousness transformation toolkit
+              Pioneer the Future of Sovereign Consciousness
             </p>
-            <p className="text-sm text-muted-foreground">
-              Signed in as: <span className="font-medium text-foreground">{user?.email}</span>
+            <p className="text-lg text-muted-foreground/80 mb-4 max-w-2xl mx-auto">
+              Privacy-first • Mesh-networked • Metaphysically-powered consciousness transformation platform
             </p>
+            <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+              <Wifi className="h-4 w-4 text-cyan-500" />
+              <span>Sacred Mesh Active</span>
+              <span>•</span>
+              <span className="font-medium text-foreground">{user?.email}</span>
+            </div>
           </div>
 
           {/* Sacred Shiftery Tiles */}
@@ -246,7 +265,31 @@ const Index = () => {
                       <rect width="100" height="100" fill="url(#grove-pattern)" />
                     </svg>
                   ),
-                  1: ( // Sacred Feed - Flowing stream pattern
+                  1: ( // Sacred Messages - Mesh network pattern
+                    <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
+                      <defs>
+                        <pattern id="mesh-pattern" x="0" y="0" width="25" height="25" patternUnits="userSpaceOnUse">
+                          <circle cx="5" cy="5" r="2" fill="currentColor" />
+                          <circle cx="15" cy="5" r="2" fill="currentColor" />
+                          <circle cx="25" cy="5" r="2" fill="currentColor" />
+                          <circle cx="5" cy="15" r="2" fill="currentColor" />
+                          <circle cx="15" cy="15" r="2" fill="currentColor" />
+                          <circle cx="25" cy="15" r="2" fill="currentColor" />
+                          <line x1="5" y1="5" x2="15" y2="5" stroke="currentColor" strokeWidth="1" />
+                          <line x1="15" y1="5" x2="25" y2="5" stroke="currentColor" strokeWidth="1" />
+                          <line x1="5" y1="5" x2="5" y2="15" stroke="currentColor" strokeWidth="1" />
+                          <line x1="15" y1="5" x2="15" y2="15" stroke="currentColor" strokeWidth="1" />
+                          <line x1="25" y1="5" x2="25" y2="15" stroke="currentColor" strokeWidth="1" />
+                          <line x1="5" y1="15" x2="15" y2="15" stroke="currentColor" strokeWidth="1" />
+                          <line x1="15" y1="15" x2="25" y2="15" stroke="currentColor" strokeWidth="1" />
+                          <line x1="5" y1="5" x2="15" y2="15" stroke="currentColor" strokeWidth="0.5" />
+                          <line x1="15" y1="5" x2="25" y2="15" stroke="currentColor" strokeWidth="0.5" />
+                        </pattern>
+                      </defs>
+                      <rect width="100" height="100" fill="url(#mesh-pattern)" />
+                    </svg>
+                  ),
+                  2: ( // Sacred Feed - Flowing stream pattern
                     <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
                       <defs>
                         <pattern id="feed-pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
@@ -259,7 +302,7 @@ const Index = () => {
                       <rect width="100" height="100" fill="url(#feed-pattern)" />
                     </svg>
                   ),
-                  2: ( // Sacred Circles - Circular connected pattern
+                  3: ( // Sacred Circles - Circular connected pattern
                     <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
                       <defs>
                         <pattern id="circles-pattern" x="0" y="0" width="25" height="25" patternUnits="userSpaceOnUse">
@@ -274,7 +317,7 @@ const Index = () => {
                       <rect width="100" height="100" fill="url(#circles-pattern)" />
                     </svg>
                   ),
-                  3: ( // Mirror Journal - Reflective chevron pattern
+                  4: ( // Mirror Journal - Reflective chevron pattern
                     <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
                       <defs>
                         <pattern id="journal-pattern" x="0" y="0" width="16" height="16" patternUnits="userSpaceOnUse">
@@ -285,7 +328,7 @@ const Index = () => {
                       <rect width="100" height="100" fill="url(#journal-pattern)" />
                     </svg>
                   ),
-                  4: ( // Collective Codex - Synchronized grid pattern
+                  5: ( // Collective Codex - Synchronized grid pattern
                     <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
                       <defs>
                         <pattern id="register-pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
@@ -303,7 +346,7 @@ const Index = () => {
                       <rect width="100" height="100" fill="url(#register-pattern)" />
                     </svg>
                   ),
-                  5: ( // Personal Codex - Ancient manuscript pattern
+                  6: ( // Personal Codex - Ancient manuscript pattern
                     <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
                       <defs>
                         <pattern id="codex-pattern" x="0" y="0" width="24" height="12" patternUnits="userSpaceOnUse">
@@ -316,7 +359,7 @@ const Index = () => {
                       <rect width="100" height="100" fill="url(#codex-pattern)" />
                     </svg>
                   ),
-                  6: ( // YouTube Library - Video tile mosaic
+                  7: ( // YouTube Library - Video tile mosaic
                     <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
                       <defs>
                         <pattern id="video-pattern" x="0" y="0" width="18" height="18" patternUnits="userSpaceOnUse">
@@ -331,7 +374,7 @@ const Index = () => {
                       <rect width="100" height="100" fill="url(#video-pattern)" />
                     </svg>
                   ),
-                  7: ( // Sacred Guidebook - Ancient scroll pattern
+                  8: ( // Sacred Guidebook - Ancient scroll pattern
                     <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
                       <defs>
                         <pattern id="guidebook-pattern" x="0" y="0" width="22" height="22" patternUnits="userSpaceOnUse">
@@ -345,7 +388,7 @@ const Index = () => {
                       <rect width="100" height="100" fill="url(#guidebook-pattern)" />
                     </svg>
                   ),
-                  8: ( // Consciousness Constellation - Star map pattern
+                  9: ( // Consciousness Constellation - Star map pattern
                     <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
                       <defs>
                         <pattern id="constellation-pattern" x="0" y="0" width="30" height="30" patternUnits="userSpaceOnUse">
@@ -363,7 +406,7 @@ const Index = () => {
                       <rect width="100" height="100" fill="url(#constellation-pattern)" />
                     </svg>
                   ),
-                  9: ( // Support - Heart frequency pattern
+                  10: ( // Support - Heart frequency pattern
                     <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
                       <defs>
                         <pattern id="support-pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">

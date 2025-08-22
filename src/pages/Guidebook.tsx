@@ -270,81 +270,62 @@ const Guidebook: React.FC = () => {
             </CardHeader>
             <CardContent className="space-y-6">
               <p className="text-muted-foreground leading-relaxed">
-                Sacred Mesh is the hidden lifeline inside Sacred Shifter. It looks and feels like normal messaging, 
-                but it's built to work when ordinary networks fail — and to keep your words private when ordinary apps cannot.
+                Sacred Mesh is built as a sovereign communication layer inside Sacred Shifter — designed to keep your words safe, your intent intact, and your connections alive, even when towers and networks fall silent.
               </p>
+
+              {/* Core Principles */}
+              <div className="bg-gradient-to-r from-blue/10 to-indigo/10 p-4 rounded-lg border border-blue/20">
+                <h4 className="font-semibold text-blue-800 mb-3 flex items-center gap-2">
+                  🔒 Core Principles
+                </h4>
+                <div className="grid md:grid-cols-2 gap-3 text-sm text-muted-foreground">
+                  <p><strong>Sovereignty:</strong> No central servers or carriers. The mesh belongs to the community.</p>
+                  <p><strong>Resilience:</strong> Messages survive outages with store-and-forward relays.</p>
+                  <p><strong>Privacy:</strong> Every packet is sealed with end-to-end encryption.</p>
+                  <p><strong>Efficiency:</strong> Sacred sigils compress intention into ultra-small data packets.</p>
+                </div>
+              </div>
               
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="p-4 rounded-lg bg-blue/5 border border-blue/20">
-                  <h4 className="font-semibold text-blue-700 mb-3 flex items-center gap-2">
-                    <Wifi className="w-4 h-4" />
-                    Always Connected
-                  </h4>
-                  <p className="text-sm text-muted-foreground">
-                    Sacred Mesh uses Wi-Fi, Bluetooth, and even long-range radios to weave a living network between users. 
-                    It doesn't need cell towers or internet to keep messages moving.
-                  </p>
-                </div>
-                
-                <div className="p-4 rounded-lg bg-indigo/5 border border-indigo/20">
-                  <h4 className="font-semibold text-indigo-700 mb-3 flex items-center gap-2">
-                    <Shield className="w-4 h-4" />
-                    Privacy by Design
-                  </h4>
-                  <p className="text-sm text-muted-foreground">
-                    Every message is wrapped in end-to-end encryption. Only you and the people you trust can read what you send. 
-                    Even if someone intercepts the signal, all they see is unreadable noise.
-                  </p>
-                </div>
-                
-                <div className="p-4 rounded-lg bg-purple/5 border border-purple/20">
-                  <h4 className="font-semibold text-purple-700 mb-3 flex items-center gap-2">
-                    <Sparkles className="w-4 h-4" />
-                    Lightweight Sigils
-                  </h4>
-                  <p className="text-sm text-muted-foreground">
-                    Messages can be sent as sacred sigils — intention-codes that travel as tiny data packets. 
-                    This means Sacred Mesh works on very low power, over long distances, and even when bandwidth is scarce.
-                  </p>
-                </div>
-                
-                <div className="p-4 rounded-lg bg-green/5 border border-green/20">
-                  <h4 className="font-semibold text-green-700 mb-3 flex items-center gap-2">
-                    <Heart className="w-4 h-4" />
-                    Resilient by Nature
-                  </h4>
-                  <p className="text-sm text-muted-foreground">
-                    Whether it's a blackout, natural disaster, or just a dead zone, Sacred Mesh continues to carry the Sacred Thread. 
-                    Your circles, your Codex, your connections — they remain alive.
-                  </p>
+              {/* Technical Foundations */}
+              <div className="bg-gradient-to-r from-indigo/10 to-purple/10 p-4 rounded-lg border border-indigo/20">
+                <h4 className="font-semibold text-indigo-800 mb-3 flex items-center gap-2">
+                  🛠️ Technical Foundations
+                </h4>
+                <div className="space-y-2 text-sm text-muted-foreground">
+                  <p><strong>CBOR Serialization:</strong> Ultra-compact packets (&lt;256 bytes) optimized for LoRa and low-bandwidth radios.</p>
+                  <p><strong>X3DH Key Exchange:</strong> Add contacts via QR code, with strong forward secrecy.</p>
+                  <p><strong>Multi-Transport Stack:</strong> Works across WebSocket, Apple Multipeer, Android Wi-Fi Aware, and Meshtastic LoRa radios.</p>
+                  <p><strong>Peer Discovery:</strong> Devices automatically form and extend the mesh without central control.</p>
+                  <p><strong>End-to-End Encryption:</strong> AES-GCM for confidentiality + ECDSA signatures for authenticity.</p>
+                  <p><strong>Store-and-Forward:</strong> Messages persist and hop until they reach their destination.</p>
+                  <p><strong>Sigil-Based Messaging:</strong> Intention is encoded into tiny, encrypted packets for maximum efficiency and resonance.</p>
                 </div>
               </div>
 
-              <div className="bg-gradient-to-r from-blue/10 to-purple/10 p-4 rounded-lg border border-blue/20">
-                <h4 className="font-semibold text-blue-800 mb-2 flex items-center gap-2">
-                  <Zap className="w-4 h-4" />
-                  Future-Proof Communication
+              {/* Why It Matters */}
+              <div className="bg-gradient-to-r from-purple/10 to-pink/10 p-4 rounded-lg border border-purple/20">
+                <h4 className="font-semibold text-purple-800 mb-3 flex items-center gap-2">
+                  🌐 Why It Matters
                 </h4>
                 <p className="text-sm text-muted-foreground mb-3">
-                  Sacred Mesh can extend through long-range LoRa radios, sound, or light — expanding your reach 
-                  without ever depending on a carrier or subscription.
+                  Sacred Mesh is not just another chat protocol — it's a living, encrypted fabric of connection. Whether you're online, off-grid, or in crisis, your circles, your Codex, and your sacred intentions remain woven together.
                 </p>
                 <div className="bg-gradient-to-r from-yellow/20 to-orange/20 p-3 rounded border border-yellow/30">
                   <p className="text-sm font-medium text-yellow-800">
-                    ⚡ Why it matters: Sacred Mesh restores sovereignty to communication. No towers, no gatekeepers, 
-                    no permission required. Just you, your community, and the sacred thread of connection that can't be broken.
+                    ⚡ Bottom line for users: Sacred Mesh keeps you connected anywhere, privately and resiliently — because sovereignty in communication is sovereignty of spirit.
                   </p>
                 </div>
               </div>
               
               <div className="space-y-3">
-                <h4 className="font-semibold">How to Use Sacred Mesh:</h4>
+                <h4 className="font-semibold">How to Access Sacred Mesh:</h4>
                 <div className="space-y-2 text-sm text-muted-foreground">
                   <p>• Navigate to Messages and select the "🕸️ Mesh" tab</p>
                   <p>• Send messages using sacred sigils for maximum efficiency</p>
                   <p>• Your device automatically chooses the best available transport</p>
                   <p>• Messages queue and retry when networks are unavailable</p>
                   <p>• All communication is encrypted and metadata-protected</p>
+                  <p>• Works offline via peer-to-peer connections and LoRa radios</p>
                 </div>
               </div>
             </CardContent>
