@@ -151,7 +151,7 @@ export const unhookingMachine = setup({
     paused: {
       on: {
         RESUME: {
-          target: '#unhooking.hist',
+          target: 'intro',
         },
         ABORT: 'exit',
       },
@@ -163,6 +163,7 @@ export const unhookingMachine = setup({
       type: 'final',
     },
   },
+  history: 'shallow',
 });
 
 function getNextScene(currentScene: string): string {
