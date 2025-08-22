@@ -117,7 +117,7 @@ function SpeedComparison({ mode, isActive }: SpeedComparisonProps) {
 
       {/* Information particles */}
       {particles.map(particle => (
-        <mesh key={particle.id} position={particle.position}>
+        <mesh key={particle.id} position={[particle.position.x, particle.position.y, particle.position.z]}>
           <Sphere args={[0.1, 8, 8]}>
             <meshStandardMaterial
               color={particle.absorbed ? '#ffffff' : particleColor}
