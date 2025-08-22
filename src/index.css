@@ -645,6 +645,21 @@ All colors MUST be HSL.
     animation-duration: 10s, 4s, 2s;
   }
 
+/* Resonance Meter - Compact Header Version */
+.resonance-meter-small {
+  @apply relative w-12 h-2 bg-border/30 rounded-full overflow-hidden;
+}
+
+.resonance-meter-small .resonance-fill {
+  @apply absolute left-0 top-0 h-full rounded-full transition-all duration-1000 ease-out;
+  background: linear-gradient(90deg, 
+    hsla(var(--primary) / 0.6), 
+    hsla(var(--primary) / 1));
+  width: var(--resonance-level, 67%);
+  box-shadow: 0 0 8px hsla(var(--primary) / 0.4);
+  animation: resonance-pulse 3s ease-in-out infinite;
+}
+
 /* Sovereign Mesh Header Styles */
 .sovereign-mesh-header {
   @apply flex items-center justify-center px-4 py-1;

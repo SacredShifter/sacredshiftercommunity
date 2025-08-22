@@ -178,10 +178,18 @@ const Index = () => {
       <div className="relative z-10 container mx-auto px-4 py-12">
         {/* Hero Section */}
         <div className="text-center mb-12 space-y-6">
+          <div className="flex justify-center mb-6">
+            <img
+              src="https://mikltjgbvxrxndtszorb.supabase.co/storage/v1/object/public/sacred-assets/uploads/Logo-MainSacredShifter-removebg-preview%20(1).png"
+              alt="Sacred Shifter"
+              className="h-16 md:h-20 w-auto filter invert brightness-0 contrast-100"
+            />
+          </div>
+          
           <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/30 backdrop-blur-sm">
             <Network className="h-5 w-5 text-primary animate-pulse" />
             <span className="text-lg font-bold bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
-              The Mesh of Consciousness
+              The Mesh of Consciousness — Connect, Reflect, Transform, Anywhere
             </span>
             <div className="privacy-indicator">
               <Lock className="h-4 w-4 privacy-lock" />
@@ -189,12 +197,8 @@ const Index = () => {
             </div>
           </div>
           
-          <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-foreground via-primary to-accent bg-clip-text text-transparent leading-tight">
-            Sacred Shifter
-          </h1>
-          
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Connect, Reflect, Transform — Anywhere. A sovereign platform where consciousness meets frontier technology. 
+            A sovereign platform where consciousness meets frontier technology. 
             Encrypted mesh networks, sacred wisdom, and digital sovereignty united.
           </p>
         </div>
