@@ -59,97 +59,107 @@ export function AuraConsole() {
   const dapResult = parsedCommand ? runDAP(parsedCommand) : null;
 
   return (
-    <div className="space-y-6">
-      <Card className="sacred-card">
-        <CardHeader>
+    <div className="h-full flex flex-col">
+      <Card className="sacred-card flex-1 flex flex-col min-h-0">
+        <CardHeader className="flex-shrink-0">
           <CardTitle className="flex items-center gap-2">
             <Terminal className="h-5 w-5" />
             Aura Command Console
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {/* Natural Language Input */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Natural Language Command</label>
-              <Textarea
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="e.g., 'Add akashic entry about Sacred Geometry' or 'Announce to all users: New features available'"
-                className="min-h-[100px] resize-none"
-                disabled={loading}
-              />
-              
-              {/* Example Commands */}
-              <div className="text-xs text-muted-foreground space-y-1">
-                <div>Examples:</div>
-                <div>• Add codex entry "Golden Ratio" with body "Mathematical harmony"</div>
-                <div>• Announce to all: Welcome to the new meditation features</div>
-                <div>• Create journal template "Shadow Work" for inner exploration</div>
-                <div>• Preview darker theme with purple accents</div>
+        <CardContent className="flex-1 flex flex-col min-h-0 space-y-4">
+          {/* Scrollable Content Area */}
+          <div className="flex-1 min-h-0 overflow-y-auto space-y-4 pr-2">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {/* Natural Language Input */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Natural Language Command</label>
+                <Textarea
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="e.g., 'Add akashic entry about Sacred Geometry' or 'Announce to all users: New features available'"
+                  className="min-h-[100px] resize-none"
+                  disabled={loading}
+                />
+                
+                {/* Example Commands */}
+                <div className="text-xs text-muted-foreground space-y-1">
+                  <div>Examples:</div>
+                  <div>• Add codex entry "Golden Ratio" with body "Mathematical harmony"</div>
+                  <div>• Announce to all: Welcome to the new meditation features</div>
+                  <div>• Create journal template "Shadow Work" for inner exploration</div>
+                  <div>• Preview darker theme with purple accents</div>
+                </div>
+              </div>
+
+              {/* Parsed Command View */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Parsed Command</label>
+                <div className="min-h-[100px] p-3 bg-muted rounded-md">
+                  {parsedCommand ? (
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <Badge variant={parsedCommand.level === 1 ? 'default' : parsedCommand.level === 2 ? 'secondary' : 'destructive'}>
+                          Level {parsedCommand.level}
+                        </Badge>
+                        <code className="text-sm">{parsedCommand.kind}</code>
+                      </div>
+                      <div className="text-sm">{getCommandDescription(parsedCommand)}</div>
+                      <pre className="text-xs text-muted-foreground overflow-auto max-h-32">
+                        {JSON.stringify(parsedCommand.payload, null, 2)}
+                      </pre>
+                    </div>
+                  ) : (
+                    <div className="text-muted-foreground text-sm">
+                      Enter a command to see the parsed result
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
-            {/* Parsed Command View */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Parsed Command</label>
-              <div className="min-h-[100px] p-3 bg-muted rounded-md">
-                {parsedCommand ? (
+            {/* DAP Analysis */}
+            {dapResult && (
+              <Alert>
+                <AlertTriangle className="h-4 w-4" />
+                <AlertDescription>
                   <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <Badge variant={parsedCommand.level === 1 ? 'default' : parsedCommand.level === 2 ? 'secondary' : 'destructive'}>
-                        Level {parsedCommand.level}
-                      </Badge>
-                      <code className="text-sm">{parsedCommand.kind}</code>
-                    </div>
-                    <div className="text-sm">{getCommandDescription(parsedCommand)}</div>
-                    <pre className="text-xs text-muted-foreground overflow-auto">
-                      {JSON.stringify(parsedCommand.payload, null, 2)}
-                    </pre>
+                    <div className="font-medium">Distortion Audit Protocol: {getDAPSummary(dapResult)}</div>
+                    {dapResult.warnings.map((warning, i) => (
+                      <div key={i} className="text-sm">⚠️ {warning}</div>
+                    ))}
+                    {dapResult.blockers?.map((blocker, i) => (
+                      <div key={i} className="text-sm text-destructive">❌ {blocker}</div>
+                    ))}
                   </div>
-                ) : (
-                  <div className="text-muted-foreground text-sm">
-                    Enter a command to see the parsed result
-                  </div>
-                )}
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {/* Preview Results */}
+            {preview && (
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Preview Results</label>
+                <div className="p-3 bg-muted rounded-md">
+                  <pre className="text-sm overflow-auto max-h-40">
+                    {JSON.stringify(preview, null, 2)}
+                  </pre>
+                </div>
               </div>
+            )}
+
+            {/* Level Information */}
+            <div className="text-xs text-muted-foreground space-y-1 pb-4">
+              <div><strong>Level 1:</strong> Executes immediately (content creation, announcements)</div>
+              <div><strong>Level 2:</strong> Requires confirmation (style previews, scaffolding)</div>
+              <div><strong>Level 3:</strong> Owner approval required (style changes, migrations)</div>
             </div>
           </div>
 
-          {/* DAP Analysis */}
-          {dapResult && (
-            <Alert>
-              <AlertTriangle className="h-4 w-4" />
-              <AlertDescription>
-                <div className="space-y-2">
-                  <div className="font-medium">Distortion Audit Protocol: {getDAPSummary(dapResult)}</div>
-                  {dapResult.warnings.map((warning, i) => (
-                    <div key={i} className="text-sm">⚠️ {warning}</div>
-                  ))}
-                  {dapResult.blockers?.map((blocker, i) => (
-                    <div key={i} className="text-sm text-destructive">❌ {blocker}</div>
-                  ))}
-                </div>
-              </AlertDescription>
-            </Alert>
-          )}
-
-          {/* Preview Results */}
-          {preview && (
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Preview Results</label>
-              <div className="p-3 bg-muted rounded-md">
-                <pre className="text-sm overflow-auto">
-                  {JSON.stringify(preview, null, 2)}
-                </pre>
-              </div>
-            </div>
-          )}
-
           <Separator />
 
-          {/* Action Buttons */}
-          <div className="flex gap-2 justify-end">
+          {/* Fixed Action Buttons at Bottom */}
+          <div className="flex-shrink-0 flex gap-2 justify-end pt-2">
             {parsedCommand && parsedCommand.level > 1 && (
               <Button
                 variant="outline"
@@ -171,13 +181,6 @@ export function AuraConsole() {
                parsedCommand?.level === 2 ? 'Request Confirmation' : 
                'Request Owner Approval'}
             </Button>
-          </div>
-
-          {/* Level Information */}
-          <div className="text-xs text-muted-foreground space-y-1">
-            <div><strong>Level 1:</strong> Executes immediately (content creation, announcements)</div>
-            <div><strong>Level 2:</strong> Requires confirmation (style previews, scaffolding)</div>
-            <div><strong>Level 3:</strong> Owner approval required (style changes, migrations)</div>
           </div>
         </CardContent>
       </Card>
