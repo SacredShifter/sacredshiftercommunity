@@ -4,6 +4,7 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { UIErrorBoundary } from "@/components/ErrorBoundary";
 import { AuraPresenceIndicator } from "@/components/AuraPresenceIndicator";
 import { NotificationDropdown } from "@/components/NotificationDropdown";
+import { SovereignMeshHeader } from "@/components/SovereignMeshHeader";
 import SimpleBackground from "@/components/SimpleBackground";
 
 export const MainLayout = () => {
@@ -15,6 +16,9 @@ export const MainLayout = () => {
           <AppSidebar />
         </UIErrorBoundary>
         <SidebarInset className="flex-1 flex flex-col min-h-screen">
+          {/* Sovereign Mesh Status Bar */}
+          <SovereignMeshHeader />
+          
           <header className="h-14 md:h-12 flex items-center justify-between border-b border-border/30 backdrop-blur-md bg-background/40 px-3 md:px-4 shrink-0 sticky top-0 z-50">
             <div className="flex items-center">
               <SidebarTrigger className="mr-2 md:mr-4" />

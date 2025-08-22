@@ -329,29 +329,6 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Consciousness Bar */}
-      <div className="consciousness-bar">
-        <div className="flex items-center gap-4">
-          <div className="privacy-indicator">
-            <Lock className="h-4 w-4 privacy-lock text-emerald-400" />
-            <span>Sovereign</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-muted-foreground">Field Resonance</span>
-            <div className="resonance-meter">
-              <div 
-                className="resonance-fill" 
-                style={{ '--resonance-level': `${resonanceLevel}%` } as React.CSSProperties}
-              />
-            </div>
-            <span className="text-xs font-mono text-primary">{Math.round(resonanceLevel)}%</span>
-          </div>
-          <div className="privacy-indicator">
-            <Network className="h-4 w-4 text-violet-400" style={{ animation: 'mesh-wave 2s ease-in-out infinite' }} />
-            <span>Mesh Active</span>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };

@@ -645,6 +645,29 @@ All colors MUST be HSL.
     animation-duration: 10s, 4s, 2s;
   }
 
+/* Sovereign Mesh Header Styles */
+.sovereign-mesh-header {
+  @apply flex items-center justify-center px-4 py-1;
+  background: linear-gradient(90deg, 
+    hsla(var(--primary) / 0.05) 0%, 
+    hsla(var(--primary) / 0.1) 50%, 
+    hsla(var(--primary) / 0.05) 100%);
+  border-bottom: 1px solid hsla(var(--border) / 0.3);
+  backdrop-filter: blur(8px);
+}
+
+.mesh-pulse {
+  animation: mesh-wave 2s ease-in-out infinite;
+}
+
+.connection-indicator {
+  @apply transition-all duration-300;
+}
+
+.connection-indicator:hover {
+  @apply text-primary;
+}
+
 /* Living Background Animations */
 @keyframes consciousness-breathe {
   0%, 100% { 
