@@ -28,6 +28,7 @@ import NotFound from "./pages/NotFound";
 import AuraQuantumCommandNexus from '@/pages/AuraQuantumCommandNexus';
 import ConstellationMapper from "./pages/ConstellationMapper";
 import Grove from "./pages/Grove";
+import Liberation from "./pages/Liberation";
 import LearningModule3D from './components/3D/LearningModule3D';
 
 function App() {
@@ -59,6 +60,7 @@ function App() {
                 <Route path="/resonance/entries/:id" element={<RegistryEntry />} />
                 <Route path="/codex" element={<AkashicConstellationPage />} />
                 <Route path="/grove" element={<Grove />} />
+                <Route path="/liberation" element={<Liberation />} />
                 <Route path="/guidebook" element={<Guidebook />} />
                 <Route path="/constellation" element={<ConstellationMapper />} />
                 <Route path="/support" element={<Support />} />

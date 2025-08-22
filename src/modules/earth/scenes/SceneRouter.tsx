@@ -1,0 +1,21 @@
+import React, { Suspense } from 'react';
+import { useEarthState } from '../context/EarthContext';
+
+export const SceneRouter: React.FC = () => {
+  const { state } = useEarthState();
+  const currentScene = state.context.currentScene;
+
+  return (
+    <Suspense fallback={<mesh><sphereGeometry args={[1]} /><meshBasicMaterial color="#228B22" wireframe /></mesh>}>
+      <group>
+        <ambientLight intensity={0.4} color="#90EE90" />
+        <pointLight position={[0, 5, 0]} intensity={0.6} color="#32CD32" />
+        <mesh position={[0, -2, 0]} onClick={() => state.send?.({ type: 'STEP_IN' })}>
+          <planeGeometry args={[20, 20]} />
+          <meshStandardMaterial color="#8B4513" />
+        </mesh>
+        <text position={[0, 2, 0]} color="#FFFFFF">Earth Module - {currentScene}</text>
+      </group>
+    </Suspense>
+  );
+};
