@@ -60,6 +60,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ isVisible, onCom
           .from('profiles')
           .upsert({ 
             id: user.id,
+            user_id: user.id,
             display_name: user.email?.split('@')[0] || 'Sacred Seeker',
             onboarding_completed: true,
             created_at: new Date().toISOString(),

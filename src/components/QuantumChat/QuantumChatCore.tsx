@@ -229,11 +229,32 @@ export const QuantumChatCore: React.FC<QuantumChatCoreProps> = ({ roomId, onClos
     }
   };
 
-  // Set up real-time subscriptions
+  // Load existing messages and set up real-time subscriptions
   useEffect(() => {
     if (!user) return;
 
-    // Subscribe to messages - use any type until database types are updated
+    // Fetch existing messages first
+    const loadMessages = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('quantum_messages' as any)
+          .select('*')
+          .eq('room_id', roomId)
+          .order('created_at', { ascending: true });
+        
+        if (error) {
+          console.error('Error loading messages:', error);
+        } else if (data) {
+          setMessages(data as unknown as QuantumMessage[]);
+        }
+      } catch (err) {
+        console.error('Failed to load quantum messages:', err);
+      }
+    };
+
+    loadMessages();
+
+    // Subscribe to new messages
     const messagesChannel = supabase
       .channel(`quantum_chat_${roomId}`)
       .on('postgres_changes', {

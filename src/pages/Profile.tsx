@@ -41,7 +41,7 @@ const Profile = () => {
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
-        .eq('id', user.id)
+        .eq('user_id', user.id)
         .single();
 
       if (error) {
@@ -51,6 +51,7 @@ const Profile = () => {
             .from('profiles')
             .insert([{
               id: user.id,
+              user_id: user.id,
               display_name: user.email?.split('@')[0] || 'Sacred Seeker',
             }])
             .select()
@@ -115,7 +116,7 @@ const Profile = () => {
           display_name: formData.display_name,
           avatar_url: formData.avatar_url,
         })
-        .eq('id', user.id)
+        .eq('user_id', user.id)
         .select()
         .single();
 
