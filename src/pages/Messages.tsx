@@ -15,9 +15,10 @@ import { SacredQuantumMessageInterface } from '@/components/SacredQuantumMessage
 import { SynchronicityThreads } from '@/components/SynchronicityThreads';
 import { QuantumChatCore } from '@/components/QuantumChat/QuantumChatCore';
 import { ClassicChatInterface } from '@/components/ClassicChatInterface';
+import { SacredMeshTestInterface } from '@/components/SacredMeshTestInterface';
 import { toast } from 'sonner';
 
-type ViewMode = 'sacred' | 'quantum' | 'classic';
+type ViewMode = 'sacred' | 'quantum' | 'classic' | 'mesh';
 
 export default function Messages() {
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
@@ -143,6 +144,14 @@ export default function Messages() {
                 <Send className="h-3 w-3 mr-1" />
                 Classic
               </Button>
+              <Button
+                variant={viewMode === 'mesh' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setViewMode('mesh')}
+                className="flex-1 text-xs"
+              >
+                🕸️ Mesh
+              </Button>
             </div>
 
             {/* Search */}
@@ -252,6 +261,14 @@ export default function Messages() {
               onBack={() => setSelectedConversationId(null)}
             />
           )}
+          
+          {viewMode === 'mesh' && (
+            <SacredMeshTestInterface />
+          )}
+        </div>
+      ) : viewMode === 'mesh' ? (
+        <div className="flex-1">
+          <SacredMeshTestInterface />
         </div>
       ) : (
         <div className="hidden lg:flex flex-1 items-center justify-center relative">
