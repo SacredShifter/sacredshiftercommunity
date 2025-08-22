@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Send, Users, Settings, UserPlus, Hash, ArrowLeft, Crown, Shield, BookOpen, Maximize2, Minimize2, Minus, Heart, Brain } from 'lucide-react';
+import { Send, Users, Settings, UserPlus, Hash, ArrowLeft, Crown, Shield, BookOpen, Maximize2, Minimize2, Minus, Heart, Brain, MessageSquare, Activity, Filter, Sparkles, Vote } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -17,6 +17,15 @@ import { AddMemberModal } from '@/components/AddMemberModal';
 import { CircleMessageModeSelector } from '@/components/CircleMessageModeSelector';
 import { SacredQuantumMessageInterface } from '@/components/SacredQuantumMessageInterface';
 import { QuantumChatCore } from '@/components/QuantumChat/QuantumChatCore';
+import { MessageReactions } from '@/components/SacredCircle/MessageReactions';
+import { MessageThread } from '@/components/SacredCircle/MessageThread';
+import { EnhancedMemberProfile } from '@/components/SacredCircle/EnhancedMemberProfile';
+import { CircleHealthDashboard } from '@/components/SacredCircle/CircleHealthDashboard';
+import { CircleAdvancedFiltering } from '@/components/SacredCircle/CircleAdvancedFiltering';
+import { CollectiveMeditationSession } from '@/components/SacredCircle/CollectiveMeditationSession';
+import { CircleVoiceMessage } from '@/components/SacredCircle/CircleVoiceMessage';
+import { CircleAstrologicalTiming } from '@/components/SacredCircle/CircleAstrologicalTiming';
+import { CircleGovernanceSystem } from '@/components/SacredCircle/CircleGovernanceSystem';
 
 type MessageMode = 'sacred' | 'quantum' | 'classic';
 
@@ -52,6 +61,9 @@ export const SacredCircleInterface = ({
   const [loadingShares, setLoadingShares] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showAddMember, setShowAddMember] = useState(false);
+  const [selectedThreadMessage, setSelectedThreadMessage] = useState<string | null>(null);
+  const [messageReactions, setMessageReactions] = useState<{[messageId: string]: any[]}>({});
+  const [filteredMessages, setFilteredMessages] = useState<any[]>([]);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -76,8 +88,14 @@ export const SacredCircleInterface = ({
     fetchRecentMessages(circleId);
     if (circleId) {
       fetchSharedEntries();
+      fetchMessageReactions();
     }
   }, [fetchRecentMessages, circleId]);
+
+  // Update filtered messages when messages change
+  useEffect(() => {
+    setFilteredMessages(messages);
+  }, [messages]);
 
   const fetchSharedEntries = async () => {
     if (!circleId) return;
@@ -123,6 +141,22 @@ export const SacredCircleInterface = ({
     } finally {
       setLoadingShares(false);
     }
+  };
+
+  const fetchMessageReactions = async () => {
+    if (!circleId) return;
+    
+    // Placeholder - would fetch from actual database
+    console.log('Fetching message reactions for circle:', circleId);
+  };
+
+  const handleReactionUpdate = () => {
+    // Placeholder - would refetch reactions
+    console.log('Updating reactions');
+  };
+
+  const handleMessageFilter = (filtered: any[]) => {
+    setFilteredMessages(filtered);
   };
 
   const handleSendMessage = async () => {
@@ -297,11 +331,15 @@ export const SacredCircleInterface = ({
         {/* Main Content */}
         <div className="flex-1 flex flex-col">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
-            <TabsList className="grid w-full grid-cols-4 mx-4 mt-2">
+            <TabsList className="grid w-full grid-cols-8 mx-4 mt-2">
               <TabsTrigger value="messages" className="text-xs">Messages</TabsTrigger>
+              <TabsTrigger value="health" className="text-xs"><Activity className="h-3 w-3" /></TabsTrigger>
+              <TabsTrigger value="meditation" className="text-xs"><Sparkles className="h-3 w-3" /></TabsTrigger>
+              <TabsTrigger value="governance" className="text-xs"><Vote className="h-3 w-3" /></TabsTrigger>
               <TabsTrigger value="modes" className="text-xs">Modes</TabsTrigger>
               <TabsTrigger value="shared" className="text-xs">Shared</TabsTrigger>
               <TabsTrigger value="members" className="text-xs">Members</TabsTrigger>
+              <TabsTrigger value="filter" className="text-xs"><Filter className="h-3 w-3" /></TabsTrigger>
             </TabsList>
 
             <TabsContent value="modes" className="flex-1 flex flex-col mt-2">
@@ -377,7 +415,7 @@ export const SacredCircleInterface = ({
                 ) : (
                   <div className="space-y-4">
                     {(() => {
-                      const circleMessages = circleId ? messages.filter(m => m.group_id === circleId) : messages;
+                      const circleMessages = circleId ? filteredMessages.filter(m => m.group_id === circleId) : filteredMessages;
                       return circleMessages.map((message, index) => {
                         const isOwnMessage = message.user_id === user?.id;
                         const showAvatar = index === 0 || circleMessages[index - 1]?.user_id !== message.user_id;

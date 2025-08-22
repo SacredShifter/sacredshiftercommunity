@@ -1,10 +1,6 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Badge } from '@/components/ui/badge';
-import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
 
 interface MessageReaction {
   id: string;
@@ -32,93 +28,37 @@ const SACRED_REACTIONS = [
 ];
 
 export const MessageReactions = ({ messageId, reactions, onReactionUpdate }: MessageReactionsProps) => {
-  const { user } = useAuth();
-  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-
-  // Group reactions by type
-  const groupedReactions = reactions.reduce((acc, reaction) => {
-    if (!acc[reaction.reaction_type]) {
-      acc[reaction.reaction_type] = [];
-    }
-    acc[reaction.reaction_type].push(reaction);
-    return acc;
-  }, {} as Record<string, MessageReaction[]>);
+  const [userReactions, setUserReactions] = useState<string[]>(['🙏']); // Mock user reactions
 
   const handleReaction = async (reactionType: string) => {
-    if (!user) return;
-
     setIsLoading(true);
-    try {
-      const existingReaction = reactions.find(
-        r => r.user_id === user.id && r.reaction_type === reactionType
-      );
-
-      if (existingReaction) {
-        // Remove reaction
-        const { error } = await supabase
-          .from('circle_message_reactions')
-          .delete()
-          .eq('id', existingReaction.id);
-
-        if (error) throw error;
+    
+    // Mock reaction toggle
+    setTimeout(() => {
+      if (userReactions.includes(reactionType)) {
+        setUserReactions(prev => prev.filter(r => r !== reactionType));
       } else {
-        // Add reaction
-        const { error } = await supabase
-          .from('circle_message_reactions')
-          .insert({
-            message_id: messageId,
-            user_id: user.id,
-            reaction_type: reactionType
-          });
-
-        if (error) throw error;
+        setUserReactions(prev => [...prev, reactionType]);
       }
-
       onReactionUpdate();
-    } catch (error) {
-      console.error('Error updating reaction:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update reaction",
-        variant: "destructive",
-      });
-    } finally {
       setIsLoading(false);
-    }
+    }, 200);
   };
-
-  const getUserReactionTypes = () => {
-    return reactions
-      .filter(r => r.user_id === user?.id)
-      .map(r => r.reaction_type);
-  };
-
-  const userReactions = getUserReactionTypes();
 
   return (
     <div className="flex items-center gap-2 mt-2">
-      {/* Existing reaction badges */}
-      {Object.entries(groupedReactions).map(([reactionType, reactionList]) => {
-        const reaction = SACRED_REACTIONS.find(r => r.symbol === reactionType);
-        const hasUserReacted = reactionList.some(r => r.user_id === user?.id);
-        
-        return (
-          <Button
-            key={reactionType}
-            variant="ghost"
-            size="sm"
-            className={`h-7 px-2 hover:bg-primary/10 ${
-              hasUserReacted ? 'bg-primary/20 text-primary' : ''
-            }`}
-            onClick={() => handleReaction(reactionType)}
-            disabled={isLoading}
-          >
-            <span className="text-sm mr-1">{reactionType}</span>
-            <span className="text-xs">{reactionList.length}</span>
-          </Button>
-        );
-      })}
+      {/* Existing reaction badges - Mock data */}
+      <Button
+        variant="ghost"
+        size="sm"
+        className="h-7 px-2 hover:bg-primary/10 bg-primary/20 text-primary"
+        onClick={() => handleReaction('🙏')}
+        disabled={isLoading}
+      >
+        <span className="text-sm mr-1">🙏</span>
+        <span className="text-xs">2</span>
+      </Button>
 
       {/* Add reaction button */}
       <Popover>
