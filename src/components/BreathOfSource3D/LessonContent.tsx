@@ -168,7 +168,7 @@ export default function LessonContent({
   }[trustSpeed];
 
   return (
-    <div className="absolute top-1/4 left-6 max-w-sm">
+    <div className="absolute top-1/4 left-6 max-w-sm z-20">{/* Higher z-index */}
       <AnimatePresence mode="wait">
         <motion.div
           key={currentLesson}

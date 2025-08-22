@@ -65,7 +65,7 @@ export default function HUDInterface({
   const canComplete = required === 0 || cycleCount >= required;
 
   return (
-    <div className="absolute inset-0 pointer-events-none">
+    <div className="absolute inset-0 pointer-events-none z-20">{/* Higher z-index */}
       {/* Top HUD - Lesson Info */}
       <div className="absolute top-6 left-6 right-6 pointer-events-auto">
         <motion.div

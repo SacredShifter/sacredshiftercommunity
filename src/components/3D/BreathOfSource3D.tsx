@@ -123,13 +123,13 @@ function BreathScene() {
 
   return (
     <>
-      <DynamicLighting breathPhase={currentPhase} trustSpeed={context.trustSpeed} />
+      <DynamicLighting breathPhase={currentPhase || 'inhale'} trustSpeed={context.trustSpeed} />
       <SacredBackground />
       
       {/* Central Breath Orb */}
       <BreathOrb 
-        isBreathing={isBreathing}
-        currentPhase={currentPhase}
+        isBreathing={true} // Always show breathing animation
+        currentPhase={currentPhase || 'inhale'}
         trustSpeed={context.trustSpeed}
         cycleCount={context.cycleCount}
       />
@@ -210,8 +210,8 @@ export default function BreathOfSource3D() {
       />
 
       {/* UI Overlays */}
-      <div className="absolute inset-0 pointer-events-none">
-        {/* Trust Speed Controls */}
+      <div className="absolute inset-0 pointer-events-none z-10">
+        {/* Trust Speed Controls - Show prominently for L0 */}
         {currentLesson === 0 && (
           <div className="pointer-events-auto">
             <TrustSpeedControls 
@@ -221,7 +221,7 @@ export default function BreathOfSource3D() {
           </div>
         )}
 
-        {/* HUD Interface */}
+        {/* HUD Interface - Always visible */}
         <div className="pointer-events-auto">
           <HUDInterface 
             currentLesson={currentLesson}
@@ -236,7 +236,7 @@ export default function BreathOfSource3D() {
           />
         </div>
 
-        {/* Lesson Content */}
+        {/* Lesson Content - Always show educational content */}
         <div className="pointer-events-auto">
           <LessonContent 
             currentLesson={currentLesson}

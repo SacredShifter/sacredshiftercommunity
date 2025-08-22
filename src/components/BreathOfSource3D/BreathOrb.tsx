@@ -57,11 +57,12 @@ export default function BreathOrb({
 
     const time = state.clock.elapsedTime * speedMultiplier;
     
-    // Breathing scale animation
+    // Always animate breathing - show continuous gentle breathing
     let targetScale = 1.0;
     let glowIntensity = 0.5;
     let hue = 0.6; // Default blue/cool
     
+    // Always show breathing animation (gentle default if not actively breathing)
     if (isBreathing) {
       switch (currentPhase) {
         case 'inhale':
@@ -85,8 +86,15 @@ export default function BreathOrb({
           hue = 0.7; // Deep blue (Surrender)
           break;
         default:
-          targetScale = 1.0;
+          targetScale = 1.0 + Math.sin(time * 0.5) * 0.15; // Gentle default breathing
+          glowIntensity = 0.6 + Math.sin(time * 0.5) * 0.2;
+          hue = 0.5;
       }
+    } else {
+      // Default gentle breathing animation when not actively practicing
+      targetScale = 1.0 + Math.sin(time * 0.5) * 0.15;
+      glowIntensity = 0.6 + Math.sin(time * 0.5) * 0.2;
+      hue = 0.5;
     }
 
     // Smooth scale transition
