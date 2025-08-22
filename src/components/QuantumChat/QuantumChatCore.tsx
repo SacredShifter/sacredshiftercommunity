@@ -244,6 +244,7 @@ export const QuantumChatCore: React.FC<QuantumChatCoreProps> = ({ roomId, onClos
         
         if (error) {
           console.error('Error loading messages:', error);
+          return; // Don't try to set messages if there's an error
         } else if (data) {
           setMessages(data as unknown as QuantumMessage[]);
         }

@@ -67,11 +67,19 @@ export function useAuraChat(adminMode: boolean = false) {
         }
       });
 
+      console.log('Response from Aura:', { data, error });
+
       // Dismiss thinking toast
       thinkingToast.dismiss();
 
       if (error) {
-        throw new Error(error.message);
+        console.error('Supabase function error:', error);
+        throw new Error(`Function error: ${error.message}`);
+      }
+
+      if (!data || !data.success) {
+        console.error('Aura returned unsuccessful response:', data);
+        throw new Error(data?.error || 'Unknown error from Aura');
       }
 
       const response = data as AuraResponse;
