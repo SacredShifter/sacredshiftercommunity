@@ -37,22 +37,35 @@ export default function BreathCycleManager({
   const pattern = breathPresets[preset];
 
   useEffect(() => {
+    // Clear any existing timer first
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+
     if (!isActive) {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-        timerRef.current = null;
-      }
       return;
     }
+
+    // Reset phase to inhale when starting
+    phaseRef.current = 'inhale';
 
     const runBreathCycle = () => {
       const phases: BreathPhase[] = ['inhale', 'holdIn', 'exhale', 'holdOut'];
       let currentPhaseIndex = 0;
       
       const nextPhase = () => {
-        if (!isActive) return;
+        // Double check if still active
+        if (!isActive) {
+          if (timerRef.current) {
+            clearTimeout(timerRef.current);
+            timerRef.current = null;
+          }
+          return;
+        }
         
         const phase = phases[currentPhaseIndex];
+        phaseRef.current = phase;
         onPhaseChange(phase);
         
         const duration = pattern[phase] * 1000 * speedMultiplier;
@@ -81,7 +94,15 @@ export default function BreathCycleManager({
         timerRef.current = null;
       }
     };
-  }, [isActive, preset, trustSpeed, speedMultiplier, onPhaseChange, onCycleComplete]);
+  }, [isActive]); // Remove dependencies that cause re-renders
+
+  // Handle preset/speed changes without restarting the entire cycle
+  useEffect(() => {
+    // Only log the change, don't restart the cycle
+    if (isActive) {
+      console.log(`Breath settings updated: ${preset} at ${trustSpeed} speed`);
+    }
+  }, [preset, trustSpeed]);
 
   // This component doesn't render anything visible
   return null;
