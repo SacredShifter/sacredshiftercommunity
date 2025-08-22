@@ -1481,6 +1481,8 @@ body::after {
     );
     backdrop-filter: blur(0.5px) brightness(1);
   }
+}
+
 /* Hide scrollbars but keep scrolling functionality for sidebar */
 .sidebar-no-scrollbar {
   overflow-y: auto;
