@@ -58,13 +58,10 @@ export function useAuraChat(adminMode: boolean = false) {
         admin_mode: adminMode && userRole === 'admin'
       };
       
-      console.log('Invoking Aura with payload:', JSON.stringify(payload, null, 2));
+      console.log('Invoking Aura with payload:', payload);
       
       const { data, error } = await supabase.functions.invoke('aura-core', {
-        body: JSON.stringify(payload),
-        headers: {
-          'Content-Type': 'application/json',
-        }
+        body: payload
       });
 
       console.log('Response from Aura:', { data, error });

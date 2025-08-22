@@ -46,14 +46,14 @@ serve(async (req) => {
     // Parse and validate request body
     let requestBody;
     try {
-      const text = await req.text();
-      console.log('Request body text:', text.substring(0, 200) + (text.length > 200 ? '...' : ''));
+      requestBody = await req.json();
+      console.log('Received request body:', JSON.stringify(requestBody, null, 2));
       
-      if (!text || text.trim() === '') {
-        console.error('Empty request body received');
+      if (!requestBody || typeof requestBody !== 'object') {
+        console.error('Invalid request body format:', requestBody);
         return new Response(
           JSON.stringify({ 
-            error: 'Empty request body',
+            error: 'Request body must be a valid JSON object',
             success: false 
           }),
           { 
@@ -62,8 +62,6 @@ serve(async (req) => {
           }
         );
       }
-      
-      requestBody = JSON.parse(text);
     } catch (parseError) {
       console.error('JSON parsing error:', parseError);
       return new Response(
