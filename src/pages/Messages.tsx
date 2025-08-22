@@ -1,31 +1,30 @@
 import { useState, useRef, useEffect } from 'react';
 import { useDirectMessages } from '@/hooks/useDirectMessages';
 import { useAuth } from '@/hooks/useAuth';
+import { usePersonalSignature } from '@/hooks/usePersonalSignature';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { Search, Send, Smile, Image, Mic, Phone, Video, MoreHorizontal, ArrowLeft } from 'lucide-react';
+import { Search, Send, Eye, Heart, Brain, MoreHorizontal, ArrowLeft } from 'lucide-react';
 import { formatDistance } from 'date-fns/formatDistance';
 import { StartDirectMessageModal } from '@/components/StartDirectMessageModal';
-import { EmojiPicker } from '@/components/EmojiPicker';
-import { VoiceRecorder } from '@/components/VoiceRecorder';
-import { ImageUploader } from '@/components/ImageUploader';
-import { CallButtons } from '@/components/CallButtons';
+import { SacredQuantumMessageInterface } from '@/components/SacredQuantumMessageInterface';
+import { SynchronicityThreads } from '@/components/SynchronicityThreads';
+import { QuantumChatCore } from '@/components/QuantumChat/QuantumChatCore';
 import { toast } from 'sonner';
 
 export default function Messages() {
   const { user } = useAuth();
+  const { signature } = usePersonalSignature();
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
-  const [newMessage, setNewMessage] = useState('');
   const [showStartMessageModal, setShowStartMessageModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [viewMode, setViewMode] = useState<'sacred' | 'quantum' | 'classic'>('sacred');
+  const [showSynchronicity, setShowSynchronicity] = useState(false);
+  // Remove old refs as they're not needed for the new sacred interface
 
   const {
     messages,
@@ -43,44 +42,33 @@ export default function Messages() {
     )
   );
 
-  // Even if no conversation exists yet, show chat interface if user is selected
-  const shouldShowChatInterface = selectedConversationId !== null;
-
-  const scrollToBottom = () => {
-    // Temporarily disabled to stop screen jumping
-    console.log('scrollToBottom called - disabled to prevent jumping');
+  // Enhanced view mode based on user's consciousness development
+  const getOptimalViewMode = () => {
+    if (!signature) return 'sacred';
+    
+    const { temperament, cognitivePattern, preferences } = signature;
+    
+    if (preferences.visualComplexity > 0.8 && cognitivePattern === 'quantum') {
+      return 'quantum';
+    }
+    
+    if (temperament === 'contemplative' || preferences.contemplationDepth > 0.7) {
+      return 'sacred';
+    }
+    
+    return 'sacred'; // Default to sacred experience
   };
 
-  // Temporarily disabled auto-scroll to prevent screen jumping
-  // useEffect(() => {
-  //   if (messages.length > 0) {
-  //     const timer = setTimeout(() => {
-  //       scrollToBottom();
-  //     }, 100);
-  //     return () => clearTimeout(timer);
-  //   }
-  // }, [messages.length]);
-
-  const handleSendMessage = async () => {
-    if (!selectedConversationId || !newMessage.trim()) return;
-
-    try {
-      await sendMessage(selectedConversationId, newMessage.trim());
-      setNewMessage('');
-      if (textareaRef.current) {
-        textareaRef.current.style.height = 'auto';
+  // Auto-adapt view mode to user's consciousness signature
+  useEffect(() => {
+    if (signature && viewMode === 'sacred') {
+      const optimalMode = getOptimalViewMode();
+      if (optimalMode !== viewMode) {
+        setViewMode(optimalMode);
+        toast.success(`Interface adapted to your consciousness signature: ${optimalMode} mode`);
       }
-    } catch (error) {
-      toast.error('Failed to send message');
     }
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
-    }
-  };
+  }, [signature, viewMode]);
 
   const getInitials = (name?: string) => {
     if (!name) return 'SS';
@@ -109,50 +97,6 @@ export default function Messages() {
     await fetchMessages(userId);
   };
 
-  // Handlers for new functionality
-  const handleEmojiSelect = (emoji: string) => {
-    setNewMessage(prev => prev + emoji);
-    if (textareaRef.current) {
-      textareaRef.current.focus();
-    }
-  };
-
-  const handleVoiceRecording = async (audioBlob: Blob) => {
-    try {
-      // Convert audio blob to base64 for sending
-      const reader = new FileReader();
-      reader.onload = async () => {
-        const base64Audio = (reader.result as string).split(',')[1];
-        // For now, we'll show a success message
-        // In the future, this could be sent as an audio message
-        toast.success('Voice message recorded! (Feature coming soon)');
-        console.log('Voice recording received:', base64Audio);
-      };
-      reader.readAsDataURL(audioBlob);
-    } catch (error) {
-      toast.error('Failed to process voice recording');
-    }
-  };
-
-  const handleImageSelect = async (file: File) => {
-    try {
-      // For now, we'll show a success message
-      // In the future, this could upload the image and send as a message
-      toast.success('Image selected! (Upload feature coming soon)');
-      console.log('Image selected:', file.name, file.size);
-    } catch (error) {
-      toast.error('Failed to process image');
-    }
-  };
-
-  // Auto-resize textarea
-  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setNewMessage(e.target.value);
-    const textarea = e.target;
-    textarea.style.height = 'auto';
-    textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
-  };
-
   const filteredConversations = conversations.filter(conv => {
     // Add search functionality for conversations
     return true; // For now, show all conversations
@@ -170,21 +114,51 @@ export default function Messages() {
   }
 
   return (
-    <div className="h-[calc(100vh-8rem)] max-h-[calc(100vh-8rem)] flex bg-background/20 backdrop-blur-sm overflow-hidden -m-4 sm:-m-6 md:-m-8">
+    <div className="h-[calc(100vh-8rem)] max-h-[calc(100vh-8rem)] flex bg-gradient-to-br from-background via-background/90 to-primary/5 backdrop-blur-sm overflow-hidden -m-4 sm:-m-6 md:-m-8 relative">
       {/* Conversations Sidebar */}
-      <div className={`${selectedConversationId ? 'hidden lg:flex' : 'flex'} w-full lg:w-80 border-r border-border/30 flex-col`}>
-        {/* Header */}
+      <div className={`${selectedConversationId ? 'hidden lg:flex' : 'flex'} w-full lg:w-80 border-r border-border/30 flex-col bg-background/40 backdrop-blur-md`}>
+        {/* Enhanced Header with View Mode Controls */}
         <div className="p-4 border-b border-border/30">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-xl font-semibold">Messages</h2>
-            <Button 
-              variant="ghost" 
-              size="sm"
-              onClick={() => setShowStartMessageModal(true)}
-              className="text-primary hover:text-primary/80"
-            >
-              New Chat
-            </Button>
+            <h2 className="text-xl font-semibold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              Sacred Messages
+            </h2>
+            <div className="flex items-center gap-2">
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => setShowSynchronicity(!showSynchronicity)}
+                className="text-primary hover:text-primary/80"
+              >
+                <Eye className="h-4 w-4" />
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => setShowStartMessageModal(true)}
+                className="text-primary hover:text-primary/80"
+              >
+                New Chat
+              </Button>
+            </div>
+          </div>
+          
+          {/* View Mode Selector */}
+          <div className="flex items-center gap-1 mb-3 p-1 bg-muted/50 rounded-lg">
+            {['sacred', 'quantum', 'classic'].map((mode) => (
+              <Button
+                key={mode}
+                variant={viewMode === mode ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setViewMode(mode as any)}
+                className="flex-1 text-xs"
+              >
+                {mode === 'sacred' && <Heart className="w-3 h-3 mr-1" />}
+                {mode === 'quantum' && <Brain className="w-3 h-3 mr-1" />}
+                {mode === 'classic' && <Eye className="w-3 h-3 mr-1" />}
+                {mode.charAt(0).toUpperCase() + mode.slice(1)}
+              </Button>
+            ))}
           </div>
           
           {/* Search */}
@@ -194,7 +168,7 @@ export default function Messages() {
               placeholder="Search conversations..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-background/20"
+              className="pl-10 bg-background/20 border-primary/20"
             />
           </div>
         </div>
@@ -253,141 +227,73 @@ export default function Messages() {
         </ScrollArea>
       </div>
 
-      {/* Chat Area */}
-      {shouldShowChatInterface ? (
-        <div className="flex-1 flex flex-col">
-          {/* Chat Header */}
-          <div className="p-4 border-b border-border/30 bg-background/20">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="lg:hidden"
-                  onClick={() => setSelectedConversationId(null)}
+      {/* Sacred Communication Interface */}
+      {selectedConversationId ? (
+        <div className="flex-1 relative">
+          {/* Render appropriate interface based on view mode */}
+          {viewMode === 'sacred' && (
+            <SacredQuantumMessageInterface
+              selectedUserId={selectedConversationId}
+              onBack={() => setSelectedConversationId(null)}
+            />
+          )}
+          
+          {viewMode === 'quantum' && (
+            <QuantumChatCore
+              roomId={`dm_${[user?.id, selectedConversationId].sort().join('_')}`}
+              onClose={() => setSelectedConversationId(null)}
+            />
+          )}
+          
+          {viewMode === 'classic' && (
+            <div className="h-full flex items-center justify-center">
+              <Card className="p-8 text-center max-w-md">
+                <div className="w-20 h-20 rounded-full bg-muted/50 flex items-center justify-center mx-auto mb-4">
+                  <Send className="h-8 w-8 text-muted-foreground" />
+                </div>
+                <h3 className="text-xl font-medium mb-2">Classic Mode</h3>
+                <p className="text-muted-foreground mb-4">
+                  Classic messaging interface coming soon...
+                </p>
+                <Button 
+                  onClick={() => setViewMode('sacred')}
+                  className="bg-gradient-to-r from-primary to-secondary"
                 >
-                  <ArrowLeft className="h-4 w-4" />
+                  Experience Sacred Mode
                 </Button>
-                <Avatar className="w-10 h-10">
-                  <AvatarImage src="" />
-                  <AvatarFallback className="bg-primary/10 text-primary">
-                    {getInitials('Sacred Seeker')}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <h3 className="font-medium">Sacred Seeker</h3>
-                  <p className="text-sm text-muted-foreground">Online</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center space-x-2">
-                <CallButtons 
-                  userId={selectedConversationId} 
-                  userName={`User ${selectedConversationId.slice(0, 8)}`} 
-                />
-                <Button variant="ghost" size="sm">
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </div>
+              </Card>
             </div>
-          </div>
-
-          {/* Messages */}
-          <ScrollArea className="flex-1 p-4">
-            {messages.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-muted-foreground">No messages yet. Start the conversation!</p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {messages.map((message) => {
-                  const isOwnMessage = message.sender_id === user?.id;
-                  return (
-                    <div
-                      key={message.id}
-                      className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`}
-                    >
-                      <div className={`max-w-xs lg:max-w-md xl:max-w-lg ${isOwnMessage ? 'order-1' : ''}`}>
-                        {!isOwnMessage && (
-                          <div className="flex items-center space-x-2 mb-1">
-                            <Avatar className="w-6 h-6">
-                              <AvatarImage src="" />
-                              <AvatarFallback className="text-xs bg-primary/10 text-primary">
-                                {getInitials(`User ${message.sender_id}`)}
-                              </AvatarFallback>
-                            </Avatar>
-                            <span className="text-xs text-muted-foreground">
-                              User {message.sender_id?.slice(0, 8)}
-                            </span>
-                          </div>
-                        )}
-                        <div
-                          className={`px-4 py-2 rounded-2xl ${
-                            isOwnMessage
-                              ? 'bg-primary text-primary-foreground ml-auto'
-                              : 'bg-muted'
-                          }`}
-                        >
-                          <p className="text-sm">{message.content}</p>
-                        </div>
-                        <p className={`text-xs text-muted-foreground mt-1 ${isOwnMessage ? 'text-right' : ''}`}>
-                          {formatTime(message.created_at)}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })}
-                <div ref={messagesEndRef} />
-              </div>
-            )}
-          </ScrollArea>
-
-          {/* Message Input */}
-          <div className="p-4 border-t border-border/30 bg-background/20">
-            <div className="flex items-end space-x-3">
-              <div className="flex-1">
-                <div className="flex items-center space-x-2 mb-2">
-                  <ImageUploader onImageSelect={handleImageSelect} />
-                  <VoiceRecorder onRecordingComplete={handleVoiceRecording} />
-                  <EmojiPicker onEmojiSelect={handleEmojiSelect} />
-                </div>
-                <Textarea
-                  ref={textareaRef}
-                  placeholder="Type a message..."
-                  value={newMessage}
-                  onChange={handleTextareaChange}
-                  onKeyPress={handleKeyPress}
-                  className="min-h-[40px] max-h-[120px] resize-none bg-background/20"
-                  style={{ height: 'auto' }}
-                />
-              </div>
-              <Button 
-                onClick={handleSendMessage}
-                disabled={!newMessage.trim()}
-                className="shrink-0"
-              >
-                <Send className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
+          )}
         </div>
       ) : (
         // Welcome Screen
-        <div className="hidden lg:flex flex-1 items-center justify-center">
+        <div className="hidden lg:flex flex-1 items-center justify-center relative">
           <div className="text-center">
-            <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-              <Send className="h-8 w-8 text-primary" />
+            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center mx-auto mb-4 backdrop-blur-sm">
+              <Heart className="h-8 w-8 text-primary" />
             </div>
-            <h3 className="text-xl font-medium mb-2">Select a conversation</h3>
+            <h3 className="text-xl font-medium mb-2 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              Sacred Communication Portal
+            </h3>
             <p className="text-muted-foreground mb-4">
-              Choose from your existing conversations or start a new one
+              Select a soul to begin consciousness-synchronized communication
             </p>
-            <Button onClick={() => setShowStartMessageModal(true)}>
-              New Message
+            <Button 
+              onClick={() => setShowStartMessageModal(true)}
+              className="bg-gradient-to-r from-primary to-secondary"
+            >
+              Begin Sacred Connection
             </Button>
           </div>
         </div>
       )}
+
+      {/* Synchronicity Threads Overlay */}
+      <SynchronicityThreads
+        currentMessages={messages}
+        isVisible={showSynchronicity}
+        onToggle={() => setShowSynchronicity(!showSynchronicity)}
+      />
 
       <StartDirectMessageModal
         isOpen={showStartMessageModal}
