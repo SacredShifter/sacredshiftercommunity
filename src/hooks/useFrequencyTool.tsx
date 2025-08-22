@@ -40,20 +40,42 @@ export function useFrequencyTool() {
   const createSacredTone = async (frequency: number, volume: number = 0.1) => {
     try {
       const audioContext = await initializeAudioContext();
+      
+      console.log('🔊 AudioContext state:', audioContext.state);
+      console.log('🔊 AudioContext sampleRate:', audioContext.sampleRate);
 
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
       
       oscillator.frequency.value = frequency;
       oscillator.type = 'sine';
-      gainNode.gain.value = volume;
+      
+      // Set gain more carefully
+      gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+      gainNode.gain.linearRampToValueAtTime(volume, audioContext.currentTime + 0.1);
       
       oscillator.connect(gainNode);
       gainNode.connect(audioContext.destination);
       
+      console.log('🎵 Playing sacred frequency:', frequency, 'Hz at volume', volume);
+      console.log('🎵 Oscillator type:', oscillator.type);
+      console.log('🎵 Gain value:', gainNode.gain.value);
+      
       oscillator.start();
       
-      console.log(`🎵 Playing sacred frequency: ${frequency} Hz at volume ${volume}`);
+      // Test with a beep first
+      setTimeout(() => {
+        console.log('🔔 Testing with 1000Hz beep for 0.5 seconds');
+        const testOsc = audioContext.createOscillator();
+        const testGain = audioContext.createGain();
+        testOsc.frequency.value = 1000;
+        testOsc.type = 'square';
+        testGain.gain.value = 0.3;
+        testOsc.connect(testGain);
+        testGain.connect(audioContext.destination);
+        testOsc.start();
+        testOsc.stop(audioContext.currentTime + 0.5);
+      }, 1000);
       
       return { oscillator, gainNode };
     } catch (error) {
