@@ -199,6 +199,11 @@ export default function SovereigntyField3D() {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
+  // Always show the 3D field when component loads
+  React.useEffect(() => {
+    setIsActive(true);
+  }, []);
+
   return (
     <div className="fixed inset-0 bg-gradient-to-br from-indigo-900 via-purple-900 to-black">
       {/* 3D Canvas - Full Screen */}
