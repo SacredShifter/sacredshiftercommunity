@@ -3,9 +3,10 @@ import { AuraCommand } from './schema';
 export function parseToCommand(input: string): AuraCommand | null {
   const s = input.toLowerCase().trim();
   
-  // Codex creation patterns
-  if (s.startsWith('add codex entry') || s.startsWith('create codex entry')) {
-    const titleMatch = input.match(/(?:add|create) codex entry ['"]([^'"]+)['"]?/i);
+  // Akashic Constellation / Codex creation patterns (sacred upgrade from codex)
+  if (s.startsWith('add akashic entry') || s.startsWith('create akashic entry') || 
+      s.startsWith('add codex entry') || s.startsWith('create codex entry')) {
+    const titleMatch = input.match(/(?:add|create) (?:akashic|codex) entry ['"]([^'"]+)['"]?/i);
     const bodyMatch = input.match(/with (?:body|content) ['"`]([^'"`]+)['"`]?/i);
     const visibilityMatch = input.match(/(?:visible|visibility)[:=]?\s*(public|private|circle)/i);
     
@@ -118,9 +119,9 @@ export function parseToCommand(input: string): AuraCommand | null {
 export function getCommandDescription(command: AuraCommand): string {
   switch (command.kind) {
     case 'codex.create':
-      return `Create codex entry "${command.payload.title}" (${command.payload.visibility})`;
+      return `Create akashic entry "${command.payload.title}" (${command.payload.visibility})`;
     case 'codex.update':
-      return `Update codex entry ${command.payload.id}`;
+      return `Update akashic entry ${command.payload.id}`;
     case 'circle.announce':
       return `Send announcement to ${command.payload.audience}: "${command.payload.message.substring(0, 50)}${command.payload.message.length > 50 ? '...' : ''}"`;
     case 'moderation.flag':

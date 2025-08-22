@@ -59,6 +59,7 @@ export const HelpTooltips = {
   videos: "Access curated spiritual teachings and meditation content",
   registry: "Catalog your spiritual experiences and synchronicities",
   codex: "Your personal memory archive of insights and downloads",
+  akashicConstellation: "Your eternal wisdom organized by sacred archetypal resonance and consciousness frequencies",
   profile: "Manage your spiritual profile and journey milestones",
   settings: "Customize your Sacred Shifter experience",
   

@@ -75,7 +75,7 @@ export function AuraConsole() {
               <Textarea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="e.g., 'Add codex entry about Sacred Geometry' or 'Announce to all users: New features available'"
+                placeholder="e.g., 'Add akashic entry about Sacred Geometry' or 'Announce to all users: New features available'"
                 className="min-h-[100px] resize-none"
                 disabled={loading}
               />

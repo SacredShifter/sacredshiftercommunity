@@ -46,7 +46,7 @@ export function runDAP(command: AuraCommand): DAPResult {
 
   // Transparency - ensure visibility is appropriate
   if (command.kind === 'codex.create' && command.payload.visibility === 'private') {
-    warnings.push('Creating private codex entry. Consider if this knowledge would benefit the community.');
+    warnings.push('Creating private akashic entry. Consider if this sacred wisdom would benefit the community.');
   }
 
   // Integration - require integration notes for new practices

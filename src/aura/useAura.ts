@@ -295,7 +295,7 @@ export function useAura() {
 function getCommandDescription(command: AuraCommand): string {
   switch (command.kind) {
     case 'codex.create':
-      return `Created codex entry "${command.payload.title}"`;
+      return `Created akashic entry "${command.payload.title}" ⟐`;
     case 'circle.announce':
       return `Sent announcement to ${command.payload.audience}`;
     case 'journal.template.create':
