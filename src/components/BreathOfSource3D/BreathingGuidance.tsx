@@ -67,7 +67,7 @@ export default function BreathingGuidance({
   if (!isActive) return null;
 
   return (
-    <div className="absolute top-4 right-4 pointer-events-none z-30 max-w-xs">{/* Absolute positioning within container */}
+    <div className="absolute top-4 right-4 pointer-events-none z-30 w-64">{/* Smaller fixed width, positioned in viewport */}
       <AnimatePresence mode="wait">
         <motion.div
           key={currentPhase}

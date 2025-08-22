@@ -168,7 +168,7 @@ export default function LessonContent({
   }[trustSpeed];
 
   return (
-    <div className="fixed top-1/4 left-4 max-w-sm z-20">{/* Fixed positioning */}
+    <div className="absolute top-20 left-4 w-72 z-20">{/* Positioned below header, fixed width */}
       <AnimatePresence mode="wait">
         <motion.div
           key={currentLesson}

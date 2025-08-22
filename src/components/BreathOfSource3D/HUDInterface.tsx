@@ -65,9 +65,9 @@ export default function HUDInterface({
   const canComplete = required === 0 || cycleCount >= required;
 
   return (
-    <div className="absolute inset-0 pointer-events-none z-15 flex flex-col">{/* Absolute positioning within container */}
-      {/* Top HUD - Lesson Info - Fixed to top */}
-      <div className="absolute top-4 left-4 right-4 pointer-events-auto">
+    <div className="absolute inset-0 pointer-events-none z-15 flex flex-col">
+      {/* Top HUD - Lesson Info */}
+      <div className="absolute top-4 left-4 right-4 pointer-events-auto max-w-xl">
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -109,12 +109,12 @@ export default function HUDInterface({
         </motion.div>
       </div>
 
-      {/* Bottom HUD - Fixed to bottom */}
-      <div className="absolute bottom-4 left-4 right-4 pointer-events-auto">
+      {/* Bottom HUD */}
+      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 pointer-events-auto">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="max-w-sm mx-auto"
+          className="w-80"
         >
           <Card className="bg-background/80 backdrop-blur-md border-primary/20">
             <CardContent className="p-2">
