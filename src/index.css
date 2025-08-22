@@ -235,18 +235,17 @@ All colors MUST be HSL.
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 2;
+    z-index: 1;
     pointer-events: none;
     background-image: 
-      /* Chain link pattern - more visible */
-      url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='1.2' stroke-opacity='0.3'%3E%3Cellipse cx='20' cy='10' rx='12' ry='6' transform='rotate(45 20 10)'/%3E%3Cellipse cx='20' cy='30' rx='12' ry='6' transform='rotate(-45 20 30)'/%3E%3Cellipse cx='10' cy='20' rx='12' ry='6' transform='rotate(45 10 20)'/%3E%3Cellipse cx='30' cy='20' rx='12' ry='6' transform='rotate(-45 30 20)'/%3E%3C/g%3E%3C/svg%3E"),
-      /* Mesh pattern - enhanced */
-      url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%2300ffff' stroke-width='0.8' stroke-opacity='0.25'%3E%3Cpath d='M0,30 L60,30 M30,0 L30,60 M15,15 L45,45 M45,15 L15,45' /%3E%3Ccircle cx='15' cy='15' r='3' fill='%23ffffff' fill-opacity='0.15'/%3E%3Ccircle cx='45' cy='15' r='3' fill='%23ffffff' fill-opacity='0.15'/%3E%3Ccircle cx='15' cy='45' r='3' fill='%23ffffff' fill-opacity='0.15'/%3E%3Ccircle cx='45' cy='45' r='3' fill='%23ffffff' fill-opacity='0.15'/%3E%3Ccircle cx='30' cy='30' r='4' fill='%2300ffff' fill-opacity='0.2'/%3E%3C/g%3E%3C/svg%3E");
-    background-size: 40px 40px, 60px 60px;
-    background-position: 0 0, 20px 20px;
+      /* Prominent chain link pattern */
+      url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%2300ffff' stroke-width='2' stroke-opacity='0.6'%3E%3Cellipse cx='15' cy='7.5' rx='8' ry='4' transform='rotate(45 15 7.5)'/%3E%3Cellipse cx='15' cy='22.5' rx='8' ry='4' transform='rotate(-45 15 22.5)'/%3E%3Cellipse cx='7.5' cy='15' rx='8' ry='4' transform='rotate(45 7.5 15)'/%3E%3Cellipse cx='22.5' cy='15' rx='8' ry='4' transform='rotate(-45 22.5 15)'/%3E%3C/g%3E%3C/svg%3E"),
+      /* Visible mesh grid */
+      url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='1' stroke-opacity='0.4'%3E%3Cpath d='M0,10 L20,10 M10,0 L10,20' /%3E%3Ccircle cx='10' cy='10' r='2' fill='%2300ffff' fill-opacity='0.3'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 30px 30px, 20px 20px;
+    background-position: 0 0, 10px 10px;
     background-repeat: repeat;
-    backdrop-filter: blur(0.5px);
-    animation: mesh-chain-flow 8s linear infinite;
+    animation: mesh-chain-flow 6s linear infinite;
   }
 
   .mesh-chain-overlay::after {
@@ -256,18 +255,18 @@ All colors MUST be HSL.
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 3;
+    z-index: 2;
     pointer-events: none;
-    background: linear-gradient(
-      45deg,
-      transparent 20%,
-      hsla(0, 0%, 100%, 0.12) 50%,
-      transparent 80%
-    );
-    backdrop-filter: blur(1px) brightness(1.2);
+    background: 
+      radial-gradient(circle at 25% 25%, hsla(180, 100%, 50%, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 75% 75%, hsla(180, 100%, 50%, 0.15) 0%, transparent 50%),
+      linear-gradient(45deg, transparent 30%, hsla(0, 0%, 100%, 0.2) 50%, transparent 70%);
+    backdrop-filter: blur(1px) brightness(1.3);
     border-radius: inherit;
-    animation: glassy-shimmer 4s ease-in-out infinite;
-    box-shadow: inset 0 0 20px hsla(0, 0%, 100%, 0.1);
+    animation: glassy-shimmer 3s ease-in-out infinite;
+    box-shadow: 
+      inset 0 0 30px hsla(180, 100%, 50%, 0.2),
+      inset 0 0 60px hsla(0, 0%, 100%, 0.1);
   }
 
   .sacred-cta-pulse {
