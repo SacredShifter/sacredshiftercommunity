@@ -188,7 +188,7 @@ export const liberationMachine = setup({
     paused: {
       on: {
         RESUME: {
-          target: '#liberation.hist',
+          target: 'intro',
         },
         ABORT: 'exit',
       },
@@ -200,6 +200,7 @@ export const liberationMachine = setup({
       type: 'final',
     },
   },
+  history: 'shallow',
 });
 
 function getNextScene(currentScene: string): string {
