@@ -222,21 +222,7 @@ export default function LearningModule3D({ moduleId, onBack, className }: Learni
 
         {/* Module Component with Error Boundary */}
         <ErrorBoundary name={`3D-Module-${selectedModule.id}`}>
-          <Suspense 
-            fallback={
-              <div className="flex items-center justify-center h-[70vh]">
-                <div className="text-center space-y-4">
-                  <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
-                  <div className="space-y-2">
-                    <p className="font-sacred text-lg">Loading {selectedModule.title}</p>
-                    <p className="text-sm text-muted-foreground">Preparing 3D visualization...</p>
-                  </div>
-                </div>
-              </div>
-            }
-          >
-            <ModuleComponent />
-          </Suspense>
+          <ModuleComponent />
         </ErrorBoundary>
       </div>
     );
