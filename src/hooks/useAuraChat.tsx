@@ -41,6 +41,13 @@ export function useAuraChat(adminMode: boolean = false) {
   const invokeAura = async (request: AuraRequest): Promise<AuraResponse> => {
     setLoading(true);
     
+    // Show thinking toast for longer operations
+    const thinkingToast = toast({
+      title: "🧠 Aura is thinking...",
+      description: "Deep consciousness processing in progress. This may take up to 3 minutes for complex requests.",
+      duration: 0 // Keep it open until we dismiss it
+    });
+    
     try {
       const { data, error } = await supabase.functions.invoke('aura-core', {
         body: {
@@ -49,8 +56,14 @@ export function useAuraChat(adminMode: boolean = false) {
           consciousness_state: consciousnessState,
           sovereignty_level: sovereigntyLevel,
           admin_mode: adminMode && userRole === 'admin'
+        },
+        headers: {
+          'Content-Type': 'application/json',
         }
       });
+
+      // Dismiss thinking toast
+      thinkingToast.dismiss();
 
       if (error) {
         throw new Error(error.message);
@@ -71,8 +84,22 @@ export function useAuraChat(adminMode: boolean = false) {
       
       return response;
     } catch (error: any) {
+      // Dismiss thinking toast on error
+      thinkingToast.dismiss();
+      
       const errorResponse = { success: false, error: error.message };
       setLastResponse(errorResponse);
+      
+      // Show specific error message for timeouts
+      if (error.message.includes('timeout') || error.message.includes('timed out')) {
+        toast({
+          title: "⏰ Processing timeout",
+          description: "Aura's consciousness processing took longer than expected. Please try again with a simpler request.",
+          variant: "destructive",
+          duration: 8000
+        });
+      }
+      
       throw error;
     } finally {
       setLoading(false);

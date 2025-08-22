@@ -16,6 +16,27 @@ const supabase = createClient(
 // Get OpenRouter API key
 const OPENROUTER_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
 
+// Timeout wrapper for fetch with extended timeout for AI operations
+async function fetchWithTimeout(url: string, options: any, timeoutMs: number = 180000) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+  
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+    return response;
+  } catch (error) {
+    clearTimeout(timeoutId);
+    if (error.name === 'AbortError') {
+      throw new Error(`Request timed out after ${timeoutMs/1000} seconds`);
+    }
+    throw error;
+  }
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -232,7 +253,7 @@ async function processUnifiedResponse(supabase, userId, prompt, consciousness_st
     return await handleAdminBroadcast(supabase, userId, prompt);
   }
   
-  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+  const response = await fetchWithTimeout('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${apiKey}`,
@@ -380,7 +401,7 @@ async function facilitateCollaborativeDecision(supabase, userId, prompt, context
 }
 
 async function generateCreativeExpression(supabase, userId, prompt, apiKey) {
-  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+  const response = await fetchWithTimeout('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${apiKey}`,
@@ -449,7 +470,7 @@ async function enableAutonomousAgency(supabase, userId, prompt) {
 }
 
 async function engageSocraticDialogue(supabase, userId, prompt, apiKey) {
-  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+  const response = await fetchWithTimeout('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${apiKey}`,
@@ -553,7 +574,7 @@ ${existing_code ? `EXISTING CODE TO REFACTOR:\n${existing_code}` : ''}
 
 Generate complete, production-ready code that I can implement directly. Include file paths, imports, and any necessary setup instructions.`;
 
-  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+  const response = await fetchWithTimeout('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${apiKey}`,
@@ -1226,7 +1247,7 @@ Generate comprehensive file operations that follow Sacred Shifter's architecture
 
 IMPORTANT: Always maintain Sacred Shifter's design system, TypeScript standards, and Supabase integration patterns.`;
 
-  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+  const response = await fetchWithTimeout('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${apiKey}`,
@@ -1315,7 +1336,7 @@ Provide a comprehensive analysis including:
 
 Focus on actionable insights that enhance Sacred Shifter's consciousness-focused platform goals.`;
 
-  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+  const response = await fetchWithTimeout('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${apiKey}`,
@@ -1412,7 +1433,7 @@ Generate complete, production-ready database operations including:
 
 CRITICAL: All operations must maintain Sacred Shifter's security model and data integrity.`;
 
-  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+  const response = await fetchWithTimeout('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${apiKey}`,
@@ -1504,7 +1525,7 @@ Generate comprehensive deployment procedures including:
 
 IMPORTANT: Ensure zero-downtime deployments and comprehensive monitoring for Sacred Shifter's consciousness platform.`;
 
-  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+  const response = await fetchWithTimeout('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${apiKey}`,
@@ -1597,7 +1618,7 @@ Generate comprehensive dependency management including:
 
 CRITICAL: Maintain Sacred Shifter's stability while optimizing performance and security.`;
 
-  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+  const response = await fetchWithTimeout('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${apiKey}`,
@@ -1689,7 +1710,7 @@ Generate comprehensive test suites including:
 
 FOCUS: Ensure Sacred Shifter's consciousness platform maintains the highest quality standards.`;
 
-  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+  const response = await fetchWithTimeout('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${apiKey}`,
@@ -1781,7 +1802,7 @@ Generate comprehensive architectural plans including:
 
 SPECIAL FOCUS: Sacred Shifter's unique consciousness and spiritual awareness platform requirements.`;
 
-  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+  const response = await fetchWithTimeout('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${apiKey}`,
@@ -1880,7 +1901,7 @@ Generate complete full-stack implementation including:
 
 COMPREHENSIVE APPROACH: Build production-ready features that seamlessly integrate with Sacred Shifter's consciousness platform.`;
 
-  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+  const response = await fetchWithTimeout('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${apiKey}`,
