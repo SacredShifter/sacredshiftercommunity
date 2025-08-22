@@ -1,4 +1,4 @@
-import { createMachine, assign } from 'xstate';
+import { createMachine, assign, setup } from 'xstate';
 
 export interface LiberationContext {
   currentScene: string;
@@ -31,7 +31,70 @@ export type LiberationEvent =
   | { type: 'DEVICE_CHECK'; ok: boolean }
   | { type: 'AUDIO_PERMISSION'; granted: boolean };
 
-export const liberationMachine = createMachine<LiberationContext, LiberationEvent>({
+export const liberationMachine = setup({
+  types: {
+    context: {} as LiberationContext,
+    events: {} as LiberationEvent,
+  },
+  guards: {
+    deviceOK: ({ context }) => context.deviceOK,
+    comfortOK: ({ context }) => context.isComfortable && context.arousalLevel < 7,
+    audioGranted: ({ context }) => context.audioGranted,
+  },
+  actions: {
+    logMarker: ({ context, event }) => {
+      console.log(`Liberation: ${event.type} at ${context.currentScene}`);
+      // This will be replaced with actual telemetry
+    },
+    playSfx: ({ context }) => {
+      if (context.audioGranted) {
+        // Audio system will handle this
+      }
+    },
+    swapScene: assign({
+      currentScene: ({ context, event }) => {
+        const sceneMap: Record<string, string> = {
+          START: 'fear',
+          NEXT: getNextScene(context.currentScene),
+        };
+        return sceneMap[event.type] || context.currentScene;
+      },
+    }),
+    startBreathCoach: () => {
+      // Breath coach initialization
+    },
+    saveSession: () => {
+      // Save to Supabase
+    },
+    pushReflection: () => {
+      // Push to reflection system
+    },
+    updateAudioGranted: assign({
+      audioGranted: ({ event }) => {
+        if (event.type === 'AUDIO_PERMISSION') {
+          return event.granted;
+        }
+        return false;
+      },
+    }),
+    updateDeviceOK: assign({
+      deviceOK: ({ event }) => {
+        if (event.type === 'DEVICE_CHECK') {
+          return event.ok;
+        }
+        return true;
+      },
+    }),
+    updateArousalLevel: assign({
+      arousalLevel: ({ event }) => {
+        if (event.type === 'AROUSAL_UPDATE') {
+          return event.level;
+        }
+        return 0;
+      },
+    }),
+  },
+}).createMachine({
   id: 'liberation',
   initial: 'intro',
   context: {
@@ -60,18 +123,14 @@ export const liberationMachine = createMachine<LiberationContext, LiberationEven
       on: {
         START: {
           target: 'fear',
-          cond: 'deviceOK',
+          guard: 'deviceOK',
           actions: ['logMarker', 'swapScene'],
         },
         AUDIO_PERMISSION: {
-          actions: assign({
-            audioGranted: (_, event) => event.granted,
-          }),
+          actions: 'updateAudioGranted',
         },
         DEVICE_CHECK: {
-          actions: assign({
-            deviceOK: (_, event) => event.ok,
-          }),
+          actions: 'updateDeviceOK',
         },
       },
     },
@@ -80,15 +139,13 @@ export const liberationMachine = createMachine<LiberationContext, LiberationEven
       on: {
         NEXT: {
           target: 'crossing',
-          cond: 'comfortOK',
+          guard: 'comfortOK',
           actions: ['logMarker'],
         },
         PAUSE: 'paused',
         ABORT: 'exit',
         AROUSAL_UPDATE: {
-          actions: assign({
-            arousalLevel: (_, event) => event.level,
-          }),
+          actions: 'updateArousalLevel',
         },
       },
     },
@@ -130,7 +187,9 @@ export const liberationMachine = createMachine<LiberationContext, LiberationEven
     },
     paused: {
       on: {
-        RESUME: '#liberation.hist',
+        RESUME: {
+          target: '#liberation.hist',
+        },
         ABORT: 'exit',
       },
     },
@@ -139,45 +198,6 @@ export const liberationMachine = createMachine<LiberationContext, LiberationEven
     },
     exit: {
       type: 'final',
-    },
-  },
-  hist: {
-    type: 'history',
-    history: 'shallow',
-  },
-}, {
-  guards: {
-    deviceOK: (context) => context.deviceOK,
-    comfortOK: (context) => context.isComfortable && context.arousalLevel < 7,
-    audioGranted: (context) => context.audioGranted,
-  },
-  actions: {
-    logMarker: (context, event) => {
-      console.log(`Liberation: ${event.type} at ${context.currentScene}`);
-      // This will be replaced with actual telemetry
-    },
-    playSfx: (context) => {
-      if (context.audioGranted) {
-        // Audio system will handle this
-      }
-    },
-    swapScene: assign({
-      currentScene: (context, event) => {
-        const sceneMap: Record<string, string> = {
-          START: 'fear',
-          NEXT: getNextScene(context.currentScene),
-        };
-        return sceneMap[event.type] || context.currentScene;
-      },
-    }),
-    startBreathCoach: (context) => {
-      // Breath coach initialization
-    },
-    saveSession: (context) => {
-      // Save to Supabase
-    },
-    pushReflection: (context) => {
-      // Push to reflection system
     },
   },
 });
