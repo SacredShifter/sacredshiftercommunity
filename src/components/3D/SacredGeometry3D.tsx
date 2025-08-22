@@ -37,15 +37,15 @@ const geometryData: GeometryData[] = [
     edges: 6,
     color: '#FF4500',
     position: [-3, 2, 0],
-    component: React.forwardRef<THREE.Mesh, any>((props, ref) => 
-      <Tetrahedron ref={ref} {...props}>
+    component: React.forwardRef<THREE.Mesh, any>(({ isSelected, onClick, onPointerOver, onPointerOut, ...threeProps }, ref) => 
+      <Tetrahedron ref={ref} {...threeProps} onClick={onClick} onPointerOver={onPointerOver} onPointerOut={onPointerOut}>
         <meshStandardMaterial
           color="#FF4500"
           emissive="#FF4500"
-          emissiveIntensity={props.isSelected ? 0.2 : 0.05}
+          emissiveIntensity={isSelected ? 0.2 : 0.05}
           transparent
           opacity={0.8}
-          wireframe={props.isSelected}
+          wireframe={isSelected}
         />
       </Tetrahedron>
     )
@@ -62,16 +62,16 @@ const geometryData: GeometryData[] = [
     edges: 12,
     color: '#8B4513',
     position: [-1, 2, 0],
-    component: React.forwardRef<THREE.Mesh, any>((props, ref) => 
-      <mesh ref={ref} {...props}>
+    component: React.forwardRef<THREE.Mesh, any>(({ isSelected, onClick, onPointerOver, onPointerOut, ...threeProps }, ref) => 
+      <mesh ref={ref} {...threeProps} onClick={onClick} onPointerOver={onPointerOver} onPointerOut={onPointerOut}>
         <boxGeometry />
         <meshStandardMaterial
           color="#8B4513"
           emissive="#8B4513"
-          emissiveIntensity={props.isSelected ? 0.2 : 0.05}
+          emissiveIntensity={isSelected ? 0.2 : 0.05}
           transparent
           opacity={0.8}
-          wireframe={props.isSelected}
+          wireframe={isSelected}
         />
       </mesh>
     )
@@ -88,15 +88,15 @@ const geometryData: GeometryData[] = [
     edges: 12,
     color: '#87CEEB',
     position: [1, 2, 0],
-    component: React.forwardRef<THREE.Mesh, any>((props, ref) => 
-      <Octahedron ref={ref} {...props}>
+    component: React.forwardRef<THREE.Mesh, any>(({ isSelected, onClick, onPointerOver, onPointerOut, ...threeProps }, ref) => 
+      <Octahedron ref={ref} {...threeProps} onClick={onClick} onPointerOver={onPointerOver} onPointerOut={onPointerOut}>
         <meshStandardMaterial
           color="#87CEEB"
           emissive="#87CEEB"
-          emissiveIntensity={props.isSelected ? 0.2 : 0.05}
+          emissiveIntensity={isSelected ? 0.2 : 0.05}
           transparent
           opacity={0.8}
-          wireframe={props.isSelected}
+          wireframe={isSelected}
         />
       </Octahedron>
     )
@@ -113,15 +113,15 @@ const geometryData: GeometryData[] = [
     edges: 30,
     color: '#4169E1',
     position: [3, 2, 0],
-    component: React.forwardRef<THREE.Mesh, any>((props, ref) => 
-      <Icosahedron ref={ref} {...props}>
+    component: React.forwardRef<THREE.Mesh, any>(({ isSelected, onClick, onPointerOver, onPointerOut, ...threeProps }, ref) => 
+      <Icosahedron ref={ref} {...threeProps} onClick={onClick} onPointerOver={onPointerOver} onPointerOut={onPointerOut}>
         <meshStandardMaterial
           color="#4169E1"
           emissive="#4169E1"
-          emissiveIntensity={props.isSelected ? 0.2 : 0.05}
+          emissiveIntensity={isSelected ? 0.2 : 0.05}
           transparent
           opacity={0.8}
-          wireframe={props.isSelected}
+          wireframe={isSelected}
         />
       </Icosahedron>
     )
@@ -138,15 +138,15 @@ const geometryData: GeometryData[] = [
     edges: 30,
     color: '#9370DB',
     position: [0, 0, 0],
-    component: React.forwardRef<THREE.Mesh, any>((props, ref) => 
-      <Dodecahedron ref={ref} {...props}>
+    component: React.forwardRef<THREE.Mesh, any>(({ isSelected, onClick, onPointerOver, onPointerOut, ...threeProps }, ref) => 
+      <Dodecahedron ref={ref} {...threeProps} onClick={onClick} onPointerOver={onPointerOver} onPointerOut={onPointerOut}>
         <meshStandardMaterial
           color="#9370DB"
           emissive="#9370DB"
-          emissiveIntensity={props.isSelected ? 0.2 : 0.05}
+          emissiveIntensity={isSelected ? 0.2 : 0.05}
           transparent
           opacity={0.8}
-          wireframe={props.isSelected}
+          wireframe={isSelected}
         />
       </Dodecahedron>
     )
