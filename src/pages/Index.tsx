@@ -195,8 +195,6 @@ const Index = () => {
           </p>
         </div>
 
-        {/* Featured Content by Aura */}
-        <FeaturedContentSection />
 
         {/* Journey Path */}
         <div className="journey-path relative">
