@@ -24,6 +24,7 @@ import { format } from 'date-fns/format';
 import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
 import { useMirrorJournal, MirrorJournalEntry } from '@/hooks/useMirrorJournal';
 import { useAuth } from '@/hooks/useAuth';
+import { useUnifiedMessaging } from '@/hooks/useUnifiedMessaging';
 import { DreamAnalyzer } from '@/components/DreamAnalyzer';
 
 const poeticPrompts = [
@@ -65,6 +66,7 @@ interface MirrorJournalProps {
 export const MirrorJournal: React.FC<MirrorJournalProps> = ({ className }) => {
   const { user } = useAuth();
   const { entries, loading, createEntry, updateEntry, deleteEntry, autoSave } = useMirrorJournal();
+  const { sendJournalEntry: sendUnifiedJournal, isInitialized } = useUnifiedMessaging();
   const [isCreating, setIsCreating] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [currentEntry, setCurrentEntry] = useState({
@@ -121,6 +123,31 @@ export const MirrorJournal: React.FC<MirrorJournalProps> = ({ className }) => {
   };
 
   const handleSave = async () => {
+    // Try unified messaging first for journal entries
+    if (isInitialized && (isCreating || editingId)) {
+      try {
+        await sendUnifiedJournal(currentEntry.content, {
+          title: currentEntry.title,
+          moodTag: currentEntry.mood_tag,
+          chakraAlignment: currentEntry.chakra_alignment,
+          isDraft: false
+        }, {
+          fallbackToMesh: true,
+          enableRetry: true
+        });
+        
+        // Reset form on success
+        setIsCreating(false);
+        setEditingId(null);
+        setCurrentEntry({ title: '', content: '', mood_tag: '', chakra_alignment: '' });
+        return;
+      } catch (unifiedError) {
+        console.warn('🌟 Unified journal save failed, falling back to direct database:', unifiedError);
+        // Fall through to original method
+      }
+    }
+
+    // Fallback to original method
     if (isCreating) {
       const result = await createEntry({
         ...currentEntry,

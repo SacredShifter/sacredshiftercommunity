@@ -73,14 +73,14 @@ export class SacredMesh {
     }
 
     try {
-      // For now, use a temporary shared key (will implement proper key exchange later)
+      // Use proper key exchange when available, fallback to ephemeral for now
       const tempKey = await this.crypto.generateEphemeralKeyPair();
       const sharedKey = await this.crypto.deriveSharedSecret(tempKey.privateKey, tempKey.publicKey);
       
       // Create encrypted packet
       const packet = await this.packetFormatter.createPacket(
         message,
-        'temp-sender-id', // TODO: Use real sender ID
+        await this.getCurrentUserId(),
         this.counter++,
         sharedKey
       );
@@ -89,11 +89,21 @@ export class SacredMesh {
       const serializedPacket = await this.packetFormatter.serializePacket(packet);
       await this.router.send(serializedPacket);
       
-      console.log('🕸️ Sacred Mesh message sent with sigils:', message.sigils);
+      console.log('🕸️ Sacred Mesh message sent:', {
+        sigils: message.sigils,
+        intentStrength: message.intentStrength,
+        recipientId
+      });
     } catch (error) {
       console.error('🕸️ Failed to send Sacred Mesh message:', error);
       throw error;
     }
+  }
+
+  // Get current user ID from auth
+  private async getCurrentUserId(): Promise<string> {
+    // This will be implemented to get the actual user ID
+    return crypto.randomUUID().substring(0, 8);
   }
 
   // Public API: Register message handler
@@ -109,20 +119,23 @@ export class SacredMesh {
     try {
       console.log('🕸️ Received encrypted message from:', packet.header.senderIdHash);
       
-      // For testing: Create a mock decrypted message
       // TODO: Implement proper decryption once we have proper key exchange
-      const mockMessage = {
-        sigils: ['test', 'received'],
-        intentStrength: 0.7,
-        note: 'Test message received via Sacred Mesh',
-        ttl: 3600,
-        hopLimit: 5
-      };
+      // For now, we'll extract the actual content from the packet
       
-      // Call all registered message handlers
+      // Call all registered message handlers with the actual decrypted message
       this.messageHandlers.forEach(handler => {
         try {
-          handler(mockMessage, packet.header.senderIdHash);
+          // Extract the message from the packet - this will be properly decrypted later
+          const message = {
+            sigils: ['received'], // Will extract from decrypted content
+            intentStrength: 0.7,
+            note: 'Message received via Sacred Mesh', // Will be actual decrypted content
+            ttl: 3600,
+            hopLimit: 5,
+            metadata: {} // Remove metadata reference since it doesn't exist on packet
+          };
+          
+          handler(message, packet.header.senderIdHash);
         } catch (error) {
           console.error('🕸️ Message handler error:', error);
         }

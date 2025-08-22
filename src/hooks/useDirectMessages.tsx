@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useRealtimeSubscription } from './useRealtimeSubscription';
 import { useAuth } from './useAuth';
 import { useMessageValidation } from './useMessageValidation';
+import { useUnifiedMessaging } from './useUnifiedMessaging';
 import { Database } from '@/integrations/supabase/types';
 import { toast } from 'sonner';
 
@@ -34,6 +35,7 @@ export interface Conversation extends ConversationRow {
 export const useDirectMessages = (conversationUserId?: string) => {
   const { user } = useAuth();
   const { validateAndSend } = useMessageValidation();
+  const { sendDirectMessage: sendUnifiedMessage, isInitialized } = useUnifiedMessaging();
   const [messages, setMessages] = useState<DirectMessage[]>([]);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
@@ -108,7 +110,7 @@ export const useDirectMessages = (conversationUserId?: string) => {
     }
   }, [user]);
 
-  // Send a new message with validation
+  // Send a new message with unified messaging (mesh fallback)
   const sendMessage = useCallback(async (
     recipientId: string, 
     content: string, 
@@ -118,6 +120,21 @@ export const useDirectMessages = (conversationUserId?: string) => {
   ) => {
     if (!user) throw new Error('User not authenticated');
 
+    // Use unified messaging system with mesh fallback
+    if (isInitialized) {
+      try {
+        await sendUnifiedMessage(recipientId, content, {
+          fallbackToMesh: true,
+          enableRetry: true
+        });
+        return true; // Success via unified system
+      } catch (unifiedError) {
+        console.warn('🌟 Unified messaging failed, falling back to direct database:', unifiedError);
+        // Fall through to direct database attempt
+      }
+    }
+
+    // Fallback to direct database method with validation
     const success = await validateAndSend(
       content,
       messageType,
@@ -146,7 +163,7 @@ export const useDirectMessages = (conversationUserId?: string) => {
     }
 
     return success;
-  }, [user, validateAndSend]);
+  }, [user, validateAndSend, sendUnifiedMessage, isInitialized]);
 
   // Typing indicator functions
   const setTypingStatus = useCallback((recipientId: string, typing: boolean) => {

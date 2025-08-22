@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useRealtimeSubscription } from './useRealtimeSubscription';
 import { useAuth } from './useAuth';
+import { useUnifiedMessaging } from './useUnifiedMessaging';
 
 export interface SacredCircle {
   id: string;
@@ -47,6 +48,7 @@ export interface CircleMessage {
 
 export const useSacredCircles = () => {
   const { user } = useAuth();
+  const { sendCircleMessage: sendUnifiedMessage, isInitialized } = useUnifiedMessaging();
   const [circles, setCircles] = useState<SacredCircle[]>([]);
   const [messages, setMessages] = useState<CircleMessage[]>([]);
   const [loading, setLoading] = useState(true);
@@ -133,7 +135,7 @@ export const useSacredCircles = () => {
     }
   }, [user]);
 
-  // Send a message (general post, not tied to specific circle yet)
+  // Send a message with unified messaging (mesh fallback)
   const sendMessage = useCallback(async (
     content: string,
     visibility: 'circle' | 'private' = 'circle',
@@ -147,6 +149,27 @@ export const useSacredCircles = () => {
   ) => {
     if (!user) throw new Error('User not authenticated');
 
+    // Use unified messaging system with mesh fallback
+    if (isInitialized && options.circleId) {
+      try {
+        await sendUnifiedMessage(options.circleId, content, {
+          visibility,
+          chakraTag: options.chakraTag,
+          tone: options.tone,
+          frequency: options.frequency,
+          isAnonymous: options.isAnonymous
+        }, {
+          fallbackToMesh: true,
+          enableRetry: true
+        });
+        return true; // Success via unified system
+      } catch (unifiedError) {
+        console.warn('🌟 Unified circle messaging failed, falling back to direct database:', unifiedError);
+        // Fall through to direct database attempt
+      }
+    }
+
+    // Fallback to direct database method
     try {
       const { data, error } = await supabase
         .from('circle_posts')
@@ -166,10 +189,10 @@ export const useSacredCircles = () => {
       if (error) throw error;
       return data;
     } catch (err) {
-      console.error('Error sending message:', err);
+      console.error('Error sending circle message:', err);
       throw new Error('Failed to send message');
     }
-  }, [user]);
+  }, [user, sendUnifiedMessage, isInitialized]);
 
   // Join a Sacred Circle
   const joinCircle = useCallback(async (circleId: string) => {
