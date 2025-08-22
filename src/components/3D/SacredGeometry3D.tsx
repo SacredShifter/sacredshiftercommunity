@@ -186,17 +186,20 @@ function AnimatedGeometry({ geometry, isSelected, onClick }: GeometryShapeProps)
         isSelected={isSelected}
       />
 
-      {/* Element Label - Removed font reference */}
+      {/* Element Label */}
       {geometry.element && (
-        <Text
-          position={[0, -2, 0]}
-          fontSize={0.3}
-          color={geometry.color}
-          anchorX="center"
-          anchorY="middle"
-        >
-          {geometry.element}
-        </Text>
+        <Html position={[0, -2, 0]} center>
+          <div 
+            className="text-center font-semibold pointer-events-none"
+            style={{ 
+              color: geometry.color,
+              fontSize: '12px',
+              textShadow: '0 0 4px rgba(0,0,0,0.8)'
+            }}
+          >
+            {geometry.element}
+          </div>
+        </Html>
       )}
 
       {/* Sacred ratio indicators */}
