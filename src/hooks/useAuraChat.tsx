@@ -66,6 +66,39 @@ export function useAuraChat(adminMode: boolean = false) {
 
       console.log('Response from Aura:', { data, error });
 
+      // Enhanced error handling with retry logic
+      if (error) {
+        console.error('Aura function error:', error);
+        
+        // Check if it's a truncation error and retry with simplified prompt
+        if (error.message?.includes('cut short') || error.message?.includes('incomplete')) {
+          console.log('Retrying with simplified prompt...');
+          
+          const simplifiedPayload = {
+            ...payload,
+            prompt: `Please respond to: ${payload.prompt}`,
+            platform_context: {} // Remove platform context for retry
+          };
+          
+          const { data: retryData, error: retryError } = await supabase.functions.invoke('aura-core', {
+            body: simplifiedPayload
+          });
+          
+          if (retryError) {
+            throw new Error(`Aura Error (after retry): ${retryError.message}`);
+          }
+          
+          if (!retryData?.success) {
+            throw new Error(`Aura Error (retry): ${retryData?.error || 'Unknown error'}`);
+          }
+          
+          setLastResponse(retryData);
+          return retryData;
+        }
+        
+        throw new Error(`Aura Error: ${error.message}`);
+      }
+
       // Dismiss thinking toast
       thinkingToast.dismiss();
 

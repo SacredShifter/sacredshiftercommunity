@@ -159,13 +159,32 @@ export function AuraConversation() {
       setIsTyping(false);
       console.error('Conversation error:', error);
       
+      // Enhanced error feedback based on error type
+      let errorContent = `I'm experiencing connection difficulties. Please try again in a moment.`;
+      let personality = 'technical';
+      let confidence = 0.2;
+      
+      if (error.message?.includes('cut short') || error.message?.includes('incomplete')) {
+        errorContent = `My response was interrupted. I'm processing your message more efficiently now.`;
+        personality = 'adaptive';
+        confidence = 0.6;
+      } else if (error.message?.includes('timeout')) {
+        errorContent = `Your request requires deep processing. Let me try a more focused approach.`;
+        personality = 'patient';
+        confidence = 0.5;
+      } else if (error.message?.includes('rate limit')) {
+        errorContent = `I need a moment to process. Please wait briefly before continuing our conversation.`;
+        personality = 'gentle';
+        confidence = 0.7;
+      }
+      
       const errorMessage: ConversationMessage = {
         id: `aura-error-${Date.now()}`,
-        content: `I'm experiencing connection difficulties. Please try again in a moment.`,
+        content: errorContent,
         type: 'aura',
         timestamp: new Date(),
-        personality: 'technical',
-        confidence: 0.2
+        personality,
+        confidence
       };
 
       setMessages(prev => [...prev, errorMessage]);
