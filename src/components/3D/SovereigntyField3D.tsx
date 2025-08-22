@@ -133,7 +133,7 @@ export default function SovereigntyField3D() {
   const [fieldStrength, setFieldStrength] = useState([0.7]);
   const [fieldFrequency, setFieldFrequency] = useState([0.5]);
   const [fieldCoherence, setFieldCoherence] = useState([0.6]);
-  const [isActive, setIsActive] = useState(false);
+  const [isActive, setIsActive] = useState(true); // Always show the field
   const [currentPhase, setCurrentPhase] = useState<'learning' | 'practice' | 'integration'>('learning');
   const [completedLessons, setCompletedLessons] = useState<string[]>([]);
   const [practiceTimer, setPracticeTimer] = useState(0);
