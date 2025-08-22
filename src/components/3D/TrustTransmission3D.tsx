@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Text, Sphere, Line } from '@react-three/drei';
+import { OrbitControls, Text, Sphere } from '@react-three/drei';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -16,18 +16,7 @@ interface TrustWaveProps {
 
 function TrustWave({ isTransmitting, speed }: TrustWaveProps) {
   const waveRef = useRef<THREE.Mesh>(null);
-  const particlesRef = useRef<THREE.Points>(null);
   
-  // Create particle system
-  const particleCount = speed === 'trust' ? 100 : 300;
-  const positions = new Float32Array(particleCount * 3);
-  
-  for (let i = 0; i < particleCount; i++) {
-    positions[i * 3] = (Math.random() - 0.5) * 20;
-    positions[i * 3 + 1] = (Math.random() - 0.5) * 20; 
-    positions[i * 3 + 2] = (Math.random() - 0.5) * 20;
-  }
-
   useFrame((state) => {
     if (!isTransmitting) return;
 
@@ -38,25 +27,9 @@ function TrustWave({ isTransmitting, speed }: TrustWaveProps) {
       waveRef.current.rotation.y += 0.01 * speedMultiplier;
       waveRef.current.scale.setScalar(1 + Math.sin(time * speedMultiplier) * 0.3);
     }
-
-    if (particlesRef.current) {
-      const positions = particlesRef.current.geometry.attributes.position.array as Float32Array;
-      const time = state.clock.elapsedTime;
-      const speedFactor = speed === 'trust' ? 1 : 3;
-      
-      for (let i = 0; i < particleCount; i++) {
-        const i3 = i * 3;
-        positions[i3] += Math.sin(time * speedFactor + i) * 0.01;
-        positions[i3 + 1] += Math.cos(time * speedFactor + i) * 0.01;
-        positions[i3 + 2] += Math.sin(time * speedFactor + i * 0.1) * 0.01;
-      }
-      
-      particlesRef.current.geometry.attributes.position.needsUpdate = true;
-    }
   });
 
   const waveColor = speed === 'trust' ? '#10b981' : '#ef4444';
-  const particleColor = speed === 'trust' ? '#34d399' : '#f87171';
 
   return (
     <group>
@@ -73,23 +46,25 @@ function TrustWave({ isTransmitting, speed }: TrustWaveProps) {
         </Sphere>
       </mesh>
 
-      {/* Particle field */}
-      <points ref={particlesRef}>
-        <bufferGeometry>
-          <bufferAttribute
-            attach="attributes-position"
-            array={positions}
-            count={particleCount}
-            itemSize={3}
-          />
-        </bufferGeometry>
-        <pointsMaterial
-          color={particleColor}
-          size={speed === 'trust' ? 0.1 : 0.05}
-          transparent
-          opacity={0.8}
-        />
-      </points>
+      {/* Simple particle indicators */}
+      {isTransmitting && [0, 1, 2, 3, 4].map((index) => (
+        <mesh
+          key={index}
+          position={[
+            Math.cos(index * Math.PI * 0.4) * (4 + index),
+            Math.sin(index * Math.PI * 0.3) * 2,
+            Math.sin(index * Math.PI * 0.4) * (4 + index)
+          ]}
+        >
+          <Sphere args={[0.1, 8, 8]}>
+            <meshStandardMaterial
+              color={speed === 'trust' ? '#34d399' : '#f87171'}
+              transparent
+              opacity={0.8}
+            />
+          </Sphere>
+        </mesh>
+      ))}
 
       {/* Transmission rings */}
       {isTransmitting && [4, 6, 8].map((radius, index) => (

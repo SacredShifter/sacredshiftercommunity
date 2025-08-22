@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Text, Sphere, Line, Box } from '@react-three/drei';
+import { OrbitControls, Text, Sphere } from '@react-three/drei';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -9,14 +9,6 @@ import { Gauge, Timer, Heart, Zap, BarChart3 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import * as THREE from 'three';
 
-interface LearningParticle {
-  id: number;
-  position: THREE.Vector3;
-  velocity: THREE.Vector3;
-  absorbed: boolean;
-  resistance: number;
-}
-
 interface SpeedComparisonProps {
   mode: 'trust' | 'data';
   isActive: boolean;
@@ -24,39 +16,10 @@ interface SpeedComparisonProps {
 }
 
 function SpeedComparison({ mode, isActive, onAbsorptionChange }: SpeedComparisonProps) {
-  const particlesRef = useRef<THREE.Points>(null);
   const brainRef = useRef<THREE.Mesh>(null);
-  const [particles, setParticles] = useState<LearningParticle[]>([]);
   const [absorptionRate, setAbsorptionRate] = useState(0);
 
-  useEffect(() => {
-    if (isActive) {
-      // Initialize particles
-      const newParticles: LearningParticle[] = [];
-      const particleCount = mode === 'trust' ? 50 : 200;
-      
-      for (let i = 0; i < particleCount; i++) {
-        newParticles.push({
-          id: i,
-          position: new THREE.Vector3(
-            (Math.random() - 0.5) * 20,
-            (Math.random() - 0.5) * 20,
-            (Math.random() - 0.5) * 20
-          ),
-          velocity: new THREE.Vector3(
-            (Math.random() - 0.5) * (mode === 'trust' ? 0.1 : 0.3),
-            (Math.random() - 0.5) * (mode === 'trust' ? 0.1 : 0.3),
-            (Math.random() - 0.5) * (mode === 'trust' ? 0.1 : 0.3)
-          ),
-          absorbed: false,
-          resistance: mode === 'trust' ? 0.1 : 0.8
-        });
-      }
-      setParticles(newParticles);
-    }
-  }, [mode, isActive]);
-
-  useFrame((state, delta) => {
+  useFrame((state) => {
     if (!isActive) return;
 
     if (brainRef.current) {
@@ -64,45 +27,16 @@ function SpeedComparison({ mode, isActive, onAbsorptionChange }: SpeedComparison
       brainRef.current.scale.setScalar(1 + Math.sin(state.clock.elapsedTime * 2) * pulseFactor);
     }
 
-    setParticles(prevParticles => {
-      let absorbed = 0;
-      
-      const updatedParticles = prevParticles.map(particle => {
-        if (particle.absorbed) {
-          absorbed++;
-          return particle;
-        }
-
-        // Move towards brain (center)
-        const direction = new THREE.Vector3(0, 0, 0).sub(particle.position).normalize();
-        particle.velocity.add(direction.multiplyScalar(delta * 0.5));
-        particle.position.add(particle.velocity);
-
-        // Check absorption
-        const distance = particle.position.length();
-        if (distance < 2) {
-          if (Math.random() > particle.resistance) {
-            particle.absorbed = true;
-            absorbed++;
-          } else {
-            // Bounce away if resistance
-            particle.velocity.multiplyScalar(-0.5);
-          }
-        }
-
-        return particle;
-      });
-
-      setAbsorptionRate((absorbed / prevParticles.length) * 100);
-      const newRate = (absorbed / prevParticles.length) * 100;
-      setAbsorptionRate(newRate);
+    // Simulate absorption rate based on mode
+    const targetRate = mode === 'trust' ? 85 : 35;
+    setAbsorptionRate(prev => {
+      const newRate = prev + (targetRate - prev) * 0.02;
       onAbsorptionChange(newRate);
-      return updatedParticles;
+      return newRate;
     });
   });
 
   const brainColor = mode === 'trust' ? '#10b981' : '#ef4444';
-  const particleColor = mode === 'trust' ? '#34d399' : '#f87171';
 
   return (
     <group>
@@ -120,21 +54,33 @@ function SpeedComparison({ mode, isActive, onAbsorptionChange }: SpeedComparison
       </mesh>
 
       {/* Information particles */}
-      {particles.map(particle => (
-        <mesh key={particle.id} position={[particle.position.x, particle.position.y, particle.position.z]}>
-          <Sphere args={[0.1, 8, 8]}>
-            <meshStandardMaterial
-              color={particle.absorbed ? '#ffffff' : particleColor}
-              transparent
-              opacity={particle.absorbed ? 0.2 : 0.8}
-            />
-          </Sphere>
-        </mesh>
-      ))}
+      {isActive && [0, 1, 2, 3, 4, 5, 6, 7].map((index) => {
+        const particleCount = mode === 'trust' ? 8 : 16;
+        if (index >= particleCount) return null;
+        
+        return (
+          <mesh
+            key={index}
+            position={[
+              Math.cos(index * Math.PI / 4) * (6 + Math.sin(Date.now() * 0.001 * (index + 1)) * 2),
+              Math.sin(index * Math.PI / 6) * 3,
+              Math.sin(index * Math.PI / 4) * (6 + Math.cos(Date.now() * 0.001 * (index + 1)) * 2)
+            ]}
+          >
+            <Sphere args={[mode === 'trust' ? 0.15 : 0.08, 8, 8]}>
+              <meshStandardMaterial
+                color={mode === 'trust' ? '#34d399' : '#f87171'}
+                transparent
+                opacity={0.8}
+              />
+            </Sphere>
+          </mesh>
+        );
+      })}
 
       {/* Absorption field visualization */}
       <mesh>
-        <Sphere args={[4, 32, 32]}>
+        <Sphere args={[4, 16, 16]}>
           <meshStandardMaterial
             color={brainColor}
             transparent
@@ -155,7 +101,7 @@ function SpeedComparison({ mode, isActive, onAbsorptionChange }: SpeedComparison
         {mode === 'trust' ? 'TRUST SPEED LEARNING' : 'DATA SPEED LEARNING'}
       </Text>
 
-      {/* Absorption rate */}
+      {/* Absorption rate display */}
       <Text
         position={[0, -6, 0]}
         fontSize={0.4}
@@ -290,38 +236,48 @@ export default function SpeedOfTrust3D() {
                 </div>
               </div>
 
-              {/* Real-time metrics */}
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <div>
                   <div className="flex justify-between text-xs mb-1">
-                    <span>Comprehension</span>
-                    <span>{metrics.comprehension.toFixed(0)}%</span>
+                    <span>Absorption Rate</span>
+                    <span>{absorptionRate.toFixed(0)}%</span>
                   </div>
-                  <Progress value={metrics.comprehension} className="h-2" />
-                </div>
-                
-                <div>
-                  <div className="flex justify-between text-xs mb-1">
-                    <span>Retention</span>
-                    <span>{metrics.retention.toFixed(0)}%</span>
-                  </div>
-                  <Progress value={metrics.retention} className="h-2" />
+                  <Progress value={absorptionRate} />
                 </div>
 
-                <div>
-                  <div className="flex justify-between text-xs mb-1">
-                    <span>Stress Level</span>
-                    <span>{metrics.stress.toFixed(0)}%</span>
+                {/* Real-time metrics */}
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div>
+                    <div className="flex justify-between mb-1">
+                      <span>Comprehension</span>
+                      <span>{metrics.comprehension.toFixed(0)}%</span>
+                    </div>
+                    <Progress value={metrics.comprehension} className="h-1" />
                   </div>
-                  <Progress value={metrics.stress} className="h-2" />
-                </div>
+                  
+                  <div>
+                    <div className="flex justify-between mb-1">
+                      <span>Retention</span>
+                      <span>{metrics.retention.toFixed(0)}%</span>
+                    </div>
+                    <Progress value={metrics.retention} className="h-1" />
+                  </div>
 
-                <div>
-                  <div className="flex justify-between text-xs mb-1">
-                    <span>Flow State</span>
-                    <span>{metrics.flow.toFixed(0)}%</span>
+                  <div>
+                    <div className="flex justify-between mb-1">
+                      <span>Stress Level</span>
+                      <span>{metrics.stress.toFixed(0)}%</span>
+                    </div>
+                    <Progress value={metrics.stress} className="h-1" />
                   </div>
-                  <Progress value={metrics.flow} className="h-2" />
+
+                  <div>
+                    <div className="flex justify-between mb-1">
+                      <span>Flow State</span>
+                      <span>{metrics.flow.toFixed(0)}%</span>
+                    </div>
+                    <Progress value={metrics.flow} className="h-1" />
+                  </div>
                 </div>
               </div>
             </div>

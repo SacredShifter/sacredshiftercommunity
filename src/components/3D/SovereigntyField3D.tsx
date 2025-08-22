@@ -1,6 +1,6 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Text, Sphere, Ring } from '@react-three/drei';
+import { OrbitControls, Text, Sphere } from '@react-three/drei';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -37,10 +37,11 @@ function SovereigntyField({ strength, frequency, coherence }: SovereigntyFieldPr
       <mesh ref={meshRef}>
         <Sphere args={[1, 32, 32]}>
           <meshStandardMaterial
-            color={new THREE.Color().setHSL(0.6, 0.8, 0.6)}
+            color="#10b981"
             transparent
             opacity={0.7}
-            emissive={new THREE.Color().setHSL(0.6, 0.5, 0.2)}
+            emissive="#059669"
+            emissiveIntensity={0.2}
           />
         </Sphere>
       </mesh>
@@ -48,17 +49,17 @@ function SovereigntyField({ strength, frequency, coherence }: SovereigntyFieldPr
       {/* Boundary Rings */}
       <group ref={ringsRef}>
         {[2, 3, 4].map((radius, index) => (
-          <Ring
+          <mesh
             key={index}
-            args={[radius - 0.1, radius + 0.1, 32]}
             rotation={[Math.PI / 2, 0, index * Math.PI / 3]}
           >
+            <ringGeometry args={[radius - 0.1, radius + 0.1, 32]} />
             <meshStandardMaterial
-              color={new THREE.Color().setHSL(0.6 + index * 0.1, 0.7, 0.5)}
+              color="#34d399"
               transparent
               opacity={0.3 + coherence * 0.4}
             />
-          </Ring>
+          </mesh>
         ))}
       </group>
 
@@ -74,8 +75,9 @@ function SovereigntyField({ strength, frequency, coherence }: SovereigntyFieldPr
         >
           <Sphere args={[0.2, 16, 16]}>
             <meshStandardMaterial
-              color={new THREE.Color().setHSL(0.1, 0.9, 0.7)}
-              emissive={new THREE.Color().setHSL(0.1, 0.6, 0.1)}
+              color="#fbbf24"
+              emissive="#f59e0b"
+              emissiveIntensity={0.1}
             />
           </Sphere>
         </mesh>

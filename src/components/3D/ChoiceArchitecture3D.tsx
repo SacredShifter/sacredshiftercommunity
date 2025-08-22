@@ -1,6 +1,6 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Text, Sphere, Line, Box } from '@react-three/drei';
+import { OrbitControls, Text, Sphere, Box } from '@react-three/drei';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -25,28 +25,11 @@ interface ChoicePathProps {
 function ChoicePath({ nodes, currentPath }: ChoicePathProps) {
   const groupRef = useRef<THREE.Group>(null);
   
-  useFrame((state) => {
+  useFrame(() => {
     if (groupRef.current) {
       groupRef.current.rotation.y += 0.002;
     }
   });
-
-  // Create path lines
-  const pathLines = currentPath.slice(0, -1).map((nodeId, index) => {
-    const currentNode = nodes.find(n => n.id === nodeId);
-    const nextNode = nodes.find(n => n.id === currentPath[index + 1]);
-    
-    if (!currentNode || !nextNode) return null;
-    
-    return (
-      <Line
-        key={`${nodeId}-${nextNode.id}`}
-        points={[currentNode.position, nextNode.position]}
-        color="#6366f1"
-        lineWidth={3}
-      />
-    );
-  }).filter(Boolean);
 
   return (
     <group ref={groupRef}>
@@ -89,17 +72,36 @@ function ChoicePath({ nodes, currentPath }: ChoicePathProps) {
         </group>
       ))}
 
-      {/* Render path lines */}
-      {pathLines}
+      {/* Simple connecting lines between active nodes */}
+      {currentPath.length > 1 && currentPath.slice(0, -1).map((nodeId, index) => {
+        const currentNode = nodes.find(n => n.id === nodeId);
+        const nextNode = nodes.find(n => n.id === currentPath[index + 1]);
+        
+        if (!currentNode || !nextNode) return null;
+        
+        return (
+          <mesh key={`line-${index}`}>
+            <cylinderGeometry args={[0.02, 0.02, 
+              Math.sqrt(
+                Math.pow(nextNode.position[0] - currentNode.position[0], 2) +
+                Math.pow(nextNode.position[1] - currentNode.position[1], 2) +
+                Math.pow(nextNode.position[2] - currentNode.position[2], 2)
+              )
+            , 8]} />
+            <meshStandardMaterial color="#6366f1" />
+          </mesh>
+        );
+      })}
 
-      {/* Central axis */}
-      <Line
-        points={[[0, -8, 0], [0, 8, 0]]}
-        color="#ffffff"
-        lineWidth={1}
-        transparent
-        opacity={0.3}
-      />
+      {/* Central axis indicator */}
+      <mesh>
+        <cylinderGeometry args={[0.01, 0.01, 16, 8]} />
+        <meshStandardMaterial
+          color="#ffffff"
+          transparent
+          opacity={0.3}
+        />
+      </mesh>
     </group>
   );
 }
@@ -107,7 +109,6 @@ function ChoicePath({ nodes, currentPath }: ChoicePathProps) {
 export default function ChoiceArchitecture3D() {
   const [currentScenario, setCurrentScenario] = useState('trust');
   const [selectedPath, setSelectedPath] = useState<string[]>(['start']);
-  const [showConsequences, setShowConsequences] = useState(false);
 
   const scenarios = {
     trust: {
@@ -141,30 +142,8 @@ export default function ChoiceArchitecture3D() {
 
   const currentNodes = scenarios[currentScenario as keyof typeof scenarios].nodes;
 
-  const handleNodeSelection = (nodeId: string) => {
-    const node = currentNodes.find(n => n.id === nodeId);
-    if (!node) return;
-
-    // Update active states
-    const updatedNodes = currentNodes.map(n => ({
-      ...n,
-      active: n.id === nodeId || selectedPath.includes(n.id)
-    }));
-
-    // Add to path if not already there
-    if (!selectedPath.includes(nodeId)) {
-      setSelectedPath([...selectedPath, nodeId]);
-    }
-
-    // Show consequences after making choices
-    if (node.type === 'outcome') {
-      setShowConsequences(true);
-    }
-  };
-
   const resetScenario = () => {
     setSelectedPath(['start']);
-    setShowConsequences(false);
   };
 
   const getPathAnalysis = () => {
@@ -279,12 +258,12 @@ export default function ChoiceArchitecture3D() {
               <p className="text-muted-foreground text-xs">Each cube represents a decision moment</p>
             </div>
             <div>
-              <p className="font-medium mb-1">2. Click to Choose Path</p>
-              <p className="text-muted-foreground text-xs">See how choices lead to outcomes</p>
+              <p className="font-medium mb-1">2. Switch Scenarios</p>
+              <p className="text-muted-foreground text-xs">Explore different decision contexts</p>
             </div>
             <div>
               <p className="font-medium mb-1">3. Notice Consequences</p>
-              <p className="text-muted-foreground text-xs">Spheres show the results of your choices</p>
+              <p className="text-muted-foreground text-xs">Spheres show the results of choices</p>
             </div>
             <div>
               <p className="font-medium mb-1">4. Analyze Your Pattern</p>
@@ -302,15 +281,7 @@ export default function ChoiceArchitecture3D() {
         
         <ChoicePath nodes={currentNodes} currentPath={selectedPath} />
         
-        <OrbitControls 
-          enablePan={false} 
-          maxDistance={15} 
-          minDistance={6}
-          onClick={(e) => {
-            // Handle node selection - simplified for demo
-            console.log('Canvas clicked');
-          }}
-        />
+        <OrbitControls enablePan={false} maxDistance={15} minDistance={6} />
       </Canvas>
 
       {/* Bottom Insight */}
