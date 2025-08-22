@@ -20,9 +20,10 @@ interface LearningParticle {
 interface SpeedComparisonProps {
   mode: 'trust' | 'data';
   isActive: boolean;
+  onAbsorptionChange: (rate: number) => void;
 }
 
-function SpeedComparison({ mode, isActive }: SpeedComparisonProps) {
+function SpeedComparison({ mode, isActive, onAbsorptionChange }: SpeedComparisonProps) {
   const particlesRef = useRef<THREE.Points>(null);
   const brainRef = useRef<THREE.Mesh>(null);
   const [particles, setParticles] = useState<LearningParticle[]>([]);
@@ -93,6 +94,9 @@ function SpeedComparison({ mode, isActive }: SpeedComparisonProps) {
       });
 
       setAbsorptionRate((absorbed / prevParticles.length) * 100);
+      const newRate = (absorbed / prevParticles.length) * 100;
+      setAbsorptionRate(newRate);
+      onAbsorptionChange(newRate);
       return updatedParticles;
     });
   });
@@ -169,6 +173,7 @@ export default function SpeedOfTrust3D() {
   const [currentMode, setCurrentMode] = useState<'trust' | 'data'>('trust');
   const [isRunning, setIsRunning] = useState(false);
   const [sessionTime, setSessionTime] = useState(0);
+  const [absorptionRate, setAbsorptionRate] = useState(0);
   const [metrics, setMetrics] = useState({
     comprehension: 0,
     retention: 0,
@@ -201,6 +206,7 @@ export default function SpeedOfTrust3D() {
     if (!isRunning) {
       setSessionTime(0);
       setMetrics({ comprehension: 0, retention: 0, stress: 0, flow: 0 });
+      setAbsorptionRate(0);
     }
   };
 
@@ -375,7 +381,11 @@ export default function SpeedOfTrust3D() {
           color={currentMode === 'trust' ? '#10b981' : '#ef4444'} 
         />
         
-        <SpeedComparison mode={currentMode} isActive={isRunning} />
+        <SpeedComparison 
+          mode={currentMode} 
+          isActive={isRunning} 
+          onAbsorptionChange={setAbsorptionRate}
+        />
         
         <OrbitControls enablePan={false} maxDistance={20} minDistance={8} />
       </Canvas>
