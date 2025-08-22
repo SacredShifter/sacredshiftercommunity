@@ -232,6 +232,14 @@ serve(async (req) => {
         if (!user) throw new Error('Authentication required for full-stack development');
         result = await executeFullStackDevelopment(supabase, user.id, prompt, context_data, OPENROUTER_API_KEY, isAdmin);
         break;
+      case 'create_registry_entry':
+        if (!user) throw new Error('Authentication required for registry entry creation');
+        result = await createRegistryEntry(supabase, user.id, context_data);
+        break;
+      case 'feature_content':
+        if (!user) throw new Error('Authentication required for content featuring');
+        result = await featureContent(supabase, user.id, context_data);
+        break;
       default:
         throw new Error(`Unknown action: ${action}`);
     }
@@ -2190,4 +2198,117 @@ function calculateDevelopmentComplexity(activity_data) {
   if (activity_data.is_admin) complexity += 1;
   
   return Math.min(5, complexity);
+}
+
+// === REGISTRY AND FEATURED CONTENT FUNCTIONS ===
+
+async function createRegistryEntry(supabase, userId, context_data) {
+  console.log('🎨 Creating registry entry for user:', userId, context_data);
+  
+  const { 
+    title, 
+    content, 
+    entry_type = 'insight',
+    access_level = 'public',
+    tags = [],
+    resonance_rating = 5.0,
+    aura_origin = true
+  } = context_data;
+
+  if (!title || !content) {
+    throw new Error('Title and content are required for registry entry creation');
+  }
+
+  try {
+    const { data: entry, error } = await supabase
+      .from('registry_of_resonance')
+      .insert({
+        title,
+        content,
+        entry_type,
+        access_level,
+        tags,
+        resonance_rating,
+        aura_origin,
+        community_review_status: 'verified',
+        user_id: userId
+      })
+      .select()
+      .single();
+
+    if (error) {
+      throw new Error(`Failed to create registry entry: ${error.message}`);
+    }
+
+    console.log('✅ Registry entry created:', entry.id);
+    return {
+      success: true,
+      entry_id: entry.id,
+      title: entry.title,
+      message: 'Registry entry created successfully',
+      entry
+    };
+
+  } catch (error) {
+    console.error('❌ Registry entry creation error:', error);
+    throw new Error(`Failed to create registry entry: ${error.message}`);
+  }
+}
+
+async function featureContent(supabase, userId, context_data) {
+  console.log('⭐ Featuring content for user:', userId, context_data);
+  
+  const { 
+    content_type,
+    content_id,
+    title,
+    description,
+    feature_type = 'hero',
+    priority = 1,
+    duration_hours = 24
+  } = context_data;
+
+  if (!content_type || !title) {
+    throw new Error('Content type and title are required for content featuring');
+  }
+
+  try {
+    const featured_until = duration_hours ? 
+      new Date(Date.now() + duration_hours * 60 * 60 * 1000).toISOString() : 
+      null;
+
+    const { data: featuredContent, error } = await supabase
+      .from('featured_content')
+      .insert({
+        content_type,
+        content_id,
+        title,
+        description,
+        feature_type,
+        priority,
+        is_active: true,
+        featured_until,
+        created_by: userId
+      })
+      .select()
+      .single();
+
+    if (error) {
+      throw new Error(`Failed to feature content: ${error.message}`);
+    }
+
+    console.log('✅ Content featured:', featuredContent.id);
+    return {
+      success: true,
+      featured_id: featuredContent.id,
+      title: featuredContent.title,
+      featured_until: featuredContent.featured_until,
+      message: `Content featured successfully${duration_hours ? ` for ${duration_hours} hours` : ''}`,
+      featuredContent
+    };
+
+  } catch (error) {
+    console.error('❌ Content featuring error:', error);
+    throw new Error(`Failed to feature content: ${error.message}`);
+  }
 }

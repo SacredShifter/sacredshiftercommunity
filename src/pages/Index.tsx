@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
+import { FeaturedContentSection } from '@/components/FeaturedContentSection';
 import { 
   MessageCircle, 
   BookOpen, 
@@ -193,6 +194,9 @@ const Index = () => {
             Encrypted mesh networks, sacred wisdom, and digital sovereignty united.
           </p>
         </div>
+
+        {/* Featured Content by Aura */}
+        <FeaturedContentSection />
 
         {/* Journey Path */}
         <div className="journey-path relative">

@@ -19,6 +19,7 @@ import Settings from "./pages/Settings";
 import Journal from "./pages/Journal";
 import VideoLibrary from "./pages/VideoLibrary";
 import Registry from "./pages/Registry";
+import RegistryEntry from "./pages/RegistryEntry";
 import Codex from "./pages/Codex";
 import Guidebook from "./pages/Guidebook";
 import Support from "./pages/Support";
@@ -55,6 +56,7 @@ function App() {
                 <Route path="/journal" element={<Journal />} />
                 <Route path="/videos" element={<VideoLibrary />} />
                 <Route path="/registry" element={<Registry />} />
+                <Route path="/resonance/entries/:id" element={<RegistryEntry />} />
                 <Route path="/codex" element={<Codex />} />
                 <Route path="/grove" element={<Grove />} />
                 <Route path="/guidebook" element={<Guidebook />} />
