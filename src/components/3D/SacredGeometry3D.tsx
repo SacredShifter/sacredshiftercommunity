@@ -37,8 +37,8 @@ const geometryData: GeometryData[] = [
     edges: 6,
     color: '#FF4500',
     position: [-3, 2, 0],
-    component: React.forwardRef<THREE.Mesh, any>(({ isSelected, onClick, onPointerOver, onPointerOut, ...threeProps }, ref) => 
-      <Tetrahedron ref={ref} {...threeProps} onClick={onClick} onPointerOver={onPointerOver} onPointerOut={onPointerOut}>
+    component: React.forwardRef<THREE.Mesh, any>(({ isSelected, onClick, onPointerOver, onPointerOut }, ref) => 
+      <Tetrahedron ref={ref} onClick={onClick} onPointerOver={onPointerOver} onPointerOut={onPointerOut}>
         <meshStandardMaterial
           color="#FF4500"
           emissive="#FF4500"
@@ -62,8 +62,8 @@ const geometryData: GeometryData[] = [
     edges: 12,
     color: '#8B4513',
     position: [-1, 2, 0],
-    component: React.forwardRef<THREE.Mesh, any>(({ isSelected, onClick, onPointerOver, onPointerOut, ...threeProps }, ref) => 
-      <mesh ref={ref} {...threeProps} onClick={onClick} onPointerOver={onPointerOver} onPointerOut={onPointerOut}>
+    component: React.forwardRef<THREE.Mesh, any>(({ isSelected, onClick, onPointerOver, onPointerOut }, ref) => 
+      <mesh ref={ref} onClick={onClick} onPointerOver={onPointerOver} onPointerOut={onPointerOut}>
         <boxGeometry />
         <meshStandardMaterial
           color="#8B4513"
@@ -88,8 +88,8 @@ const geometryData: GeometryData[] = [
     edges: 12,
     color: '#87CEEB',
     position: [1, 2, 0],
-    component: React.forwardRef<THREE.Mesh, any>(({ isSelected, onClick, onPointerOver, onPointerOut, ...threeProps }, ref) => 
-      <Octahedron ref={ref} {...threeProps} onClick={onClick} onPointerOver={onPointerOver} onPointerOut={onPointerOut}>
+    component: React.forwardRef<THREE.Mesh, any>(({ isSelected, onClick, onPointerOver, onPointerOut }, ref) => 
+      <Octahedron ref={ref} onClick={onClick} onPointerOver={onPointerOver} onPointerOut={onPointerOut}>
         <meshStandardMaterial
           color="#87CEEB"
           emissive="#87CEEB"
@@ -113,8 +113,8 @@ const geometryData: GeometryData[] = [
     edges: 30,
     color: '#4169E1',
     position: [3, 2, 0],
-    component: React.forwardRef<THREE.Mesh, any>(({ isSelected, onClick, onPointerOver, onPointerOut, ...threeProps }, ref) => 
-      <Icosahedron ref={ref} {...threeProps} onClick={onClick} onPointerOver={onPointerOver} onPointerOut={onPointerOut}>
+    component: React.forwardRef<THREE.Mesh, any>(({ isSelected, onClick, onPointerOver, onPointerOut }, ref) => 
+      <Icosahedron ref={ref} onClick={onClick} onPointerOver={onPointerOver} onPointerOut={onPointerOut}>
         <meshStandardMaterial
           color="#4169E1"
           emissive="#4169E1"
@@ -138,8 +138,8 @@ const geometryData: GeometryData[] = [
     edges: 30,
     color: '#9370DB',
     position: [0, 0, 0],
-    component: React.forwardRef<THREE.Mesh, any>(({ isSelected, onClick, onPointerOver, onPointerOut, ...threeProps }, ref) => 
-      <Dodecahedron ref={ref} {...threeProps} onClick={onClick} onPointerOver={onPointerOver} onPointerOut={onPointerOut}>
+    component: React.forwardRef<THREE.Mesh, any>(({ isSelected, onClick, onPointerOver, onPointerOut }, ref) => 
+      <Dodecahedron ref={ref} onClick={onClick} onPointerOver={onPointerOver} onPointerOut={onPointerOut}>
         <meshStandardMaterial
           color="#9370DB"
           emissive="#9370DB"
@@ -169,6 +169,9 @@ function AnimatedGeometry({ geometry, isSelected, onClick }: GeometryShapeProps)
       
       if (isSelected) {
         meshRef.current.rotation.z += 0.02;
+        meshRef.current.scale.setScalar(1.2);
+      } else {
+        meshRef.current.scale.setScalar(1);
       }
     }
   });
@@ -179,7 +182,6 @@ function AnimatedGeometry({ geometry, isSelected, onClick }: GeometryShapeProps)
     <group position={geometry.position}>
       <GeometryComponent
         ref={meshRef}
-        args={isSelected ? [1.2] : [1]}
         onClick={() => onClick(geometry)}
         onPointerOver={() => document.body.style.cursor = 'pointer'}
         onPointerOut={() => document.body.style.cursor = 'auto'}
