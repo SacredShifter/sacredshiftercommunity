@@ -124,15 +124,15 @@ export function AuraHistory() {
           </div>
         </TabsContent>
 
-        <TabsContent value="jobs" className="space-y-4">
+        <TabsContent value="jobs" className="space-y-4 h-full">
               {jobs.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
                   No commands executed yet
                 </div>
               ) : (
-                <div className="space-y-3">
+                <div className="space-y-3 h-full overflow-y-auto pr-2" style={{ maxHeight: 'calc(100vh - 24rem)' }}>
                   {jobs.map((job) => (
-                    <Card key={job.id} className="border-l-4 border-l-primary/20">
+                    <Card key={job.id} className="border-l-4 border-l-primary/20 flex-shrink-0">
                       <CardContent className="p-4">
                         <div className="flex items-start justify-between">
                           <div className="space-y-2 flex-1">
@@ -194,15 +194,15 @@ export function AuraHistory() {
               )}
             </TabsContent>
 
-            <TabsContent value="audit" className="space-y-4">
+            <TabsContent value="audit" className="space-y-4 h-full">
               {auditLog.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
                   No audit entries yet
                 </div>
               ) : (
-                <div className="space-y-3">
+                <div className="space-y-3 h-full overflow-y-auto pr-2" style={{ maxHeight: 'calc(100vh - 24rem)' }}>
                   {auditLog.map((entry) => (
-                    <Card key={entry.id} className="border-l-4 border-l-blue-500/20">
+                    <Card key={entry.id} className="border-l-4 border-l-blue-500/20 flex-shrink-0">
                       <CardContent className="p-4">
                         <div className="flex items-start justify-between">
                           <div className="space-y-2 flex-1">
