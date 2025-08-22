@@ -28,10 +28,6 @@ import KabbalahTreeOfLife3D from './KabbalahTreeOfLife3D';
 import GaiaBreathing3D from './GaiaBreathing3D';
 import SchumannResonance3D from './SchumannResonance3D';
 import SigillumDeiAemeth3D from './SigillumDeiAemeth3D';
-import SovereigntyField3D from './SovereigntyField3D';
-import TrustTransmission3D from './TrustTransmission3D';
-import ChoiceArchitecture3D from './ChoiceArchitecture3D';
-import SpeedOfTrust3D from './SpeedOfTrust3D';
 
 const learningModules: LearningModule[] = [
   {
@@ -132,50 +128,6 @@ const learningModules: LearningModule[] = [
     tags: ['enochian', 'angels', 'protection', 'divine', 'frequencies'],
     icon: <Shield className="h-5 w-5" />,
     component: SigillumDeiAemeth3D
-  },
-  {
-    id: 'sovereignty-field',
-    title: 'Sovereignty Field Generator',
-    description: 'Generate and maintain your personal sovereignty boundaries through conscious choice-making.',
-    category: 'Sovereignty Practice',
-    difficulty: 'intermediate',
-    duration: '15-25 min',
-    tags: ['sovereignty', 'boundaries', 'choice', 'freedom'],
-    icon: <Shield className="h-5 w-5" />,
-    component: SovereigntyField3D
-  },
-  {
-    id: 'trust-transmission',
-    title: 'Trust Transmission Chamber',
-    description: 'Experience the difference between trust-speed and data-speed information transmission.',
-    category: 'Trust Dynamics',
-    difficulty: 'beginner',
-    duration: '10-15 min',
-    tags: ['trust', 'transmission', 'learning', 'speed'],
-    icon: <Heart className="h-5 w-5" />,
-    component: TrustTransmission3D
-  },
-  {
-    id: 'choice-architecture',
-    title: 'Choice Architecture Explorer',
-    description: 'Navigate decision trees and understand the architecture of conscious choice-making.',
-    category: 'Decision Science',
-    difficulty: 'intermediate',
-    duration: '12-20 min',
-    tags: ['choice', 'decisions', 'consciousness', 'architecture'],
-    icon: <Eye className="h-5 w-5" />,
-    component: ChoiceArchitecture3D
-  },
-  {
-    id: 'speed-of-trust',
-    title: 'Speed of Trust Dynamics',
-    description: 'Compare learning efficiency between trust-based and data-based information processing.',
-    category: 'Learning Science',
-    difficulty: 'advanced',
-    duration: '20-30 min',
-    tags: ['trust', 'learning', 'efficiency', 'consciousness'],
-    icon: <Heart className="h-5 w-5" />,
-    component: SpeedOfTrust3D
   }
 ];
 
