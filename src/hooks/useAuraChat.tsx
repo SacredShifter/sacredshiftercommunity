@@ -49,18 +49,19 @@ export function useAuraChat(adminMode: boolean = false) {
     });
     
     try {
+      const user = await supabase.auth.getUser();
       const payload = {
         ...request,
-        user_id: (await supabase.auth.getUser()).data.user?.id,
+        user_id: user.data.user?.id,
         consciousness_state: consciousnessState,
         sovereignty_level: sovereigntyLevel,
         admin_mode: adminMode && userRole === 'admin'
       };
       
-      console.log('Invoking Aura with payload:', payload);
+      console.log('Invoking Aura with payload:', JSON.stringify(payload, null, 2));
       
       const { data, error } = await supabase.functions.invoke('aura-core', {
-        body: payload,
+        body: JSON.stringify(payload),
         headers: {
           'Content-Type': 'application/json',
         }
