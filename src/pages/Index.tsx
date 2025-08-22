@@ -1,673 +1,358 @@
-import { useAuth } from "@/hooks/useAuth";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useTourContext } from "@/components/TourProvider";
-import { LANDING_PAGE_TOUR } from "@/configs/tours";
-import { OnboardingFlow } from "@/components/Onboarding/OnboardingFlow";
-import { SacredGrove } from "@/components/SacredGrove/SacredGrove";
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { Card, CardContent } from '@/components/ui/card';
+import { useAuth } from '@/hooks/useAuth';
 import { 
-  Home, Users, User, Rss, Settings, LogOut, BookOpen, Video, 
-  Database, Archive, Scroll, Heart, Sparkles, Crown, Zap, Map, MessageCircle, Wifi 
-} from "lucide-react";
+  MessageCircle, 
+  BookOpen, 
+  Users, 
+  Zap, 
+  Video, 
+  Settings, 
+  Bot,
+  Network,
+  Compass,
+  Globe,
+  Brain,
+  Sparkles,
+  Shield,
+  Wifi,
+  Lock,
+  WifiOff,
+  Star,
+  Hexagon,
+  Triangle,
+  Database,
+  Archive,
+  Scroll,
+  Heart,
+  Crown,
+  Map,
+  Rss
+} from 'lucide-react';
 
 const Index = () => {
-  const { user, signOut } = useAuth();
-  const navigate = useNavigate();
-  const { startTour, isTourCompleted } = useTourContext();
-  const [showOnboarding, setShowOnboarding] = useState(false);
-  const [showSacredGrove, setShowSacredGrove] = useState(false);
-  const [isFirstVisit, setIsFirstVisit] = useState(false);
-  const [onboardingCompleted, setOnboardingCompleted] = useState(false);
+  const { user } = useAuth();
+  const [meshStatus, setMeshStatus] = useState<'active' | 'offline'>('active');
+  const [resonanceLevel, setResonanceLevel] = useState(70);
+  const [currentStep, setCurrentStep] = useState(0);
 
   useEffect(() => {
-    const checkFirstVisit = async () => {
-      if (!user) return;
-      
-      try {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('onboarding_completed')
-          .eq('id', user.id)
-          .single();
+    // Simulate mesh status changes
+    const interval = setInterval(() => {
+      setMeshStatus(prev => Math.random() > 0.1 ? 'active' : 'offline');
+      setResonanceLevel(60 + Math.random() * 30);
+    }, 5000);
 
-        if (!profile?.onboarding_completed) {
-          setIsFirstVisit(true);
-          setShowOnboarding(true);
-        } else {
-          setOnboardingCompleted(true);
-        }
-      } catch (error) {
-        console.error('Error checking onboarding status:', error);
-        // If there's an error fetching profile, assume user needs onboarding
-        setIsFirstVisit(true);
-        setShowOnboarding(true);
-      }
-    };
+    return () => clearInterval(interval);
+  }, []);
 
-    checkFirstVisit();
-  }, [user]);
+  const journeySteps = [
+    { icon: BookOpen, label: 'Journal', path: '/journal' },
+    { icon: Users, label: 'Circles', path: '/circles' },
+    { icon: Network, label: 'Mesh', path: '/messages' },
+    { icon: Sparkles, label: 'Codex', path: '/codex' }
+  ];
 
-  // Auto-start tour for returning users (after onboarding)
-  useEffect(() => {
-    if (user && !isTourCompleted('landing-page-tour') && !showOnboarding && onboardingCompleted) {
-      // Small delay to ensure elements are rendered
-      const timer = setTimeout(() => {
-        startTour(LANDING_PAGE_TOUR);
-      }, 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [user, showOnboarding, onboardingCompleted, isTourCompleted, startTour]);
-
-  const handleOnboardingComplete = () => {
-    setShowOnboarding(false);
-    setOnboardingCompleted(true);
-  };
-
-  // Reset onboarding for testing (only in development)
-  const resetOnboarding = async () => {
-    if (!user) return;
-    try {
-      await supabase
-        .from('profiles')
-        .update({ onboarding_completed: false })
-        .eq('id', user.id);
-      
-      setShowOnboarding(true);
-      setOnboardingCompleted(false);
-      
-      console.log('Onboarding reset successfully');
-    } catch (error) {
-      console.error('Error resetting onboarding:', error);
-    }
-  };
-
-  const sacredSections = [
+  const modules = [
     {
-      title: "Sacred Grove",
-      description: "Enter the foundational consciousness transformation experience",
+      title: 'Sacred Mesh',
+      description: 'The crown jewel - sovereign peer-to-peer communication that transcends all networks',
+      icon: Network,
+      path: '/messages',
+      gradient: 'from-violet-500 via-blue-500 to-emerald-500',
+      glow: 'shadow-violet-500/30',
+      keywords: ['mesh networking', 'sovereign communication', 'encrypted', 'decentralized'],
+      isCrownJewel: true,
+      status: meshStatus
+    },
+    {
+      title: 'Sacred Grove',
+      description: 'Enter the foundational consciousness transformation experience',
       icon: Crown,
-      action: () => setShowSacredGrove(true),
-      gradient: "from-yellow-500/20 to-amber-500/20",
-      glowColor: "yellow",
-      cta: "Enter the Living Wisdom Portal",
-      pulseColor: "45 93% 47%" // sacred gold
+      path: '/grove',
+      gradient: 'from-yellow-500 to-amber-600',
+      glow: 'shadow-yellow-500/30',
+      keywords: ['consciousness', 'transformation', 'sacred space']
     },
     {
-      title: "Sacred Messages",
-      description: "Sovereign mesh communication beyond towers—encrypted, resilient, unstoppable",
-      icon: MessageCircle,
-      path: "/messages",
-      gradient: "from-cyan-500/20 to-blue-500/20",
-      glowColor: "cyan",
-      cta: "Access the Sacred Mesh Network",
-      pulseColor: "180 100% 50%" // sovereign cyan
-    },
-    {
-      title: "Sacred Feed",
-      description: "Your personalized stream of consciousness transformation content",
+      title: 'Sacred Feed',
+      description: 'Your personalized stream of consciousness transformation content',
       icon: Rss,
-      path: "/feed",
-      gradient: "from-violet-500/20 to-purple-500/20",
-      glowColor: "violet",
-      cta: "Feed the Flame Within",
-      pulseColor: "269 69% 58%" // electric violet
+      path: '/feed',
+      gradient: 'from-violet-500 to-purple-600',
+      glow: 'shadow-violet-500/30',
+      keywords: ['feed', 'consciousness', 'personalized']
     },
     {
-      title: "Sacred Circles",
-      description: "Connect with fellow seekers in transformative group experiences",
+      title: 'Sacred Circles',
+      description: 'Connect with fellow seekers in transformative group experiences',
       icon: Users,
-      path: "/circles",
-      gradient: "from-blue-500/20 to-cyan-500/20",
-      glowColor: "blue",
-      cta: "Step Into the Shared Field",
-      pulseColor: "196 83% 60%" // alignment aqua
+      path: '/circles',
+      gradient: 'from-blue-500 to-cyan-600',
+      glow: 'shadow-blue-500/30',
+      keywords: ['community', 'groups', 'connection']
     },
     {
-      title: "Mirror Journal",
-      description: "Reflect, record, and analyze your inner journey",
+      title: 'Mirror Journal',
+      description: 'Reflect, record, and analyze your inner journey',
       icon: BookOpen,
-      path: "/journal",
-      gradient: "from-emerald-500/20 to-green-500/20",
-      glowColor: "emerald",
-      cta: "Witness Your Soul Unfold",
-      pulseColor: "143 25% 86%" // truth light
+      path: '/journal',
+      gradient: 'from-emerald-500 to-green-600',
+      glow: 'shadow-emerald-500/30',
+      keywords: ['reflection', 'journal', 'inner work']
     },
     {
-      title: "Collective Codex",
-      description: "Document meaningful synchronicities and spiritual experiences",
+      title: 'Collective Codex',
+      description: 'Document meaningful synchronicities and spiritual experiences',
       icon: Database,
-      path: "/registry",
-      gradient: "from-amber-500/20 to-orange-500/20",
-      glowColor: "amber",
-      cta: "Anchor the Synchronicities",
-      pulseColor: "60 100% 50%" // pulse yellow
+      path: '/registry',
+      gradient: 'from-amber-500 to-orange-600',
+      glow: 'shadow-amber-500/30',
+      keywords: ['synchronicity', 'collective', 'wisdom']
     },
     {
-      title: "Personal Codex",
-      description: "Your private collection of wisdom, insights, and revelations",
+      title: 'Personal Codex',
+      description: 'Your private collection of wisdom, insights, and revelations',
       icon: Archive,
-      path: "/codex",
-      gradient: "from-pink-500/20 to-rose-500/20",
-      glowColor: "pink",
-      cta: "Chronicle Your Sacred Knowing",
-      pulseColor: "324 78% 54%" // purpose magenta
+      path: '/codex',
+      gradient: 'from-pink-500 to-rose-600',
+      glow: 'shadow-pink-500/30',
+      keywords: ['personal', 'wisdom', 'insights']
     },
     {
-      title: "YouTube Library",
-      description: "Curated video content for consciousness expansion",
+      title: 'YouTube Library',
+      description: 'Curated video content for consciousness expansion',
       icon: Video,
-      path: "/videos",
-      gradient: "from-red-500/20 to-orange-500/20",
-      glowColor: "red",
-      cta: "Receive Vision Through Sound & Story",
-      pulseColor: "14 100% 57%" // warm orange
+      path: '/videos',
+      gradient: 'from-red-500 to-orange-600',
+      glow: 'shadow-red-500/30',
+      keywords: ['videos', 'curated', 'expansion']
     },
     {
-      title: "Sacred Shifter Guidebook",
-      description: "Ancient wisdom for modern transformation",
+      title: 'Sacred Guidebook',
+      description: 'Ancient wisdom for modern transformation',
       icon: Scroll,
-      path: "/guidebook",
-      gradient: "from-indigo-500/20 to-blue-500/20",
-      glowColor: "indigo",
-      cta: "Walk the Path of Living Wisdom",
-      pulseColor: "257 65% 70%" // deep indigo light
+      path: '/guidebook',
+      gradient: 'from-indigo-500 to-blue-600',
+      glow: 'shadow-indigo-500/30',
+      keywords: ['wisdom', 'ancient', 'guidance']
     },
     {
-      title: "Consciousness Constellation",
-      description: "Map the cosmic connections between your experiences",
+      title: 'Consciousness Constellation',
+      description: 'Map the cosmic connections between your experiences',
       icon: Map,
-      path: "/constellation",
-      gradient: "from-purple-500/20 to-indigo-500/20",
-      glowColor: "purple",
-      cta: "Chart Your Soul's Stellar Map",
-      pulseColor: "280 100% 70%" // cosmic purple
+      path: '/constellation',
+      gradient: 'from-purple-500 to-indigo-600',
+      glow: 'shadow-purple-500/30',
+      keywords: ['mapping', 'cosmic', 'connections']
     },
     {
-      title: "Support Sacred Shifter",
-      description: "Fuel the frequency with donations and premium modules",
+      title: 'Support Sacred Shifter',
+      description: 'Fuel the frequency with donations and premium modules',
       icon: Heart,
-      path: "/support",
-      gradient: "from-rose-500/20 to-pink-500/20",
-      glowColor: "rose",
-      cta: "Fuel the Frequency of Truth",
-      pulseColor: "350 100% 60%" // rose pulse
+      path: '/support',
+      gradient: 'from-rose-500 to-pink-600',
+      glow: 'shadow-rose-500/30',
+      keywords: ['support', 'donations', 'premium']
     }
   ];
 
-  const handleSignOut = async () => {
-    await signOut();
-  };
-
-
   return (
-    <>
-      <OnboardingFlow 
-        isVisible={showOnboarding}
-        onComplete={handleOnboardingComplete}
+    <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-primary/5 relative overflow-hidden">
+      {/* Living Background */}
+      <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:50px_50px]" />
+      <div 
+        className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl"
+        style={{ animation: 'consciousness-breathe 6s ease-in-out infinite' }}
+      />
+      <div 
+        className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl"
+        style={{ animation: 'consciousness-breathe 8s ease-in-out infinite reverse' }}
+      />
+      <div 
+        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-secondary/5 rounded-full blur-3xl"
+        style={{ animation: 'consciousness-breathe 10s ease-in-out infinite' }}
       />
       
-      <div className="h-full p-6">
-        <div className="max-w-7xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-12">
-            <div className="flex justify-center mb-6">
-              <div className="relative">
-                <img 
-                  src="https://mikltjgbvxrxndtszorb.supabase.co/storage/v1/object/public/sacred-assets/uploads/Logo-MainSacredShifter-removebg-preview%20(1).png" 
-                  alt="Sacred Shifter" 
-                  className="h-24 w-auto filter invert brightness-0 contrast-100 opacity-90"
-                  data-tour="sacred-shifter-logo"
-                />
-                <div className="absolute -inset-2 bg-gradient-to-r from-primary/20 to-primary/10 rounded-full blur-xl animate-pulse" />
-              </div>
-            </div>
-            
-            <h1 className="text-3xl font-bold mb-4 bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent">
-              Sacred Shifter
-            </h1>
-            <p className="text-xl text-muted-foreground mb-2">
-              Pioneer the Future of Sovereign Consciousness
-            </p>
-            <p className="text-lg text-muted-foreground/80 mb-4 max-w-2xl mx-auto">
-              Privacy-first • Mesh-networked • Metaphysically-powered consciousness transformation platform
-            </p>
-            <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-              <Wifi className="h-4 w-4 text-cyan-500" />
-              <span>Sacred Mesh Active</span>
-              <span>•</span>
-              <span className="font-medium text-foreground">{user?.email}</span>
+      <div className="relative z-10 container mx-auto px-4 py-12">
+        {/* Hero Section */}
+        <div className="text-center mb-12 space-y-6">
+          <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/30 backdrop-blur-sm">
+            <Network className="h-5 w-5 text-primary animate-pulse" />
+            <span className="text-lg font-bold bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
+              The Mesh of Consciousness
+            </span>
+            <div className="privacy-indicator">
+              <Lock className="h-4 w-4 privacy-lock" />
+              <Wifi className="h-4 w-4" />
             </div>
           </div>
+          
+          <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-foreground via-primary to-accent bg-clip-text text-transparent leading-tight">
+            Sacred Shifter
+          </h1>
+          
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            Connect, Reflect, Transform — Anywhere. A sovereign platform where consciousness meets frontier technology. 
+            Encrypted mesh networks, sacred wisdom, and digital sovereignty united.
+          </p>
+        </div>
 
-          {/* Sacred Shiftery Tiles */}
-          <div 
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8"
-            data-tour="frequency-tiles"
+        {/* Journey Path */}
+        <div className="journey-path">
+          {journeySteps.map((step, index) => (
+            <Link 
+              key={step.label}
+              to={step.path}
+              className={`journey-step ${index === currentStep ? 'active' : ''}`}
+              onClick={() => setCurrentStep(index)}
+            >
+              <step.icon className="h-4 w-4" />
+              <span>{step.label}</span>
+              {index === currentStep && (
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full animate-pulse" />
+              )}
+            </Link>
+          ))}
+        </div>
+
+        {/* Sacred Mesh - Crown Jewel */}
+        <div className="mb-8">
+          <Link 
+            to="/messages"
+            className="group block"
           >
-            {sacredSections.map((section, index) => {
-              // Generate unique geometric pattern for each module
-              const getGeometricPattern = (sectionIndex: number) => {
-                const patterns = {
-                  0: ( // Sacred Grove - Crown/Tree pattern
-                    <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
-                      <defs>
-                        <pattern id="grove-pattern" x="0" y="0" width="30" height="30" patternUnits="userSpaceOnUse">
-                          <polygon points="15,2 10,12 20,12" fill="currentColor" />
-                          <rect x="13" y="12" width="4" height="8" fill="currentColor" />
-                          <polygon points="5,25 15,15 25,25" fill="currentColor" />
-                          <circle cx="8" cy="8" r="2" fill="currentColor" />
-                          <circle cx="22" cy="8" r="2" fill="currentColor" />
-                        </pattern>
-                      </defs>
-                      <rect width="100" height="100" fill="url(#grove-pattern)" />
-                    </svg>
-                  ),
-                  1: ( // Sacred Messages - Mesh network pattern
-                    <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
-                      <defs>
-                        <pattern id="mesh-pattern" x="0" y="0" width="25" height="25" patternUnits="userSpaceOnUse">
-                          <circle cx="5" cy="5" r="2" fill="currentColor" />
-                          <circle cx="15" cy="5" r="2" fill="currentColor" />
-                          <circle cx="25" cy="5" r="2" fill="currentColor" />
-                          <circle cx="5" cy="15" r="2" fill="currentColor" />
-                          <circle cx="15" cy="15" r="2" fill="currentColor" />
-                          <circle cx="25" cy="15" r="2" fill="currentColor" />
-                          <line x1="5" y1="5" x2="15" y2="5" stroke="currentColor" strokeWidth="1" />
-                          <line x1="15" y1="5" x2="25" y2="5" stroke="currentColor" strokeWidth="1" />
-                          <line x1="5" y1="5" x2="5" y2="15" stroke="currentColor" strokeWidth="1" />
-                          <line x1="15" y1="5" x2="15" y2="15" stroke="currentColor" strokeWidth="1" />
-                          <line x1="25" y1="5" x2="25" y2="15" stroke="currentColor" strokeWidth="1" />
-                          <line x1="5" y1="15" x2="15" y2="15" stroke="currentColor" strokeWidth="1" />
-                          <line x1="15" y1="15" x2="25" y2="15" stroke="currentColor" strokeWidth="1" />
-                          <line x1="5" y1="5" x2="15" y2="15" stroke="currentColor" strokeWidth="0.5" />
-                          <line x1="15" y1="5" x2="25" y2="15" stroke="currentColor" strokeWidth="0.5" />
-                        </pattern>
-                      </defs>
-                      <rect width="100" height="100" fill="url(#mesh-pattern)" />
-                    </svg>
-                  ),
-                  2: ( // Sacred Feed - Flowing stream pattern
-                    <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
-                      <defs>
-                        <pattern id="feed-pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-                          <rect x="0" y="0" width="8" height="4" fill="currentColor" />
-                          <rect x="10" y="6" width="8" height="4" fill="currentColor" />
-                          <rect x="2" y="12" width="8" height="4" fill="currentColor" />
-                          <rect x="12" y="18" width="6" height="2" fill="currentColor" />
-                        </pattern>
-                      </defs>
-                      <rect width="100" height="100" fill="url(#feed-pattern)" />
-                    </svg>
-                  ),
-                  3: ( // Sacred Circles - Circular connected pattern
-                    <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
-                      <defs>
-                        <pattern id="circles-pattern" x="0" y="0" width="25" height="25" patternUnits="userSpaceOnUse">
-                          <circle cx="5" cy="5" r="3" fill="currentColor" />
-                          <circle cx="15" cy="5" r="3" fill="currentColor" />
-                          <circle cx="5" cy="15" r="3" fill="currentColor" />
-                          <circle cx="15" cy="15" r="3" fill="currentColor" />
-                          <rect x="8" y="0" width="2" height="25" fill="currentColor" />
-                          <rect x="0" y="8" width="25" height="2" fill="currentColor" />
-                        </pattern>
-                      </defs>
-                      <rect width="100" height="100" fill="url(#circles-pattern)" />
-                    </svg>
-                  ),
-                  4: ( // Mirror Journal - Reflective chevron pattern
-                    <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
-                      <defs>
-                        <pattern id="journal-pattern" x="0" y="0" width="16" height="16" patternUnits="userSpaceOnUse">
-                          <polygon points="0,0 8,8 0,16" fill="currentColor" />
-                          <polygon points="16,0 8,8 16,16" fill="currentColor" />
-                        </pattern>
-                      </defs>
-                      <rect width="100" height="100" fill="url(#journal-pattern)" />
-                    </svg>
-                  ),
-                  5: ( // Collective Codex - Synchronized grid pattern
-                    <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
-                      <defs>
-                        <pattern id="register-pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-                          <rect x="0" y="0" width="6" height="6" fill="currentColor" />
-                          <rect x="8" y="0" width="6" height="6" fill="currentColor" />
-                          <rect x="16" y="0" width="4" height="6" fill="currentColor" />
-                          <rect x="0" y="8" width="6" height="6" fill="currentColor" />
-                          <rect x="8" y="8" width="6" height="6" fill="currentColor" />
-                          <rect x="16" y="8" width="4" height="6" fill="currentColor" />
-                          <rect x="0" y="16" width="6" height="4" fill="currentColor" />
-                          <rect x="8" y="16" width="6" height="4" fill="currentColor" />
-                          <rect x="16" y="16" width="4" height="4" fill="currentColor" />
-                        </pattern>
-                      </defs>
-                      <rect width="100" height="100" fill="url(#register-pattern)" />
-                    </svg>
-                  ),
-                  6: ( // Personal Codex - Ancient manuscript pattern
-                    <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
-                      <defs>
-                        <pattern id="codex-pattern" x="0" y="0" width="24" height="12" patternUnits="userSpaceOnUse">
-                          <rect x="0" y="0" width="10" height="4" fill="currentColor" />
-                          <rect x="12" y="0" width="10" height="4" fill="currentColor" />
-                          <rect x="2" y="6" width="8" height="4" fill="currentColor" />
-                          <rect x="14" y="6" width="8" height="4" fill="currentColor" />
-                        </pattern>
-                      </defs>
-                      <rect width="100" height="100" fill="url(#codex-pattern)" />
-                    </svg>
-                  ),
-                  7: ( // YouTube Library - Video tile mosaic
-                    <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
-                      <defs>
-                        <pattern id="video-pattern" x="0" y="0" width="18" height="18" patternUnits="userSpaceOnUse">
-                          <rect x="0" y="0" width="8" height="8" fill="currentColor" />
-                          <rect x="10" y="0" width="8" height="4" fill="currentColor" />
-                          <rect x="10" y="6" width="8" height="4" fill="currentColor" />
-                          <rect x="0" y="10" width="4" height="8" fill="currentColor" />
-                          <rect x="6" y="10" width="4" height="8" fill="currentColor" />
-                          <rect x="12" y="12" width="6" height="6" fill="currentColor" />
-                        </pattern>
-                      </defs>
-                      <rect width="100" height="100" fill="url(#video-pattern)" />
-                    </svg>
-                  ),
-                  8: ( // Sacred Guidebook - Ancient scroll pattern
-                    <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
-                      <defs>
-                        <pattern id="guidebook-pattern" x="0" y="0" width="22" height="22" patternUnits="userSpaceOnUse">
-                          <rect x="0" y="0" width="20" height="3" fill="currentColor" />
-                          <rect x="0" y="5" width="15" height="3" fill="currentColor" />
-                          <rect x="0" y="10" width="18" height="3" fill="currentColor" />
-                          <rect x="0" y="15" width="12" height="3" fill="currentColor" />
-                          <rect x="0" y="20" width="16" height="2" fill="currentColor" />
-                        </pattern>
-                      </defs>
-                      <rect width="100" height="100" fill="url(#guidebook-pattern)" />
-                    </svg>
-                  ),
-                  9: ( // Consciousness Constellation - Star map pattern
-                    <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
-                      <defs>
-                        <pattern id="constellation-pattern" x="0" y="0" width="30" height="30" patternUnits="userSpaceOnUse">
-                          <circle cx="5" cy="5" r="2" fill="currentColor" />
-                          <circle cx="20" cy="8" r="1.5" fill="currentColor" />
-                          <circle cx="12" cy="15" r="2.5" fill="currentColor" />
-                          <circle cx="25" cy="20" r="1" fill="currentColor" />
-                          <circle cx="8" cy="25" r="1.5" fill="currentColor" />
-                          <line x1="5" y1="5" x2="12" y2="15" stroke="currentColor" strokeWidth="0.5" />
-                          <line x1="12" y1="15" x2="20" y2="8" stroke="currentColor" strokeWidth="0.5" />
-                          <line x1="20" y1="8" x2="25" y2="20" stroke="currentColor" strokeWidth="0.5" />
-                          <line x1="12" y1="15" x2="8" y2="25" stroke="currentColor" strokeWidth="0.5" />
-                        </pattern>
-                      </defs>
-                      <rect width="100" height="100" fill="url(#constellation-pattern)" />
-                    </svg>
-                  ),
-                  10: ( // Support - Heart frequency pattern
-                    <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
-                      <defs>
-                        <pattern id="support-pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-                          <rect x="0" y="4" width="4" height="4" fill="currentColor" />
-                          <rect x="6" y="2" width="4" height="8" fill="currentColor" />
-                          <rect x="12" y="0" width="4" height="12" fill="currentColor" />
-                          <rect x="18" y="6" width="2" height="6" fill="currentColor" />
-                          <rect x="0" y="16" width="20" height="2" fill="currentColor" />
-                        </pattern>
-                      </defs>
-                      <rect width="100" height="100" fill="url(#support-pattern)" />
-                    </svg>
-                  )
-                };
-                return patterns[sectionIndex] || patterns[0];
-              };
-
-              return (
-                <div
-                  key={section.path || section.title}
-                  className="group relative cursor-pointer"
-                  onClick={() => section.action ? section.action() : navigate(section.path)}
-                  data-tour={section.path ? `tile-${section.path.substring(1)}` : `tile-${section.title.toLowerCase().replace(/\s+/g, '-')}`}
-                  style={{ animationDelay: `${index * 100}ms` }}
-                >
-                  {/* Glassmorphic Container with Hexagonal Clip Path */}
-                  <div 
-                    className="relative overflow-hidden backdrop-blur-xl transition-all duration-700 hover:scale-[1.02] hover:rotate-1 group-hover:shadow-2xl animate-fade-in min-h-[280px]"
-                    style={{
-                      background: `
-                        linear-gradient(135deg, 
-                          hsl(${section.pulseColor} / 0.08) 0%, 
-                          hsl(${section.pulseColor} / 0.15) 50%, 
-                          hsl(${section.pulseColor} / 0.1) 100%
-                        ),
-                        radial-gradient(circle at 30% 30%, 
-                          hsl(${section.pulseColor} / 0.2) 0%, 
-                          transparent 60%
-                        )
-                      `,
-                      backdropFilter: 'blur(20px) saturate(180%)',
-                      WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-                      clipPath: index % 3 === 0 
-                        ? 'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)'
-                        : index % 3 === 1 
-                        ? 'polygon(20% 0%, 80% 0%, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0% 80%, 0% 20%)'
-                        : 'polygon(25% 0%, 75% 0%, 100% 25%, 100% 75%, 75% 100%, 25% 100%, 0% 75%, 0% 25%)',
-                      border: '1px solid rgba(255,255,255,0.1)',
-                      boxShadow: `
-                        0 8px 32px hsl(${section.pulseColor} / 0.15),
-                        inset 0 1px 0 hsl(${section.pulseColor} / 0.3),
-                        0 0 0 1px rgba(255,255,255,0.05)
-                      `
-                    }}
-                  >
-                    {/* Dynamic Plasma Glow Effect */}
-                    <div 
-                      className="absolute -inset-2 opacity-0 group-hover:opacity-50 transition-all duration-1000 blur-2xl"
-                      style={{
-                        background: `conic-gradient(from ${index * 45}deg, 
-                          hsl(${section.pulseColor}) 0deg, 
-                          transparent 120deg, 
-                          hsl(${section.pulseColor} / 0.7) 240deg,
-                          transparent 360deg
-                        )`,
-                        animation: `rotate 6s linear infinite`
-                      }}
-                    />
-                    
-                    {/* Animated Geometric Pattern */}
-                    <div className="absolute inset-0 text-white/8 group-hover:text-white/12 transition-all duration-700">
-                      {getGeometricPattern(index)}
-                    </div>
-                    
-                    {/* Floating Energy Particles */}
-                    <div className="absolute inset-0 overflow-hidden">
-                      {[...Array(8)].map((_, i) => (
-                        <div
-                          key={i}
-                          className="absolute w-1 h-1 rounded-full opacity-0 group-hover:opacity-70 transition-all duration-1000"
-                          style={{
-                            background: `hsl(${section.pulseColor})`,
-                            left: `${15 + i * 12}%`,
-                            top: `${20 + (i % 4) * 20}%`,
-                            animationDelay: `${i * 300}ms`,
-                            animation: 'float 4s ease-in-out infinite, pulse 2s ease-in-out infinite alternate',
-                            boxShadow: `0 0 10px hsl(${section.pulseColor})`
-                          }}
-                        />
-                      ))}
-                    </div>
-
-                    {/* Neural Network Lines */}
-                    <svg className="absolute inset-0 w-full h-full opacity-0 group-hover:opacity-20 transition-opacity duration-1000" viewBox="0 0 300 300">
-                      <defs>
-                        <linearGradient id={`neural-${index}`} x1="0%" y1="0%" x2="100%" y2="100%">
-                          <stop offset="0%" stopColor={`hsl(${section.pulseColor})`} stopOpacity="0" />
-                          <stop offset="50%" stopColor={`hsl(${section.pulseColor})`} stopOpacity="0.8" />
-                          <stop offset="100%" stopColor={`hsl(${section.pulseColor})`} stopOpacity="0" />
-                        </linearGradient>
-                      </defs>
-                      <path 
-                        d={`M50,50 Q150,${100 + index * 20} 250,150 T300,250`}
-                        stroke={`url(#neural-${index})`} 
-                        strokeWidth="2" 
-                        fill="none"
-                        style={{
-                          animation: `dashArray 3s ease-in-out infinite`
-                        }}
-                      />
-                    </svg>
-
-                    {/* Content Container */}
-                    <div className="relative p-6 h-full flex flex-col z-10">
-                      {/* Icon & Title */}
-                      <div className="flex items-start gap-4 mb-4">
-                        <div 
-                          className="flex-shrink-0 p-3 backdrop-blur-sm border border-white/20 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500"
-                          style={{
-                            background: `
-                              linear-gradient(135deg, 
-                                hsl(${section.pulseColor} / 0.3) 0%, 
-                                hsl(${section.pulseColor} / 0.15) 100%
-                              )
-                            `,
-                            borderRadius: index % 2 === 0 ? '20px' : '12px 20px 12px 20px',
-                            boxShadow: `
-                              0 0 30px hsl(${section.pulseColor} / 0.4),
-                              inset 0 1px 0 rgba(255,255,255,0.2)
-                            `
-                          }}
-                        >
-                          <section.icon 
-                            className="h-7 w-7 drop-shadow-lg transition-all duration-300 group-hover:drop-shadow-2xl"
-                            style={{ 
-                              color: `hsl(${section.pulseColor})`,
-                              filter: `drop-shadow(0 0 8px hsl(${section.pulseColor} / 0.8))`
-                            }}
-                          />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="font-bold text-xl text-white/95 mb-1 leading-tight group-hover:text-white transition-colors duration-300">
-                            {section.title}
-                          </h3>
-                        </div>
-                      </div>
-
-                      {/* Description */}
-                      <p className="text-white/75 text-sm leading-relaxed mb-6 flex-1 group-hover:text-white/85 transition-colors duration-300">
-                        {section.description}
-                      </p>
-
-                      {/* Futuristic CTA Button */}
-                      <div 
-                        className="relative backdrop-blur-sm border border-white/20 group-hover:border-white/40 transition-all duration-500 cursor-pointer overflow-hidden group/cta"
-                        style={{
-                          background: `linear-gradient(135deg, 
-                            hsl(${section.pulseColor} / 0.12) 0%, 
-                            hsl(${section.pulseColor} / 0.2) 100%
-                          )`,
-                          borderRadius: '16px',
-                          padding: '12px',
-                          boxShadow: `inset 0 1px 0 rgba(255,255,255,0.1)`
-                        }}
-                      >
-                        {/* Animated Shimmer Effect */}
-                        <div 
-                          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover/cta:opacity-100 transition-opacity duration-500"
-                          style={{
-                            transform: 'translateX(-100%)',
-                            animation: 'shimmer 2.5s infinite'
-                          }}
-                        />
-                        
-                        {/* Holographic Border */}
-                        <div 
-                          className="absolute inset-0 rounded-2xl opacity-0 group-hover/cta:opacity-100 transition-opacity duration-500"
-                          style={{
-                            background: `conic-gradient(from 0deg, 
-                              hsl(${section.pulseColor} / 0.6), 
-                              transparent 40%, 
-                              hsl(${section.pulseColor} / 0.4) 80%, 
-                              transparent
-                            )`,
-                            mask: 'linear-gradient(white 0 0) content-box, linear-gradient(white 0 0)',
-                            maskComposite: 'xor',
-                            WebkitMask: 'linear-gradient(white 0 0) content-box, linear-gradient(white 0 0)',
-                            WebkitMaskComposite: 'xor',
-                            padding: '1px',
-                            animation: 'rotate 4s linear infinite'
-                          }}
-                        />
-                        
-                        <span className="relative text-white/95 font-medium text-sm text-center block group-hover/cta:text-white transition-colors duration-300">
-                          {section.cta}
-                        </span>
-                      </div>
+            <Card className="crown-jewel portal-tile relative p-8 backdrop-blur-xl border-white/20 hover:border-primary/40 transition-all duration-500 group-hover:shadow-2xl overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 via-blue-500/10 to-emerald-500/10" />
+              
+              {/* Sacred geometry overlay */}
+              <div className="sacred-geometry">
+                <Hexagon className="w-full h-full text-primary/30" style={{ animation: 'merkaba-spin 8s linear infinite' }} />
+              </div>
+              
+              <CardContent className="relative z-10 text-center">
+                <div className="flex items-center justify-center gap-4 mb-6">
+                  <div className="p-4 rounded-2xl bg-gradient-to-br from-violet-500 to-emerald-500 shadow-2xl">
+                    <Network className="h-8 w-8 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold bg-gradient-to-r from-violet-400 via-blue-400 to-emerald-400 bg-clip-text text-transparent">
+                      Sacred Mesh
+                    </h2>
+                    <div className={`mesh-status ${meshStatus}`}>
+                      <div className="mesh-status-dot" />
+                      <span>{meshStatus === 'active' ? 'Sacred Mesh Active' : 'Sacred Mesh Offline'}</span>
                     </div>
                   </div>
                 </div>
-              );
-            })}
-          </div>
-
-          {/* Quick Actions */}
-          <Card className="bg-background/60 backdrop-blur-lg border-primary/30 shadow-xl shadow-primary/10">
-            <CardHeader>
-              <CardTitle className="text-center text-xl">Quick Actions</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap justify-center gap-4">
-                <Button 
-                  onClick={() => navigate('/profile')}
-                  variant="outline"
-                  className="border-primary/20 hover:border-primary/50"
-                >
-                  <User className="h-4 w-4 mr-2" />
-                  View Profile
-                </Button>
                 
-                <Button 
-                  onClick={() => navigate('/settings')}
-                  variant="outline"
-                  className="border-primary/20 hover:border-primary/50"
-                >
-                  <Settings className="h-4 w-4 mr-2" />
-                  Settings
-                </Button>
+                <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-6">
+                  The crown jewel of sovereign communication. Peer-to-peer encrypted messaging that transcends 
+                  all networks, ensuring your words remain sacred and your connections unbreakable.
+                </p>
                 
-                <Button 
-                  onClick={handleSignOut}
-                  variant="outline"
-                  className="border-destructive/20 hover:border-destructive/50 hover:text-destructive"
-                >
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Sign Out
-                </Button>
+                <div className="flex justify-center gap-6 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    <Lock className="h-4 w-4 text-emerald-400" />
+                    <span>End-to-End Encrypted</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Network className="h-4 w-4 text-violet-400" />
+                    <span>Mesh Networked</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Shield className="h-4 w-4 text-blue-400" />
+                    <span>Zero Servers</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+        </div>
 
-                {/* Development Controls */}
-                {process.env.NODE_ENV === 'development' && (
-                  <Button 
-                    onClick={resetOnboarding}
-                    variant="outline"
-                    size="sm"
-                    className="text-xs"
-                  >
-                    Reset Onboarding
-                  </Button>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+        {/* Portal Modules Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {modules.slice(1).map((module, index) => (
+            <Link 
+              key={module.title} 
+              to={module.path}
+              className="group block"
+            >
+              <Card className="portal-tile relative h-full backdrop-blur-xl transition-all duration-500 overflow-hidden">
+                {/* Sacred geometry for hover */}
+                <div className="sacred-geometry">
+                  {index % 3 === 0 && <Triangle className="w-full h-full text-primary/40" />}
+                  {index % 3 === 1 && <Hexagon className="w-full h-full text-accent/40" />}
+                  {index % 3 === 2 && <Star className="w-full h-full text-secondary/40" />}
+                </div>
+
+                <CardContent className="p-6 relative z-10 h-full flex flex-col">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className={`p-3 rounded-xl bg-gradient-to-br ${module.gradient} shadow-lg`}>
+                      <module.icon className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-foreground group-hover:text-primary transition-colors">
+                        {module.title}
+                      </h3>
+                      {module.keywords && (
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {module.keywords.slice(0, 2).map((keyword) => (
+                            <span key={keyword} className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary/60">
+                              {keyword}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <p className="text-sm text-muted-foreground flex-grow leading-relaxed">
+                    {module.description}
+                  </p>
+                  
+                  <div className="mt-4 pt-4 border-t border-white/10">
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                      <span className="group-hover:text-primary transition-colors">Enter Portal →</span>
+                      <div className="flex gap-1">
+                        <div className="w-1 h-1 rounded-full bg-primary/40 group-hover:bg-primary transition-colors" />
+                        <div className="w-1 h-1 rounded-full bg-accent/40 group-hover:bg-accent transition-colors delay-75" />
+                        <div className="w-1 h-1 rounded-full bg-secondary/40 group-hover:bg-secondary transition-colors delay-150" />
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
         </div>
       </div>
 
-      {/* Sacred Grove Modal */}
-      <SacredGrove 
-        isVisible={showSacredGrove}
-        onClose={() => setShowSacredGrove(false)}
-      />
-    </>
+      {/* Consciousness Bar */}
+      <div className="consciousness-bar">
+        <div className="flex items-center gap-4">
+          <div className="privacy-indicator">
+            <Lock className="h-4 w-4 privacy-lock text-emerald-400" />
+            <span>Sovereign</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground">Field Resonance</span>
+            <div className="resonance-meter">
+              <div 
+                className="resonance-fill" 
+                style={{ '--resonance-level': `${resonanceLevel}%` } as React.CSSProperties}
+              />
+            </div>
+            <span className="text-xs font-mono text-primary">{Math.round(resonanceLevel)}%</span>
+          </div>
+          <div className="privacy-indicator">
+            <Network className="h-4 w-4 text-violet-400" style={{ animation: 'mesh-wave 2s ease-in-out infinite' }} />
+            <span>Mesh Active</span>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

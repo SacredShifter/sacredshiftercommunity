@@ -640,11 +640,237 @@ All colors MUST be HSL.
     clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
   }
 }
-  }
   
   body:active {
     animation-duration: 10s, 4s, 2s;
   }
+}
+
+/* Living Background Animations */
+@keyframes consciousness-breathe {
+  0%, 100% { 
+    transform: scale(1) rotate(0deg);
+    opacity: 0.1;
+  }
+  50% { 
+    transform: scale(1.05) rotate(0.5deg);
+    opacity: 0.15;
+  }
+}
+
+@keyframes aura-pulse {
+  0%, 100% { 
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.3), 0 0 40px hsl(var(--primary) / 0.1);
+  }
+  50% { 
+    box-shadow: 0 0 30px hsl(var(--primary) / 0.5), 0 0 60px hsl(var(--primary) / 0.2);
+  }
+}
+
+@keyframes sacred-geometry-reveal {
+  0% { 
+    transform: scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  50% { 
+    transform: scale(1.1) rotate(180deg);
+    opacity: 0.8;
+  }
+  100% { 
+    transform: scale(1) rotate(360deg);
+    opacity: 1;
+  }
+}
+
+@keyframes merkaba-spin {
+  0% { transform: rotateY(0deg) rotateX(0deg); }
+  100% { transform: rotateY(360deg) rotateX(15deg); }
+}
+
+@keyframes mesh-wave {
+  0%, 100% { transform: translateX(0px) scale(1); }
+  25% { transform: translateX(2px) scale(1.02); }
+  75% { transform: translateX(-1px) scale(0.98); }
+}
+
+@keyframes resonance-flow {
+  0% { 
+    background-position: 0% 50%;
+    transform: scaleX(0.5);
+  }
+  50% { 
+    background-position: 100% 50%;
+    transform: scaleX(1);
+  }
+  100% { 
+    background-position: 0% 50%;
+    transform: scaleX(0.8);
+  }
+}
+
+/* Portal Tile Styles */
+.portal-tile {
+  @apply relative overflow-hidden cursor-pointer;
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  clip-path: polygon(15% 0%, 85% 0%, 100% 15%, 100% 85%, 85% 100%, 15% 100%, 0% 85%, 0% 15%);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.portal-tile:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: hsl(var(--primary) / 0.4);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 40px hsl(var(--primary) / 0.2);
+}
+
+.portal-tile::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    hsl(var(--primary) / 0.3),
+    hsl(var(--accent) / 0.3),
+    hsl(var(--secondary) / 0.3)
+  );
+  clip-path: polygon(15% 0%, 85% 0%, 100% 15%, 100% 85%, 85% 100%, 15% 100%, 0% 85%, 0% 15%);
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.portal-tile:hover::before {
+  opacity: 1;
+}
+
+.portal-tile .sacred-geometry {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  width: 60px;
+  height: 60px;
+  opacity: 0;
+  transition: all 0.4s ease;
+}
+
+.portal-tile:hover .sacred-geometry {
+  animation: sacred-geometry-reveal 0.6s ease forwards;
+}
+
+/* Crown Jewel - Sacred Mesh */
+.crown-jewel {
+  @apply relative;
+  background: linear-gradient(135deg, 
+    rgba(147, 51, 234, 0.1),
+    rgba(59, 130, 246, 0.1),
+    rgba(16, 185, 129, 0.1)
+  );
+  animation: aura-pulse 3s ease-in-out infinite;
+}
+
+.crown-jewel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, 
+    hsl(var(--primary) / 0.2) 0%,
+    transparent 70%
+  );
+  border-radius: inherit;
+  animation: consciousness-breathe 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Mesh Status Indicator */
+.mesh-status {
+  @apply inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: rgb(16, 185, 129);
+}
+
+.mesh-status.offline {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: rgb(239, 68, 68);
+}
+
+.mesh-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: mesh-wave 2s ease-in-out infinite;
+}
+
+/* Journey Path */
+.journey-path {
+  @apply flex items-center justify-center gap-4 mb-8;
+}
+
+.journey-step {
+  @apply relative flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.journey-step.active {
+  background: rgba(147, 51, 234, 0.2);
+  border-color: hsl(var(--primary) / 0.4);
+  color: hsl(var(--primary));
+  box-shadow: 0 0 20px hsl(var(--primary) / 0.3);
+}
+
+.journey-step::after {
+  content: '→';
+  position: absolute;
+  right: -15px;
+  color: hsl(var(--muted-foreground));
+}
+
+.journey-step:last-child::after {
+  display: none;
+}
+
+/* Consciousness Bar */
+.consciousness-bar {
+  @apply fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50;
+  @apply flex items-center gap-4 px-6 py-3 rounded-full;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.resonance-meter {
+  @apply relative w-32 h-2 rounded-full overflow-hidden;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.resonance-fill {
+  @apply h-full rounded-full;
+  background: linear-gradient(90deg, 
+    hsl(var(--primary)),
+    hsl(var(--accent)),
+    hsl(var(--secondary))
+  );
+  background-size: 200% 100%;
+  animation: resonance-flow 3s ease-in-out infinite;
+  width: var(--resonance-level, 70%);
+}
+
+/* Privacy Indicators */
+.privacy-indicator {
+  @apply inline-flex items-center gap-1 text-xs;
+  color: hsl(var(--muted-foreground));
+}
+
+.privacy-lock {
+  animation: mesh-wave 2s ease-in-out infinite;
 }
 
 /* Sacred Interaction Effects */
