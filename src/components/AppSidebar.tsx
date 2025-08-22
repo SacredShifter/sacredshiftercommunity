@@ -28,14 +28,14 @@ const sacredToolsItems = [
   { title: "Sacred Grove", url: "/grove", icon: TreePine, tooltip: "Sacred Grove - Your living wisdom ecosystem for consciousness exploration" },
   { title: "Journal", url: "/journal", icon: BookOpen, tooltip: HelpTooltips.journal },
   { title: "Circles", url: "/circles", icon: Users, tooltip: HelpTooltips.circles },
-  { title: "Akashic Constellation", url: "/codex", icon: Archive, tooltip: HelpTooltips.akashicConstellation },
+  { title: "Personal Akashic Constellation", url: "/codex", icon: Archive, tooltip: HelpTooltips.akashicConstellation },
   { title: "Consciousness Mapper", url: "/constellation", icon: Stars, tooltip: "Consciousness Constellation Mapper - AI-powered consciousness cartography and pattern recognition" },
 ];
 
 const knowledgeItems = [
   { title: "Guidebook", url: "/guidebook", icon: Scroll, tooltip: "Guidebook - Ancient wisdom for modern transformation" },
   { title: "3D Learning Modules", url: "/learning-3d", icon: Box, tooltip: "3D Learning Modules - Interactive sacred geometry and consciousness visualization library" },
-  { title: "Collective Codex", url: "/registry", icon: Database, tooltip: HelpTooltips.registry },
+  { title: "Collective Akashic Constellation", url: "/registry", icon: Database, tooltip: HelpTooltips.collectiveAkashicConstellation },
 ];
 
 const mediaItems = [

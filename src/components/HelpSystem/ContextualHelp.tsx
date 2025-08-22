@@ -57,7 +57,7 @@ export const HelpTooltips = {
   circles: "Join or create meditation circles and discussion groups",
   journal: "Private space for daily reflections, dreams, and insights",
   videos: "Access curated spiritual teachings and meditation content",
-  registry: "Catalog your spiritual experiences and synchronicities",
+  collectiveAkashicConstellation: "Humanity's shared wisdom organized by collective archetypal resonance and consciousness frequencies",
   codex: "Your personal memory archive of insights and downloads",
   akashicConstellation: "Your eternal wisdom organized by sacred archetypal resonance and consciousness frequencies",
   profile: "Manage your spiritual profile and journey milestones",
