@@ -17,7 +17,9 @@ import {
   Square,
   TreePine,
   Brain,
-  Sparkles
+  Sparkles,
+  Wifi,
+  Shield
 } from 'lucide-react';
 
 const sections = [
@@ -101,6 +103,20 @@ const sections = [
       "Sacred geometry visualization of awareness states",
       "Predictive wisdom algorithms for optimal consciousness work timing",
       "Community resonance mapping and collective field awareness"
+    ]
+  },
+  {
+    title: "Sacred Mesh — Communication Beyond Towers",
+    icon: Wifi,
+    topics: [
+      "Understanding the hidden lifeline inside Sacred Shifter",
+      "Always connected: Wi-Fi, Bluetooth, and long-range radio networks",
+      "Privacy by design: End-to-end encryption for sovereign communication",
+      "Lightweight sigils: Intention-codes that travel as tiny data packets",
+      "Resilient by nature: Communication that survives blackouts and dead zones",
+      "Future-proof: Extending through LoRa radios, sound, and light",
+      "Restoring communication sovereignty without towers or gatekeepers",
+      "Working with quantum messaging and sigil-based protocols"
     ]
   },
   {
@@ -233,6 +249,102 @@ const Guidebook: React.FC = () => {
                   <p>3. Engage fully with each experience, allowing insights to emerge naturally</p>
                   <p>4. Review your ecosystem regularly to track patterns and growth</p>
                   <p>5. Trust the process - your grove reflects your unique consciousness journey</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Sacred Mesh Special Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+        >
+          <Card className="bg-gradient-to-br from-blue/10 via-indigo/5 to-purple/5 border-blue/30">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Wifi className="w-6 h-6 text-blue-600" />
+                Sacred Mesh — Communication Beyond Towers
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <p className="text-muted-foreground leading-relaxed">
+                Sacred Mesh is the hidden lifeline inside Sacred Shifter. It looks and feels like normal messaging, 
+                but it's built to work when ordinary networks fail — and to keep your words private when ordinary apps cannot.
+              </p>
+              
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="p-4 rounded-lg bg-blue/5 border border-blue/20">
+                  <h4 className="font-semibold text-blue-700 mb-3 flex items-center gap-2">
+                    <Wifi className="w-4 h-4" />
+                    Always Connected
+                  </h4>
+                  <p className="text-sm text-muted-foreground">
+                    Sacred Mesh uses Wi-Fi, Bluetooth, and even long-range radios to weave a living network between users. 
+                    It doesn't need cell towers or internet to keep messages moving.
+                  </p>
+                </div>
+                
+                <div className="p-4 rounded-lg bg-indigo/5 border border-indigo/20">
+                  <h4 className="font-semibold text-indigo-700 mb-3 flex items-center gap-2">
+                    <Shield className="w-4 h-4" />
+                    Privacy by Design
+                  </h4>
+                  <p className="text-sm text-muted-foreground">
+                    Every message is wrapped in end-to-end encryption. Only you and the people you trust can read what you send. 
+                    Even if someone intercepts the signal, all they see is unreadable noise.
+                  </p>
+                </div>
+                
+                <div className="p-4 rounded-lg bg-purple/5 border border-purple/20">
+                  <h4 className="font-semibold text-purple-700 mb-3 flex items-center gap-2">
+                    <Sparkles className="w-4 h-4" />
+                    Lightweight Sigils
+                  </h4>
+                  <p className="text-sm text-muted-foreground">
+                    Messages can be sent as sacred sigils — intention-codes that travel as tiny data packets. 
+                    This means Sacred Mesh works on very low power, over long distances, and even when bandwidth is scarce.
+                  </p>
+                </div>
+                
+                <div className="p-4 rounded-lg bg-green/5 border border-green/20">
+                  <h4 className="font-semibold text-green-700 mb-3 flex items-center gap-2">
+                    <Heart className="w-4 h-4" />
+                    Resilient by Nature
+                  </h4>
+                  <p className="text-sm text-muted-foreground">
+                    Whether it's a blackout, natural disaster, or just a dead zone, Sacred Mesh continues to carry the Sacred Thread. 
+                    Your circles, your Codex, your connections — they remain alive.
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-r from-blue/10 to-purple/10 p-4 rounded-lg border border-blue/20">
+                <h4 className="font-semibold text-blue-800 mb-2 flex items-center gap-2">
+                  <Zap className="w-4 h-4" />
+                  Future-Proof Communication
+                </h4>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Sacred Mesh can extend through long-range LoRa radios, sound, or light — expanding your reach 
+                  without ever depending on a carrier or subscription.
+                </p>
+                <div className="bg-gradient-to-r from-yellow/20 to-orange/20 p-3 rounded border border-yellow/30">
+                  <p className="text-sm font-medium text-yellow-800">
+                    ⚡ Why it matters: Sacred Mesh restores sovereignty to communication. No towers, no gatekeepers, 
+                    no permission required. Just you, your community, and the sacred thread of connection that can't be broken.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="space-y-3">
+                <h4 className="font-semibold">How to Use Sacred Mesh:</h4>
+                <div className="space-y-2 text-sm text-muted-foreground">
+                  <p>• Navigate to Messages and select the "🕸️ Mesh" tab</p>
+                  <p>• Send messages using sacred sigils for maximum efficiency</p>
+                  <p>• Your device automatically chooses the best available transport</p>
+                  <p>• Messages queue and retry when networks are unavailable</p>
+                  <p>• All communication is encrypted and metadata-protected</p>
                 </div>
               </div>
             </CardContent>
