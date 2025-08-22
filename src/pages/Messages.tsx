@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
-import { Search, Send, Eye, Heart, Brain, MoreHorizontal, ArrowLeft } from 'lucide-react';
+import { Search, Send, Eye, Heart, Brain, MoreHorizontal, ArrowLeft, Wifi } from 'lucide-react';
 import { formatDistance } from 'date-fns/formatDistance';
 import { StartDirectMessageModal } from '@/components/StartDirectMessageModal';
 import { SacredQuantumMessageInterface } from '@/components/SacredQuantumMessageInterface';
@@ -116,12 +116,12 @@ export default function Messages() {
             </div>
 
             {/* View Mode Selector */}
-            <div className="flex space-x-1 bg-muted p-1 rounded-lg">
+            <div className="grid grid-cols-4 gap-1 bg-muted p-1 rounded-lg">
               <Button
                 variant={viewMode === 'sacred' ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => setViewMode('sacred')}
-                className="flex-1 text-xs"
+                className="text-xs px-2"
               >
                 <Heart className="h-3 w-3 mr-1" />
                 Sacred
@@ -130,7 +130,7 @@ export default function Messages() {
                 variant={viewMode === 'quantum' ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => setViewMode('quantum')}
-                className="flex-1 text-xs"
+                className="text-xs px-2"
               >
                 <Brain className="h-3 w-3 mr-1" />
                 Quantum
@@ -139,7 +139,7 @@ export default function Messages() {
                 variant={viewMode === 'classic' ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => setViewMode('classic')}
-                className="flex-1 text-xs"
+                className="text-xs px-2"
               >
                 <Send className="h-3 w-3 mr-1" />
                 Classic
@@ -148,9 +148,10 @@ export default function Messages() {
                 variant={viewMode === 'mesh' ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => setViewMode('mesh')}
-                className="flex-1 text-xs"
+                className="text-xs px-2"
               >
-                🕸️ Mesh
+                <Wifi className="h-3 w-3 mr-1" />
+                Mesh
               </Button>
             </div>
 
