@@ -28,7 +28,9 @@ import {
   Heart,
   Crown,
   Map,
-  Rss
+  Rss,
+  ChevronRight,
+  ChevronDown
 } from 'lucide-react';
 
 const Index = () => {
@@ -186,25 +188,18 @@ const Index = () => {
             />
           </div>
           
-          <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/30 backdrop-blur-sm">
-            <Network className="h-5 w-5 text-primary animate-pulse" />
-            <span className="text-lg font-bold bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
-              The Mesh of Consciousness — Connect, Reflect, Transform, Anywhere
-            </span>
-            <div className="privacy-indicator">
-              <Lock className="h-4 w-4 privacy-lock" />
-              <Wifi className="h-4 w-4" />
-            </div>
-          </div>
-          
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+          <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed mb-2">
             A sovereign platform where consciousness meets frontier technology. 
             Encrypted mesh networks, sacred wisdom, and digital sovereignty united.
           </p>
         </div>
 
         {/* Journey Path */}
-        <div className="journey-path">
+        <div className="journey-path relative">
+          {/* Start indicator arrow */}
+          <div className="absolute -left-8 top-1/2 transform -translate-y-1/2 text-primary animate-pulse">
+            <ChevronRight className="h-5 w-5" />
+          </div>
           {journeySteps.map((step, index) => (
             <Link 
               key={step.label}
@@ -222,7 +217,7 @@ const Index = () => {
         </div>
 
         {/* Sacred Mesh - Crown Jewel */}
-        <div className="mb-8">
+        <div className="mb-8 relative">
           <Link 
             to="/messages"
             className="group block"
@@ -233,7 +228,7 @@ const Index = () => {
               {/* Mesh Chain Overlay - Subtle Implementation */}
               <div className="absolute inset-0 z-10 pointer-events-none">
                 <div 
-                  className="w-full h-full opacity-15"
+                  className="w-full h-full opacity-10"
                   style={{
                     backgroundImage: `
                       url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%2300ffff' stroke-width='0.8' stroke-opacity='0.6'%3E%3Cellipse cx='6' cy='3' rx='3' ry='1.5' transform='rotate(45 6 3)'/%3E%3Cellipse cx='6' cy='9' rx='3' ry='1.5' transform='rotate(-45 6 9)'/%3E%3Cellipse cx='3' cy='6' rx='3' ry='1.5' transform='rotate(45 3 6)'/%3E%3Cellipse cx='9' cy='6' rx='3' ry='1.5' transform='rotate(-45 9 6)'/%3E%3C/g%3E%3C/svg%3E"),
@@ -297,6 +292,15 @@ const Index = () => {
               </CardContent>
             </Card>
           </Link>
+          
+          {/* Scroll down indicator */}
+          <div 
+            className="absolute -bottom-4 right-8 text-primary/60 hover:text-primary cursor-pointer animate-bounce"
+            onClick={() => window.scrollBy({ top: 400, behavior: 'smooth' })}
+            title="More content below"
+          >
+            <ChevronDown className="h-6 w-6" />
+          </div>
         </div>
 
         {/* Portal Modules Grid */}
@@ -354,6 +358,20 @@ const Index = () => {
               </Card>
             </Link>
           ))}
+        </div>
+        
+        {/* Footer Tagline */}
+        <div className="mt-16 text-center">
+          <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/30 backdrop-blur-sm">
+            <Network className="h-5 w-5 text-primary animate-pulse" />
+            <span className="text-lg font-bold bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
+              The Mesh of Consciousness — Connect, Reflect, Transform, Anywhere
+            </span>
+            <div className="privacy-indicator">
+              <Lock className="h-4 w-4 privacy-lock" />
+              <Wifi className="h-4 w-4" />
+            </div>
+          </div>
         </div>
       </div>
 
