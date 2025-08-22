@@ -248,9 +248,9 @@ export default function Messages() {
           )}
           
           {viewMode === 'quantum' && (
-            <QuantumChatCore
-              roomId={`dm_${[user?.id, conversations.find(c => c.id === selectedConversationId)?.other_participant?.id].sort().join('_')}`}
-              onClose={() => setSelectedConversationId(null)}
+            <SacredQuantumMessageInterface
+              selectedUserId={conversations.find(c => c.id === selectedConversationId)?.other_participant?.id || selectedConversationId}
+              onBack={() => setSelectedConversationId(null)}
             />
           )}
           
