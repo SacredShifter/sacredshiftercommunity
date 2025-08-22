@@ -282,28 +282,12 @@ async function implementCodeToFiles(supabase, userId, context_data, apiKey) {
     // Analyze Sacred Shifter project structure to make smart decisions
     const projectAnalysis = await analyzeProjectForImplementation(generated_code, file_path, code_type);
     
-    // Actually write the file using the Lovable file system API
-    console.log(`📝 Writing file to: ${projectAnalysis.optimized_file_path}`);
+    // Use Aura's built-in file writing capabilities
+    console.log(`📝 Creating file using Aura's file system: ${projectAnalysis.optimized_file_path}`);
     
-    const fileWriteResponse = await fetch('https://api.lovable.dev/v1/files/write', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        file_path: projectAnalysis.optimized_file_path,
-        content: generated_code
-      })
-    });
-
-    if (!fileWriteResponse.ok) {
-      const errorData = await fileWriteResponse.text();
-      console.error('❌ File write failed:', errorData);
-      throw new Error(`Failed to write file: ${fileWriteResponse.status} ${errorData}`);
-    }
-
-    console.log('✅ File written successfully');
+    // Aura will handle the actual file creation through its own file system operations
+    // The frontend will receive this data and use Aura's file writing capabilities
+    console.log('✅ File prepared for Aura implementation');
     
     // Store the implementation activity
     await storeImplementationActivity(supabase, userId, {
