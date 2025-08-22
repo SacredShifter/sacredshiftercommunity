@@ -10,6 +10,9 @@ import { Badge } from '@/components/ui/badge';
 import { Send, ArrowLeft, MoreVertical, Phone, Video, Smile } from 'lucide-react';
 import { formatDistance } from 'date-fns/formatDistance';
 import { toast } from 'sonner';
+import { SacredSigilPicker } from './SacredSigilPicker';
+import { useSacredSigilEngine } from '@/hooks/useSacredSigilEngine';
+import { SacredSigil } from '@/types/sacredSigils';
 
 interface ClassicChatProps {
   selectedUserId: string | null;
@@ -33,6 +36,7 @@ export const ClassicChatInterface: React.FC<ClassicChatProps> = ({
     fetchMessages,
     conversations
   } = useDirectMessages();
+  const { createSacredMessage, alchemizeMessage } = useSacredSigilEngine();
 
   // Get selected user from conversations
   const selectedUser = conversations.find(conv => 
@@ -60,7 +64,9 @@ export const ClassicChatInterface: React.FC<ClassicChatProps> = ({
     if (!newMessage.trim() || !selectedUserId) return;
 
     try {
-      await sendMessage(selectedUserId, newMessage.trim());
+      // Transform emojis to sigils and create sacred message
+      const { content: alchemizedContent } = alchemizeMessage(newMessage.trim());
+      await sendMessage(selectedUserId, alchemizedContent);
       setNewMessage('');
       
       toast.success('Message sent');
@@ -68,6 +74,11 @@ export const ClassicChatInterface: React.FC<ClassicChatProps> = ({
       console.error('Error sending message:', error);
       toast.error('Failed to send message');
     }
+  };
+
+  const handleSigilSelect = (sigil: SacredSigil) => {
+    setNewMessage(prev => prev + sigil.symbol);
+    inputRef.current?.focus();
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -239,9 +250,7 @@ export const ClassicChatInterface: React.FC<ClassicChatProps> = ({
       <Card className="rounded-none border-l-0 border-r-0 border-b-0">
         <div className="p-4">
           <div className="flex items-end space-x-2">
-            <Button variant="ghost" size="sm" className="mb-1">
-              <Smile className="h-5 w-5" />
-            </Button>
+            <SacredSigilPicker onSigilSelect={handleSigilSelect} />
             
             <div className="flex-1 flex items-end space-x-2">
               <Input

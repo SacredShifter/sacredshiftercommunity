@@ -13,6 +13,9 @@ import { Send, Smile, Mic, Heart, Brain, Eye, Zap, MoreHorizontal, ArrowLeft } f
 import { formatDistance } from 'date-fns/formatDistance';
 import { toast } from 'sonner';
 import { SacredVoiceInterface } from './SacredVoiceInterface';
+import { SacredSigilPicker } from './SacredSigilPicker';
+import { useSacredSigilEngine } from '@/hooks/useSacredSigilEngine';
+import { SacredSigil } from '@/types/sacredSigils';
 
 interface ConsciousnessState {
   energy: number; // 0-1
@@ -46,6 +49,7 @@ export const SacredQuantumMessageInterface: React.FC<SacredQuantumMessageProps> 
   const { user } = useAuth();
   const { signature, getPersonalizedContent } = usePersonalSignature();
   const auraPlatform = useAuraPlatformIntegration();
+  const { createSacredMessage, alchemizeMessage, consciousness, getRecommendedSigils } = useSacredSigilEngine();
   
   const {
     messages,
@@ -205,7 +209,10 @@ export const SacredQuantumMessageInterface: React.FC<SacredQuantumMessageProps> 
     if (!newMessage.trim() || !selectedUserId) return;
 
     try {
-      await sendMessage(selectedUserId, newMessage.trim(), 'text', {
+      // Transform emojis to sigils and create sacred message
+      const { content: alchemizedContent } = alchemizeMessage(newMessage.trim());
+      
+      await sendMessage(selectedUserId, alchemizedContent, 'text', {
         consciousness_state: consciousnessState,
         aura_color: getAuraColor(),
         sacred_geometry: getSacredGeometry(),
@@ -216,12 +223,17 @@ export const SacredQuantumMessageInterface: React.FC<SacredQuantumMessageProps> 
       setNewMessage('');
       
       // Sacred feedback
-      toast.success('✨ Message transmitted through sacred channels', {
+      toast.success('✨ Sacred message transmitted with sigil resonance', {
         description: `Resonating at ${Math.round(40 + (consciousnessState.energy * 20))}Hz`
       });
     } catch (error) {
       toast.error('Sacred transmission interrupted');
     }
+  };
+
+  const handleSigilSelect = (sigil: SacredSigil) => {
+    setNewMessage(prev => prev + sigil.symbol);
+    inputRef.current?.focus();
   };
 
   // Render sacred geometry background
@@ -472,9 +484,7 @@ export const SacredQuantumMessageInterface: React.FC<SacredQuantumMessageProps> 
           <div className="flex items-end space-x-3">
             <div className="flex-1">
               <div className="flex items-center space-x-2 mb-3">
-                <Button variant="ghost" size="sm">
-                  <Smile className="h-4 w-4" />
-                </Button>
+                <SacredSigilPicker onSigilSelect={handleSigilSelect} />
                 <Button variant="ghost" size="sm">
                   <Mic className="h-4 w-4" />
                 </Button>
