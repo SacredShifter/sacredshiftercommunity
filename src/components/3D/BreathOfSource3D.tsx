@@ -13,6 +13,7 @@ import ReflectionPanel from '@/components/BreathOfSource3D/ReflectionPanel';
 import BreathAudio from '@/components/BreathOfSource3D/BreathAudio';
 import LessonContent from '@/components/BreathOfSource3D/LessonContent';
 import BiofeedbackDisplay from '@/components/BreathOfSource3D/BiofeedbackDisplay';
+import BreathCycleManager, { BreathPhase } from '@/components/BreathOfSource3D/BreathCycleManager';
 import * as THREE from 'three';
 
 // Sacred geometry background
@@ -104,47 +105,79 @@ function DynamicLighting({ breathPhase, trustSpeed }: { breathPhase: string; tru
   );
 }
 
-// Main scene component
+// Main scene component with proper breathing integration
 function BreathScene() {
+  const breathModule = useBreathOfSourceModule();
   const {
     currentLesson,
-    lessonTitle,
-    isBreathing,
-    currentPhase,
-    context,
-    startLesson,
-    completeLesson,
-    nextLesson,
-    prevLesson,
-    setTrustSpeed,
-    submitReflection,
-    showSovereigntyAnchor
-  } = useBreathOfSourceModule();
+    context
+  } = breathModule;
+
+  // Local state for actual breathing cycle
+  const [isBreathingActive, setIsBreathingActive] = React.useState(false);
+  const [currentBreathPhase, setCurrentBreathPhase] = React.useState<BreathPhase>('inhale');
+  const [cycleCount, setCycleCount] = React.useState(0);
+
+  // Auto-start breathing for lessons 1-3
+  React.useEffect(() => {
+    if (currentLesson >= 1 && currentLesson <= 3) {
+      setIsBreathingActive(true);
+    } else {
+      setIsBreathingActive(false);
+    }
+  }, [currentLesson]);
+
+  // Get breath preset based on lesson
+  const getBreathPreset = () => {
+    if (currentLesson === 1) return 'basic';
+    if (currentLesson === 2) return 'liberation';
+    if (currentLesson === 3) return 'sovereignty';
+    return 'basic';
+  };
+
+  const handlePhaseChange = (phase: BreathPhase) => {
+    setCurrentBreathPhase(phase);
+    console.log(`Breath phase: ${phase}`); // Debug log
+  };
+
+  const handleCycleComplete = () => {
+    setCycleCount(prev => prev + 1);
+    console.log(`Breath cycle completed: ${cycleCount + 1}`); // Debug log
+  };
 
   return (
     <>
-      <DynamicLighting breathPhase={currentPhase || 'inhale'} trustSpeed={context.trustSpeed} />
+      {/* Breath Cycle Manager */}
+      <BreathCycleManager
+        isActive={isBreathingActive}
+        preset={getBreathPreset()}
+        trustSpeed={context.trustSpeed}
+        onPhaseChange={handlePhaseChange}
+        onCycleComplete={handleCycleComplete}
+      />
+      
+      <DynamicLighting breathPhase={currentBreathPhase} trustSpeed={context.trustSpeed} />
       <SacredBackground />
       
-      {/* Central Breath Orb */}
+      {/* Central Breath Orb with real breathing data */}
       <BreathOrb 
-        isBreathing={true} // Always show breathing animation
-        currentPhase={currentPhase || 'inhale'}
+        isBreathing={isBreathingActive}
+        currentPhase={currentBreathPhase}
         trustSpeed={context.trustSpeed}
-        cycleCount={context.cycleCount}
+        cycleCount={cycleCount}
       />
       
       {/* Wheel/Exit Metaphor Visualization */}
       <WheelVisualization 
         isActive={currentLesson >= 3}
-        cycleCount={context.cycleCount}
-        showExit={context.cycleCount >= 10}
+        cycleCount={cycleCount}
+        showExit={cycleCount >= 10}
       />
       
       {/* Biofeedback Display (L6+) */}
       {currentLesson >= 6 && (
         <BiofeedbackDisplay 
-          currentPhase={currentPhase}
+          currentPhase={currentBreathPhase}
           coherenceLevel={0.7}
           heartRate={72}
         />

@@ -62,38 +62,36 @@ export default function BreathOrb({
     let glowIntensity = 0.5;
     let hue = 0.6; // Default blue/cool
     
-    // Always show breathing animation (gentle default if not actively breathing)
-    if (isBreathing) {
+    // Breathing animation based on actual phase
+    if (isBreathing && currentPhase) {
       switch (currentPhase) {
         case 'inhale':
-          targetScale = 1.0 + Math.sin(time * 2) * 0.3;
-          glowIntensity = 0.8 + Math.sin(time * 2) * 0.2;
+          targetScale = 1.0 + 0.4; // Expand significantly
+          glowIntensity = 0.9;
           hue = 0.1; // Warm orange (Life)
           break;
         case 'holdIn':
-          targetScale = 1.3;
+          targetScale = 1.4; // Hold at expanded size
           glowIntensity = 1.0;
           hue = 0.15; // Golden (Receive)
           break;
         case 'exhale':
-          targetScale = 1.0 - Math.cos(time * 2) * 0.2;
-          glowIntensity = 0.6 - Math.cos(time * 2) * 0.2;
+          targetScale = 0.8; // Contract significantly  
+          glowIntensity = 0.4;
           hue = 0.6; // Cool blue (Death)
           break;
         case 'holdOut':
-          targetScale = 0.8;
+          targetScale = 0.7; // Hold at contracted size
           glowIntensity = 0.3;
           hue = 0.7; // Deep blue (Surrender)
           break;
         default:
-          targetScale = 1.0 + Math.sin(time * 0.5) * 0.15; // Gentle default breathing
-          glowIntensity = 0.6 + Math.sin(time * 0.5) * 0.2;
-          hue = 0.5;
+          targetScale = 1.0;
       }
     } else {
-      // Default gentle breathing animation when not actively practicing
-      targetScale = 1.0 + Math.sin(time * 0.5) * 0.15;
-      glowIntensity = 0.6 + Math.sin(time * 0.5) * 0.2;
+      // Gentle ambient breathing when not actively practicing
+      targetScale = 1.0 + Math.sin(time * 0.5) * 0.1;
+      glowIntensity = 0.5 + Math.sin(time * 0.5) * 0.1;
       hue = 0.5;
     }
 
