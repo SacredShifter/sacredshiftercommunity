@@ -35,36 +35,32 @@ function TrustWave({ isTransmitting, speed }: TrustWaveProps) {
     <group>
       {/* Central transmission sphere */}
       <mesh ref={waveRef}>
-        <Sphere args={[2, 32, 32]}>
-          <meshStandardMaterial
-            color={waveColor}
-            transparent
-            opacity={0.6}
-            emissive={waveColor}
-            emissiveIntensity={0.2}
-          />
-        </Sphere>
+        <sphereGeometry args={[2, 32, 32]} />
+        <meshStandardMaterial
+          color={waveColor}
+          transparent
+          opacity={0.6}
+          emissive={waveColor}
+          emissiveIntensity={0.2}
+        />
       </mesh>
 
       {/* Simple particle indicators */}
-      {isTransmitting && [0, 1, 2, 3, 4].map((index) => (
-        <mesh
-          key={index}
-          position={[
-            Math.cos(index * Math.PI * 0.4) * (4 + index),
-            Math.sin(index * Math.PI * 0.3) * 2,
-            Math.sin(index * Math.PI * 0.4) * (4 + index)
-          ]}
-        >
-          <Sphere args={[0.1, 8, 8]}>
+      {isTransmitting && [0, 1, 2, 3, 4].map((index) => {
+        const x = Math.cos(index * Math.PI * 0.4) * (4 + index);
+        const y = Math.sin(index * Math.PI * 0.3) * 2;
+        const z = Math.sin(index * Math.PI * 0.4) * (4 + index);
+        return (
+          <mesh key={index} position={[x, y, z]}>
+            <sphereGeometry args={[0.1, 8, 8]} />
             <meshStandardMaterial
               color={speed === 'trust' ? '#34d399' : '#f87171'}
               transparent
               opacity={0.8}
             />
-          </Sphere>
-        </mesh>
-      ))}
+          </mesh>
+        );
+      })}
 
       {/* Transmission rings */}
       {isTransmitting && [4, 6, 8].map((radius, index) => (
