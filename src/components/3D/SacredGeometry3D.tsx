@@ -179,7 +179,7 @@ function AnimatedGeometry({ geometry, isSelected, onClick }: GeometryShapeProps)
     <group position={geometry.position}>
       <GeometryComponent
         ref={meshRef}
-        args={[isSelected ? 1.2 : 1]}
+        args={isSelected ? [1.2] : [1]}
         onClick={() => onClick(geometry)}
         onPointerOver={() => document.body.style.cursor = 'pointer'}
         onPointerOut={() => document.body.style.cursor = 'auto'}
