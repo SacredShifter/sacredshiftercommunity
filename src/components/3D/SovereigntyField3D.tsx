@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Text, Sphere } from '@react-three/drei';
+import { OrbitControls, Text } from '@react-three/drei';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -112,7 +112,6 @@ function SovereigntyField({ strength, frequency, coherence }: SovereigntyFieldPr
         color="#10b981"
         anchorX="center"
         anchorY="middle"
-        font="/fonts/inter-bold.woff"
       >
         SOVEREIGNTY FIELD
       </Text>
@@ -135,114 +134,299 @@ export default function SovereigntyField3D() {
   const [fieldFrequency, setFieldFrequency] = useState([0.5]);
   const [fieldCoherence, setFieldCoherence] = useState([0.6]);
   const [isActive, setIsActive] = useState(false);
+  const [currentPhase, setCurrentPhase] = useState<'learning' | 'practice' | 'integration'>('learning');
+  const [completedLessons, setCompletedLessons] = useState<string[]>([]);
+  const [practiceTimer, setPracticeTimer] = useState(0);
+  const [isTimerRunning, setIsTimerRunning] = useState(false);
+
+  // Timer effect
+  React.useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isTimerRunning) {
+      interval = setInterval(() => {
+        setPracticeTimer(prev => prev + 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [isTimerRunning]);
+
+  const sovereigntyLessons = [
+    {
+      id: 'boundaries',
+      title: 'Understanding Boundaries',
+      content: 'Sovereignty begins with knowing where you end and others begin. Boundaries are not walls - they are conscious choices about what energy you allow in your field.',
+      practice: 'Feel your personal space extending 3 feet around you. Notice what feels comfortable vs. intrusive.'
+    },
+    {
+      id: 'choice',
+      title: 'The Power of Choice', 
+      content: 'Every moment offers choice points. Sovereignty is the conscious participation in your own becoming through aware decision-making.',
+      practice: 'Before each decision today, pause and ask: "What choice honors my authentic self?"'
+    },
+    {
+      id: 'embodiment',
+      title: 'Embodied Sovereignty',
+      content: 'True power lives in the body, not in concepts. Stand with spine aligned, breathe fully, and speak your truth with warmth and clarity.',
+      practice: 'Stand. Feel your spine. Inhale life. On exhale, practice saying "no" with love and "yes" with full commitment.'
+    }
+  ];
+
+  const getCurrentLesson = () => {
+    return sovereigntyLessons.find(lesson => !completedLessons.includes(lesson.id)) || sovereigntyLessons[0];
+  };
+
+  const completeLesson = (lessonId: string) => {
+    if (!completedLessons.includes(lessonId)) {
+      setCompletedLessons(prev => [...prev, lessonId]);
+    }
+  };
+
+  const startPractice = () => {
+    setCurrentPhase('practice');
+    setIsActive(true);
+    setIsTimerRunning(true);
+    setPracticeTimer(0);
+  };
+
+  const stopPractice = () => {
+    setIsTimerRunning(false);
+    setCurrentPhase('integration');
+  };
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-black relative">
-      {/* Controls Panel */}
-      <div className="absolute top-4 left-4 z-10 w-80">
-        <Card className="bg-black/30 backdrop-blur-md border-primary/20">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-primary">
-              <Shield className="h-5 w-5" />
-              Sovereignty Field Generator
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="text-center">
-              <Button
-                onClick={() => setIsActive(!isActive)}
-                variant={isActive ? "default" : "outline"}
-                className="w-full"
-              >
-                {isActive ? "Field Active" : "Activate Field"}
-              </Button>
-            </div>
+      {/* Learning Panel */}
+      {currentPhase === 'learning' && (
+        <div className="absolute top-4 left-4 z-10 w-96">
+          <Card className="bg-black/30 backdrop-blur-md border-primary/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-primary">
+                <Shield className="h-5 w-5" />
+                Sovereignty Learning
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {(() => {
+                const currentLesson = getCurrentLesson();
+                return (
+                  <>
+                    <div>
+                      <h3 className="font-semibold text-lg mb-2">{currentLesson.title}</h3>
+                      <p className="text-sm text-muted-foreground mb-4">{currentLesson.content}</p>
+                      
+                      <div className="bg-primary/10 p-3 rounded-md">
+                        <p className="text-sm font-medium mb-1">Practice:</p>
+                        <p className="text-xs text-muted-foreground">{currentLesson.practice}</p>
+                      </div>
+                    </div>
 
-            <div className="space-y-4">
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium flex items-center gap-1">
-                    <Zap className="h-4 w-4" />
-                    Field Strength
-                  </span>
-                  <Badge variant="outline">{(fieldStrength[0] * 100).toFixed(0)}%</Badge>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={() => completeLesson(currentLesson.id)}
+                        variant="outline"
+                        size="sm"
+                        className="flex-1"
+                      >
+                        Mark Complete
+                      </Button>
+                      <Button
+                        onClick={startPractice}
+                        variant="default"
+                        size="sm" 
+                        className="flex-1"
+                      >
+                        Start Practice
+                      </Button>
+                    </div>
+
+                    <div className="text-xs text-muted-foreground">
+                      Progress: {completedLessons.length}/{sovereigntyLessons.length} lessons
+                    </div>
+                  </>
+                );
+              })()}
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Controls Panel - Practice Mode */}
+      {currentPhase === 'practice' && (
+        <div className="absolute top-4 left-4 z-10 w-80">
+          <Card className="bg-black/30 backdrop-blur-md border-primary/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-primary">
+                <Shield className="h-5 w-5" />
+                Sovereignty Field Generator
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="text-center space-y-2">
+                <div className="text-lg font-mono">{formatTime(practiceTimer)}</div>
+                <div className="flex gap-2">
+                  <Button
+                    onClick={stopPractice}
+                    variant="outline"
+                    size="sm"
+                    className="flex-1"
+                  >
+                    Complete Practice
+                  </Button>
                 </div>
-                <Slider
-                  value={fieldStrength}
-                  onValueChange={setFieldStrength}
-                  max={1}
-                  min={0.1}
-                  step={0.1}
-                />
               </div>
 
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium flex items-center gap-1">
-                    <Heart className="h-4 w-4" />
-                    Frequency
-                  </span>
-                  <Badge variant="outline">{(fieldFrequency[0] * 10).toFixed(1)} Hz</Badge>
+              <div className="space-y-4">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium flex items-center gap-1">
+                      <Zap className="h-4 w-4" />
+                      Field Strength
+                    </span>
+                    <Badge variant="outline">{(fieldStrength[0] * 100).toFixed(0)}%</Badge>
+                  </div>
+                  <Slider
+                    value={fieldStrength}
+                    onValueChange={setFieldStrength}
+                    max={1}
+                    min={0.1}
+                    step={0.1}
+                  />
                 </div>
-                <Slider
-                  value={fieldFrequency}
-                  onValueChange={setFieldFrequency}
-                  max={2}
-                  min={0.1}
-                  step={0.1}
-                />
+
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium flex items-center gap-1">
+                      <Heart className="h-4 w-4" />
+                      Frequency
+                    </span>
+                    <Badge variant="outline">{(fieldFrequency[0] * 10).toFixed(1)} Hz</Badge>
+                  </div>
+                  <Slider
+                    value={fieldFrequency}
+                    onValueChange={setFieldFrequency}
+                    max={2}
+                    min={0.1}
+                    step={0.1}
+                  />
+                </div>
+
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium flex items-center gap-1">
+                      <Brain className="h-4 w-4" />
+                      Coherence
+                    </span>
+                    <Badge variant="outline">{(fieldCoherence[0] * 100).toFixed(0)}%</Badge>
+                  </div>
+                  <Slider
+                    value={fieldCoherence}
+                    onValueChange={setFieldCoherence}
+                    max={1}
+                    min={0.1}
+                    step={0.1}
+                  />
+                </div>
               </div>
 
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium flex items-center gap-1">
-                    <Brain className="h-4 w-4" />
-                    Coherence
-                  </span>
-                  <Badge variant="outline">{(fieldCoherence[0] * 100).toFixed(0)}%</Badge>
-                </div>
-                <Slider
-                  value={fieldCoherence}
-                  onValueChange={setFieldCoherence}
-                  max={1}
-                  min={0.1}
-                  step={0.1}
-                />
+              <div className="text-xs text-muted-foreground space-y-2">
+                <p>• <strong>Field Strength:</strong> Your boundary definition clarity</p>
+                <p>• <strong>Frequency:</strong> Choice-making speed and precision</p>
+                <p>• <strong>Coherence:</strong> Alignment between values and actions</p>
               </div>
-            </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
-            <div className="text-xs text-muted-foreground space-y-2">
-              <p>• <strong>Field Strength:</strong> Your boundary definition clarity</p>
-              <p>• <strong>Frequency:</strong> Choice-making speed and precision</p>
-              <p>• <strong>Coherence:</strong> Alignment between values and actions</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      {/* Integration Panel */}
+      {currentPhase === 'integration' && (
+        <div className="absolute top-4 left-4 z-10 w-96">
+          <Card className="bg-black/30 backdrop-blur-md border-primary/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-primary">
+                <Heart className="h-5 w-5" />
+                Integration & Reflection
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <p className="text-sm mb-4">
+                  Practice completed! Take a moment to integrate your experience.
+                </p>
+                
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-sm font-medium mb-1">Reflection Questions:</p>
+                    <ul className="text-xs text-muted-foreground space-y-1">
+                      <li>• What did I notice about my boundaries during practice?</li>
+                      <li>• Where did I feel most/least sovereign?</li>
+                      <li>• What one boundary will I practice today?</li>
+                    </ul>
+                  </div>
+                  
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={() => setCurrentPhase('learning')}
+                      variant="outline"
+                      size="sm"
+                      className="flex-1"
+                    >
+                      Continue Learning
+                    </Button>
+                    <Button
+                      onClick={startPractice}
+                      variant="default"
+                      size="sm"
+                      className="flex-1"
+                    >
+                      Practice Again
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
-      {/* Instructions */}
+      {/* Sovereignty Principles */}
       <div className="absolute top-4 right-4 z-10 w-80">
         <Card className="bg-black/30 backdrop-blur-md border-primary/20">
           <CardHeader>
-            <CardTitle className="text-sm">Practice Instructions</CardTitle>
+            <CardTitle className="text-sm">Core Sovereignty Principles</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 text-sm">
             <div>
-              <p className="font-medium mb-1">1. Activate Your Field</p>
-              <p className="text-muted-foreground">Click to establish your sovereignty boundaries</p>
+              <p className="font-medium mb-1 text-emerald-400">Boundary Definition</p>
+              <p className="text-muted-foreground text-xs">Clear sense of where you end and others begin</p>
             </div>
             <div>
-              <p className="font-medium mb-1">2. Adjust Parameters</p>
-              <p className="text-muted-foreground">Find your natural frequency and strength</p>
+              <p className="font-medium mb-1 text-blue-400">Choice Awareness</p>
+              <p className="text-muted-foreground text-xs">Conscious participation in decision-making</p>
             </div>
             <div>
-              <p className="font-medium mb-1">3. Observe Choice Points</p>
-              <p className="text-muted-foreground">Golden spheres show decision opportunities</p>
+              <p className="font-medium mb-1 text-purple-400">Embodied Power</p>
+              <p className="text-muted-foreground text-xs">Authority that lives in the body, not concepts</p>
             </div>
             <div>
-              <p className="font-medium mb-1">4. Maintain Coherence</p>
-              <p className="text-muted-foreground">Keep rings stable through aligned choices</p>
+              <p className="font-medium mb-1 text-yellow-400">Compassionate Firmness</p>
+              <p className="text-muted-foreground text-xs">Clear boundaries with an open heart</p>
             </div>
+            
+            {currentPhase === 'practice' && (
+              <div className="pt-2 border-t border-primary/20">
+                <p className="text-xs font-medium text-primary">Active Practice</p>
+                <p className="text-xs text-muted-foreground">
+                  Adjust sliders to explore your sovereignty field strength and coherence
+                </p>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -272,16 +456,45 @@ export default function SovereigntyField3D() {
         />
       </Canvas>
 
-      {/* Bottom Panel */}
-      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10">
+      {/* Bottom Insight Panel */}
+      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10 max-w-4xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-black/40 backdrop-blur-md rounded-lg px-6 py-3 border border-primary/20"
+          className="bg-black/40 backdrop-blur-md rounded-lg px-6 py-4 border border-primary/20"
         >
-          <p className="text-center text-primary font-medium">
-            Your sovereignty begins with choice. Every moment, you decide what energy to allow in.
-          </p>
+          {currentPhase === 'learning' && (
+            <div className="text-center">
+              <p className="text-primary font-medium mb-2">
+                "Sovereignty is not about control - it's about conscious choice."
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Learn the principles, then practice with the 3D field generator to embody sovereignty
+              </p>
+            </div>
+          )}
+          
+          {currentPhase === 'practice' && (
+            <div className="text-center">
+              <p className="text-primary font-medium mb-2">
+                "True power lives in the body. Feel your boundaries. Choose consciously."
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Golden spheres represent choice points. Rings show boundary coherence.
+              </p>
+            </div>
+          )}
+          
+          {currentPhase === 'integration' && (
+            <div className="text-center">
+              <p className="text-primary font-medium mb-2">
+                "Integration means taking sovereignty from practice into daily life."
+              </p>
+              <p className="text-xs text-muted-foreground">
+                What boundary will you practice today? Where will you choose consciousness over habit?
+              </p>
+            </div>
+          )}
         </motion.div>
       </div>
     </div>
