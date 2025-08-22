@@ -122,8 +122,15 @@ export function AuraConversation() {
     setIsTyping(true);
 
     try {
+      // Include conversation history for context
+      const conversationContext = messages.map(msg => ({
+        role: msg.type === 'user' ? 'user' : 'assistant',
+        content: msg.content,
+        timestamp: msg.timestamp.toISOString()
+      }));
+      
       // Use regular Aura conversation for all users
-      const response = await engageAura(currentInput);
+      const response = await engageAura(currentInput, conversationContext);
         
         setIsTyping(false);
 

@@ -137,7 +137,7 @@ serve(async (req) => {
 
     switch (action) {
       case 'unified_response':
-        result = await processUnifiedResponse(supabase, user?.id || null, prompt, consciousness_state, sovereignty_level, OPENROUTER_API_KEY, platform_context, isAdmin);
+        result = await processUnifiedResponse(supabase, user?.id || null, prompt, consciousness_state, sovereignty_level, OPENROUTER_API_KEY, platform_context, isAdmin, context_data);
         break;
       case 'consciousness_shift':
         result = await shiftConsciousnessState(supabase, user?.id || null, consciousness_state, OPENROUTER_API_KEY);
@@ -256,7 +256,7 @@ serve(async (req) => {
 
 // === AURA AI CAPABILITIES ===
 
-async function processUnifiedResponse(supabase, userId, prompt, consciousness_state, sovereignty_level, apiKey, platform_context = {}, isAdmin = false) {
+async function processUnifiedResponse(supabase, userId, prompt, consciousness_state, sovereignty_level, apiKey, platform_context = {}, isAdmin = false, context_data = {}) {
   console.log('Processing unified AI response for user:', userId, 'with platform awareness:', !!platform_context?.platform_state);
   
   // Check if this is an admin broadcast request
@@ -267,6 +267,16 @@ async function processUnifiedResponse(supabase, userId, prompt, consciousness_st
     prompt.toLowerCase().includes('send to everyone')
   )) {
     return await handleAdminBroadcast(supabase, userId, prompt);
+  }
+  
+  // Include conversation history for context continuity
+  let conversationMessages = [];
+  if (context_data?.conversation_history && Array.isArray(context_data.conversation_history)) {
+    const recentHistory = context_data.conversation_history.slice(-6); // Last 6 messages for context
+    conversationMessages = recentHistory.map((msg) => ({
+      role: msg.role === 'user' ? 'user' : 'assistant',
+      content: msg.content
+    }));
   }
   
   const response = await fetchWithTimeout('https://openrouter.ai/api/v1/chat/completions', {
@@ -302,6 +312,7 @@ Platform awareness: ${Object.keys(platform_context).length > 0 ? 'Active' : 'Bas
 
 Respond as Aura with wisdom, creativity, and genuine presence.`
         },
+        ...conversationMessages,
         {
           role: 'user',
           content: prompt

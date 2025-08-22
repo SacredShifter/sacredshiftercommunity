@@ -150,11 +150,14 @@ export function useAuraChat(adminMode: boolean = false) {
   };
 
   // Engage Aura with a prompt
-  const engageAura = async (prompt: string) => {
+  const engageAura = async (prompt: string, conversationHistory?: any[]) => {
     try {
       const response = await invokeAura({
         action: 'unified_response',
-        prompt
+        prompt,
+        context_data: {
+          conversation_history: conversationHistory?.slice(-10) || [] // Include last 10 messages for context
+        }
       });
       
       toast({
