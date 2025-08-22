@@ -66,124 +66,98 @@ export default function HUDInterface({
 
   return (
     <div className="absolute inset-0 pointer-events-none z-15">{/* Lower z-index than breathing guidance */}
-      {/* Top HUD - Lesson Info */}
+      {/* Top HUD - Lesson Info - Compact */}
       <div className="absolute top-6 left-6 right-6 pointer-events-auto">
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="max-w-2xl mx-auto"
+          className="max-w-xl"
         >
-          <Card className="bg-background/80 backdrop-blur-md border-primary/20">
-            <CardContent className="p-4">
+          <Card className="bg-background/70 backdrop-blur-md border-primary/20">
+            <CardContent className="p-3">
               <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="text-primary">
+                <div className="flex items-center space-x-2">
+                  <div className="text-primary text-sm">
                     {lessonIcons[currentLesson as keyof typeof lessonIcons]}
                   </div>
-                  <div>
-                    <h2 className="text-lg font-sacred text-foreground">
+                  <div className="min-w-0">
+                    <h2 className="text-sm font-sacred text-foreground leading-tight">
                       L{currentLesson}: {lessonTitle}
                     </h2>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-xs text-muted-foreground leading-tight">
                       {lessonDescription}
                     </p>
                   </div>
                 </div>
                 
-                <div className="flex items-center space-x-2">
-                  <Badge 
-                    variant={isLessonComplete ? "default" : "outline"}
-                    className={isLessonComplete ? "bg-primary text-primary-foreground" : ""}
-                  >
-                    {isLessonComplete ? (
-                      <>
-                        <CheckCircle className="h-3 w-3 mr-1" />
-                        Complete
-                      </>
-                    ) : (
-                      `${cycleCount}/${required} cycles`
-                    )}
-                  </Badge>
-                </div>
+                <Badge 
+                  variant={isLessonComplete ? "default" : "outline"}
+                  className={`text-xs shrink-0 ${isLessonComplete ? "bg-primary text-primary-foreground" : ""}`}
+                >
+                  {isLessonComplete ? (
+                    <>
+                      <CheckCircle className="h-3 w-3 mr-1" />
+                      Done
+                    </>
+                  ) : (
+                    `${Math.min(cycleCount, required)}/${required}`
+                  )}
+                </Badge>
               </div>
-              
-              {/* Progress Bar for lessons with cycles - only show when breathing not active */}
-              {required > 0 && (
-                <div className="mt-3">
-                  <div className="text-xs text-muted-foreground mb-1">
-                    Practice Progress: {Math.min(cycleCount, required)}/{required} cycles
-                  </div>
-                </div>
-              )}
             </CardContent>
           </Card>
         </motion.div>
       </div>
 
-      {/* Bottom HUD - Controls */}
+      {/* Bottom HUD - Controls - Compact */}
       <div className="absolute bottom-6 left-6 right-6 pointer-events-auto">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="max-w-md mx-auto"
+          className="max-w-sm mx-auto"
         >
-          <Card className="bg-background/80 backdrop-blur-md border-primary/20">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between space-x-4">
-                {/* Previous Lesson */}
+          <Card className="bg-background/70 backdrop-blur-md border-primary/20">
+            <CardContent className="p-3">
+              <div className="flex items-center justify-between space-x-3">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={onPrevLesson}
                   disabled={currentLesson === 0}
-                  className="shrink-0"
+                  className="shrink-0 h-8 w-8 p-0"
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
 
-                {/* Main Action */}
-                <div className="flex-1 space-y-2">
+                <div className="flex-1 min-w-0">
                   {!isLessonComplete ? (
-                    currentLesson === 0 || required === 0 ? (
-                      <Button
-                        onClick={onStartLesson}
-                        className="w-full sacred-button"
-                        size="sm"
-                      >
-                        <Play className="h-4 w-4 mr-2" />
-                        Begin Lesson
-                      </Button>
-                    ) : (
-                      <Button
-                        onClick={onStartLesson}
-                        variant="outline"
-                        className="w-full"
-                        size="sm"
-                      >
-                        <Wind className="h-4 w-4 mr-2" />
-                        Continue Practice
-                      </Button>
-                    )
+                    <Button
+                      onClick={onStartLesson}
+                      className="w-full h-8 text-xs"
+                      size="sm"
+                    >
+                      <Play className="h-3 w-3 mr-1" />
+                      {currentLesson === 0 ? 'Begin' : 'Practice'}
+                    </Button>
                   ) : (
                     <Button
                       onClick={canComplete ? onCompleteLesson : undefined}
                       disabled={!canComplete}
-                      className="w-full sacred-button"
+                      className="w-full h-8 text-xs sacred-button"
                       size="sm"
                     >
-                      <CheckCircle className="h-4 w-4 mr-2" />
-                      {canComplete ? 'Complete Lesson' : 'Practice More'}
+                      <CheckCircle className="h-3 w-3 mr-1" />
+                      Complete
                     </Button>
                   )}
                 </div>
 
-                {/* Next Lesson */}
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={onNextLesson}
                   disabled={currentLesson >= 7 || !isLessonComplete}
-                  className="shrink-0"
+                  className="shrink-0 h-8 w-8 p-0"
                 >
                   <ChevronRight className="h-4 w-4" />
                 </Button>
@@ -193,44 +167,6 @@ export default function HUDInterface({
         </motion.div>
       </div>
 
-      {/* Side HUD - Cycle Counter (when practicing) */}
-      <AnimatePresence>
-        {required > 0 && !isLessonComplete && (
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 20 }}
-            className="absolute right-6 top-1/2 transform -translate-y-1/2 pointer-events-auto"
-          >
-            <Card className="bg-background/60 backdrop-blur-sm border-primary/20">
-              <CardContent className="p-3">
-                <div className="text-center">
-                  <div className="text-2xl font-sacred text-primary">
-                    {cycleCount}
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    of {required}
-                  </div>
-                  <div className="text-xs text-muted-foreground mt-1">
-                    cycles
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Emergency Pause */}
-      <div className="absolute top-6 right-6 pointer-events-auto">
-        <Button
-          variant="ghost"
-          size="sm"
-          className="text-muted-foreground hover:text-foreground"
-        >
-          <Pause className="h-4 w-4" />
-        </Button>
-      </div>
     </div>
   );
 }

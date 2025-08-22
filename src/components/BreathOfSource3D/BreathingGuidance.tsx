@@ -67,101 +67,55 @@ export default function BreathingGuidance({
   if (!isActive) return null;
 
   return (
-    <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-30">
+    <div className="absolute top-6 right-6 pointer-events-none z-30 max-w-xs">
       <AnimatePresence mode="wait">
         <motion.div
           key={currentPhase}
-          initial={{ scale: 0.8, opacity: 0 }}
+          initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.8, opacity: 0 }}
-          transition={{ 
-            type: "spring", 
-            stiffness: 400, 
-            damping: 25,
-            duration: 0.3 
-          }}
-          className="text-center"
+          exit={{ scale: 0.9, opacity: 0 }}
+          transition={{ duration: 0.2 }}
         >
           <Card className={`
-            ${phase.bgColor} ${phase.borderColor} border-2 backdrop-blur-lg
-            shadow-2xl transform transition-all duration-300
+            ${phase.bgColor} ${phase.borderColor} border backdrop-blur-md
+            shadow-lg
           `}>
-            <CardContent className="p-8 space-y-4">
-              {/* Phase Icon */}
-              <motion.div
-                initial={{ rotate: -10 }}
-                animate={{ rotate: 0 }}
-                className={`flex justify-center ${phase.color}`}
-              >
-                <div className="p-3 rounded-full bg-background/20">
+            <CardContent className="p-4 space-y-3">
+              {/* Compact header */}
+              <div className="flex items-center space-x-3">
+                <div className={`${phase.color} flex-shrink-0`}>
                   {phase.icon}
                 </div>
-              </motion.div>
+                <div className="min-w-0">
+                  <h3 className={`text-lg font-sacred ${phase.color} leading-tight`}>
+                    {phase.label}
+                  </h3>
+                  <p className="text-xs text-muted-foreground leading-tight">
+                    {phase.description}
+                  </p>
+                </div>
+              </div>
 
-              {/* Phase Label */}
-              <motion.div
-                initial={{ y: 10, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.1 }}
-                className="space-y-2"
-              >
-                <h2 className={`text-3xl font-sacred ${phase.color}`}>
-                  {phase.label}
-                </h2>
-                <p className="text-lg text-muted-foreground">
-                  {phase.description}
-                </p>
-              </motion.div>
-
-              {/* Breathing Pattern Info */}
-              <motion.div
-                initial={{ y: 10, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.2 }}
-                className="space-y-3"
-              >
-                <div className="text-sm text-muted-foreground">
-                  {presetLabels[preset]}
+              {/* Compact progress */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-xs">
+                  <span>{presetLabels[preset]}</span>
+                  <span className="font-mono">
+                    {cycleCount}/{targetCycles}
+                  </span>
                 </div>
                 
-                {/* Progress */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="flex items-center space-x-1">
-                      <Heart className="h-4 w-4" />
-                      <span>Cycles</span>
-                    </span>
-                    <span className="font-mono">
-                      {cycleCount} / {targetCycles}
-                    </span>
+                {targetCycles > 0 && (
+                  <div className="w-full h-1 bg-background/30 rounded-full overflow-hidden">
+                    <motion.div
+                      className="h-full bg-gradient-to-r from-primary to-secondary"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${progress}%` }}
+                      transition={{ duration: 0.3 }}
+                    />
                   </div>
-                  
-                  {targetCycles > 0 && (
-                    <div className="w-48 h-2 bg-background/30 rounded-full overflow-hidden">
-                      <motion.div
-                        className="h-full bg-gradient-to-r from-primary to-secondary"
-                        initial={{ width: 0 }}
-                        animate={{ width: `${progress}%` }}
-                        transition={{ duration: 0.5 }}
-                      />
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-
-              {/* Sacred Geometry Accent */}
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ 
-                  duration: 20, 
-                  repeat: Infinity, 
-                  ease: "linear" 
-                }}
-                className={`w-16 h-16 mx-auto border border-current opacity-30 ${phase.color}`}
-                style={{ 
-                  clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)'
-                }}
-              />
+                )}
+              </div>
             </CardContent>
           </Card>
         </motion.div>

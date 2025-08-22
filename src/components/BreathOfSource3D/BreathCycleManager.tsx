@@ -46,8 +46,6 @@ export default function BreathCycleManager({
     }
 
     const runBreathCycle = () => {
-      cycleStartRef.current = Date.now();
-      
       const phases: BreathPhase[] = ['inhale', 'holdIn', 'exhale', 'holdOut'];
       let currentPhaseIndex = 0;
       
@@ -55,10 +53,10 @@ export default function BreathCycleManager({
         if (!isActive) return;
         
         const phase = phases[currentPhaseIndex];
-        phaseRef.current = phase;
         onPhaseChange(phase);
         
         const duration = pattern[phase] * 1000 * speedMultiplier;
+        console.log(`Starting ${phase} for ${duration}ms`);
         
         timerRef.current = setTimeout(() => {
           currentPhaseIndex++;
@@ -67,10 +65,8 @@ export default function BreathCycleManager({
             // Cycle complete
             onCycleComplete();
             currentPhaseIndex = 0;
-            nextPhase(); // Start next cycle
-          } else {
-            nextPhase(); // Continue to next phase
           }
+          nextPhase(); // Continue to next phase
         }, duration);
       };
       
