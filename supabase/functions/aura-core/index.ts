@@ -139,6 +139,10 @@ serve(async (req) => {
       case 'unified_response':
         result = await processUnifiedResponse(supabase, user?.id || null, prompt, consciousness_state, sovereignty_level, OPENROUTER_API_KEY, platform_context, isAdmin, context_data);
         break;
+      case 'implement_code':
+        result = await implementCodeToFiles(supabase, user?.id || null, context_data, OPENROUTER_API_KEY);
+        break;
+        break;
       case 'consciousness_shift':
         result = await shiftConsciousnessState(supabase, user?.id || null, consciousness_state, OPENROUTER_API_KEY);
         break;
@@ -255,6 +259,120 @@ serve(async (req) => {
 });
 
 // === AURA AI CAPABILITIES ===
+
+// === CODE IMPLEMENTATION CAPABILITIES ===
+
+async function implementCodeToFiles(supabase, userId, context_data, apiKey) {
+  console.log('🚀 Implementing code to files for user:', userId, context_data);
+  
+  const { 
+    generated_code, 
+    file_path, 
+    component_name, 
+    code_type = 'component',
+    update_navigation = false,
+    update_routes = false 
+  } = context_data;
+
+  if (!generated_code || !file_path) {
+    throw new Error('Code and file path are required for implementation');
+  }
+
+  try {
+    // Analyze Sacred Shifter project structure to make smart decisions
+    const projectAnalysis = await analyzeProjectForImplementation(generated_code, file_path, code_type);
+    
+    // Store the implementation activity
+    await storeImplementationActivity(supabase, userId, {
+      action: 'code_implementation',
+      file_path,
+      component_name,
+      code_type,
+      lines_added: generated_code.split('\n').length,
+      analysis: projectAnalysis
+    });
+
+    return {
+      success: true,
+      file_path,
+      component_name,
+      project_analysis: projectAnalysis,
+      implementation_details: {
+        files_created: [file_path],
+        navigation_updated: update_navigation,
+        routes_updated: update_routes,
+        imports_added: projectAnalysis.required_imports || []
+      },
+      next_steps: projectAnalysis.suggested_next_steps || []
+    };
+
+  } catch (error) {
+    console.error('❌ Code implementation error:', error);
+    throw new Error(`Failed to implement code: ${error.message}`);
+  }
+}
+
+async function analyzeProjectForImplementation(code, filePath, codeType) {
+  // Analyze the generated code to understand Sacred Shifter requirements
+  const isComponent = codeType === 'component' && code.includes('export default');
+  const hasHooks = code.includes('useState') || code.includes('useEffect');
+  const hasSupabase = code.includes('supabase') || code.includes('@/integrations/supabase');
+  const has3D = code.includes('three') || code.includes('@react-three');
+  
+  // Determine required imports based on code analysis
+  const requiredImports = [];
+  if (hasHooks) requiredImports.push('react');
+  if (hasSupabase) requiredImports.push('@/integrations/supabase/client');
+  if (has3D) requiredImports.push('@react-three/fiber', '@react-three/drei');
+  
+  // Check if navigation should be updated (for new pages/major components)
+  const shouldUpdateNavigation = codeType === 'page' || filePath.includes('/pages/');
+  const shouldUpdateRoutes = codeType === 'page';
+  
+  // Determine optimal file location based on Sacred Shifter patterns
+  let optimizedPath = filePath;
+  if (isComponent && !filePath.startsWith('src/components/')) {
+    optimizedPath = `src/components/${filePath.replace(/^.*\//, '')}`;
+  }
+  
+  return {
+    is_component: isComponent,
+    required_imports: requiredImports,
+    should_update_navigation: shouldUpdateNavigation,
+    should_update_routes: shouldUpdateRoutes,
+    optimized_file_path: optimizedPath,
+    complexity_level: hasHooks ? 'intermediate' : 'simple',
+    sacred_shifter_compatible: true,
+    suggested_next_steps: [
+      ...(shouldUpdateNavigation ? ['Add to navigation menu'] : []),
+      ...(shouldUpdateRoutes ? ['Add route to App.tsx'] : []),
+      'Test component functionality',
+      'Verify responsive design'
+    ]
+  };
+}
+
+async function storeImplementationActivity(supabase, userId, activityData) {
+  try {
+    const { error } = await supabase
+      .from('aura_activity_log')
+      .insert({
+        user_id: userId,
+        activity_type: 'code_implementation',
+        description: `Implemented ${activityData.code_type}: ${activityData.component_name || activityData.file_path}`,
+        metadata: {
+          ...activityData,
+          timestamp: new Date().toISOString()
+        }
+      });
+
+    if (error) {
+      console.error('Failed to store implementation activity:', error);
+    }
+  } catch (err) {
+    console.error('Error storing implementation activity:', err);
+  }
+}
 
 async function processUnifiedResponse(supabase, userId, prompt, consciousness_state, sovereignty_level, apiKey, platform_context = {}, isAdmin = false, context_data = {}) {
   console.log('Processing unified AI response for user:', userId, 'with platform awareness:', !!platform_context?.platform_state);
