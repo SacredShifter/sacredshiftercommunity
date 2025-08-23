@@ -174,7 +174,7 @@ interface GeometryShapeProps {
 }
 
 function AnimatedGeometry({ geometry, isSelected, onClick }: GeometryShapeProps) {
-  const meshRef = useRef<THREE.Mesh>(null);
+  const meshRef = useRef<THREE.Group>(null);
   const materialRef = useRef<THREE.MeshStandardMaterial>(null);
   
   useFrame(() => {

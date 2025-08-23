@@ -47,9 +47,9 @@ export const Witness: React.FC = () => {
       <lineSegments geometry={bodyGeometry}>
         <lineBasicMaterial color={hovered ? '#f0f0f0' : '#ffffff'} />
       </lineSegments>
-      <line geometry={headGeometry}>
+      <lineSegments geometry={headGeometry}>
         <lineBasicMaterial color={isFocused ? '#ffff00' : (hovered ? '#f0f0f0' : '#ffffff')} />
-      </line>
+      </lineSegments>
     </group>
   );
 };
