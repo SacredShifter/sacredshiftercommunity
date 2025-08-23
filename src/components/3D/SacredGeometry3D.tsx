@@ -5,9 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { motion } from 'framer-motion';
-import { Volume2, Play, Pause, Shapes } from 'lucide-react';
+import { Volume2, Play, Pause, Shapes, MessageSquare } from 'lucide-react';
 import { useFrequencyTool } from '@/hooks/useFrequencyTool';
 import * as THREE from 'three';
+
+interface SacredGeometry3DProps {
+  hideInCeremonies?: boolean;
+}
 
 interface GeometryData {
   id: string;
@@ -21,7 +25,7 @@ interface GeometryData {
   edges: number;
   color: string;
   position: [number, number, number];
-  component: React.ComponentType<any>;
+  mantra?: string;
 }
 
 const geometryData: GeometryData[] = [
@@ -36,18 +40,7 @@ const geometryData: GeometryData[] = [
     vertices: 4,
     edges: 6,
     color: '#FF4500',
-    position: [-3, 2, 0],
-    component: React.forwardRef<THREE.Mesh, any>((_, ref) => 
-      <Tetrahedron ref={ref}>
-        <meshStandardMaterial
-          color="#FF4500"
-          emissive="#FF4500"
-          emissiveIntensity={0.05}
-          transparent
-          opacity={0.8}
-        />
-      </Tetrahedron>
-    )
+    position: [-4, 2, 0],
   },
   {
     id: 'cube',
@@ -60,19 +53,8 @@ const geometryData: GeometryData[] = [
     vertices: 8,
     edges: 12,
     color: '#8B4513',
-    position: [-1, 2, 0],
-    component: React.forwardRef<THREE.Mesh, any>((_, ref) => 
-      <mesh ref={ref}>
-        <boxGeometry />
-        <meshStandardMaterial
-          color="#8B4513"
-          emissive="#8B4513"
-          emissiveIntensity={0.05}
-          transparent
-          opacity={0.8}
-        />
-      </mesh>
-    )
+    position: [-2, 2, 0],
+    mantra: 'Fortress of Truth.',
   },
   {
     id: 'octahedron',
@@ -85,18 +67,7 @@ const geometryData: GeometryData[] = [
     vertices: 6,
     edges: 12,
     color: '#87CEEB',
-    position: [1, 2, 0],
-    component: React.forwardRef<THREE.Mesh, any>((_, ref) => 
-      <Octahedron ref={ref}>
-        <meshStandardMaterial
-          color="#87CEEB"
-          emissive="#87CEEB"
-          emissiveIntensity={0.05}
-          transparent
-          opacity={0.8}
-        />
-      </Octahedron>
-    )
+    position: [0, 2, 0],
   },
   {
     id: 'icosahedron',
@@ -109,18 +80,7 @@ const geometryData: GeometryData[] = [
     vertices: 12,
     edges: 30,
     color: '#4169E1',
-    position: [3, 2, 0],
-    component: React.forwardRef<THREE.Mesh, any>((_, ref) => 
-      <Icosahedron ref={ref}>
-        <meshStandardMaterial
-          color="#4169E1"
-          emissive="#4169E1"
-          emissiveIntensity={0.05}
-          transparent
-          opacity={0.8}
-        />
-      </Icosahedron>
-    )
+    position: [2, 2, 0],
   },
   {
     id: 'dodecahedron',
@@ -133,18 +93,77 @@ const geometryData: GeometryData[] = [
     vertices: 20,
     edges: 30,
     color: '#9370DB',
+    position: [4, 2, 0],
+  },
+  {
+    id: 'circle',
+    name: 'Circle',
+    description: 'Represents unity, wholeness, and the infinite.',
+    symbolism: 'Unity, source, wholeness, infinite',
+    element: 'Source',
+    platonicSolid: false,
+    faces: 1,
+    vertices: 32,
+    edges: 32,
+    color: '#FFFFFF',
+    position: [-4, 0, 0],
+    mantra: 'Circle of Source.',
+  },
+  {
+    id: 'witness',
+    name: 'Witness',
+    description: 'The observer, the self-aware consciousness.',
+    symbolism: 'Consciousness, awareness, observer',
+    element: 'Mind',
+    platonicSolid: false,
+    faces: 0,
+    vertices: 0,
+    edges: 0,
+    color: '#00FFFF',
+    position: [-2, 0, 0],
+    mantra: 'Witness within.',
+  },
+  {
+    id: 'eros',
+    name: 'Eros',
+    description: 'The life force, creative energy, and desire.',
+    symbolism: 'Desire, passion, life force, creativity',
+    element: 'Passion',
+    platonicSolid: false,
+    faces: 0,
+    vertices: 0,
+    edges: 0,
+    color: '#FF007F',
     position: [0, 0, 0],
-    component: React.forwardRef<THREE.Mesh, any>((_, ref) => 
-      <Dodecahedron ref={ref}>
-        <meshStandardMaterial
-          color="#9370DB"
-          emissive="#9370DB"
-          emissiveIntensity={0.05}
-          transparent
-          opacity={0.8}
-        />
-      </Dodecahedron>
-    )
+    mantra: 'Root of Desire ignites.',
+  },
+  {
+    id: 'butterfly',
+    name: 'Butterfly',
+    description: 'Represents transformation, metamorphosis, and rebirth.',
+    symbolism: 'Transformation, rebirth, metamorphosis',
+    element: 'Soul',
+    platonicSolid: false,
+    faces: 2,
+    vertices: 6,
+    edges: 6,
+    color: '#FFD700',
+    position: [2, 0, 0],
+    mantra: 'Metamorphosis through fire.',
+  },
+  {
+    id: 'justice',
+    name: 'Justice',
+    description: 'Represents balance, fairness, and cosmic law.',
+    symbolism: 'Balance, fairness, truth, cosmic law',
+    element: 'Law',
+    platonicSolid: false,
+    faces: 2,
+    vertices: 4,
+    edges: 4,
+    color: '#C0C0C0',
+    position: [4, 0, 0],
+    mantra: 'Protector at my step.',
   }
 ];
 
@@ -177,21 +196,25 @@ function AnimatedGeometry({ geometry, isSelected, onClick }: GeometryShapeProps)
     }
   });
 
-  const GeometryComponent = geometry.component;
-  
   return (
-    <group position={geometry.position}>
-      <mesh
-        ref={meshRef}
-        onClick={() => onClick(geometry)}
-        onPointerOver={() => document.body.style.cursor = 'pointer'}
-        onPointerOut={() => document.body.style.cursor = 'auto'}
-      >
-        {geometry.id === 'tetrahedron' && <tetrahedronGeometry />}
+    <group
+      position={geometry.position}
+      ref={meshRef}
+      onClick={() => onClick(geometry)}
+      onPointerOver={() => document.body.style.cursor = 'pointer'}
+      onPointerOut={() => document.body.style.cursor = 'auto'}
+    >
+      <mesh>
+        {geometry.id === 'tetrahedron' && <Tetrahedron />}
         {geometry.id === 'cube' && <boxGeometry />}
-        {geometry.id === 'octahedron' && <octahedronGeometry />}
-        {geometry.id === 'icosahedron' && <icosahedronGeometry />}
-        {geometry.id === 'dodecahedron' && <dodecahedronGeometry />}
+        {geometry.id === 'circle' && <circleGeometry args={[1, 32]} />}
+        {geometry.id === 'witness' && <sphereGeometry args={[0.8, 32, 32]} />}
+        {geometry.id === 'eros' && <shapeGeometry args={[new HeartShape()]} />}
+        {geometry.id === 'butterfly' && <ButterflyGeometry />}
+        {geometry.id === 'justice' && <JusticeGeometry />}
+        {geometry.id === 'octahedron' && <Octahedron />}
+        {geometry.id === 'icosahedron' && <Icosahedron />}
+        {geometry.id === 'dodecahedron' && <Dodecahedron />}
         <meshStandardMaterial
           ref={materialRef}
           color={geometry.color}
@@ -200,6 +223,7 @@ function AnimatedGeometry({ geometry, isSelected, onClick }: GeometryShapeProps)
           transparent
           opacity={0.8}
           wireframe={isSelected}
+          side={THREE.DoubleSide}
         />
       </mesh>
 
@@ -238,6 +262,52 @@ function AnimatedGeometry({ geometry, isSelected, onClick }: GeometryShapeProps)
   );
 }
 
+class HeartShape extends THREE.Shape {
+  constructor() {
+    super();
+    const x = -0.5, y = -0.5;
+    this.moveTo(x + 0.5, y + 0.5);
+    this.bezierCurveTo(x + 0.5, y + 0.5, x + 0.4, y, x, y);
+    this.bezierCurveTo(x - 0.6, y, x - 0.6, y + 0.7, x - 0.6, y + 0.7);
+    this.bezierCurveTo(x - 0.6, y + 1.1, x - 0.3, y + 1.54, x + 0.5, y + 1.9);
+    this.bezierCurveTo(x + 1.2, y + 1.54, x + 1.6, y + 1.1, x + 1.6, y + 0.7);
+    this.bezierCurveTo(x + 1.6, y + 0.7, x + 1.6, y, x + 1.0, y);
+    this.bezierCurveTo(x + 0.7, y, x + 0.5, y + 0.5, x + 0.5, y + 0.5);
+  }
+}
+
+function ButterflyGeometry() {
+  return (
+    <group>
+      <mesh position={[-0.6, 0, 0]} rotation={[0, 0.5, 0]}>
+        <planeGeometry args={[1, 1]} />
+      </mesh>
+      <mesh position={[0.6, 0, 0]} rotation={[0, -0.5, 0]}>
+        <planeGeometry args={[1, 1]} />
+      </mesh>
+    </group>
+  );
+}
+
+function JusticeGeometry() {
+  return (
+    <group>
+      <mesh position={[0, 0, 0]}>
+        <boxGeometry args={[0.1, 1, 0.1]} />
+      </mesh>
+      <mesh position={[0, 0.5, 0]}>
+        <boxGeometry args={[1, 0.1, 0.1]} />
+      </mesh>
+      <mesh position={[-0.5, 0.25, 0]}>
+        <boxGeometry args={[0.1, 0.5, 0.1]} />
+      </mesh>
+      <mesh position={[0.5, 0.25, 0]}>
+        <boxGeometry args={[0.1, 0.5, 0.1]} />
+      </mesh>
+    </group>
+  );
+}
+
 function FlowerOfLife() {
   const positions: [number, number, number][] = [
     [0, 0, -2], // Center
@@ -263,9 +333,10 @@ function FlowerOfLife() {
   );
 }
 
-export default function SacredGeometry3D() {
+export default function SacredGeometry3D({ hideInCeremonies = false }: SacredGeometry3DProps) {
   const [selectedGeometry, setSelectedGeometry] = useState<GeometryData | null>(null);
   const [showFlowerOfLife, setShowFlowerOfLife] = useState(true);
+  const [showCaptions, setShowCaptions] = useState(!hideInCeremonies);
   
   // Sacred frequency integration
   const { 
@@ -342,14 +413,23 @@ export default function SacredGeometry3D() {
               </p>
               
               <div className="space-y-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowFlowerOfLife(!showFlowerOfLife)}
-                  className="w-full"
-                >
-                  {showFlowerOfLife ? 'Hide' : 'Show'} Flower of Life
-                </Button>
+                <div className="grid grid-cols-2 gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowFlowerOfLife(!showFlowerOfLife)}
+                  >
+                    {showFlowerOfLife ? 'Hide' : 'Show'} Flower
+                  </Button>
+                  <Button
+                    variant={showCaptions ? "outline" : "secondary"}
+                    size="sm"
+                    onClick={() => setShowCaptions(!showCaptions)}
+                  >
+                    <MessageSquare className="h-4 w-4 mr-2"/>
+                    {showCaptions ? 'Hide' : 'Show'} Mantra
+                  </Button>
+                </div>
                 
                 <div className="text-xs text-muted-foreground">
                   • Click shapes to explore
@@ -452,6 +532,15 @@ export default function SacredGeometry3D() {
                     {selectedGeometry.symbolism}
                   </p>
                 </div>
+
+                {selectedGeometry.mantra && showCaptions && (
+                  <div>
+                    <h4 className="font-semibold mb-2">Mantra</h4>
+                    <p className="text-sm font-sacred" style={{ color: selectedGeometry.color }}>
+                      “{selectedGeometry.mantra}”
+                    </p>
+                  </div>
+                )}
 
                 <div className="grid grid-cols-3 gap-2 text-center text-xs">
                   <div className="p-2 rounded bg-muted">
@@ -586,7 +675,7 @@ export default function SacredGeometry3D() {
         <div className="flex justify-center">
           <Card className="bg-background/80 backdrop-blur-sm border-primary/20">
             <CardContent className="p-3">
-              <div className="flex space-x-2">
+              <div className="flex space-x-2 flex-wrap justify-center">
                 {geometryData.map(geometry => (
                   <Button
                     key={geometry.id}
