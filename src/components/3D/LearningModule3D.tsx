@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Loader2, Box, Eye, Heart, Shield, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { useLearningStore } from '@/stores/learningStore';
 import ChakraLearning3D from './ChakraLearning3D';
 import SacredGeometry3D from './SacredGeometry3D';
 
@@ -153,9 +154,11 @@ export default function LearningModule3D({ moduleId, onBack, className }: Learni
   const [selectedModule, setSelectedModule] = React.useState<LearningModule | null>(
     moduleId ? learningModules.find(m => m.id === moduleId) || null : null
   );
+  const onChapterJump = useLearningStore((state) => state.onChapterJump);
 
   const handleModuleSelect = (module: LearningModule) => {
     setSelectedModule(module);
+    onChapterJump(module.id);
   };
 
   const handleBack = () => {
