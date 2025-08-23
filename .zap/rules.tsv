@@ -1,0 +1,27 @@
+# ZAP Scanning Rules Configuration
+# Format: RULE_ID	THRESHOLD	IGNORE
+# THRESHOLD: OFF|LOW|MEDIUM|HIGH
+# IGNORE: TRUE|FALSE
+
+# Ignore false positives for SPA applications
+10202	OFF	FALSE	# Absence of Anti-CSRF Tokens (SPAs handle this differently)
+10021	LOW	FALSE	# X-Content-Type-Options Header Missing
+10020	LOW	FALSE	# X-Frame-Options Header Missing
+10016	LOW	FALSE	# Web Browser XSS Protection Not Enabled
+
+# Security headers that should be present
+10017	HIGH	FALSE	# Cross-Domain JavaScript Source File Inclusion
+10023	HIGH	FALSE	# Information Disclosure - Debug Error Messages
+10024	HIGH	FALSE	# Information Disclosure - Sensitive Information in URL
+10025	HIGH	FALSE	# Information Disclosure - Sensitive Information in HTTP Referrer Header
+
+# Block high severity issues
+40012	HIGH	FALSE	# Cross Site Scripting (Reflected)
+40014	HIGH	FALSE	# Cross Site Scripting (Persistent)
+40016	HIGH	FALSE	# Cross Site Scripting (Persistent) - Prime
+40017	HIGH	FALSE	# Cross Site Scripting (Persistent) - Spider
+40018	HIGH	FALSE	# SQL Injection
+40019	HIGH	FALSE	# SQL Injection - MySQL
+40020	HIGH	FALSE	# SQL Injection - Hypersonic SQL
+40021	HIGH	FALSE	# SQL Injection - Oracle
+40022	HIGH	FALSE	# SQL Injection - PostgreSQL

@@ -1,0 +1,105 @@
+name: Production Security & Quality Gates
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  security-and-quality:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: TypeScript type check
+      run: npm run type-check
+      
+    - name: Build application
+      run: npm run build
+      
+    - name: Run tests
+      run: npm test -- --coverage --watchAll=false
+      
+    - name: Setup Supabase CLI
+      uses: supabase/setup-cli@v1
+      with:
+        version: latest
+        
+    - name: Verify RLS Policies
+      env:
+        SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+      run: |
+        # Check that all tables have RLS enabled
+        echo "Checking RLS policies..."
+        
+        # Create a script to check RLS
+        cat > check_rls.sql << 'EOF'
+        SELECT 
+          schemaname,
+          tablename,
+          rowsecurity
+        FROM pg_tables 
+        WHERE schemaname = 'public' 
+        AND rowsecurity = false
+        AND tablename NOT LIKE '%_view'
+        AND tablename NOT LIKE 'pg_%'
+        AND tablename NOT LIKE 'information_%';
+        EOF
+        
+        # Run the check via Supabase CLI
+        result=$(supabase db query --project-ref $SUPABASE_PROJECT_ID --file check_rls.sql 2>/dev/null || echo "check_failed")
+        
+        if [[ "$result" == *"check_failed"* ]]; then
+          echo "❌ RLS check failed - unable to connect to database"
+          exit 1
+        fi
+        
+        # Count tables without RLS
+        count=$(echo "$result" | wc -l)
+        
+        if [ "$count" -gt 1 ]; then
+          echo "❌ Found tables without RLS enabled:"
+          echo "$result"
+          echo "All user-facing tables must have RLS enabled for production"
+          exit 1
+        else
+          echo "✅ All tables have RLS enabled"
+        fi
+        
+    - name: Lighthouse CI
+      uses: treosh/lighthouse-ci-action@v11
+      with:
+        configPath: './lighthouse.config.js'
+        uploadArtifacts: true
+        temporaryPublicStorage: true
+        
+    - name: OWASP ZAP Baseline Scan
+      uses: zaproxy/action-baseline@v0.11.0
+      with:
+        target: 'https://da56c97a-3355-43d7-807a-390d8ed20bcd.lovableproject.com'
+        rules_file_name: '.zap/rules.tsv'
+        cmd_options: '-a'
+        
+    - name: Security dependency check
+      run: npm audit --audit-level high
+      
+    - name: Check for secrets in code
+      uses: trufflesecurity/trufflehog@main
+      with:
+        path: ./
+        base: main
+        head: HEAD
+        extra_args: --debug --only-verified

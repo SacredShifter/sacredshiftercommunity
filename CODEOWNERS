@@ -1,0 +1,55 @@
+# Sacred Shifter Code Owners
+# 
+# This file defines who must review changes to specific parts of the codebase
+# before they can be merged. This ensures code quality and security.
+
+# Global fallback - all files require review
+* @sacred-shifter-admin
+
+# Database and Infrastructure (CRITICAL)
+/supabase/** @sacred-shifter-admin @database-admin
+supabase/migrations/** @sacred-shifter-admin @database-admin
+supabase/functions/** @sacred-shifter-admin @backend-admin
+
+# Source Code (CORE APPLICATION)
+/src/** @sacred-shifter-admin @frontend-admin
+
+# Security and Configuration (ULTRA CRITICAL)
+/.github/** @sacred-shifter-admin
+/package.json @sacred-shifter-admin
+/package-lock.json @sacred-shifter-admin
+/.gitignore @sacred-shifter-admin
+/tsconfig.json @sacred-shifter-admin
+/vite.config.ts @sacred-shifter-admin
+/tailwind.config.ts @sacred-shifter-admin
+
+# Documentation and Release Management
+/CHANGELOG.md @sacred-shifter-admin
+/README.md @sacred-shifter-admin
+/PRODUCTION_READINESS_AUDIT.md @sacred-shifter-admin
+
+# CI/CD and Security
+/.github/workflows/** @sacred-shifter-admin @devops-admin
+/lighthouse.config.js @sacred-shifter-admin
+/.zap/** @sacred-shifter-admin
+
+# Edge Functions (BACKEND SECURITY)
+/supabase/functions/healthz/** @sacred-shifter-admin @backend-admin
+
+# Authentication and User Management
+/src/hooks/useAuth.tsx @sacred-shifter-admin @security-admin
+/src/pages/Auth.tsx @sacred-shifter-admin @security-admin
+/src/components/ProtectedRoute.tsx @sacred-shifter-admin @security-admin
+/src/components/AdminRoute.tsx @sacred-shifter-admin @security-admin
+
+# Production Components
+/src/components/production/** @sacred-shifter-admin @reliability-admin
+/src/components/ErrorBoundary.tsx @sacred-shifter-admin @reliability-admin
+
+# Core AI and Consciousness Systems
+/src/components/Aura* @sacred-shifter-admin @ai-admin
+/src/modules/** @sacred-shifter-admin @experience-admin
+/src/components/3D/** @sacred-shifter-admin @graphics-admin
+
+# Note: Replace placeholder usernames with actual GitHub usernames
+# Example: @sacred-shifter-admin -> @yourgithubusername
