@@ -9,6 +9,8 @@ import { MainLayout } from "@/components/MainLayout";
 import { ToolbarWithComponents } from "@/components/ToolbarWithComponents";
 
 import { ErrorBoundary, UIErrorBoundary } from "@/components/ErrorBoundary";
+import { ProductionReadyErrorBoundary } from "@/components/production/ProductionReadyErrorBoundary";
+import { PerformanceMonitor } from "@/components/production/PerformanceMonitor";
 
 import Index from "./pages/Index";
 import Feed from "./pages/Feed";
@@ -34,10 +36,12 @@ import Shift from './pages/Shift';
 
 function App() {
   return (
-    <ErrorBoundary name="Root">
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
+    <ProductionReadyErrorBoundary>
+      <PerformanceMonitor />
+      <ErrorBoundary name="Root">
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
         <div className="min-h-screen relative w-full">
           
           <Routes>
@@ -79,7 +83,8 @@ function App() {
             <ToolbarWithComponents />
           </div>
         </TooltipProvider>
-    </ErrorBoundary>
+      </ErrorBoundary>
+    </ProductionReadyErrorBoundary>
   );
 }
 
