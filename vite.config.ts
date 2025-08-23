@@ -1,22 +1,24 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react-swc";
-import path from "path";
-import { componentTagger } from "lovable-tagger";
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import path from 'node:path';
 
-// https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
-  server: {
-    host: "127.0.0.1",
-    port: 8080,
-  },
-  plugins: [
-    react(),
-    mode === 'development' &&
-    componentTagger(),
-  ].filter(Boolean),
+export default defineConfig({
+  plugins: [react()],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      '@shift/supa': path.resolve(__dirname, 'packages/supa/src'),
+      '@shift/ui': path.resolve(__dirname, 'packages/ui/src'),
+      '@shift/schema': path.resolve(__dirname, 'packages/schema'),
     },
+    // avoids symlink weirdness with pnpm workspaces
+    preserveSymlinks: true,
   },
-}));
+  server: {
+    // allow importing files outside project root (packages/)
+    fs: { allow: ['.', 'packages'] },
+  },
+  optimizeDeps: {
+    // optional but helps when mixing linked deps
+    include: ['three'],
+  },
+});

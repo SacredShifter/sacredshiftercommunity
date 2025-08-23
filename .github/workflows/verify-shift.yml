@@ -1,0 +1,99 @@
+name: Verify Shift Stack
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'docker/**'
+      - 'supabase/**'
+      - 'src/**'
+      - '.github/workflows/verify-shift.yml'
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    services:
+      # Optional: ephemeral Postgres if your compose expects an external DB; remove if compose already includes DB
+      pg:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: app
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install deps
+        run: pnpm i
+
+      # ---------- 1) MIGRATION HARNESS ----------
+      - name: Docker Compose (migrations)
+        working-directory: docker/migrate
+        run: |
+          docker compose version
+          docker compose up --build --abort-on-container-exit --exit-code-from migrator
+      - name: Assert migrations success
+        if: ${{ success() }}
+        run: |
+          # Grep logs for success marker (adjust to your migrator log line if different)
+          MIG_LOG=$(docker compose -f docker/migrate/docker-compose.yml logs migrator || true)
+          echo "$MIG_LOG" | tee migration.log
+          echo "$MIG_LOG" | grep -qi "All migrations applied successfully." || (echo "Migration success marker not found" && exit 1)
+      - name: Upload migration logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: migration-logs
+          path: migration.log
+
+      # ---------- 2) DEV STACK (HEADLESS) ----------
+      # Run dev stack detached, wait for health checks, then smoke test
+      - name: Docker Compose (dev up)
+        working-directory: docker/dev
+        run: |
+          docker compose up --build -d
+          # give containers time to boot
+          sleep 15
+          docker compose ps
+          docker compose logs --no-color > ../../dev-stack.log || true
+
+      - name: Health check orchestrator
+        run: |
+          # curl inside the CI runner’s network; if compose exposes 6060, this should pass
+          curl -fsS http://localhost:6060/health | tee orchestrator_health.txt
+          grep -q "OK" orchestrator_health.txt
+
+      - name: Upload dev logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: dev-stack-logs
+          path: |
+            dev-stack.log
+            orchestrator_health.txt
+
+      # ---------- 3) SMOKE TEST (build-time TS import) ----------
+      - name: Add smoke.ts
+        run: |
+          echo "import { supa } from '@shift/supa/client'; console.log(!!supa);" > src/smoke.ts
+          # Ensure a page imports it; using Home as requested
+          sed -i '1s;^;import \"./smoke\";\n;' src/pages/Home.tsx || true
+
+      - name: Typecheck & Build (ensures imports resolve)
+        run: |
+          npm run typecheck --if-present
+          npm run build --if-present

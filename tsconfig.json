@@ -7,7 +7,10 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@shift/supa/*": ["packages/supa/src/*"],
+      "@shift/ui/*": ["packages/ui/src/*"],
+      "@shift/schema/*": ["packages/schema/*"]
     },
     "noImplicitAny": false,
     "noUnusedParameters": false,
@@ -15,5 +18,6 @@
     "allowJs": true,
     "noUnusedLocals": false,
     "strictNullChecks": false
-  }
+  },
+  "include": ["src", "packages"]
 }

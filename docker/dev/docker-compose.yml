@@ -1,0 +1,24 @@
+version: "3.9"
+services:
+  web:
+    image: node:20
+    working_dir: /app
+    command: sh -lc "npm i -g pnpm && pnpm i && pnpm --filter web dev --host 0.0.0.0"
+    ports:
+      - "5173:5173"
+    env_file: ../../.env
+    volumes:
+      - ../../:/app
+
+  orchestrator:
+    image: node:20
+    working_dir: /app/apps/orchestrator
+    command: sh -lc "npm i -g pnpm && pnpm i && pnpm dev"
+    ports:
+      - "6060:${ORCH_PORT:-6060}"
+    env_file: ../../.env
+    environment:
+      ORCH_PORT: ${ORCH_PORT:-6060}
+      ORCH_ALLOWED_ORIGINS: ${ORCH_ALLOWED_ORIGINS:-http://localhost:5173}
+    volumes:
+      - ../../:/app

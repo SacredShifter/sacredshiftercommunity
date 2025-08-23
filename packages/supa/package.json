@@ -1,0 +1,11 @@
+{
+  "name": "@shift/supa",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.53.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.3"
+  }
+}
