@@ -2114,6 +2114,60 @@ export type Database = {
         }
         Relationships: []
       }
+      circle_member_profiles: {
+        Row: {
+          bio: string | null
+          chakra_alignment: string | null
+          circle_id: string
+          connections_made: number | null
+          contribution_score: number | null
+          created_at: string | null
+          display_name: string | null
+          id: string
+          last_active: string | null
+          presence_state: string | null
+          resonance_level: number | null
+          sacred_symbols: string[] | null
+          updated_at: string | null
+          user_id: string
+          wisdom_shared: number | null
+        }
+        Insert: {
+          bio?: string | null
+          chakra_alignment?: string | null
+          circle_id: string
+          connections_made?: number | null
+          contribution_score?: number | null
+          created_at?: string | null
+          display_name?: string | null
+          id?: string
+          last_active?: string | null
+          presence_state?: string | null
+          resonance_level?: number | null
+          sacred_symbols?: string[] | null
+          updated_at?: string | null
+          user_id: string
+          wisdom_shared?: number | null
+        }
+        Update: {
+          bio?: string | null
+          chakra_alignment?: string | null
+          circle_id?: string
+          connections_made?: number | null
+          contribution_score?: number | null
+          created_at?: string | null
+          display_name?: string | null
+          id?: string
+          last_active?: string | null
+          presence_state?: string | null
+          resonance_level?: number | null
+          sacred_symbols?: string[] | null
+          updated_at?: string | null
+          user_id?: string
+          wisdom_shared?: number | null
+        }
+        Relationships: []
+      }
       circle_members: {
         Row: {
           circle_id: string
@@ -2142,6 +2196,66 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      circle_message_reactions: {
+        Row: {
+          created_at: string | null
+          id: string
+          message_id: string
+          reaction_type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          message_id: string
+          reaction_type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          message_id?: string
+          reaction_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      circle_message_threads: {
+        Row: {
+          chakra_tag: string | null
+          circle_id: string
+          content: string
+          created_at: string | null
+          id: string
+          is_anonymous: boolean | null
+          parent_message_id: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          chakra_tag?: string | null
+          circle_id: string
+          content: string
+          created_at?: string | null
+          id?: string
+          is_anonymous?: boolean | null
+          parent_message_id: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          chakra_tag?: string | null
+          circle_id?: string
+          content?: string
+          created_at?: string | null
+          id?: string
+          is_anonymous?: boolean | null
+          parent_message_id?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       circle_messages: {
         Row: {
@@ -4799,6 +4913,54 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      featured_content: {
+        Row: {
+          content_id: string | null
+          content_type: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          feature_type: string
+          featured_until: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          priority: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content_id?: string | null
+          content_type: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          feature_type?: string
+          featured_until?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          priority?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content_id?: string | null
+          content_type?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          feature_type?: string
+          featured_until?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          priority?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       field_integrity_metrics: {
         Row: {
