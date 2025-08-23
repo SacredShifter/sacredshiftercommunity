@@ -1,0 +1,23 @@
+name: Infra Preview
+on:
+  pull_request:
+    paths: [ "infra/**", ".github/workflows/infra-ci.yml", "scripts/ensure_pulumi.sh" ]
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - name: Ensure Pulumi
+        run: bash scripts/ensure_pulumi.sh
+      - name: Install deps
+        run: cd infra && npm ci && npm run build
+      - name: Pulumi preview (staging)
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+        run: |
+          cd infra
+          pulumi stack init sacred-shifter/staging || pulumi stack select sacred-shifter/staging
+          pulumi preview --diff

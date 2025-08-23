@@ -1,0 +1,3 @@
+name: sacred-shifter
+runtime: nodejs
+description: Sacred Shifter infra (Pulumi TS)

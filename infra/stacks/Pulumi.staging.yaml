@@ -1,0 +1,3 @@
+config:
+  sacred-shifter:app.domain: sacredshifter.app
+  sacred-shifter:cors.allowlist: https://sacredshifter.app,http://localhost:3000
