@@ -1,0 +1,16 @@
+# This file provides examples of how to override the default models and voices
+# for the stt and tts services. To use a different model or voice, uncomment
+# the corresponding lines below and replace the values with your desired
+# model or voice.
+#
+# For a list of available Whisper.cpp models, see:
+# https://github.com/ggerganov/whisper.cpp#available-models-and-languages
+#
+# For a list of available Piper voices, see:
+# https://rhasspy.github.io/piper-samples/
+#
+services:
+  # stt:
+  #   command: ["--model", "small.en", "--threads", "4", "--port", "9000", "--language", "en"]
+  # tts:
+  #   command: ["--voice", "en_US-lessac-medium"]

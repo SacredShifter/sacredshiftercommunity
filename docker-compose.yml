@@ -1,0 +1,15 @@
+services:
+  stt:
+    image: ghcr.io/ggerganov/whisper.cpp:latest
+    command: ["--model", "base.en", "--threads", "4", "--port", "9000", "--language", "en"]
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./models/whisper:/models
+  tts:
+    image: rhasspy/piper:latest
+    command: ["--voice", "en_US-libritts-high"]
+    ports:
+      - "9001:5000"
+    volumes:
+      - ./voices:/voices
