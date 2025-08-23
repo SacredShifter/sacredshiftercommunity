@@ -6,7 +6,7 @@ import { LiberationProvider } from './context/LiberationContext';
 import { SceneRouter } from './scenes/SceneRouter';
 import { HUD } from './ui/HUD';
 import { ComfortMenu } from './ui/ComfortMenu';
-import { AudioEngine } from './audio/AudioEngine';
+import { AudioEngine } from '@/modules/collective/audio/AudioEngine';
 import { PerfGate } from './hooks/usePerformanceGate';
 import { PostEffects } from './scenes/PostEffects';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
@@ -33,15 +33,16 @@ export default function GateOfLiberation() {
               powerPreference: 'high-performance'
             }}
           >
-            <PerfGate>
-              <PostEffects />
-              <SceneRouter />
-            </PerfGate>
+            <AudioEngine>
+              <PerfGate>
+                <PostEffects />
+                <SceneRouter />
+              </PerfGate>
+            </AudioEngine>
           </Canvas>
           
           <HUD />
           <ComfortMenu />
-          <AudioEngine />
         </div>
       </LiberationProvider>
     </ErrorBoundary>

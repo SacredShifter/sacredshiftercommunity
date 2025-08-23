@@ -1,14 +1,26 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Pause, Play, Settings, ArrowLeft } from 'lucide-react';
 import { useLiberationState } from '../context/LiberationContext';
 import { cn } from '@/lib/utils';
+import { useBreathCoach } from '../hooks/useBreathCoach';
+import { BreathRing } from './BreathRing';
 
 export const HUD: React.FC = () => {
   const { state, send } = useLiberationState();
   const currentScene = state.context.currentScene;
   const isPaused = state.matches('paused');
+
+  const { isActive, currentPhase, progress, start, stop } = useBreathCoach();
+
+  useEffect(() => {
+    if (currentScene === 'expansion' && !isPaused) {
+      start();
+    } else {
+      stop();
+    }
+  }, [currentScene, isPaused, start, stop]);
 
   const handlePause = () => {
     send({ type: isPaused ? 'RESUME' : 'PAUSE' });
@@ -35,6 +47,21 @@ export const HUD: React.FC = () => {
 
   return (
     <div className="fixed inset-0 pointer-events-none">
+      {/* Breath Ring */}
+      <AnimatePresence>
+        {isActive && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.5 }}
+            className="absolute inset-0 flex items-center justify-center"
+          >
+            <BreathRing phase={currentPhase} progress={progress} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Top HUD */}
       <div className="absolute top-4 left-4 right-4 flex justify-between items-center pointer-events-auto">
         <div className="flex items-center gap-4">
@@ -85,7 +112,7 @@ export const HUD: React.FC = () => {
 
       {/* Bottom prompts */}
       <AnimatePresence>
-        {currentScene !== 'intro' && (
+        {currentScene !== 'intro' && !isActive && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
