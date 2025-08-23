@@ -1,6 +1,8 @@
 import React from 'react';
 import { Canvas } from '@react-three/fiber';
 import { useMachine } from '@xstate/react';
+import { fromPromise } from 'xstate';
+import { useAuraPlatformIntegration } from '@/hooks/useAuraPlatformIntegration';
 import { liberationMachine } from './machine';
 import { LiberationProvider } from './context/LiberationContext';
 import { SceneRouter } from './scenes/SceneRouter';
@@ -12,7 +14,14 @@ import { PostEffects } from './scenes/PostEffects';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 export default function GateOfLiberation() {
-  const [state, send] = useMachine(liberationMachine);
+  const { recordShiftEvent } = useAuraPlatformIntegration();
+  const [state, send] = useMachine(liberationMachine, {
+    actors: {
+      recordShiftEvent: fromPromise(async ({ input }: { input: any }) => {
+        await recordShiftEvent(input.action, input.payload);
+      }),
+    },
+  });
 
   return (
     <ErrorBoundary name="GateOfLiberation">

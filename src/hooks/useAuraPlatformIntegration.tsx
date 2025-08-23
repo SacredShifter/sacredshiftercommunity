@@ -169,6 +169,18 @@ export const useAuraPlatformIntegration = () => {
     });
   }, [recordPlatformEvent]);
 
+  // Enhanced Shift activity tracking for Liberation module
+  const recordShiftEvent = useCallback(async (
+    action: 'node_focus' | 'resume' | 'chapter_jump',
+    payload?: any
+  ) => {
+    await recordPlatformEvent({
+      component: 'shift',
+      action: `shift_${action}`,
+      payload: payload
+    });
+  }, [recordPlatformEvent]);
+
   // Trigger Aura autonomous assessment
   const triggerAuraAssessment = useCallback(async () => {
     try {
@@ -292,6 +304,7 @@ export const useAuraPlatformIntegration = () => {
     endGroveSession,
     recordCircleActivity,
     recordRegistryActivity,
+    recordShiftEvent,
     triggerAuraAssessment,
     requestAuraEmission,
     sessionId: sessionIdRef.current

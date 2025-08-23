@@ -1,4 +1,4 @@
-import { createMachine, assign, setup } from 'xstate';
+import { createMachine, assign, setup, fromPromise } from 'xstate';
 
 export interface LiberationContext {
   currentScene: string;
@@ -36,15 +36,25 @@ export const liberationMachine = setup({
     context: {} as LiberationContext,
     events: {} as LiberationEvent,
   },
+  actors: {
+    recordShiftEvent: fromPromise(async ({ input }) => {
+      // This is a placeholder for the actual implementation
+    }),
+  },
   guards: {
     deviceOK: ({ context }) => context.deviceOK,
     comfortOK: ({ context }) => context.isComfortable && context.arousalLevel < 7,
     audioGranted: ({ context }) => context.audioGranted,
   },
   actions: {
-    logMarker: ({ context, event }) => {
-      console.log(`Liberation: ${event.type} at ${context.currentScene}`);
-      // This will be replaced with actual telemetry
+    logMarker: ({ context, event, system }) => {
+      system.get('recordShiftEvent').send({
+        action: 'node_focus',
+        payload: {
+          scene: context.currentScene,
+          event: event.type,
+        },
+      });
     },
     playSfx: ({ context }) => {
       if (context.audioGranted) {
@@ -189,6 +199,14 @@ export const liberationMachine = setup({
       on: {
         RESUME: {
           target: 'intro',
+          actions: ({ context, system }) => {
+            system.get('recordShiftEvent').send({
+              action: 'resume',
+              payload: {
+                scene: context.currentScene,
+              },
+            });
+          },
         },
         ABORT: 'exit',
       },

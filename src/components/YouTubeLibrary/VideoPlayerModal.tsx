@@ -7,6 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { VideoPlayerModalProps } from '@/types/youtube';
 import { cn } from '@/lib/utils';
+import { useAuraPlatformIntegration } from '@/hooks/useAuraPlatformIntegration';
+import VideoChapters from './VideoChapters';
 
 export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
   video,
@@ -18,6 +20,18 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
 }) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [currentTime, setCurrentTime] = useState(0);
+  const { recordShiftEvent } = useAuraPlatformIntegration();
+
+  const handleChapterClick = (time: number) => {
+    iframeRef.current?.contentWindow?.postMessage(
+      JSON.stringify({ event: 'seekTo', func: 'seekTo', args: [time, true] }),
+      '*'
+    );
+    recordShiftEvent('chapter_jump', {
+      video_id: video?.id,
+      time,
+    });
+  };
 
   // YouTube embed URL with clean parameters
   const embedUrl = video ? 
@@ -187,6 +201,10 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
                     <p id="video-description" className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed">
                       {video.description || 'No description available.'}
                     </p>
+                    <VideoChapters
+                      description={video.description || ''}
+                      onChapterClick={handleChapterClick}
+                    />
                   </div>
                 </div>
               </div>

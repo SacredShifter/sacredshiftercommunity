@@ -4,6 +4,10 @@
 
 **URL**: https://lovable.dev/projects/da56c97a-3355-43d7-807a-390d8ed20bcd
 
+## Documentation
+
+- [Shift Module](./docs/shift.md)
+
 ## How can I edit this code?
 
 There are several ways of editing your application.
