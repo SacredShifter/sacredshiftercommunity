@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -30,6 +31,9 @@ import ConstellationMapper from "./pages/ConstellationMapper";
 import Grove from "./pages/Grove";
 import Liberation from "./pages/Liberation";
 import LearningModule3D from './components/3D/LearningModule3D';
+
+const ShiftPage = lazy(() => import('./modules/shift/ShiftPage'));
+const ShiftPageSkeleton = lazy(() => import('./modules/shift/ShiftPageSkeleton'));
 
 function App() {
   return (
@@ -69,6 +73,7 @@ function App() {
                 <Route path="/ai-admin" element={<AdminRoute><AuraQuantumCommandNexus /></AdminRoute>} />
                 <Route path="/aura-admin" element={<AdminRoute><AuraQuantumCommandNexus /></AdminRoute>} />
                 <Route path="/learning-3d" element={<LearningModule3D />} />
+                <Route path="/shift" element={<Suspense fallback={<ShiftPageSkeleton />}><ShiftPage /></Suspense>} />
               </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>
