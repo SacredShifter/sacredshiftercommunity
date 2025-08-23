@@ -1,26 +1,25 @@
 import React from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
-import Cube from './objects/Cube';
-import Circle from './objects/Circle';
-import Witness from './objects/Witness';
-import Eros from './objects/Eros';
-import Butterfly from './objects/Butterfly';
-import Justice from './objects/Justice';
+import { EnhancedCosmogram } from './EnhancedCosmogram';
 
 const ShiftCanvas = () => {
   return (
-    <Canvas>
-      <ambientLight />
-      <pointLight position={[10, 10, 10]} />
-      <Cube />
-      <Circle />
-      <Witness />
-      <Eros />
-      <Butterfly />
-      <Justice />
-      <OrbitControls />
-    </Canvas>
+    <div className="w-full h-full">
+      <Canvas camera={{ position: [0, 0, 10], fov: 75 }}>
+        <ambientLight intensity={0.6} />
+        <pointLight position={[10, 10, 10]} intensity={1} />
+        <directionalLight position={[-10, -10, -5]} intensity={0.5} />
+        <EnhancedCosmogram />
+        <OrbitControls 
+          enablePan={true}
+          enableZoom={true}
+          enableRotate={true}
+          maxDistance={20}
+          minDistance={5}
+        />
+      </Canvas>
+    </div>
   );
 };
 

@@ -1,12 +1,12 @@
 import React from 'react';
 import ShiftCanvas from './scene/ShiftCanvas';
-import HUD from './ui/HUD';
+import { YouTubeIntegratedHUD } from './ui/YouTubeIntegratedHUD';
 
 const ShiftPage = () => {
   return (
-    <div>
+    <div className="w-full h-screen relative bg-background">
       <ShiftCanvas />
-      <HUD />
+      <YouTubeIntegratedHUD />
     </div>
   );
 };

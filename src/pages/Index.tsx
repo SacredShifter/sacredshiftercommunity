@@ -71,12 +71,21 @@ const Index = () => {
     },
     {
       title: 'Sacred Grove',
-      description: 'Enter the foundational consciousness transformation experience',
+      description: 'Interactive 3D consciousness modules with breathing techniques and wisdom anchors',
       icon: Crown,
       path: '/grove',
       gradient: 'from-yellow-500 to-amber-600',
       glow: 'shadow-yellow-500/30',
-      keywords: ['consciousness', 'transformation', 'sacred space']
+      keywords: ['3D modules', 'breathing', 'interactive wisdom']
+    },
+    {
+      title: 'Shift Module',
+      description: 'Cosmogram of interactive 3D objects with synchronized audio chapters',
+      icon: Compass,
+      path: '/shift',
+      gradient: 'from-cyan-500 to-blue-600',
+      glow: 'shadow-cyan-500/30',
+      keywords: ['cosmogram', '3D objects', 'audio chapters']
     },
     {
       title: 'Sacred Feed',
@@ -125,12 +134,12 @@ const Index = () => {
     },
     {
       title: 'YouTube Library',
-      description: 'Curated video content for consciousness expansion',
+      description: 'Curated video content with chapter navigation and reflection tools',
       icon: Video,
       path: '/videos',
       gradient: 'from-red-500 to-orange-600',
       glow: 'shadow-red-500/30',
-      keywords: ['videos', 'curated', 'expansion']
+      keywords: ['curated videos', 'chapter navigation', 'reflection tools']
     },
     {
       title: 'Sacred Guidebook',
