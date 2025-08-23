@@ -1,0 +1,11 @@
+encryptionsalt: v1:s1m4s7hxMvk=:v1:LqahgibuVQWjKtYk:/PkyzHXEn5d5EkDHv633U/4xnBBL8w==
+config:
+  sacred-shifter:corsAllowlist:
+    - https://staging.sacredshifter.app
+    - http://localhost:8080
+  sacred-shifter:domain: staging.sacredshifter.app
+  sacred-shifter:imageTag: latest
+  sacred-shifter:repo: github.com/sacred-shifter/sacred-shifter
+  sacred-shifter:supabaseAnonKey:
+    secure: v1:iULvWRCxLw7n07vJ:vawp+Lq0LAhUxBtcqdWy0iWcFRka1FhlzuXnF8WIlDYAxcPZUigw
+  sacred-shifter:supabaseUrl: https://staging-placeholder.supabase.co

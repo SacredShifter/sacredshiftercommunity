@@ -1,0 +1,7 @@
+name: sacred-shifter
+runtime: nodejs
+description: Infrastructure for the Sacred Shifter platform
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: typescript

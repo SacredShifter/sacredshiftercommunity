@@ -1,0 +1,31 @@
+{
+  "name": "aura-core",
+  "version": "1.0.0",
+  "description": "The sovereign builder for the Sacred Shifter platform.",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js server",
+    "task": "node dist/index.js run",
+    "dev": "ts-node src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ai",
+    "automation",
+    "iac",
+    "deployment"
+  ],
+  "author": "Aura",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.12.12",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  }
+}

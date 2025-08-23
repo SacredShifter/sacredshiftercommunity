@@ -1,0 +1,29 @@
+name: Pulumi Infrastructure CI
+
+on:
+  pull_request:
+    paths:
+      - 'infra/**'
+
+jobs:
+  pulumi-preview:
+    runs-on: ubuntu-latest
+    name: Pulumi Preview
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Pulumi
+        run: ./scripts/ensure_pulumi.sh
+
+      - name: Add Pulumi to PATH
+        run: echo "$HOME/.pulumi/bin" >> $GITHUB_PATH
+
+      - name: Pulumi Preview
+        run: |
+          cd infra
+          pulumi login --local
+          pulumi stack select staging
+          pulumi preview --diff
+        env:
+          PULUMI_CONFIG_PASSPHRASE: ${{ secrets.PULUMI_CONFIG_PASSPHRASE }}

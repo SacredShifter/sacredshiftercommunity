@@ -1,0 +1,10 @@
+encryptionsalt: v1:AFdGUEhsYaU=:v1:aFAee0K+goAajhUX:7KtcQlPZTT+8FAcNW1BJakTyJB53Qw==
+config:
+  sacred-shifter:corsAllowlist:
+    - https://sacredshifter.app
+  sacred-shifter:domain: sacredshifter.app
+  sacred-shifter:imageTag: prod-0.1.0
+  sacred-shifter:repo: github.com/sacred-shifter/sacred-shifter
+  sacred-shifter:supabaseAnonKey:
+    secure: v1:c4U7oq/+ptdrotNi:BIivpQkc/n/5KFMc0xTRequohCwCgFtwoKxULDWfPp76KWp2
+  sacred-shifter:supabaseUrl: https://prod-placeholder.supabase.co
