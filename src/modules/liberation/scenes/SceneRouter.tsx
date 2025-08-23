@@ -1,13 +1,16 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, forwardRef } from 'react';
 import { useLiberationState } from '../context/LiberationContext';
 import { Intro } from './Intro';
 import { Hall } from './Hall';
 import { Crossing } from './Crossing';
-import { Expansion } from './Expansion';
+import { Expansion, ExpansionHandles } from './Expansion';
 import { Integration } from './Integration';
-import { Loader2 } from 'lucide-react';
 
-export const SceneRouter: React.FC = () => {
+interface SceneRouterProps {
+  expansionRef: React.Ref<ExpansionHandles>;
+}
+
+export const SceneRouter = forwardRef<any, SceneRouterProps>(({ expansionRef }, ref) => {
   const { state } = useLiberationState();
   const currentScene = state.context.currentScene;
 
@@ -20,7 +23,7 @@ export const SceneRouter: React.FC = () => {
       case 'crossing':
         return <Crossing />;
       case 'expansion':
-        return <Expansion />;
+        return <Expansion ref={expansionRef} />;
       case 'integration':
         return <Integration />;
       default:
@@ -33,7 +36,7 @@ export const SceneRouter: React.FC = () => {
       {renderScene()}
     </Suspense>
   );
-};
+});
 
 const LoadingScene: React.FC = () => (
   <group>

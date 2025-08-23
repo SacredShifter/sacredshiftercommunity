@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { useMachine } from '@xstate/react';
 import { liberationMachine } from './machine';
@@ -10,9 +10,17 @@ import { AudioEngine } from './audio/AudioEngine';
 import { PerfGate } from './hooks/usePerformanceGate';
 import { PostEffects } from './scenes/PostEffects';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { ExpansionHandles } from './scenes/Expansion';
 
 export default function GateOfLiberation() {
   const [state, send] = useMachine(liberationMachine);
+  const expansionRef = useRef<ExpansionHandles>(null);
+
+  const handleWaypointClick = (index: number) => {
+    if (expansionRef.current) {
+      expansionRef.current.focusOnWaypoint(index);
+    }
+  };
 
   return (
     <ErrorBoundary name="GateOfLiberation">
@@ -35,11 +43,14 @@ export default function GateOfLiberation() {
           >
             <PerfGate>
               <PostEffects />
-              <SceneRouter />
+              <SceneRouter expansionRef={expansionRef} />
             </PerfGate>
           </Canvas>
           
-          <HUD />
+          <HUD
+            waypoints={expansionRef.current?.waypoints || []}
+            onWaypointClick={handleWaypointClick}
+          />
           <ComfortMenu />
           <AudioEngine />
         </div>

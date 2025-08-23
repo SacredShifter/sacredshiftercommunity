@@ -4,8 +4,19 @@ import { Button } from '@/components/ui/button';
 import { Pause, Play, Settings, ArrowLeft } from 'lucide-react';
 import { useLiberationState } from '../context/LiberationContext';
 import { cn } from '@/lib/utils';
+import { Legend } from './Legend';
 
-export const HUD: React.FC = () => {
+type Waypoint = {
+  position: [number, number, number];
+  message: string;
+};
+
+interface HUDProps {
+  waypoints: Waypoint[];
+  onWaypointClick: (index: number) => void;
+}
+
+export const HUD: React.FC<HUDProps> = ({ waypoints, onWaypointClick }) => {
   const { state, send } = useLiberationState();
   const currentScene = state.context.currentScene;
   const isPaused = state.matches('paused');
@@ -147,6 +158,10 @@ export const HUD: React.FC = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {currentScene === 'expansion' && (
+        <Legend waypoints={waypoints} onWaypointClick={onWaypointClick} />
+      )}
     </div>
   );
 };

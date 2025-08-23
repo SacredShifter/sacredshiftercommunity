@@ -1,13 +1,26 @@
-import React, { useRef, useMemo } from 'react';
-import { useFrame } from '@react-three/fiber';
-import { Text, Sphere } from '@react-three/drei';
+import React, { useRef, useMemo, useEffect, forwardRef, useImperativeHandle, useState } from 'react';
+import { useFrame, useThree } from '@react-three/fiber';
+import { Text, Sphere, Html } from '@react-three/drei';
 import { useLiberationState } from '../context/LiberationContext';
 import * as THREE from 'three';
+import gsap from 'gsap';
 
-export const Expansion: React.FC = () => {
+type Waypoint = {
+  position: [number, number, number];
+  message: string;
+};
+
+export interface ExpansionHandles {
+  focusOnWaypoint: (index: number) => void;
+  waypoints: Waypoint[];
+}
+
+export const Expansion = forwardRef<ExpansionHandles, {}>((props, ref) => {
   const { state } = useLiberationState();
+  const { camera } = useThree();
   const starsRef = useRef<THREE.Points>(null);
   const earthRef = useRef<THREE.Mesh>(null);
+  const [hovered, setHovered] = useState<number | null>(null);
   
   // Create starfield
   const starfield = useMemo(() => {
@@ -15,7 +28,6 @@ export const Expansion: React.FC = () => {
     const colors = new Float32Array(2000 * 3);
     
     for (let i = 0; i < 2000; i++) {
-      // Distribute stars in sphere
       const radius = 40 + Math.random() * 60;
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(2 * Math.random() - 1);
@@ -24,7 +36,6 @@ export const Expansion: React.FC = () => {
       positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
       positions[i * 3 + 2] = radius * Math.cos(phi);
       
-      // Star colors
       const starColor = new THREE.Color().setHSL(0.6 + Math.random() * 0.2, 0.8, 0.9);
       colors[i * 3] = starColor.r;
       colors[i * 3 + 1] = starColor.g;
@@ -34,24 +45,57 @@ export const Expansion: React.FC = () => {
     return { positions, colors };
   }, []);
   
-  // Waypoints for exploration
-  const waypoints = useMemo(() => [
+  const waypoints = useMemo<Waypoint[]>(() => [
     { position: [10, 5, -10], message: "You are eternal consciousness" },
     { position: [-8, -3, 15], message: "Death is transformation, not ending" },
     { position: [5, -10, 8], message: "Fear dissolves in presence" },
     { position: [-12, 8, -5], message: "You are the witness of all experience" },
   ], []);
 
+  const focusOnWaypoint = (index: number) => {
+    const waypoint = waypoints[index];
+    if (waypoint) {
+      const targetPosition = new THREE.Vector3(...waypoint.position).add(new THREE.Vector3(0, 0, 5));
+      gsap.to(camera.position, {
+        duration: 2,
+        x: targetPosition.x,
+        y: targetPosition.y,
+        z: targetPosition.z,
+        ease: 'power2.inOut',
+      });
+      if (navigator.vibrate) {
+        navigator.vibrate(50);
+      }
+    }
+  };
+
+  useImperativeHandle(ref, () => ({
+    focusOnWaypoint,
+    waypoints,
+  }));
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const key = parseInt(event.key);
+      if (key >= 1 && key <= waypoints.length) {
+        focusOnWaypoint(key - 1);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [waypoints, camera]);
+
   useFrame((frameState) => {
     const time = frameState.clock.elapsedTime;
     
-    // Gentle starfield rotation
     if (starsRef.current) {
       starsRef.current.rotation.y = time * 0.01;
       starsRef.current.rotation.x = Math.sin(time * 0.005) * 0.1;
     }
     
-    // Earth breathing motion
     if (earthRef.current) {
       const scale = 1 + Math.sin(time * 0.5) * 0.05;
       earthRef.current.scale.setScalar(scale);
@@ -61,11 +105,9 @@ export const Expansion: React.FC = () => {
 
   return (
     <group>
-      {/* Soft ambient light */}
       <ambientLight intensity={0.3} color="#87CEEB" />
       <directionalLight position={[10, 10, 5]} intensity={0.4} color="#FFF8DC" />
       
-      {/* Starfield */}
       <points ref={starsRef}>
         <bufferGeometry>
           <bufferAttribute
@@ -91,7 +133,6 @@ export const Expansion: React.FC = () => {
         />
       </points>
       
-      {/* Earth as friend */}
       <Sphere ref={earthRef} args={[3, 32, 32]} position={[0, -15, -20]}>
         <meshStandardMaterial
           color="#4169E1"
@@ -102,7 +143,6 @@ export const Expansion: React.FC = () => {
         />
       </Sphere>
       
-      {/* Aurora-like volumes */}
       {[1, 2, 3].map((aurora) => (
         <mesh
           key={aurora}
@@ -123,9 +163,17 @@ export const Expansion: React.FC = () => {
         </mesh>
       ))}
       
-      {/* Waypoints */}
       {waypoints.map((waypoint, index) => (
-        <group key={index} position={waypoint.position as [number, number, number]}>
+        <group
+          key={index}
+          position={waypoint.position as [number, number, number]}
+          onClick={() => focusOnWaypoint(index)}
+          onPointerOver={() => setHovered(index)}
+          onPointerOut={() => setHovered(null)}
+          // @ts-ignore
+          role="button"
+          aria-label={waypoint.message}
+        >
           <Sphere args={[0.5, 16, 16]}>
             <meshBasicMaterial
               color="#FFD700"
@@ -145,10 +193,16 @@ export const Expansion: React.FC = () => {
           >
             {waypoint.message}
           </Text>
+          {hovered === index && (
+            <Html distanceFactor={10}>
+              <div className="bg-black/50 text-white p-2 rounded-md max-w-xs">
+                {waypoint.message}
+              </div>
+            </Html>
+          )}
         </group>
       ))}
       
-      {/* Main instruction */}
       <Text
         position={[0, 8, 0]}
         fontSize={0.8}
@@ -164,4 +218,4 @@ export const Expansion: React.FC = () => {
       </Text>
     </group>
   );
-};
+});
