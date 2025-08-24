@@ -151,6 +151,15 @@ const Index = () => {
       keywords: ['wisdom', 'ancient', 'guidance']
     },
     {
+      title: 'Aura Knowledge Hub',
+      description: 'AI-powered wisdom synthesis and autonomous guidance platform',
+      icon: Brain,
+      path: '/aura-admin',
+      gradient: 'from-teal-500 to-cyan-600',
+      glow: 'shadow-teal-500/30',
+      keywords: ['AI wisdom', 'autonomous', 'guidance']
+    },
+    {
       title: 'Consciousness Constellation',
       description: 'Map the cosmic connections between your experiences',
       icon: Map,
