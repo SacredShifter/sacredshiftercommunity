@@ -50,7 +50,7 @@ export function useFrequencyTool() {
       oscillator.frequency.value = frequency;
       oscillator.type = 'sine';
       
-      // Set gain more carefully
+      // Set gain more carefully with smooth fade-in
       gainNode.gain.setValueAtTime(0, audioContext.currentTime);
       gainNode.gain.linearRampToValueAtTime(volume, audioContext.currentTime + 0.1);
       
@@ -62,20 +62,6 @@ export function useFrequencyTool() {
       console.log('🎵 Gain value:', gainNode.gain.value);
       
       oscillator.start();
-      
-      // Test with a beep first
-      setTimeout(() => {
-        console.log('🔔 Testing with 1000Hz beep for 0.5 seconds');
-        const testOsc = audioContext.createOscillator();
-        const testGain = audioContext.createGain();
-        testOsc.frequency.value = 1000;
-        testOsc.type = 'square';
-        testGain.gain.value = 0.3;
-        testOsc.connect(testGain);
-        testGain.connect(audioContext.destination);
-        testOsc.start();
-        testOsc.stop(audioContext.currentTime + 0.5);
-      }, 1000);
       
       return { oscillator, gainNode };
     } catch (error) {
