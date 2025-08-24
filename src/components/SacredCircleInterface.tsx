@@ -64,8 +64,41 @@ export const SacredCircleInterface = ({
   const [selectedThreadMessage, setSelectedThreadMessage] = useState<string | null>(null);
   const [messageReactions, setMessageReactions] = useState<{[messageId: string]: any[]}>({});
   const [filteredMessages, setFilteredMessages] = useState<any[]>([]);
+  const [internalMaximized, setInternalMaximized] = useState(false);
+  const [internalMinimized, setInternalMinimized] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Use internal state as fallback when parent doesn't provide handlers
+  const currentMaximized = isMaximized || internalMaximized;
+  const currentMinimized = isMinimized || internalMinimized;
+
+  const handleMaximize = () => {
+    if (onMaximize) {
+      onMaximize();
+    } else {
+      setInternalMaximized(true);
+      setInternalMinimized(false);
+    }
+  };
+
+  const handleMinimize = () => {
+    if (onMinimize) {
+      onMinimize();
+    } else {
+      setInternalMinimized(true);
+      setInternalMaximized(false);
+    }
+  };
+
+  const handleRestore = () => {
+    if (onRestore) {
+      onRestore();
+    } else {
+      setInternalMaximized(false);
+      setInternalMinimized(false);
+    }
+  };
 
   const {
     circles,
@@ -255,9 +288,9 @@ export const SacredCircleInterface = ({
   return (
     <Card className={cn(
       "flex flex-col bg-background/95 backdrop-blur-sm transition-all duration-300",
-      isMaximized && "fixed inset-0 top-0 left-0 right-0 bottom-0 z-50 rounded-none animate-scale-in w-screen h-screen",
-      isMinimized && "h-12 overflow-hidden",
-      !isMaximized && !isMinimized && "h-full",
+      currentMaximized && "fixed inset-0 top-0 left-0 right-0 bottom-0 z-50 rounded-none animate-scale-in w-screen h-screen",
+      currentMinimized && "h-12 overflow-hidden",
+      !currentMaximized && !currentMinimized && "h-full",
       className
     )}>
       {/* Header */}
@@ -308,7 +341,7 @@ export const SacredCircleInterface = ({
               variant="ghost" 
               size="sm" 
               className="h-7 w-7 p-0 hover:bg-yellow-500/20"
-              onClick={onMinimize}
+              onClick={handleMinimize}
               title="Minimize"
             >
               <Minus className="h-3 w-3" />
@@ -317,17 +350,17 @@ export const SacredCircleInterface = ({
               variant="ghost" 
               size="sm" 
               className="h-7 w-7 p-0 hover:bg-green-500/20"
-              onClick={isMaximized ? onRestore : onMaximize}
-              title={isMaximized ? "Restore" : "Maximize"}
+              onClick={currentMaximized ? handleRestore : handleMaximize}
+              title={currentMaximized ? "Restore" : "Maximize"}
             >
-              {isMaximized ? <Minimize2 className="h-3 w-3" /> : <Maximize2 className="h-3 w-3" />}
+              {currentMaximized ? <Minimize2 className="h-3 w-3" /> : <Maximize2 className="h-3 w-3" />}
             </Button>
           </div>
         </div>
       </div>
 
       {/* Content Area */}
-      <div className={cn("flex-1 flex", isMinimized && "hidden")}>
+      <div className={cn("flex-1 flex", currentMinimized && "hidden")}>
         {/* Main Content */}
         <div className="flex-1 flex flex-col">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
