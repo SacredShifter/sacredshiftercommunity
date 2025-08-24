@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { AuraInterface } from '@/components/AuraInterface';
 import { AuraAdminInterface } from '@/components/AuraAdminInterface';
-import { AuraConsole } from '@/aura/components/AuraConsole';
+
 import { AuraHistory } from '@/aura/components/AuraHistory';
 import { AuraConfirm } from '@/aura/components/AuraConfirm';
 import { AuraCodeGenerationInterface } from '@/components/AuraCodeGenerationInterface';
@@ -22,7 +22,7 @@ import { AuraModuleGovernance } from '@/components/AuraModuleGovernance';
 import { AuraModuleDiscussion } from '@/components/AuraModuleDiscussion';
 import { AuraParticipationGovernance } from '@/components/AuraParticipationGovernance';
 import { AuraConsciousnessJournal } from '@/components/AuraConsciousnessJournal';
-import { FieldIntegrityMonitor } from '@/components/FieldIntegrityMonitor';
+
 import { useAura } from '@/aura/useAura';
 import { usePersonalAI } from '@/hooks/usePersonalAI';
 import { supabase } from '@/integrations/supabase/client';
@@ -494,15 +494,8 @@ function AuraQuantumCommandNexusContent() {
                 </TabsContent>
 
                 <TabsContent value="operations" className="space-y-6 mt-6">
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div className="lg:col-span-2">
-                      <AuraConsole />
-                    </div>
-                    <div>
-                      <FieldIntegrityMonitor />
-                    </div>
-                  </div>
                   <AuraInterface />
+                  <AuraAdminInterface />
                 </TabsContent>
 
                 <TabsContent value="engineering" className="space-y-6 mt-6">

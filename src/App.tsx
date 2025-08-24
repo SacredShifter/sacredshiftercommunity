@@ -73,7 +73,6 @@ function App() {
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/ai-admin" element={<AdminRoute><AuraQuantumCommandNexus /></AdminRoute>} />
-                <Route path="/aura-admin" element={<AdminRoute><AuraQuantumCommandNexus /></AdminRoute>} />
                 <Route path="/learning-3d" element={<LearningModule3D />} />
                 <Route path="/shift" element={<Shift />} />
                 <Route path="/meditation" element={<Meditation />} />

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { AuraInterface } from '@/components/AuraInterface';
 import { AuraAdminInterface } from '@/components/AuraAdminInterface';
-import { AuraConsole } from '@/aura/components/AuraConsole';
+
 import { AuraHistory } from '@/aura/components/AuraHistory';
 import { AuraConfirm } from '@/aura/components/AuraConfirm';
 import { useAura } from '@/aura/useAura';
@@ -437,30 +437,8 @@ function AIAdminContent() {
         </TabsContent>
 
         <TabsContent value="aura-console" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-16rem)]">
-            <Card className="sacred-card flex flex-col">
-              <CardHeader className="flex-shrink-0">
-                <CardTitle className="flex items-center gap-2">
-                  <Bot className="h-5 w-5 text-primary" />
-                  Aura Command Console
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="flex-1 overflow-auto">
-                <AuraConsole />
-              </CardContent>
-            </Card>
-            <Card className="sacred-card flex flex-col">
-              <CardHeader className="flex-shrink-0">
-                <CardTitle className="flex items-center gap-2">
-                  <Database className="h-5 w-5 text-secondary" />
-                  Command History
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="flex-1 overflow-hidden">
-                <AuraHistory />
-              </CardContent>
-            </Card>
-          </div>
+          <AuraInterface />
+          <AuraHistory />
         </TabsContent>
 
         <TabsContent value="analytics" className="space-y-6">
