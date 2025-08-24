@@ -30,6 +30,7 @@ import SchumannResonance3D from './SchumannResonance3D';
 import SigillumDeiAemeth3D from './SigillumDeiAemeth3D';
 import BreathOfSource3D from './BreathOfSource3D';
 import ShiftCanvas from '../../modules/shift/scene/ShiftCanvas';
+import GateOfLiberation from '../../modules/liberation/LiberationCanvas';
 
 const learningModules: LearningModule[] = [
   {
@@ -152,6 +153,17 @@ const learningModules: LearningModule[] = [
     tags: ['cosmogram', '3D objects', 'audio chapters', 'sacred geometry'],
     icon: <Box className="h-5 w-5" />,
     component: ShiftCanvas
+  },
+  {
+    id: 'gate-of-liberation',
+    title: 'Gate of Liberation',
+    description: 'A profound 4-phase journey of transcending fear through immersive 3D environments with binaural audio guidance.',
+    category: 'Consciousness Liberation',
+    difficulty: 'advanced',
+    duration: '60-90 min',
+    tags: ['liberation', 'fear transcendence', 'consciousness', 'binaural beats', '3D journey'],
+    icon: <Shield className="h-5 w-5" />,
+    component: GateOfLiberation
   }
 ];
 

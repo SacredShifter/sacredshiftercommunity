@@ -18,6 +18,8 @@ interface HUDProps {
 
 export const HUD: React.FC<HUDProps> = ({ waypoints, onWaypointClick }) => {
   const { state, send } = useLiberationState();
+  const [showAccessibility, setShowAccessibility] = useState(false);
+  const [audioMuted, setAudioMuted] = useState(false);
   const currentScene = state.context.currentScene;
   const isPaused = state.matches('paused');
 
