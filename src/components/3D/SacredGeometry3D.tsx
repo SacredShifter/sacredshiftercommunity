@@ -40,7 +40,7 @@ const geometryData: GeometryData[] = [
     vertices: 4,
     edges: 6,
     color: '#FF6B35',
-    position: [-4, 2, 0],
+    position: [-3, 1, 0],
   },
   {
     id: 'cube',
@@ -53,7 +53,7 @@ const geometryData: GeometryData[] = [
     vertices: 8,
     edges: 12,
     color: '#8B4513',
-    position: [-2, 2, 0],
+    position: [-1, 1, 0],
     mantra: 'Fortress of Truth.',
   },
   {
@@ -67,7 +67,7 @@ const geometryData: GeometryData[] = [
     vertices: 6,
     edges: 12,
     color: '#00CED1',
-    position: [0, 2, 0],
+    position: [1, 1, 0],
   },
   {
     id: 'icosahedron',
@@ -80,7 +80,7 @@ const geometryData: GeometryData[] = [
     vertices: 12,
     edges: 30,
     color: '#4169E1',
-    position: [2, 2, 0],
+    position: [3, 1, 0],
   },
   {
     id: 'dodecahedron',
@@ -93,12 +93,12 @@ const geometryData: GeometryData[] = [
     vertices: 20,
     edges: 30,
     color: '#9370DB',
-    position: [4, 2, 0],
+    position: [5, 1, 0],
   },
   {
     id: 'circle',
     name: 'Circle',
-    description: 'Represents unity, wholeness, and the infinite.',
+    description: 'Represents unity, wholeness, and the infinite. The most sacred of all forms.',
     symbolism: 'Unity, source, wholeness, infinite',
     element: 'Source',
     platonicSolid: false,
@@ -106,64 +106,8 @@ const geometryData: GeometryData[] = [
     vertices: 32,
     edges: 32,
     color: '#FFD700',
-    position: [-4, 0, 0],
+    position: [0, -1, 0],
     mantra: 'Circle of Source.',
-  },
-  {
-    id: 'witness',
-    name: 'Witness',
-    description: 'The observer, the self-aware consciousness.',
-    symbolism: 'Consciousness, awareness, observer',
-    element: 'Mind',
-    platonicSolid: false,
-    faces: 0,
-    vertices: 0,
-    edges: 0,
-    color: '#00FFFF',
-    position: [-2, 0, 0],
-    mantra: 'Witness within.',
-  },
-  {
-    id: 'eros',
-    name: 'Eros',
-    description: 'The life force, creative energy, and desire.',
-    symbolism: 'Desire, passion, life force, creativity',
-    element: 'Passion',
-    platonicSolid: false,
-    faces: 0,
-    vertices: 0,
-    edges: 0,
-    color: '#FF1493',
-    position: [0, 0, 0],
-    mantra: 'Root of Desire ignites.',
-  },
-  {
-    id: 'butterfly',
-    name: 'Butterfly',
-    description: 'Represents transformation, metamorphosis, and rebirth.',
-    symbolism: 'Transformation, rebirth, metamorphosis',
-    element: 'Soul',
-    platonicSolid: false,
-    faces: 2,
-    vertices: 6,
-    edges: 6,
-    color: '#FF8C00',
-    position: [2, 0, 0],
-    mantra: 'Metamorphosis through fire.',
-  },
-  {
-    id: 'justice',
-    name: 'Justice',
-    description: 'Represents balance, fairness, and cosmic law.',
-    symbolism: 'Balance, fairness, truth, cosmic law',
-    element: 'Law',
-    platonicSolid: false,
-    faces: 2,
-    vertices: 4,
-    edges: 4,
-    color: '#E6E6FA',
-    position: [4, 0, 0],
-    mantra: 'Protector at my step.',
   }
 ];
 
@@ -216,14 +160,6 @@ function AnimatedGeometry({ geometry, isSelected, onClick }: GeometryShapeProps)
         return <DodecahedronGeometry />;
       case 'circle':
         return <CircleGeometry />;
-      case 'witness':
-        return <WitnessGeometry />;
-      case 'eros':
-        return <ErosGeometry />;
-      case 'butterfly':
-        return <ButterflyGeometry />;
-      case 'justice':
-        return <JusticeGeometry />;
       default:
         return <sphereGeometry args={[1, 32, 32]} />;
     }
@@ -349,101 +285,6 @@ function CircleGeometry() {
       </mesh>
       <mesh>
         <circleGeometry args={[0.3, 64]} />
-      </mesh>
-    </group>
-  );
-}
-
-function WitnessGeometry() {
-  return (
-    <group>
-      {/* Central awareness sphere */}
-      <mesh>
-        <sphereGeometry args={[0.8, 32, 32]} />
-      </mesh>
-      {/* Consciousness field rings */}
-      <mesh rotation={[Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[1.2, 1.25, 32]} />
-      </mesh>
-      <mesh rotation={[0, 0, Math.PI / 2]}>
-        <ringGeometry args={[1.2, 1.25, 32]} />
-      </mesh>
-      <mesh rotation={[Math.PI / 4, Math.PI / 4, 0]}>
-        <ringGeometry args={[1.2, 1.25, 32]} />
-      </mesh>
-    </group>
-  );
-}
-
-function ErosGeometry() {
-  return (
-    <group>
-      {/* Sacred heart form using spheres */}
-      <mesh position={[0, -0.2, 0]}>
-        <sphereGeometry args={[0.8, 16, 16]} />
-      </mesh>
-      <mesh position={[-0.3, 0.3, 0]}>
-        <sphereGeometry args={[0.4, 16, 16]} />
-      </mesh>
-      <mesh position={[0.3, 0.3, 0]}>
-        <sphereGeometry args={[0.4, 16, 16]} />
-      </mesh>
-      {/* Energy vortex */}
-      <mesh rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[1, 0.1, 8, 16]} />
-      </mesh>
-    </group>
-  );
-}
-
-function ButterflyGeometry() {
-  return (
-    <group>
-      {/* Sacred butterfly with golden ratio proportions */}
-      <mesh position={[-0.8, 0.3, 0]} rotation={[0, 0, 0.3]}>
-        <planeGeometry args={[1.2, 1.6]} />
-      </mesh>
-      <mesh position={[0.8, 0.3, 0]} rotation={[0, 0, -0.3]}>
-        <planeGeometry args={[1.2, 1.6]} />
-      </mesh>
-      <mesh position={[-0.6, -0.3, 0]} rotation={[0, 0, -0.3]}>
-        <planeGeometry args={[0.8, 1]} />
-      </mesh>
-      <mesh position={[0.6, -0.3, 0]} rotation={[0, 0, 0.3]}>
-        <planeGeometry args={[0.8, 1]} />
-      </mesh>
-      {/* Body */}
-      <mesh position={[0, 0, 0]}>
-        <cylinderGeometry args={[0.05, 0.05, 2, 8]} />
-      </mesh>
-    </group>
-  );
-}
-
-function JusticeGeometry() {
-  return (
-    <group>
-      {/* Sacred scales of justice */}
-      <mesh position={[0, 0, 0]}>
-        <cylinderGeometry args={[0.05, 0.05, 2, 8]} />
-      </mesh>
-      <mesh position={[0, 0.8, 0]}>
-        <cylinderGeometry args={[0.02, 0.02, 1.6, 8]} />
-        <meshStandardMaterial color="#C0C0C0" />
-      </mesh>
-      {/* Scale plates */}
-      <mesh position={[-0.7, 0.6, 0]}>
-        <cylinderGeometry args={[0.3, 0.3, 0.05, 16]} />
-      </mesh>
-      <mesh position={[0.7, 0.6, 0]}>
-        <cylinderGeometry args={[0.3, 0.3, 0.05, 16]} />
-      </mesh>
-      {/* Chains */}
-      <mesh position={[-0.35, 0.7, 0]}>
-        <cylinderGeometry args={[0.01, 0.01, 0.3, 8]} />
-      </mesh>
-      <mesh position={[0.35, 0.7, 0]}>
-        <cylinderGeometry args={[0.01, 0.01, 0.3, 8]} />
       </mesh>
     </group>
   );
