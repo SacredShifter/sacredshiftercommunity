@@ -104,7 +104,7 @@ export default function Messages() {
   }
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col overflow-hidden">
       <div className="flex flex-1 min-h-0">
         {/* Conversations Sidebar */}
         <div className={`${selectedConversationId ? 'hidden md:flex' : 'flex'} w-full md:w-80 flex-col border-r`}>
