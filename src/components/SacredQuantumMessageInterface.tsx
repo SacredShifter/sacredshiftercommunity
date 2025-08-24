@@ -282,7 +282,7 @@ export const SacredQuantumMessageInterface: React.FC<SacredQuantumMessageProps> 
 
   return (
     <motion.div 
-      className="h-full flex flex-col min-h-0 relative"
+      className="h-full flex flex-col relative"
       animate={controls}
     >
       {/* Sacred Geometry Background */}
