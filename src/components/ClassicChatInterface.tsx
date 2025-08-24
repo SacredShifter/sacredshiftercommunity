@@ -50,9 +50,22 @@ export const ClassicChatInterface: React.FC<ClassicChatProps> = ({
     }
   }, [selectedUserId, fetchMessages]);
 
-  // Auto-scroll to bottom when new messages arrive
+  // Auto-scroll to bottom only when new messages arrive and user is near bottom
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messages.length > 0 && messagesEndRef.current) {
+      const messagesContainer = messagesEndRef.current.parentElement;
+      if (messagesContainer) {
+        const { scrollTop, scrollHeight, clientHeight } = messagesContainer;
+        const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
+        
+        // Only scroll if user is already near the bottom to avoid disrupting reading
+        if (isNearBottom) {
+          setTimeout(() => {
+            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+          }, 100);
+        }
+      }
+    }
   }, [messages]);
 
   // Focus input when component mounts
