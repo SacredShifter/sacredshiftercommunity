@@ -63,7 +63,7 @@ export const YouTubePlayer = forwardRef<YouTubePlayerRef, YouTubePlayerProps>(
       }
 
       function initializePlayer() {
-        if (containerRef.current && !playerRef.current) {
+        if (containerRef.current && !playerRef.current && videoId && videoId.trim() !== '') {
           playerRef.current = new (window as any).YT.Player(containerRef.current, {
             width,
             height,
@@ -100,9 +100,15 @@ export const YouTubePlayer = forwardRef<YouTubePlayerRef, YouTubePlayerProps>(
     return (
       <div 
         ref={containerRef}
-        className="youtube-player-container bg-black rounded-lg overflow-hidden"
+        className="youtube-player-container bg-muted rounded-lg overflow-hidden flex items-center justify-center"
         style={{ width, height }}
-      />
+      >
+        {(!videoId || videoId.trim() === '') && (
+          <div className="text-muted-foreground text-sm text-center p-4">
+            No video configured
+          </div>
+        )}
+      </div>
     );
   }
 );

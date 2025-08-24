@@ -1,5 +1,5 @@
 export const COSMOGRAM = {
-  videoId: 'REPLACE_WITH_ID', // To be replaced with actual YouTube video ID
+  videoId: '', // Empty until actual YouTube video ID is provided
   chapters: {
     cube: 0,
     circle: 180,
