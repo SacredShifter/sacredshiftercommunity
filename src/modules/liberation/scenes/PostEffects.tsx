@@ -4,7 +4,14 @@ import { useLiberationState } from '../context/LiberationContext';
 
 export const PostEffects: React.FC = () => {
   const { state } = useLiberationState();
-  const comfortSettings = state.context.comfortSettings;
+  
+  // Add null checks and default values to prevent "Cannot read properties of undefined" errors
+  const comfortSettings = state?.context?.comfortSettings || {
+    motionReduced: false,
+    volumeLevel: 0.7,
+    vignetteEnabled: true,
+    fovClamped: false,
+  };
 
   return (
     <EffectComposer>
