@@ -12,7 +12,7 @@ import ShiftPage from './ShiftPage';
 describe('ShiftPage', () => {
   it('renders route shell and canvas stub', () => {
     render(<ShiftPage />);
-    expect(screen.getByText('Play/Pause')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /play\/pause/i })).toBeInTheDocument();
     expect(screen.getByTestId('shift-canvas-stub')).toBeInTheDocument();
   });
 });

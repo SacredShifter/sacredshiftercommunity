@@ -11,7 +11,7 @@ export interface UnifiedMessage {
   circleId?: string; // For circle messages
   content: string;
   metadata?: Record<string, any>;
-  timestamp: Date;
+  timestamp: number; // Use number for timestamp
   deliveryMethod: DeliveryMethod;
   status: MessageStatus;
   meshPayload?: {
@@ -21,7 +21,8 @@ export interface UnifiedMessage {
     hopLimit: number;
   };
   retryCount?: number;
-  lastRetry?: Date;
+  lastRetryAtMs?: number;
+  nextRetryAtMs?: number;
 }
 
 export interface MessageContext {

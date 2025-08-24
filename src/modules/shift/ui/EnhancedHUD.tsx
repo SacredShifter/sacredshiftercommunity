@@ -57,6 +57,7 @@ export const EnhancedHUD: React.FC = () => {
               size="sm" 
               variant={playbackMode !== 'paused' ? 'default' : 'outline'}
               onClick={handlePlayPause}
+              aria-label="Play/Pause"
             >
               {playbackMode !== 'paused' ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
             </Button>
