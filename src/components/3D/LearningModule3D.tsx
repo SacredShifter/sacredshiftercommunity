@@ -29,6 +29,7 @@ import GaiaBreathing3D from './GaiaBreathing3D';
 import SchumannResonance3D from './SchumannResonance3D';
 import SigillumDeiAemeth3D from './SigillumDeiAemeth3D';
 import BreathOfSource3D from './BreathOfSource3D';
+import ShiftCanvas from '../../modules/shift/scene/ShiftCanvas';
 
 const learningModules: LearningModule[] = [
   {
@@ -140,6 +141,17 @@ const learningModules: LearningModule[] = [
     tags: ['enochian', 'angels', 'protection', 'divine', 'frequencies'],
     icon: <Shield className="h-5 w-5" />,
     component: SigillumDeiAemeth3D
+  },
+  {
+    id: 'shift-cosmogram',
+    title: 'Shift Cosmogram',
+    description: 'Interactive 3D cosmogram with synchronized audio chapters and sacred geometry navigation.',
+    category: 'Sacred Technology',
+    difficulty: 'intermediate',
+    duration: '20-30 min',
+    tags: ['cosmogram', '3D objects', 'audio chapters', 'sacred geometry'],
+    icon: <Box className="h-5 w-5" />,
+    component: ShiftCanvas
   }
 ];
 

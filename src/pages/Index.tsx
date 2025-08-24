@@ -79,13 +79,13 @@ const Index = () => {
       keywords: ['3D modules', 'breathing', 'interactive wisdom']
     },
     {
-      title: 'Shift Module',
-      description: 'Cosmogram of interactive 3D objects with synchronized audio chapters',
+      title: '3D Learning Modules',
+      description: 'Interactive immersive experiences including cosmograms, sacred geometry, and wisdom teachings',
       icon: Compass,
-      path: '/shift',
+      path: '/grove?tab=3d-modules',
       gradient: 'from-cyan-500 to-blue-600',
       glow: 'shadow-cyan-500/30',
-      keywords: ['cosmogram', '3D objects', 'audio chapters']
+      keywords: ['3D modules', 'interactive learning', 'sacred geometry']
     },
     {
       title: 'Sacred Feed',
