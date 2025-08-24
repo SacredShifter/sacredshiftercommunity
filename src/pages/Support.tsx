@@ -31,7 +31,7 @@ const Support: React.FC = () => {
   }, [searchParams, toast]);
 
   return (
-    <div className="min-h-screen p-6 md:p-8 lg:p-12">
+    <div className="h-[calc(100vh-3rem)] overflow-y-auto p-6 md:p-8 lg:p-12">
       <div className="max-w-5xl mx-auto space-y-12">
         
         {/* Hero Section */}

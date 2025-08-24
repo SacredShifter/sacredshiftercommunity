@@ -171,7 +171,7 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-primary/5 relative overflow-hidden">
+    <div className="h-[calc(100vh-3rem)] overflow-y-auto bg-gradient-to-br from-background via-background/95 to-primary/5 relative">
       {/* Living Background */}
       <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:50px_50px]" />
       <div 

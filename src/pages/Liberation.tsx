@@ -78,7 +78,7 @@ export default function Liberation() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-primary/5 p-4">
+    <div className="h-[calc(100vh-3rem)] overflow-y-auto bg-gradient-to-br from-background via-background/95 to-primary/5 p-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
