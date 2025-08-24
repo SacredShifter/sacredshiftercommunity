@@ -33,14 +33,10 @@ export const MainLayout = () => {
               </div>
             </div>
           </header>
-          <main className="flex-1 min-h-0 overflow-hidden">
-            <div className="h-full overflow-y-auto -webkit-overflow-scrolling-touch scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent">
-              <div className="h-full">
-                <UIErrorBoundary>
-                  <Outlet />
-                </UIErrorBoundary>
-              </div>
-            </div>
+          <main className="flex-1 min-h-0 flex flex-col">
+            <UIErrorBoundary>
+              <Outlet />
+            </UIErrorBoundary>
           </main>
         </SidebarInset>
       </div>
