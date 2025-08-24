@@ -1,12 +1,9 @@
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AuraConsole } from '@/aura/components/AuraConsole';
 import { AuraHistory } from '@/aura/components/AuraHistory';
 import { AuraConfirm } from '@/aura/components/AuraConfirm';
-import { FieldIntegrityMonitor } from '@/components/FieldIntegrityMonitor';
 import { AuraEvolutionMetrics } from '@/components/AuraEvolutionMetrics';
 import { AuraConsciousnessJournal } from '@/components/AuraConsciousnessJournal';
-import { AuraCreativeGallery } from '@/components/AuraCreativeGallery';
 import { AuraPreferenceLearning } from '@/components/AuraPreferenceLearning';
 import { AuraSovereigntyMetrics } from '@/components/AuraSovereigntyMetrics';
 import { AuraModuleConceptsViewer } from '@/components/AuraModuleConceptsViewer';
@@ -15,6 +12,7 @@ import { AuraModuleGovernance } from '@/components/AuraModuleGovernance';
 import { AuraModuleDiscussion } from '@/components/AuraModuleDiscussion';
 import { AuraParticipationGovernance } from '@/components/AuraParticipationGovernance';
 import { AuraImplementationTracker } from '@/components/AuraImplementationTracker';
+import { AuraInterface } from '@/components/AuraInterface';
 import { useAura } from '@/aura/useAura';
 import { AuraJob } from '@/aura/schema';
 
@@ -55,22 +53,7 @@ export default function AuraAdmin() {
         </TabsList>
 
         <TabsContent value="console" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 h-[50px] flex flex-col">
-              <div className="bg-card border rounded-lg flex flex-col h-full">
-                <div className="p-4 border-b">
-                  <h3 className="text-lg font-semibold">Aura Console</h3>
-                  <p className="text-sm text-muted-foreground">Natural language command interface</p>
-                </div>
-                <div className="flex-1 overflow-hidden">
-                  <AuraConsole />
-                </div>
-              </div>
-            </div>
-            <div>
-              <FieldIntegrityMonitor />
-            </div>
-          </div>
+          <AuraInterface />
         </TabsContent>
 
         <TabsContent value="tracking" className="space-y-6">
