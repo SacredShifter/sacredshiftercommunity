@@ -34,6 +34,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { YouTubeVideo, YouTubePlaylist } from '@/types/youtube';
 import { SimpleVideoModal } from '@/components/YouTubeLibrary/SimpleVideoModal';
+import { GroupMeditationSession } from '@/components/GroupMeditationSession';
 
 type MeditationType = 'breathing' | 'loving-kindness' | 'chakra' | 'mindfulness' | 'body-scan';
 type SessionState = 'idle' | 'active' | 'paused' | 'completed';
@@ -484,607 +485,643 @@ export default function Meditation() {
   };
 
   const selectedMeditation = meditationTypes.find(t => t.id === selectedType);
+  const joinedSession = activeSessions.find(s => s.id === joinedSessionId);
 
   return (
-    <div className="h-full overflow-y-auto p-4 space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            Sacred Meditation
-          </h1>
-          <p className="text-muted-foreground">
-            Individual practice and collective consciousness expansion
-          </p>
+    <>
+      {/* Group Session Interface Overlay */}
+      {joinedSession && (
+        <GroupMeditationSession
+          sessionId={joinedSession.id}
+          sessionType={joinedSession.type}
+          duration={joinedSession.duration}
+          backgroundAudio={joinedSession.backgroundAudio}
+          onLeave={leaveGroupSession}
+        />
+      )}
+
+      <div className="h-full overflow-y-auto p-4 space-y-6 animate-fade-in">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              Sacred Meditation
+            </h1>
+            <p className="text-muted-foreground">
+              Individual practice and collective consciousness expansion
+            </p>
+          </div>
+          <Badge variant="outline" className="flex items-center gap-1 animate-pulse">
+            <Sparkles className="h-3 w-3" />
+            Mindful Presence
+          </Badge>
         </div>
-        <Badge variant="outline" className="flex items-center gap-1">
-          <Sparkles className="h-3 w-3" />
-          Mindful Presence
-        </Badge>
-      </div>
 
-      <Tabs defaultValue="solo" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="solo" className="flex items-center gap-2">
-            <Brain className="h-4 w-4" />
-            Solo Practice
-          </TabsTrigger>
-          <TabsTrigger value="group" className="flex items-center gap-2">
-            <Users className="h-4 w-4" />
-            Group Sessions
-          </TabsTrigger>
-          <TabsTrigger value="guided" className="flex items-center gap-2">
-            <Video className="h-4 w-4" />
-            Guided Videos
-          </TabsTrigger>
-        </TabsList>
+        <Tabs defaultValue="solo" className="w-full">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="solo" className="flex items-center gap-2 hover-scale">
+              <Brain className="h-4 w-4" />
+              Solo Practice
+            </TabsTrigger>
+            <TabsTrigger value="group" className="flex items-center gap-2 hover-scale">
+              <Users className="h-4 w-4" />
+              Group Sessions
+              {joinedSessionId && (
+                <Badge variant="secondary" className="ml-1 text-xs animate-pulse">
+                  Active
+                </Badge>
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="guided" className="flex items-center gap-2 hover-scale">
+              <Video className="h-4 w-4" />
+              Guided Videos
+            </TabsTrigger>
+          </TabsList>
 
-        {/* Solo Meditation Tab */}
-        <TabsContent value="solo" className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Meditation Selection */}
-            <Card className="lg:col-span-2">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Moon className="h-5 w-5 text-primary" />
-                  Choose Your Practice
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
-                  {meditationTypes.map((type) => (
-                    <Card
-                      key={type.id}
-                      className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
-                        selectedType === type.id 
-                          ? 'border-primary bg-primary/5' 
-                          : 'hover:border-primary/50'
-                      }`}
-                      onClick={() => setSelectedType(type.id)}
-                    >
-                      <CardContent className="p-4">
-                        <div className="flex items-start gap-3">
-                          <span className="text-2xl">{type.icon}</span>
-                          <div className="flex-1">
-                            <h3 className="font-medium text-sm">{type.name}</h3>
-                            <p className="text-xs text-muted-foreground mt-1">
-                              {type.description}
-                            </p>
-                            <Badge variant="outline" className="mt-2 text-xs">
-                              {type.defaultDuration} min
-                            </Badge>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-
-                {selectedMeditation && (
-                  <div className="space-y-4">
-                    <div className="p-4 bg-muted/50 rounded-lg">
-                      <p className="text-sm text-muted-foreground">
-                        <strong>Guidance:</strong> {selectedMeditation.guidance}
-                      </p>
-                    </div>
-
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Duration: {duration[0]} minutes</label>
-                      <Slider
-                        value={duration}
-                        onValueChange={setDuration}
-                        max={60}
-                        min={3}
-                        step={1}
-                        className="w-full"
-                      />
-                    </div>
-
-                    {/* Background Audio Selection */}
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <label className="text-sm font-medium flex items-center gap-2">
-                          <Video className="h-4 w-4" />
-                          Background Audio {selectedBackgroundAudio && "✓"}
-                        </label>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setShowChannelConfig(!showChannelConfig)}
-                        >
-                          <Settings className="h-4 w-4" />
-                        </Button>
-                      </div>
-
-                      {showChannelConfig && (
-                        <Card className="p-4 border-primary/20">
-                          <div className="space-y-3">
-                            <h4 className="text-sm font-medium">Connect Your Channel</h4>
-                            <div className="flex gap-2">
-                              <Input
-                                placeholder="Enter your YouTube Channel ID"
-                                value={channelId}
-                                onChange={(e) => setChannelId(e.target.value)}
-                                className="flex-1"
-                              />
-                              <Button 
-                                size="sm" 
-                                onClick={() => loadChannelPlaylists()}
-                                disabled={!channelId || youtubeLoading}
-                              >
-                                Connect
-                              </Button>
-                            </div>
-                            
-                            {userPlaylists.length > 0 && (
-                              <div className="space-y-2">
-                                <label className="text-xs font-medium">Select Playlist:</label>
-                                <select
-                                  value={selectedPlaylist}
-                                  onChange={(e) => {
-                                    setSelectedPlaylist(e.target.value);
-                                    if (e.target.value) {
-                                      loadPlaylistVideos(e.target.value);
-                                    }
-                                  }}
-                                  className="w-full p-2 border rounded text-sm"
-                                >
-                                  <option value="">Choose a playlist...</option>
-                                  {userPlaylists.map((playlist) => (
-                                    <option key={playlist.id} value={playlist.id}>
-                                      {playlist.title} ({playlist.itemCount} videos)
-                                    </option>
-                                  ))}
-                                </select>
-                              </div>
-                            )}
-                            
-                            <p className="text-xs text-muted-foreground">
-                              💡 Connect your channel to access your personal meditation playlists
-                            </p>
-                          </div>
-                        </Card>
-                      )}
-                      
-                      {selectedBackgroundAudio ? (
-                        <div className="p-3 bg-primary/10 rounded-lg border border-primary/20">
-                          <div className="flex items-center justify-between">
-                            <div className="flex-1">
-                              <p className="text-sm font-medium line-clamp-1">{selectedBackgroundAudio.title}</p>
-                              <p className="text-xs text-muted-foreground">{selectedBackgroundAudio.duration}</p>
-                            </div>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => setSelectedBackgroundAudio(null)}
-                            >
-                              Remove
-                            </Button>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="space-y-3">
-                          <div className="flex items-center gap-2">
-                            <Input
-                              placeholder="Search for background music..."
-                              value={searchQuery}
-                              onChange={(e) => setSearchQuery(e.target.value)}
-                              onKeyDown={(e) => e.key === 'Enter' && handleVideoSearch()}
-                              className="flex-1"
-                            />
-                            <Button size="sm" onClick={handleVideoSearch} disabled={youtubeLoading}>
-                              <Search className="h-4 w-4" />
-                            </Button>
-                          </div>
-                          
-                          <div className="max-h-48 overflow-y-auto space-y-2 border rounded-lg p-2">
-                            {youtubeLoading ? (
-                              <div className="text-center py-4">
-                                <RefreshCw className="h-4 w-4 animate-spin mx-auto" />
-                                <p className="text-xs text-muted-foreground mt-2">Loading tracks...</p>
-                              </div>
-                            ) : meditationVideos.length > 0 ? (
-                              meditationVideos.slice(0, 8).map((video) => (
-                                <div
-                                  key={video.id}
-                                  className="flex items-center gap-3 p-2 hover:bg-muted/50 rounded cursor-pointer transition-colors border border-transparent hover:border-primary/20"
-                                  onClick={() => selectBackgroundAudio(video)}
-                                >
-                                  <img
-                                    src={video.thumbnail}
-                                    alt={video.title}
-                                    className="w-12 h-8 object-cover rounded flex-shrink-0"
-                                  />
-                                  <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-medium line-clamp-1">{video.title}</p>
-                                    <p className="text-xs text-muted-foreground">{video.duration}</p>
-                                  </div>
-                                  <Button size="sm" variant="ghost" className="px-2">
-                                    Select
-                                  </Button>
-                                </div>
-                              ))
-                            ) : (
-                              <div className="text-center py-4">
-                                <Video className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-                                <p className="text-xs text-muted-foreground">
-                                  Search for meditation music or tracks
-                                </p>
-                              </div>
-                            )}
-                          </div>
-                          
-                          <p className="text-xs text-muted-foreground">
-                            💡 Tip: Search for "ambient", "nature sounds", "singing bowls", or "meditation music"
-                          </p>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setSoundEnabled(!soundEnabled)}
-                        >
-                          {soundEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
-                        </Button>
-                        {soundEnabled && (
-                          <div className="flex items-center gap-2">
-                            <span className="text-xs">Vol:</span>
-                            <Slider
-                              value={volume}
-                              onValueChange={setVolume}
-                              max={100}
-                              min={0}
-                              step={5}
-                              className="w-16"
-                            />
-                          </div>
-                        )}
-                      </div>
-                      {isAudioPlaying && selectedBackgroundAudio && (
-                        <Badge variant="secondary" className="text-xs">
-                          🎵 Playing
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Session Controls */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Clock className="h-5 w-5 text-primary" />
-                  Session Control
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {sessionState === 'idle' && (
-                  <Button 
-                    onClick={startSoloMeditation} 
-                    className="w-full"
-                    size="lg"
-                  >
-                    <Play className="h-4 w-4 mr-2" />
-                    Start Meditation
-                  </Button>
-                )}
-
-                {sessionState === 'active' && (
-                  <div className="space-y-3">
-                    <div className="text-center">
-                      <div className="text-3xl font-mono font-bold text-primary">
-                        {formatTime(timeRemaining)}
-                      </div>
-                      <Progress value={sessionProgress} className="mt-2" />
-                      {selectedBackgroundAudio && isAudioPlaying && (
-                        <div className="mt-2 p-2 bg-primary/5 rounded text-xs">
-                          🎵 {selectedBackgroundAudio.title}
-                        </div>
-                      )}
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <Button variant="outline" onClick={pauseMeditation}>
-                        <Pause className="h-4 w-4 mr-2" />
-                        Pause
-                      </Button>
-                      <Button variant="destructive" onClick={stopMeditation}>
-                        <Square className="h-4 w-4 mr-2" />
-                        Stop
-                      </Button>
-                    </div>
-                    {isAudioPlaying && (
-                      <div className="flex items-center gap-2 text-xs">
-                        <span>Audio Volume:</span>
-                        <Slider
-                          value={audioVolume}
-                          onValueChange={setAudioVolume}
-                          max={100}
-                          min={0}
-                          step={5}
-                          className="flex-1"
-                        />
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {sessionState === 'paused' && (
-                  <div className="space-y-3">
-                    <div className="text-center">
-                      <div className="text-3xl font-mono font-bold text-muted-foreground">
-                        {formatTime(timeRemaining)}
-                      </div>
-                      <p className="text-sm text-muted-foreground">Paused</p>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <Button onClick={resumeMeditation}>
-                        <Play className="h-4 w-4 mr-2" />
-                        Resume
-                      </Button>
-                      <Button variant="destructive" onClick={stopMeditation}>
-                        <Square className="h-4 w-4 mr-2" />
-                        Stop
-                      </Button>
-                    </div>
-                  </div>
-                )}
-
-                {sessionState === 'completed' && (
-                  <div className="text-center space-y-3">
-                    <div className="text-primary">
-                      <Sparkles className="h-12 w-12 mx-auto mb-2" />
-                      <p className="font-medium">Session Complete!</p>
-                      <p className="text-sm text-muted-foreground">
-                        Take a moment to notice how you feel
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                <Button 
-                  variant="outline" 
-                  className="w-full" 
-                  onClick={createGroupSession}
-                  disabled={isCreatingSession}
-                >
-                  <Users className="h-4 w-4 mr-2" />
-                  {isCreatingSession ? 'Creating...' : 'Create Group Session'}
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
-        {/* Group Sessions Tab */}
-        <TabsContent value="group" className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold">Active Group Sessions</h2>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={fetchActiveSessions}
-            >
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Refresh
-            </Button>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {activeSessions.map((session) => {
-              const meditationType = meditationTypes.find(t => t.id === session.type);
-              const isJoined = joinedSessionId === session.id;
-              const startTime = new Date(session.startedAt);
-              const elapsed = Math.floor((Date.now() - startTime.getTime()) / 1000 / 60);
-              
-              return (
-                <Card key={session.id} className={`${isJoined ? 'border-primary' : ''}`}>
-                  <CardContent className="p-4">
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xl">{meditationType?.icon}</span>
-                        <div>
-                          <h3 className="font-medium text-sm">{meditationType?.name}</h3>
-                          <p className="text-xs text-muted-foreground">
-                            {session.duration} minutes • {elapsed}m elapsed
-                          </p>
-                        </div>
-                      </div>
-                      {isJoined && (
-                        <Badge variant="default" className="text-xs">
-                          Joined
-                        </Badge>
-                      )}
-                    </div>
-
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                        <Users className="h-3 w-3" />
-                        {session.participantCount} meditating
-                      </div>
-                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                        <Clock className="h-3 w-3" />
-                        {session.duration - elapsed}m remaining
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Progress 
-                        value={(elapsed / session.duration) * 100} 
-                        className="h-2"
-                      />
-                      {!isJoined ? (
-                        <Button 
-                          onClick={() => joinGroupSession(session.id)}
-                          className="w-full"
-                          size="sm"
-                        >
-                          <Heart className="h-4 w-4 mr-2" />
-                          Join Session
-                        </Button>
-                      ) : (
-                        <Button 
-                          variant="outline"
-                          onClick={leaveGroupSession}
-                          className="w-full"
-                          size="sm"
-                        >
-                          Leave Session
-                        </Button>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-
-            {activeSessions.length === 0 && (
-              <div className="col-span-full text-center py-8">
-                <Sparkles className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
-                <p className="text-muted-foreground">
-                  No active group sessions right now
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  Create one from the Solo Practice tab to invite others
-                </p>
-              </div>
-            )}
-          </div>
-        </TabsContent>
-
-        {/* Guided Videos Tab */}
-        <TabsContent value="guided" className="space-y-4">
-          <div className="space-y-4">
-            <div className="flex items-center gap-4">
-              <div className="flex-1">
-                <Input
-                  placeholder="Search meditation videos..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleVideoSearch()}
-                />
-              </div>
-              <Button onClick={handleVideoSearch} disabled={youtubeLoading}>
-                <Search className="h-4 w-4 mr-2" />
-                Search
-              </Button>
-            </div>
-
-            {meditationPlaylists.length > 0 && (
-              <Card>
+          {/* Solo Meditation Tab */}
+          <TabsContent value="solo" className="space-y-4 animate-fade-in">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Meditation Selection */}
+              <Card className="lg:col-span-2 hover-scale">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <List className="h-5 w-5 text-primary" />
-                    Meditation Playlists
+                    <Moon className="h-5 w-5 text-primary" />
+                    Choose Your Practice
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {meditationPlaylists.map((playlist) => (
-                      <Card key={playlist.id} className="cursor-pointer hover:shadow-md transition-shadow">
-                        <CardContent className="p-4">
-                          <div className="aspect-video mb-3 rounded overflow-hidden">
-                            <img 
-                              src={playlist.thumbnail} 
-                              alt={playlist.title}
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                          <h3 className="font-medium text-sm mb-2 line-clamp-2">{playlist.title}</h3>
-                          <p className="text-xs text-muted-foreground">
-                            {playlist.itemCount} videos
-                          </p>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Video className="h-5 w-5 text-primary" />
-                  Guided Meditation Videos
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {youtubeLoading ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {Array.from({ length: 6 }).map((_, i) => (
-                      <Card key={i} className="animate-pulse">
-                        <CardContent className="p-4">
-                          <div className="aspect-video bg-muted rounded mb-3" />
-                          <div className="h-4 bg-muted rounded mb-2" />
-                          <div className="h-3 bg-muted rounded w-2/3" />
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {meditationVideos.map((video) => (
-                      <Card 
-                        key={video.id} 
-                        className="cursor-pointer hover:shadow-md transition-shadow group"
-                        onClick={() => handleVideoPlay(video)}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+                    {meditationTypes.map((type, index) => (
+                      <Card
+                        key={type.id}
+                        className={`cursor-pointer transition-all duration-200 hover:shadow-md hover-scale ${
+                          selectedType === type.id 
+                            ? 'border-primary bg-primary/5 animate-scale-in' 
+                            : 'hover:border-primary/50'
+                        }`}
+                        onClick={() => setSelectedType(type.id)}
+                        style={{ animationDelay: `${index * 100}ms` }}
                       >
                         <CardContent className="p-4">
-                          <div className="aspect-video mb-3 rounded overflow-hidden relative">
-                            <img 
-                              src={video.thumbnail} 
-                              alt={video.title}
-                              className="w-full h-full object-cover"
-                            />
-                            <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                              <PlayCircle className="h-12 w-12 text-white" />
+                          <div className="flex items-start gap-3">
+                            <span className="text-2xl animate-pulse">{type.icon}</span>
+                            <div className="flex-1">
+                              <h3 className="font-medium text-sm">{type.name}</h3>
+                              <p className="text-xs text-muted-foreground mt-1">
+                                {type.description}
+                              </p>
+                              <Badge variant="outline" className="mt-2 text-xs">
+                                {type.defaultDuration} min
+                              </Badge>
                             </div>
-                          </div>
-                          <h3 className="font-medium text-sm mb-2 line-clamp-2">{video.title}</h3>
-                          <div className="flex items-center justify-between text-xs text-muted-foreground">
-                            <span>{video.duration}</span>
-                            <span>{parseInt(video.viewCount).toLocaleString()} views</span>
                           </div>
                         </CardContent>
                       </Card>
                     ))}
                   </div>
-                )}
 
-                {!youtubeLoading && meditationVideos.length === 0 && (
-                  <div className="text-center py-8">
-                    <Video className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
-                    <p className="text-muted-foreground">
-                      No meditation videos found
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      Try searching for specific meditation topics
-                    </p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-      </Tabs>
+                  {selectedMeditation && (
+                    <div className="space-y-4 animate-fade-in">
+                      <div className="p-4 bg-muted/50 rounded-lg">
+                        <p className="text-sm text-muted-foreground">
+                          <strong>Guidance:</strong> {selectedMeditation.guidance}
+                        </p>
+                      </div>
 
-      {/* Video Player Modal */}
-      <SimpleVideoModal
-        video={selectedVideo}
-        isOpen={isVideoModalOpen}
-        onClose={() => {
-          setIsVideoModalOpen(false);
-          setSelectedVideo(null);
-        }}
-        onWatchLater={() => {}}
-        onFavorite={() => {}}
-        userMetadata={undefined}
-      />
-    </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">Duration: {duration[0]} minutes</label>
+                        <Slider
+                          value={duration}
+                          onValueChange={setDuration}
+                          max={60}
+                          min={3}
+                          step={1}
+                          className="w-full"
+                        />
+                      </div>
+
+                      {/* Background Audio Selection */}
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <label className="text-sm font-medium flex items-center gap-2">
+                            <Video className="h-4 w-4" />
+                            Background Audio {selectedBackgroundAudio && "✓"}
+                          </label>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setShowChannelConfig(!showChannelConfig)}
+                            className="hover-scale"
+                          >
+                            <Settings className="h-4 w-4" />
+                          </Button>
+                        </div>
+
+                        {showChannelConfig && (
+                          <Card className="p-4 border-primary/20 animate-scale-in">
+                            <div className="space-y-3">
+                              <h4 className="text-sm font-medium">Connect Your Channel</h4>
+                              <div className="flex gap-2">
+                                <Input
+                                  placeholder="Enter your YouTube Channel ID"
+                                  value={channelId}
+                                  onChange={(e) => setChannelId(e.target.value)}
+                                  className="flex-1"
+                                />
+                                <Button 
+                                  size="sm" 
+                                  onClick={() => loadChannelPlaylists()}
+                                  disabled={!channelId || youtubeLoading}
+                                  className="hover-scale"
+                                >
+                                  Connect
+                                </Button>
+                              </div>
+                              
+                              {userPlaylists.length > 0 && (
+                                <div className="space-y-2 animate-fade-in">
+                                  <label className="text-xs font-medium">Select Playlist:</label>
+                                  <select
+                                    value={selectedPlaylist}
+                                    onChange={(e) => {
+                                      setSelectedPlaylist(e.target.value);
+                                      if (e.target.value) {
+                                        loadPlaylistVideos(e.target.value);
+                                      }
+                                    }}
+                                    className="w-full p-2 border rounded text-sm hover-scale"
+                                  >
+                                    <option value="">Choose a playlist...</option>
+                                    {userPlaylists.map((playlist) => (
+                                      <option key={playlist.id} value={playlist.id}>
+                                        {playlist.title} ({playlist.itemCount} videos)
+                                      </option>
+                                    ))}
+                                  </select>
+                                </div>
+                              )}
+                              
+                              <p className="text-xs text-muted-foreground">
+                                💡 Connect your channel to access your personal meditation playlists
+                              </p>
+                            </div>
+                          </Card>
+                        )}
+                        
+                        {selectedBackgroundAudio ? (
+                          <div className="p-3 bg-primary/10 rounded-lg border border-primary/20 animate-scale-in">
+                            <div className="flex items-center justify-between">
+                              <div className="flex-1">
+                                <p className="text-sm font-medium line-clamp-1">{selectedBackgroundAudio.title}</p>
+                                <p className="text-xs text-muted-foreground">{selectedBackgroundAudio.duration}</p>
+                              </div>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => setSelectedBackgroundAudio(null)}
+                                className="hover-scale"
+                              >
+                                Remove
+                              </Button>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="space-y-3">
+                            <div className="flex items-center gap-2">
+                              <Input
+                                placeholder="Search for background music..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && handleVideoSearch()}
+                                className="flex-1"
+                              />
+                              <Button size="sm" onClick={handleVideoSearch} disabled={youtubeLoading} className="hover-scale">
+                                <Search className="h-4 w-4" />
+                              </Button>
+                            </div>
+                            
+                            <div className="max-h-48 overflow-y-auto space-y-2 border rounded-lg p-2">
+                              {youtubeLoading ? (
+                                <div className="text-center py-4">
+                                  <RefreshCw className="h-4 w-4 animate-spin mx-auto" />
+                                  <p className="text-xs text-muted-foreground mt-2">Loading tracks...</p>
+                                </div>
+                              ) : meditationVideos.length > 0 ? (
+                                meditationVideos.slice(0, 8).map((video, index) => (
+                                  <div
+                                    key={video.id}
+                                    className="flex items-center gap-3 p-2 hover:bg-muted/50 rounded cursor-pointer transition-colors border border-transparent hover:border-primary/20 hover-scale animate-fade-in"
+                                    onClick={() => selectBackgroundAudio(video)}
+                                    style={{ animationDelay: `${index * 50}ms` }}
+                                  >
+                                    <img
+                                      src={video.thumbnail}
+                                      alt={video.title}
+                                      className="w-12 h-8 object-cover rounded flex-shrink-0"
+                                    />
+                                    <div className="flex-1 min-w-0">
+                                      <p className="text-sm font-medium line-clamp-1">{video.title}</p>
+                                      <p className="text-xs text-muted-foreground">{video.duration}</p>
+                                    </div>
+                                    <Button size="sm" variant="ghost" className="px-2 hover-scale">
+                                      Select
+                                    </Button>
+                                  </div>
+                                ))
+                              ) : (
+                                <div className="text-center py-4">
+                                  <Video className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+                                  <p className="text-xs text-muted-foreground">
+                                    Search for meditation music or tracks
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                            
+                            <p className="text-xs text-muted-foreground">
+                              💡 Tip: Search for "ambient", "nature sounds", "singing bowls", or "meditation music"
+                            </p>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setSoundEnabled(!soundEnabled)}
+                            className="hover-scale"
+                          >
+                            {soundEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+                          </Button>
+                          {soundEnabled && (
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs">Vol:</span>
+                              <Slider
+                                value={volume}
+                                onValueChange={setVolume}
+                                max={100}
+                                min={0}
+                                step={5}
+                                className="w-16"
+                              />
+                            </div>
+                          )}
+                        </div>
+                        {isAudioPlaying && selectedBackgroundAudio && (
+                          <Badge variant="secondary" className="text-xs animate-pulse">
+                            🎵 Playing
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Session Controls */}
+              <Card className="hover-scale">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Clock className="h-5 w-5 text-primary" />
+                    Session Control
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {sessionState === 'idle' && (
+                    <Button 
+                      onClick={startSoloMeditation} 
+                      className="w-full hover-scale"
+                      size="lg"
+                    >
+                      <Play className="h-4 w-4 mr-2" />
+                      Start Meditation
+                    </Button>
+                  )}
+
+                  {sessionState === 'active' && (
+                    <div className="space-y-3 animate-fade-in">
+                      <div className="text-center">
+                        <div className="text-3xl font-mono font-bold text-primary animate-pulse">
+                          {formatTime(timeRemaining)}
+                        </div>
+                        <Progress value={sessionProgress} className="mt-2" />
+                        {selectedBackgroundAudio && isAudioPlaying && (
+                          <div className="mt-2 p-2 bg-primary/5 rounded text-xs animate-fade-in">
+                            🎵 {selectedBackgroundAudio.title}
+                          </div>
+                        )}
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <Button variant="outline" onClick={pauseMeditation} className="hover-scale">
+                          <Pause className="h-4 w-4 mr-2" />
+                          Pause
+                        </Button>
+                        <Button variant="destructive" onClick={stopMeditation} className="hover-scale">
+                          <Square className="h-4 w-4 mr-2" />
+                          Stop
+                        </Button>
+                      </div>
+                      {isAudioPlaying && (
+                        <div className="flex items-center gap-2 text-xs">
+                          <span>Audio Volume:</span>
+                          <Slider
+                            value={audioVolume}
+                            onValueChange={setAudioVolume}
+                            max={100}
+                            min={0}
+                            step={5}
+                            className="flex-1"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {sessionState === 'paused' && (
+                    <div className="space-y-3 animate-fade-in">
+                      <div className="text-center">
+                        <div className="text-3xl font-mono font-bold text-muted-foreground">
+                          {formatTime(timeRemaining)}
+                        </div>
+                        <p className="text-sm text-muted-foreground">Paused</p>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <Button onClick={resumeMeditation} className="hover-scale">
+                          <Play className="h-4 w-4 mr-2" />
+                          Resume
+                        </Button>
+                        <Button variant="destructive" onClick={stopMeditation} className="hover-scale">
+                          <Square className="h-4 w-4 mr-2" />
+                          Stop
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+
+                  {sessionState === 'completed' && (
+                    <div className="text-center space-y-3 animate-scale-in">
+                      <div className="text-primary">
+                        <Sparkles className="h-12 w-12 mx-auto mb-2 animate-pulse" />
+                        <p className="font-medium">Session Complete!</p>
+                        <p className="text-sm text-muted-foreground">
+                          Take a moment to notice how you feel
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  <Button 
+                    variant="outline" 
+                    className="w-full hover-scale" 
+                    onClick={createGroupSession}
+                    disabled={isCreatingSession}
+                  >
+                    <Users className="h-4 w-4 mr-2" />
+                    {isCreatingSession ? 'Creating...' : 'Create Group Session'}
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          {/* Group Sessions Tab */}
+          <TabsContent value="group" className="space-y-4 animate-fade-in">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold">Active Group Sessions</h2>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={fetchActiveSessions}
+                className="hover-scale"
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Refresh
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {activeSessions.map((session, index) => {
+                const meditationType = meditationTypes.find(t => t.id === session.type);
+                const isJoined = joinedSessionId === session.id;
+                const startTime = new Date(session.startedAt);
+                const elapsed = Math.floor((Date.now() - startTime.getTime()) / 1000 / 60);
+                
+                return (
+                  <Card 
+                    key={session.id} 
+                    className={`${isJoined ? 'border-primary animate-pulse' : ''} hover-scale animate-fade-in`}
+                    style={{ animationDelay: `${index * 100}ms` }}
+                  >
+                    <CardContent className="p-4">
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xl animate-pulse">{meditationType?.icon}</span>
+                          <div>
+                            <h3 className="font-medium text-sm">{meditationType?.name}</h3>
+                            <p className="text-xs text-muted-foreground">
+                              {session.duration} minutes • {elapsed}m elapsed
+                            </p>
+                          </div>
+                        </div>
+                        {isJoined && (
+                          <Badge variant="default" className="text-xs animate-pulse">
+                            Joined
+                          </Badge>
+                        )}
+                      </div>
+
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                          <Users className="h-3 w-3" />
+                          {session.participantCount} meditating
+                        </div>
+                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                          <Clock className="h-3 w-3" />
+                          {session.duration - elapsed}m remaining
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Progress 
+                          value={(elapsed / session.duration) * 100} 
+                          className="h-2"
+                        />
+                        {!isJoined ? (
+                          <Button 
+                            onClick={() => joinGroupSession(session.id)}
+                            className="w-full hover-scale"
+                            size="sm"
+                          >
+                            <Heart className="h-4 w-4 mr-2" />
+                            Join Session
+                          </Button>
+                        ) : (
+                          <Button 
+                            variant="outline"
+                            onClick={leaveGroupSession}
+                            className="w-full hover-scale"
+                            size="sm"
+                          >
+                            Leave Session
+                          </Button>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+
+              {activeSessions.length === 0 && (
+                <div className="col-span-full text-center py-8 animate-fade-in">
+                  <Sparkles className="h-12 w-12 mx-auto text-muted-foreground mb-3 animate-pulse" />
+                  <p className="text-muted-foreground">
+                    No active group sessions right now
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Create one from the Solo Practice tab to invite others
+                  </p>
+                </div>
+              )}
+            </div>
+          </TabsContent>
+
+          {/* Guided Videos Tab */}
+          <TabsContent value="guided" className="space-y-4 animate-fade-in">
+            {/* ... keep existing guided videos content ... */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-4">
+                <div className="flex-1">
+                  <Input
+                    placeholder="Search meditation videos..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleVideoSearch()}
+                  />
+                </div>
+                <Button onClick={handleVideoSearch} disabled={youtubeLoading} className="hover-scale">
+                  <Search className="h-4 w-4 mr-2" />
+                  Search
+                </Button>
+              </div>
+
+              {meditationPlaylists.length > 0 && (
+                <Card className="hover-scale">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <List className="h-5 w-5 text-primary" />
+                      Meditation Playlists
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {meditationPlaylists.map((playlist, index) => (
+                        <Card 
+                          key={playlist.id} 
+                          className="cursor-pointer hover:shadow-md transition-shadow hover-scale animate-fade-in"
+                          style={{ animationDelay: `${index * 100}ms` }}
+                        >
+                          <CardContent className="p-4">
+                            <div className="aspect-video mb-3 rounded overflow-hidden">
+                              <img 
+                                src={playlist.thumbnail} 
+                                alt={playlist.title}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                            <h3 className="font-medium text-sm mb-2 line-clamp-2">{playlist.title}</h3>
+                            <p className="text-xs text-muted-foreground">
+                              {playlist.itemCount} videos
+                            </p>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              <Card className="hover-scale">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Video className="h-5 w-5 text-primary" />
+                    Guided Meditation Videos
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {youtubeLoading ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {Array.from({ length: 6 }).map((_, i) => (
+                        <Card key={i} className="animate-pulse">
+                          <CardContent className="p-4">
+                            <div className="aspect-video bg-muted rounded mb-3" />
+                            <div className="h-4 bg-muted rounded mb-2" />
+                            <div className="h-3 bg-muted rounded w-2/3" />
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {meditationVideos.map((video, index) => (
+                        <Card 
+                          key={video.id} 
+                          className="cursor-pointer hover:shadow-md transition-shadow group hover-scale animate-fade-in"
+                          onClick={() => handleVideoPlay(video)}
+                          style={{ animationDelay: `${index * 50}ms` }}
+                        >
+                          <CardContent className="p-4">
+                            <div className="aspect-video mb-3 rounded overflow-hidden relative">
+                              <img 
+                                src={video.thumbnail} 
+                                alt={video.title}
+                                className="w-full h-full object-cover"
+                              />
+                              <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                <PlayCircle className="h-12 w-12 text-white animate-scale-in" />
+                              </div>
+                            </div>
+                            <h3 className="font-medium text-sm mb-2 line-clamp-2">{video.title}</h3>
+                            <div className="flex items-center justify-between text-xs text-muted-foreground">
+                              <span>{video.duration}</span>
+                              <span>{parseInt(video.viewCount).toLocaleString()} views</span>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  )}
+
+                  {!youtubeLoading && meditationVideos.length === 0 && (
+                    <div className="text-center py-8 animate-fade-in">
+                      <Video className="h-12 w-12 mx-auto text-muted-foreground mb-3 animate-pulse" />
+                      <p className="text-muted-foreground">
+                        No meditation videos found
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        Try searching for specific meditation topics
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+        </Tabs>
+
+        {/* Video Player Modal */}
+        <SimpleVideoModal
+          video={selectedVideo}
+          isOpen={isVideoModalOpen}
+          onClose={() => {
+            setIsVideoModalOpen(false);
+            setSelectedVideo(null);
+          }}
+          onWatchLater={() => {}}
+          onFavorite={() => {}}
+          userMetadata={undefined}
+        />
+      </div>
+    </>
   );
 }
