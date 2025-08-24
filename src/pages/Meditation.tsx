@@ -46,6 +46,7 @@ interface MeditationSession {
   startedAt: string;
   isActive: boolean;
   circleId?: string;
+  backgroundAudio?: YouTubeVideo;
 }
 
 const meditationTypes = [
@@ -117,10 +118,14 @@ export default function Meditation() {
   const [selectedVideo, setSelectedVideo] = useState<YouTubeVideo | null>(null);
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedBackgroundAudio, setSelectedBackgroundAudio] = useState<YouTubeVideo | null>(null);
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
+  const [audioVolume, setAudioVolume] = useState([30]);
   
   // Refs
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const youtubePlayerRef = useRef<any>(null);
 
   useEffect(() => {
     fetchActiveSessions();
@@ -207,7 +212,11 @@ export default function Meditation() {
     setSessionProgress(0);
     
     if (soundEnabled) {
-      playMeditationSound('start');
+      if (selectedBackgroundAudio) {
+        startBackgroundAudio(selectedBackgroundAudio);
+      } else {
+        playMeditationSound('start');
+      }
     }
     
     timerRef.current = setInterval(() => {
@@ -270,6 +279,9 @@ export default function Meditation() {
     setTimeRemaining(0);
     setSessionProgress(0);
     
+    // Stop background audio
+    stopBackgroundAudio();
+    
     if (soundEnabled) {
       playMeditationSound('stop');
     }
@@ -280,12 +292,46 @@ export default function Meditation() {
     });
   };
 
+  const startBackgroundAudio = (video: YouTubeVideo) => {
+    try {
+      // Create iframe for YouTube audio
+      const iframe = document.createElement('iframe');
+      iframe.src = `https://www.youtube.com/embed/${video.id}?autoplay=1&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&enablejsapi=1`;
+      iframe.style.display = 'none';
+      iframe.allow = 'autoplay';
+      document.body.appendChild(iframe);
+      youtubePlayerRef.current = iframe;
+      setIsAudioPlaying(true);
+    } catch (error) {
+      console.error('Error starting background audio:', error);
+    }
+  };
+
+  const stopBackgroundAudio = () => {
+    if (youtubePlayerRef.current) {
+      document.body.removeChild(youtubePlayerRef.current);
+      youtubePlayerRef.current = null;
+    }
+    setIsAudioPlaying(false);
+  };
+
+  const selectBackgroundAudio = (video: YouTubeVideo) => {
+    setSelectedBackgroundAudio(video);
+    toast({
+      title: "Background Audio Selected",
+      description: `${video.title} will play during your meditation`,
+    });
+  };
+
   const completeMeditation = () => {
     if (timerRef.current) {
       clearInterval(timerRef.current);
       timerRef.current = null;
     }
     setSessionState('completed');
+    
+    // Stop background audio
+    stopBackgroundAudio();
     
     if (soundEnabled) {
       playMeditationSound('complete');
@@ -320,7 +366,8 @@ export default function Meditation() {
         participantCount: 1,
         startedAt: new Date().toISOString(),
         isActive: true,
-        circleId: circles[0]?.id
+        circleId: circles[0]?.id,
+        backgroundAudio: selectedBackgroundAudio || undefined
       };
 
       setActiveSessions(prev => [...prev, newSession]);
@@ -487,6 +534,52 @@ export default function Meditation() {
                       />
                     </div>
 
+                    {/* Background Audio Selection */}
+                    <div className="space-y-3">
+                      <label className="text-sm font-medium flex items-center gap-2">
+                        <Video className="h-4 w-4" />
+                        Background Audio {selectedBackgroundAudio && "✓"}
+                      </label>
+                      
+                      {selectedBackgroundAudio ? (
+                        <div className="p-3 bg-primary/10 rounded-lg border border-primary/20">
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
+                              <p className="text-sm font-medium line-clamp-1">{selectedBackgroundAudio.title}</p>
+                              <p className="text-xs text-muted-foreground">{selectedBackgroundAudio.duration}</p>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setSelectedBackgroundAudio(null)}
+                            >
+                              Remove
+                            </Button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-1 gap-2 max-h-32 overflow-y-auto">
+                          {meditationVideos.slice(0, 3).map((video) => (
+                            <div
+                              key={video.id}
+                              className="flex items-center gap-3 p-2 hover:bg-muted/50 rounded cursor-pointer"
+                              onClick={() => selectBackgroundAudio(video)}
+                            >
+                              <img
+                                src={video.thumbnail}
+                                alt={video.title}
+                                className="w-10 h-6 object-cover rounded"
+                              />
+                              <div className="flex-1 min-w-0">
+                                <p className="text-xs font-medium line-clamp-1">{video.title}</p>
+                                <p className="text-xs text-muted-foreground">{video.duration}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Button
@@ -497,16 +590,24 @@ export default function Meditation() {
                           {soundEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
                         </Button>
                         {soundEnabled && (
-                          <Slider
-                            value={volume}
-                            onValueChange={setVolume}
-                            max={100}
-                            min={0}
-                            step={5}
-                            className="w-20"
-                          />
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs">Vol:</span>
+                            <Slider
+                              value={volume}
+                              onValueChange={setVolume}
+                              max={100}
+                              min={0}
+                              step={5}
+                              className="w-16"
+                            />
+                          </div>
                         )}
                       </div>
+                      {isAudioPlaying && selectedBackgroundAudio && (
+                        <Badge variant="secondary" className="text-xs">
+                          🎵 Playing
+                        </Badge>
+                      )}
                     </div>
                   </div>
                 )}
@@ -540,6 +641,11 @@ export default function Meditation() {
                         {formatTime(timeRemaining)}
                       </div>
                       <Progress value={sessionProgress} className="mt-2" />
+                      {selectedBackgroundAudio && isAudioPlaying && (
+                        <div className="mt-2 p-2 bg-primary/5 rounded text-xs">
+                          🎵 {selectedBackgroundAudio.title}
+                        </div>
+                      )}
                     </div>
                     <div className="grid grid-cols-2 gap-2">
                       <Button variant="outline" onClick={pauseMeditation}>
@@ -551,6 +657,19 @@ export default function Meditation() {
                         Stop
                       </Button>
                     </div>
+                    {isAudioPlaying && (
+                      <div className="flex items-center gap-2 text-xs">
+                        <span>Audio Volume:</span>
+                        <Slider
+                          value={audioVolume}
+                          onValueChange={setAudioVolume}
+                          max={100}
+                          min={0}
+                          step={5}
+                          className="flex-1"
+                        />
+                      </div>
+                    )}
                   </div>
                 )}
 
