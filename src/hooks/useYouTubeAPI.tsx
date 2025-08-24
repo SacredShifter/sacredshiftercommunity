@@ -137,6 +137,7 @@ export const useYouTubeAPI = () => {
   }, []);
 
   const getChannelPlaylists = useCallback(async (
+    channelId?: string,
     pageToken?: string,
     maxResults: number = 20
   ) => {
@@ -146,7 +147,7 @@ export const useYouTubeAPI = () => {
 
       const params: Record<string, string> = {
         part: 'snippet,contentDetails',
-        channelId: SACRED_SHIFTER_CHANNEL_ID,
+        channelId: channelId || SACRED_SHIFTER_CHANNEL_ID,
         maxResults: maxResults.toString(),
       };
 
@@ -172,6 +173,66 @@ export const useYouTubeAPI = () => {
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch playlists');
       return { playlists: [] };
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const getPlaylistVideos = useCallback(async (
+    playlistId: string,
+    pageToken?: string,
+    maxResults: number = 20
+  ): Promise<YouTubeSearchResponse> => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const params: Record<string, string> = {
+        part: 'snippet',
+        playlistId: playlistId,
+        maxResults: maxResults.toString(),
+      };
+
+      if (pageToken) {
+        params.pageToken = pageToken;
+      }
+
+      const data = await makeYouTubeRequest('playlistItems', params);
+
+      const videos: YouTubeVideo[] = await Promise.all(
+        data.items.map(async (item: any) => {
+          const videoId = item.snippet.resourceId.videoId;
+          
+          // Get video details for duration and stats
+          const videoData = await makeYouTubeRequest('videos', {
+            part: 'contentDetails,statistics',
+            id: videoId,
+          });
+
+          const video = videoData.items[0];
+          
+          return {
+            id: videoId,
+            title: item.snippet.title,
+            description: item.snippet.description,
+            thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.default.url,
+            publishedAt: item.snippet.publishedAt,
+            duration: video ? formatDuration(video.contentDetails.duration) : 'N/A',
+            viewCount: video ? video.statistics.viewCount : '0',
+            channelId: item.snippet.channelId,
+            channelTitle: item.snippet.channelTitle,
+          };
+        })
+      );
+
+      return {
+        videos,
+        nextPageToken: data.nextPageToken,
+        totalResults: data.pageInfo.totalResults,
+      };
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch playlist videos');
+      return { videos: [], totalResults: 0 };
     } finally {
       setLoading(false);
     }
@@ -240,6 +301,7 @@ export const useYouTubeAPI = () => {
     getChannelInfo,
     getChannelVideos,
     getChannelPlaylists,
+    getPlaylistVideos,
     searchVideos,
   };
 };

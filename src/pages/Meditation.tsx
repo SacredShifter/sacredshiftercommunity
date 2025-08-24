@@ -96,7 +96,7 @@ export default function Meditation() {
   const { user } = useAuth();
   const { toast } = useToast();
   const { circles, loading: circlesLoading } = useSacredCircles();
-  const { getChannelPlaylists, searchVideos, loading: youtubeLoading } = useYouTubeAPI();
+  const { getChannelPlaylists, getPlaylistVideos, searchVideos, loading: youtubeLoading } = useYouTubeAPI();
   
   // Solo meditation state
   const [selectedType, setSelectedType] = useState<MeditationType>('breathing');
@@ -121,6 +121,10 @@ export default function Meditation() {
   const [selectedBackgroundAudio, setSelectedBackgroundAudio] = useState<YouTubeVideo | null>(null);
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
   const [audioVolume, setAudioVolume] = useState([30]);
+  const [channelId, setChannelId] = useState('');
+  const [userPlaylists, setUserPlaylists] = useState<YouTubePlaylist[]>([]);
+  const [selectedPlaylist, setSelectedPlaylist] = useState('');
+  const [showChannelConfig, setShowChannelConfig] = useState(false);
   
   // Refs
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -202,6 +206,47 @@ export default function Meditation() {
       } catch (error) {
         console.error('Error searching videos:', error);
       }
+    }
+  };
+
+  const loadChannelPlaylists = async (customChannelId?: string) => {
+    try {
+      const targetChannelId = customChannelId || channelId;
+      if (!targetChannelId) return;
+      
+      const playlistsData = await getChannelPlaylists(targetChannelId);
+      setUserPlaylists(playlistsData.playlists);
+      
+      toast({
+        title: "Channel Connected",
+        description: `Loaded ${playlistsData.playlists.length} playlists from your channel`,
+      });
+    } catch (error) {
+      console.error('Error loading channel playlists:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load channel playlists. Please check the channel ID.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const loadPlaylistVideos = async (playlistId: string) => {
+    try {
+      const videosData = await getPlaylistVideos(playlistId);
+      setMeditationVideos(videosData.videos);
+      
+      toast({
+        title: "Playlist Loaded",
+        description: `Loaded ${videosData.videos.length} videos from your playlist`,
+      });
+    } catch (error) {
+      console.error('Error loading playlist videos:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load playlist videos",
+        variant: "destructive",
+      });
     }
   };
 
@@ -536,10 +581,69 @@ export default function Meditation() {
 
                     {/* Background Audio Selection */}
                     <div className="space-y-3">
-                      <label className="text-sm font-medium flex items-center gap-2">
-                        <Video className="h-4 w-4" />
-                        Background Audio {selectedBackgroundAudio && "✓"}
-                      </label>
+                      <div className="flex items-center justify-between">
+                        <label className="text-sm font-medium flex items-center gap-2">
+                          <Video className="h-4 w-4" />
+                          Background Audio {selectedBackgroundAudio && "✓"}
+                        </label>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setShowChannelConfig(!showChannelConfig)}
+                        >
+                          <Settings className="h-4 w-4" />
+                        </Button>
+                      </div>
+
+                      {showChannelConfig && (
+                        <Card className="p-4 border-primary/20">
+                          <div className="space-y-3">
+                            <h4 className="text-sm font-medium">Connect Your Channel</h4>
+                            <div className="flex gap-2">
+                              <Input
+                                placeholder="Enter your YouTube Channel ID"
+                                value={channelId}
+                                onChange={(e) => setChannelId(e.target.value)}
+                                className="flex-1"
+                              />
+                              <Button 
+                                size="sm" 
+                                onClick={() => loadChannelPlaylists()}
+                                disabled={!channelId || youtubeLoading}
+                              >
+                                Connect
+                              </Button>
+                            </div>
+                            
+                            {userPlaylists.length > 0 && (
+                              <div className="space-y-2">
+                                <label className="text-xs font-medium">Select Playlist:</label>
+                                <select
+                                  value={selectedPlaylist}
+                                  onChange={(e) => {
+                                    setSelectedPlaylist(e.target.value);
+                                    if (e.target.value) {
+                                      loadPlaylistVideos(e.target.value);
+                                    }
+                                  }}
+                                  className="w-full p-2 border rounded text-sm"
+                                >
+                                  <option value="">Choose a playlist...</option>
+                                  {userPlaylists.map((playlist) => (
+                                    <option key={playlist.id} value={playlist.id}>
+                                      {playlist.title} ({playlist.itemCount} videos)
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
+                            )}
+                            
+                            <p className="text-xs text-muted-foreground">
+                              💡 Connect your channel to access your personal meditation playlists
+                            </p>
+                          </div>
+                        </Card>
+                      )}
                       
                       {selectedBackgroundAudio ? (
                         <div className="p-3 bg-primary/10 rounded-lg border border-primary/20">
