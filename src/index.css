@@ -128,7 +128,7 @@ All colors MUST be HSL.
     -webkit-text-size-adjust: 100%;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
-}
+  }
 
 @layer components {
   .sacred-card {
