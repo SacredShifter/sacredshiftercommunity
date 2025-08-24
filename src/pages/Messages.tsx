@@ -104,13 +104,13 @@ export default function Messages() {
   }
 
   return (
-    <div className="flex h-full bg-background -m-4 sm:-m-6 md:-m-8">
-      {/* Conversations Sidebar */}
-      <div className={`${selectedConversationId ? 'hidden md:flex' : 'flex'} w-full md:w-80 flex-col border-r h-full`}>
-        {/* Header */}
-        <Card className="rounded-none border-l-0 border-r-0 border-t-0 flex-shrink-0">
-          <div className="p-4 space-y-4">
-            <div className="flex items-center justify-between">
+    <div className="h-full flex flex-col">
+      <div className="flex flex-1 min-h-0">
+        {/* Conversations Sidebar */}
+        <div className={`${selectedConversationId ? 'hidden md:flex' : 'flex'} w-full md:w-80 flex-col border-r`}>
+          {/* Header */}
+          <div className="flex-shrink-0 p-4 border-b bg-background">
+            <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold">Messages</h2>
               <Button
                 variant="ghost"
@@ -121,8 +121,8 @@ export default function Messages() {
               </Button>
             </div>
 
-            {/* View Mode Selector - Vertical for mobile-friendly */}
-            <div className="space-y-2">
+            {/* View Mode Selector */}
+            <div className="space-y-2 mb-4">
               <div className="text-xs font-medium text-muted-foreground px-1">Message Mode</div>
               <div className="flex flex-col gap-1">
                 <Button
@@ -166,122 +166,122 @@ export default function Messages() {
               />
             </div>
           </div>
-        </Card>
 
-        {/* Conversations List */}
-        <div className="flex-1 overflow-y-auto -webkit-overflow-scrolling-touch p-2 space-y-2 scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent">
-          {loading ? (
-            <div className="space-y-2">
-              {[...Array(5)].map((_, i) => (
-                <div key={i} className="p-3 bg-muted/50 rounded-lg animate-pulse">
+          {/* Conversations List */}
+          <div className="flex-1 min-h-0 overflow-y-auto p-2 space-y-2">
+            {loading ? (
+              <div className="space-y-2">
+                {[...Array(5)].map((_, i) => (
+                  <div key={i} className="p-3 bg-muted/50 rounded-lg animate-pulse">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-12 h-12 bg-muted rounded-full" />
+                      <div className="flex-1 space-y-2">
+                        <div className="h-4 bg-muted rounded w-3/4" />
+                        <div className="h-3 bg-muted rounded w-1/2" />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : filteredConversations.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground">No conversations yet</p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowStartMessageModal(true)}
+                  className="mt-2"
+                >
+                  Start a conversation
+                </Button>
+              </div>
+            ) : (
+              filteredConversations.map((conversation) => (
+                <Card
+                  key={conversation.id}
+                  className={`p-3 cursor-pointer transition-colors hover:bg-muted/50 ${
+                    selectedConversationId === conversation.id ? 'bg-muted border-primary' : ''
+                  }`}
+                  onClick={() => handleConversationSelect(conversation.id)}
+                >
                   <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 bg-muted rounded-full" />
-                    <div className="flex-1 space-y-2">
-                      <div className="h-4 bg-muted rounded w-3/4" />
-                      <div className="h-3 bg-muted rounded w-1/2" />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : filteredConversations.length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-muted-foreground">No conversations yet</p>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowStartMessageModal(true)}
-                className="mt-2"
-              >
-                Start a conversation
-              </Button>
-            </div>
-          ) : (
-            filteredConversations.map((conversation) => (
-              <Card
-                key={conversation.id}
-                className={`p-3 cursor-pointer transition-colors hover:bg-muted/50 ${
-                  selectedConversationId === conversation.id ? 'bg-muted border-primary' : ''
-                }`}
-                onClick={() => handleConversationSelect(conversation.id)}
-              >
-                <div className="flex items-center space-x-3">
-                  <Avatar className="w-12 h-12">
-                    <AvatarImage src={conversation.other_participant?.avatar_url} />
-                    <AvatarFallback className="bg-primary/10 text-primary">
-                      {conversation.other_participant?.display_name 
-                        ? getInitials(conversation.other_participant.display_name)
-                        : '?'
-                      }
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between">
-                      <p className="font-medium truncate">
-                        {conversation.other_participant?.display_name || 'Unknown User'}
+                    <Avatar className="w-12 h-12">
+                      <AvatarImage src={conversation.other_participant?.avatar_url} />
+                      <AvatarFallback className="bg-primary/10 text-primary">
+                        {conversation.other_participant?.display_name 
+                          ? getInitials(conversation.other_participant.display_name)
+                          : '?'
+                        }
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <p className="font-medium truncate">
+                          {conversation.other_participant?.display_name || 'Unknown User'}
+                        </p>
+                        {conversation.last_message_at && (
+                          <span className="text-xs text-muted-foreground">
+                            {formatTime(conversation.last_message_at)}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-sm text-muted-foreground truncate">
+                        {conversation.last_message?.content || 'Start a conversation...'}
                       </p>
-                      {conversation.last_message_at && (
-                        <span className="text-xs text-muted-foreground">
-                          {formatTime(conversation.last_message_at)}
-                        </span>
-                      )}
                     </div>
-                    <p className="text-sm text-muted-foreground truncate">
-                      {conversation.last_message?.content || 'Start a conversation...'}
-                    </p>
                   </div>
-                </div>
-              </Card>
-            ))
-          )}
-        </div>
-      </div>
-
-      {/* Chat Interface */}
-      {selectedConversationId ? (
-        <div className="flex-1 flex flex-col">
-          {viewMode === 'sacred' && (
-            <SacredQuantumMessageInterface
-              selectedUserId={conversations.find(c => c.id === selectedConversationId)?.other_participant?.id || selectedConversationId}
-              onBack={() => setSelectedConversationId(null)}
-            />
-          )}
-          
-          {viewMode === 'quantum' && (
-            <SacredQuantumMessageInterface
-              selectedUserId={conversations.find(c => c.id === selectedConversationId)?.other_participant?.id || selectedConversationId}
-              onBack={() => setSelectedConversationId(null)}
-            />
-          )}
-          
-          {viewMode === 'classic' && (
-            <ClassicChatInterface
-              selectedUserId={conversations.find(c => c.id === selectedConversationId)?.other_participant?.id || selectedConversationId}
-              onBack={() => setSelectedConversationId(null)}
-            />
-          )}
-        </div>
-      ) : (
-        <div className="hidden lg:flex flex-1 items-center justify-center relative">
-          <div className="text-center">
-            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center mx-auto mb-4 backdrop-blur-sm">
-              <Heart className="h-8 w-8 text-primary" />
-            </div>
-            <h3 className="text-xl font-medium mb-2 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              Communication Portal
-            </h3>
-            <p className="text-muted-foreground mb-4">
-              Select a conversation to begin messaging
-            </p>
-            <Button 
-              onClick={() => setShowStartMessageModal(true)}
-              className="bg-gradient-to-r from-primary to-secondary"
-            >
-              Start New Conversation
-            </Button>
+                </Card>
+              ))
+            )}
           </div>
         </div>
-      )}
+
+        {/* Chat Interface */}
+        {selectedConversationId ? (
+          <div className="flex-1 min-h-0 flex flex-col">
+            {viewMode === 'sacred' && (
+              <SacredQuantumMessageInterface
+                selectedUserId={conversations.find(c => c.id === selectedConversationId)?.other_participant?.id || selectedConversationId}
+                onBack={() => setSelectedConversationId(null)}
+              />
+            )}
+            
+            {viewMode === 'quantum' && (
+              <SacredQuantumMessageInterface
+                selectedUserId={conversations.find(c => c.id === selectedConversationId)?.other_participant?.id || selectedConversationId}
+                onBack={() => setSelectedConversationId(null)}
+              />
+            )}
+            
+            {viewMode === 'classic' && (
+              <ClassicChatInterface
+                selectedUserId={conversations.find(c => c.id === selectedConversationId)?.other_participant?.id || selectedConversationId}
+                onBack={() => setSelectedConversationId(null)}
+              />
+            )}
+          </div>
+        ) : (
+          <div className="hidden lg:flex flex-1 items-center justify-center">
+            <div className="text-center">
+              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center mx-auto mb-4 backdrop-blur-sm">
+                <Heart className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-xl font-medium mb-2 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                Communication Portal
+              </h3>
+              <p className="text-muted-foreground mb-4">
+                Select a conversation to begin messaging
+              </p>
+              <Button 
+                onClick={() => setShowStartMessageModal(true)}
+                className="bg-gradient-to-r from-primary to-secondary"
+              >
+                Start New Conversation
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Synchronicity Threads Overlay */}
       <SynchronicityThreads

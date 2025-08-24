@@ -162,7 +162,7 @@ export const DirectMessageInterface: React.FC<DirectMessageInterfaceProps> = ({
   };
 
   return (
-    <div className={`flex flex-col h-screen bg-background/80 backdrop-blur-sm rounded-lg border ${className}`}>
+    <div className={`flex flex-col h-full bg-background/80 backdrop-blur-sm rounded-lg border ${className}`}>
       {/* Header */}
       <div className="flex items-center gap-3 p-4 border-b border-border/50 flex-shrink-0">
         {onClose && (

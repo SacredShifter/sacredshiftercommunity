@@ -122,9 +122,9 @@ export const ClassicChatInterface: React.FC<ClassicChatProps> = ({
   }
 
   return (
-    <div className="flex-1 flex flex-col bg-background">
+    <div className="flex-1 flex flex-col min-h-0">
       {/* Chat Header */}
-      <Card className="rounded-none border-l-0 border-r-0 border-t-0">
+      <div className="flex-shrink-0 border-b bg-background">
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center space-x-3">
             <Button
@@ -165,10 +165,10 @@ export const ClassicChatInterface: React.FC<ClassicChatProps> = ({
             </Button>
           </div>
         </div>
-      </Card>
+      </div>
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4">
         {loading ? (
           <div className="flex justify-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -247,34 +247,32 @@ export const ClassicChatInterface: React.FC<ClassicChatProps> = ({
       </div>
 
       {/* Message Input */}
-      <Card className="rounded-none border-l-0 border-r-0 border-b-0">
-        <div className="p-4">
-          <div className="flex items-end space-x-2">
-            <SacredSigilPicker onSigilSelect={handleSigilSelect} />
+      <div className="flex-shrink-0 border-t bg-background p-4">
+        <div className="flex items-end space-x-2">
+          <SacredSigilPicker onSigilSelect={handleSigilSelect} />
+          
+          <div className="flex-1 flex items-end space-x-2">
+            <Input
+              ref={inputRef}
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="Type a message..."
+              className="min-h-[40px] resize-none border-0 bg-muted focus-visible:ring-1"
+              disabled={loading}
+            />
             
-            <div className="flex-1 flex items-end space-x-2">
-              <Input
-                ref={inputRef}
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder="Type a message..."
-                className="min-h-[40px] resize-none border-0 bg-muted focus-visible:ring-1"
-                disabled={loading}
-              />
-              
-              <Button 
-                onClick={handleSendMessage}
-                disabled={!newMessage.trim() || loading}
-                size="sm"
-                className="mb-1"
-              >
-                <Send className="h-4 w-4" />
-              </Button>
-            </div>
+            <Button 
+              onClick={handleSendMessage}
+              disabled={!newMessage.trim() || loading}
+              size="sm"
+              className="mb-1"
+            >
+              <Send className="h-4 w-4" />
+            </Button>
           </div>
         </div>
-      </Card>
+      </div>
     </div>
   );
 };
