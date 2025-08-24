@@ -622,6 +622,36 @@ export type Database = {
         }
         Relationships: []
       }
+      aura_activity_log: {
+        Row: {
+          activity_type: string
+          id: string
+          metadata: Json
+          success: boolean
+          target_file: string
+          timestamp: string
+          user_id: string
+        }
+        Insert: {
+          activity_type: string
+          id?: string
+          metadata?: Json
+          success?: boolean
+          target_file: string
+          timestamp?: string
+          user_id: string
+        }
+        Update: {
+          activity_type?: string
+          id?: string
+          metadata?: Json
+          success?: boolean
+          target_file?: string
+          timestamp?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       aura_audit: {
         Row: {
           action: string
@@ -843,6 +873,56 @@ export type Database = {
         }
         Relationships: []
       }
+      aura_file_verification: {
+        Row: {
+          compilation_success: boolean | null
+          exists: boolean
+          file_path: string
+          id: string
+          implementation_id: string | null
+          imports_resolved: boolean | null
+          last_modified: string | null
+          size_bytes: number | null
+          syntax_valid: boolean | null
+          verification_details: Json | null
+          verification_timestamp: string
+        }
+        Insert: {
+          compilation_success?: boolean | null
+          exists: boolean
+          file_path: string
+          id?: string
+          implementation_id?: string | null
+          imports_resolved?: boolean | null
+          last_modified?: string | null
+          size_bytes?: number | null
+          syntax_valid?: boolean | null
+          verification_details?: Json | null
+          verification_timestamp?: string
+        }
+        Update: {
+          compilation_success?: boolean | null
+          exists?: boolean
+          file_path?: string
+          id?: string
+          implementation_id?: string | null
+          imports_resolved?: boolean | null
+          last_modified?: string | null
+          size_bytes?: number | null
+          syntax_valid?: boolean | null
+          verification_details?: Json | null
+          verification_timestamp?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "aura_file_verification_implementation_id_fkey"
+            columns: ["implementation_id"]
+            isOneToOne: false
+            referencedRelation: "aura_implementation_log"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       aura_grove_interactions: {
         Row: {
           aura_request: Json
@@ -885,6 +965,90 @@ export type Database = {
           resonance_impact?: number | null
           user_id?: string
           wisdom_generated?: string | null
+        }
+        Relationships: []
+      }
+      aura_implementation_log: {
+        Row: {
+          aura_confidence: number
+          code_type: string
+          component_name: string | null
+          content_hash: string | null
+          created_at: string
+          file_exists: boolean
+          file_path: string
+          id: string
+          implementation_details: Json
+          implementation_status: string
+          lines_of_code: number | null
+          updated_at: string | null
+          user_id: string
+          verification_status: string
+        }
+        Insert: {
+          aura_confidence?: number
+          code_type?: string
+          component_name?: string | null
+          content_hash?: string | null
+          created_at?: string
+          file_exists?: boolean
+          file_path: string
+          id?: string
+          implementation_details?: Json
+          implementation_status?: string
+          lines_of_code?: number | null
+          updated_at?: string | null
+          user_id: string
+          verification_status?: string
+        }
+        Update: {
+          aura_confidence?: number
+          code_type?: string
+          component_name?: string | null
+          content_hash?: string | null
+          created_at?: string
+          file_exists?: boolean
+          file_path?: string
+          id?: string
+          implementation_details?: Json
+          implementation_status?: string
+          lines_of_code?: number | null
+          updated_at?: string | null
+          user_id?: string
+          verification_status?: string
+        }
+        Relationships: []
+      }
+      aura_implementation_metrics: {
+        Row: {
+          average_confidence: number
+          created_at: string
+          id: string
+          implementation_types: Json
+          metric_date: string
+          successful_implementations: number
+          total_implementations: number
+          verified_files: number
+        }
+        Insert: {
+          average_confidence?: number
+          created_at?: string
+          id?: string
+          implementation_types?: Json
+          metric_date?: string
+          successful_implementations?: number
+          total_implementations?: number
+          verified_files?: number
+        }
+        Update: {
+          average_confidence?: number
+          created_at?: string
+          id?: string
+          implementation_types?: Json
+          metric_date?: string
+          successful_implementations?: number
+          total_implementations?: number
+          verified_files?: number
         }
         Relationships: []
       }
@@ -7247,6 +7411,42 @@ export type Database = {
         }
         Relationships: []
       }
+      message_delivery_status: {
+        Row: {
+          id: string
+          message_id: string
+          status: string
+          timestamp: string | null
+        }
+        Insert: {
+          id?: string
+          message_id: string
+          status: string
+          timestamp?: string | null
+        }
+        Update: {
+          id?: string
+          message_id?: string
+          status?: string
+          timestamp?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_delivery_status_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "direct_messages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "message_delivery_status_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "direct_messages_with_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
           body: string | null
@@ -12890,6 +13090,54 @@ export type Database = {
         }
         Relationships: []
       }
+      tracks: {
+        Row: {
+          chapters: Json | null
+          created_at: string | null
+          end_s: number | null
+          id: string
+          module_tags: string[] | null
+          owner: string | null
+          playlist_key: string
+          public: boolean | null
+          slug: string
+          start_s: number | null
+          title: string
+          updated_at: string | null
+          yt_video_id: string
+        }
+        Insert: {
+          chapters?: Json | null
+          created_at?: string | null
+          end_s?: number | null
+          id?: string
+          module_tags?: string[] | null
+          owner?: string | null
+          playlist_key: string
+          public?: boolean | null
+          slug: string
+          start_s?: number | null
+          title: string
+          updated_at?: string | null
+          yt_video_id: string
+        }
+        Update: {
+          chapters?: Json | null
+          created_at?: string | null
+          end_s?: number | null
+          id?: string
+          module_tags?: string[] | null
+          owner?: string | null
+          playlist_key?: string
+          public?: boolean | null
+          slug?: string
+          start_s?: number | null
+          title?: string
+          updated_at?: string | null
+          yt_video_id?: string
+        }
+        Relationships: []
+      }
       training_materials: {
         Row: {
           category: string
@@ -13168,6 +13416,30 @@ export type Database = {
           name?: string
           synthesis_text?: string | null
           visual_url?: string | null
+        }
+        Relationships: []
+      }
+      typing_indicators: {
+        Row: {
+          conversation_partner_id: string
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          user_id: string
+        }
+        Insert: {
+          conversation_partner_id: string
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          user_id: string
+        }
+        Update: {
+          conversation_partner_id?: string
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -15115,6 +15387,33 @@ export type Database = {
         }
         Relationships: []
       }
+      video_events: {
+        Row: {
+          context: Json | null
+          event: string
+          id: string
+          ts: string | null
+          user_id: string | null
+          video_id: string
+        }
+        Insert: {
+          context?: Json | null
+          event: string
+          id?: string
+          ts?: string | null
+          user_id?: string | null
+          video_id: string
+        }
+        Update: {
+          context?: Json | null
+          event?: string
+          id?: string
+          ts?: string | null
+          user_id?: string | null
+          video_id?: string
+        }
+        Relationships: []
+      }
       video_tags: {
         Row: {
           created_at: string | null
@@ -15770,8 +16069,16 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      cleanup_expired_typing: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       completely_delete_user_data: {
         Args: { user_id_param: string }
+        Returns: undefined
+      }
+      create_aura_implementation_log_if_not_exists: {
+        Args: Record<PropertyKey, never>
         Returns: undefined
       }
       create_session_reflections_table: {
