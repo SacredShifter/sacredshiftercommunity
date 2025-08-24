@@ -5,12 +5,12 @@ import { UIErrorBoundary } from "@/components/ErrorBoundary";
 import { AuraPresenceIndicator } from "@/components/AuraPresenceIndicator";
 import { NotificationDropdown } from "@/components/NotificationDropdown";
 import { SovereignMeshHeader } from "@/components/SovereignMeshHeader";
-import SimpleBackground from "@/components/SimpleBackground";
+
 
 export const MainLayout = () => {
   return (
     <SidebarProvider>
-      <SimpleBackground />
+      
       <div className="sidebar-layout min-h-screen flex w-full">
         <UIErrorBoundary>
           <AppSidebar />
