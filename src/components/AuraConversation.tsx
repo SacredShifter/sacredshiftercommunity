@@ -334,8 +334,8 @@ export function AuraConversation() {
   };
 
   return (
-    <div className="h-full flex flex-col">
-      <Card className="flex-1 flex flex-col">
+    <div className="h-[300px] flex flex-col">
+      <Card className="flex-1 flex flex-col overflow-hidden">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
