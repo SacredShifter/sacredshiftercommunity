@@ -56,8 +56,16 @@ export default function AuraAdmin() {
 
         <TabsContent value="console" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2">
-              <AuraConsole />
+            <div className="lg:col-span-2 h-[600px] flex flex-col">
+              <div className="bg-card border rounded-lg flex flex-col h-full">
+                <div className="p-4 border-b">
+                  <h3 className="text-lg font-semibold">Aura Console</h3>
+                  <p className="text-sm text-muted-foreground">Natural language command interface</p>
+                </div>
+                <div className="flex-1 overflow-hidden">
+                  <AuraConsole />
+                </div>
+              </div>
             </div>
             <div>
               <FieldIntegrityMonitor />

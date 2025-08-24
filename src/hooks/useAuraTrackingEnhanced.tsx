@@ -7,9 +7,9 @@ export interface ImplementationRecord {
   id: string;
   file_path: string;
   component_name?: string;
-  code_type: 'component' | 'page' | 'hook' | 'feature';
-  implementation_status: 'success' | 'failed' | 'pending' | 'verified';
-  verification_status: 'verified' | 'unverified' | 'error';
+  code_type: string;
+  implementation_status: string;
+  verification_status: string;
   file_exists: boolean;
   content_hash?: string;
   lines_of_code?: number;
@@ -32,7 +32,7 @@ export interface FileSystemCheck {
 
 export interface AuraActivity {
   id: string;
-  activity_type: 'implementation' | 'modification' | 'deletion' | 'verification';
+  activity_type: string;
   target_file: string;
   user_id: string;
   metadata: any;

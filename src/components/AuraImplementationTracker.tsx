@@ -29,8 +29,8 @@ interface ImplementationRecord {
   component_name?: string;
   code_type: string;
   created_at: string;
-  implementation_status: 'success' | 'failed' | 'pending' | 'verified';
-  verification_status: 'verified' | 'unverified' | 'error';
+  implementation_status: string;
+  verification_status: string;
   file_exists: boolean;
   content_hash?: string;
   lines_of_code?: number;
