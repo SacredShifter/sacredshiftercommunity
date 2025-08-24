@@ -126,7 +126,7 @@ const Feed = () => {
   }
 
   return (
-    <div className="h-[calc(100vh-3rem)] overflow-y-auto">
+    <div className="h-full overflow-y-auto">
       {/* Header */}
       <div className="sticky top-0 z-10 bg-background/20 backdrop-blur-md border-b border-white/10 -mt-4 sm:-mt-6 md:-mt-8 mb-4 sm:mb-6 md:mb-8">
         <div className="max-w-2xl mx-auto px-4 py-4">
