@@ -136,7 +136,7 @@ export const AudioEngine: React.FC = () => {
     }
 
     // Add special frequencies for specific scenes
-    if (scene === 'fear' && config.dissolve) {
+    if (scene === 'fear' && 'dissolve' in config) {
       const dissolveOsc = createOscillator(
         config.dissolve.frequency,
         'triangle',
@@ -148,7 +148,7 @@ export const AudioEngine: React.FC = () => {
       }
     }
 
-    if (scene === 'expansion' && config.harmony) {
+    if (scene === 'expansion' && 'harmony' in config) {
       const harmonyOsc = createOscillator(
         config.harmony.frequency,
         'sine',

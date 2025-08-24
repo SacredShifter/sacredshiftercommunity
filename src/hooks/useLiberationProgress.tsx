@@ -35,17 +35,17 @@ export const useLiberationProgress = (sessionId: string) => {
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from('liberation_sessions')
+        .from('liberation_sessions' as any)
         .select('*')
         .eq('user_id', user.id)
         .eq('session_id', sessionId)
-        .single();
+        .maybeSingle();
 
       if (error && error.code !== 'PGRST116') {
         throw error;
       }
 
-      setCurrentSession(data);
+      setCurrentSession(data as unknown as LiberationSession | null);
     } catch (err) {
       console.error('Error loading liberation session:', err);
       setError(err instanceof Error ? err.message : 'Failed to load session');
@@ -69,7 +69,7 @@ export const useLiberationProgress = (sessionId: string) => {
       if (currentSession) {
         // Update existing session
         const { error } = await supabase
-          .from('liberation_sessions')
+          .from('liberation_sessions' as any)
           .update(sessionData)
           .eq('id', currentSession.id);
 
@@ -95,14 +95,14 @@ export const useLiberationProgress = (sessionId: string) => {
         };
 
         const { data, error } = await supabase
-          .from('liberation_sessions')
+          .from('liberation_sessions' as any)
           .insert(newSession)
           .select()
-          .single();
+          .maybeSingle();
 
         if (error) throw error;
 
-        setCurrentSession(data);
+        setCurrentSession(data as unknown as LiberationSession | null);
       }
     } catch (err) {
       console.error('Error saving liberation progress:', err);
@@ -161,7 +161,7 @@ export const useLiberationProgress = (sessionId: string) => {
 
     try {
       const { data, error } = await supabase
-        .from('liberation_sessions')
+        .from('liberation_sessions' as any)
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });

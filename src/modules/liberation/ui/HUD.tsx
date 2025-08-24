@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Pause, Play, Settings, ArrowLeft } from 'lucide-react';
+import { Pause, Play, Settings, ArrowLeft, Volume2, VolumeX } from 'lucide-react';
 import { useLiberationState } from '../context/LiberationContext';
 import { cn } from '@/lib/utils';
 import { Legend } from './Legend';
+import { AccessibilityPanel } from './AccessibilityPanel';
 
 type Waypoint = {
   position: [number, number, number];
@@ -89,9 +90,19 @@ export const HUD: React.FC<HUDProps> = ({ waypoints, onWaypointClick }) => {
           <Button
             variant="ghost"
             size="sm"
+            onClick={() => setShowAccessibility(true)}
             className="bg-black/20 backdrop-blur-sm border border-white/20 text-white hover:bg-white/10"
           >
             <Settings className="h-4 w-4" />
+          </Button>
+          
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setAudioMuted(!audioMuted)}
+            className="bg-black/20 backdrop-blur-sm border border-white/20 text-white hover:bg-white/10"
+          >
+            {audioMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
           </Button>
         </div>
       </div>
@@ -164,6 +175,11 @@ export const HUD: React.FC<HUDProps> = ({ waypoints, onWaypointClick }) => {
       {currentScene === 'expansion' && (
         <Legend waypoints={waypoints} onWaypointClick={onWaypointClick} />
       )}
+
+      <AccessibilityPanel 
+        isOpen={showAccessibility} 
+        onClose={() => setShowAccessibility(false)} 
+      />
     </div>
   );
 };
