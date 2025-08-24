@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Users, User, Rss, Settings, LogOut, BookOpen, Video, Database, Archive, Scroll, Heart, MessageCircle, Brain, TreePine, Stars, Box } from "lucide-react";
+import { Home, Users, User, Rss, Settings, LogOut, BookOpen, Video, Database, Archive, Scroll, Heart, MessageCircle, Brain, TreePine, Stars, Box, Sparkles } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -26,6 +26,7 @@ const coreNavItems = [
 
 const sacredToolsItems = [
   { title: "Sacred Grove", url: "/grove", icon: TreePine, tooltip: "Sacred Grove - Your living wisdom ecosystem for consciousness exploration" },
+  { title: "Meditation", url: "/meditation", icon: Sparkles, tooltip: "Sacred Meditation - Individual practice and collective consciousness expansion" },
   { title: "Journal", url: "/journal", icon: BookOpen, tooltip: HelpTooltips.journal },
   { title: "Circles", url: "/circles", icon: Users, tooltip: HelpTooltips.circles },
   { title: "Personal Codex", url: "/codex", icon: Archive, tooltip: HelpTooltips.akashicConstellation },
