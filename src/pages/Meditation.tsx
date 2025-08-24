@@ -6,6 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Slider } from '@/components/ui/slider';
+import { Input } from '@/components/ui/input';
 import { 
   Play, 
   Pause, 
@@ -20,12 +21,19 @@ import {
   Volume2,
   VolumeX,
   Settings,
-  RefreshCw
+  RefreshCw,
+  Video,
+  Search,
+  PlayCircle,
+  List
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useSacredCircles } from '@/hooks/useSacredCircles';
+import { useYouTubeAPI } from '@/hooks/useYouTubeAPI';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { YouTubeVideo, YouTubePlaylist } from '@/types/youtube';
+import { SimpleVideoModal } from '@/components/YouTubeLibrary/SimpleVideoModal';
 
 type MeditationType = 'breathing' | 'loving-kindness' | 'chakra' | 'mindfulness' | 'body-scan';
 type SessionState = 'idle' | 'active' | 'paused' | 'completed';
@@ -87,6 +95,7 @@ export default function Meditation() {
   const { user } = useAuth();
   const { toast } = useToast();
   const { circles, loading: circlesLoading } = useSacredCircles();
+  const { getChannelPlaylists, searchVideos, loading: youtubeLoading } = useYouTubeAPI();
   
   // Solo meditation state
   const [selectedType, setSelectedType] = useState<MeditationType>('breathing');
@@ -102,12 +111,20 @@ export default function Meditation() {
   const [joinedSessionId, setJoinedSessionId] = useState<string | null>(null);
   const [isCreatingSession, setIsCreatingSession] = useState(false);
   
+  // YouTube integration state
+  const [meditationPlaylists, setMeditationPlaylists] = useState<YouTubePlaylist[]>([]);
+  const [meditationVideos, setMeditationVideos] = useState<YouTubeVideo[]>([]);
+  const [selectedVideo, setSelectedVideo] = useState<YouTubeVideo | null>(null);
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  
   // Refs
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     fetchActiveSessions();
+    loadMeditationContent();
     const interval = setInterval(fetchActiveSessions, 30000); // Update every 30 seconds
     return () => clearInterval(interval);
   }, []);
@@ -145,6 +162,41 @@ export default function Meditation() {
       ]);
     } catch (error) {
       console.error('Error fetching meditation sessions:', error);
+    }
+  };
+
+  const loadMeditationContent = async () => {
+    try {
+      // Load meditation playlists
+      const playlistsData = await getChannelPlaylists();
+      const meditationPlaylists = playlistsData.playlists.filter(playlist => 
+        playlist.title.toLowerCase().includes('meditation') ||
+        playlist.title.toLowerCase().includes('breathing') ||
+        playlist.title.toLowerCase().includes('mindfulness')
+      );
+      setMeditationPlaylists(meditationPlaylists);
+
+      // Search for meditation-related videos
+      const videosData = await searchVideos('meditation breathing mindfulness');
+      setMeditationVideos(videosData.videos.slice(0, 12)); // Limit to 12 videos
+    } catch (error) {
+      console.error('Error loading meditation content:', error);
+    }
+  };
+
+  const handleVideoPlay = (video: YouTubeVideo) => {
+    setSelectedVideo(video);
+    setIsVideoModalOpen(true);
+  };
+
+  const handleVideoSearch = async () => {
+    if (searchQuery.trim()) {
+      try {
+        const videosData = await searchVideos(`${searchQuery} meditation`);
+        setMeditationVideos(videosData.videos.slice(0, 12));
+      } catch (error) {
+        console.error('Error searching videos:', error);
+      }
     }
   };
 
@@ -359,7 +411,7 @@ export default function Meditation() {
       </div>
 
       <Tabs defaultValue="solo" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="solo" className="flex items-center gap-2">
             <Brain className="h-4 w-4" />
             Solo Practice
@@ -367,6 +419,10 @@ export default function Meditation() {
           <TabsTrigger value="group" className="flex items-center gap-2">
             <Users className="h-4 w-4" />
             Group Sessions
+          </TabsTrigger>
+          <TabsTrigger value="guided" className="flex items-center gap-2">
+            <Video className="h-4 w-4" />
+            Guided Videos
           </TabsTrigger>
         </TabsList>
 
@@ -640,7 +696,136 @@ export default function Meditation() {
             )}
           </div>
         </TabsContent>
+
+        {/* Guided Videos Tab */}
+        <TabsContent value="guided" className="space-y-4">
+          <div className="space-y-4">
+            <div className="flex items-center gap-4">
+              <div className="flex-1">
+                <Input
+                  placeholder="Search meditation videos..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleVideoSearch()}
+                />
+              </div>
+              <Button onClick={handleVideoSearch} disabled={youtubeLoading}>
+                <Search className="h-4 w-4 mr-2" />
+                Search
+              </Button>
+            </div>
+
+            {meditationPlaylists.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <List className="h-5 w-5 text-primary" />
+                    Meditation Playlists
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {meditationPlaylists.map((playlist) => (
+                      <Card key={playlist.id} className="cursor-pointer hover:shadow-md transition-shadow">
+                        <CardContent className="p-4">
+                          <div className="aspect-video mb-3 rounded overflow-hidden">
+                            <img 
+                              src={playlist.thumbnail} 
+                              alt={playlist.title}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <h3 className="font-medium text-sm mb-2 line-clamp-2">{playlist.title}</h3>
+                          <p className="text-xs text-muted-foreground">
+                            {playlist.itemCount} videos
+                          </p>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Video className="h-5 w-5 text-primary" />
+                  Guided Meditation Videos
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {youtubeLoading ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {Array.from({ length: 6 }).map((_, i) => (
+                      <Card key={i} className="animate-pulse">
+                        <CardContent className="p-4">
+                          <div className="aspect-video bg-muted rounded mb-3" />
+                          <div className="h-4 bg-muted rounded mb-2" />
+                          <div className="h-3 bg-muted rounded w-2/3" />
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {meditationVideos.map((video) => (
+                      <Card 
+                        key={video.id} 
+                        className="cursor-pointer hover:shadow-md transition-shadow group"
+                        onClick={() => handleVideoPlay(video)}
+                      >
+                        <CardContent className="p-4">
+                          <div className="aspect-video mb-3 rounded overflow-hidden relative">
+                            <img 
+                              src={video.thumbnail} 
+                              alt={video.title}
+                              className="w-full h-full object-cover"
+                            />
+                            <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                              <PlayCircle className="h-12 w-12 text-white" />
+                            </div>
+                          </div>
+                          <h3 className="font-medium text-sm mb-2 line-clamp-2">{video.title}</h3>
+                          <div className="flex items-center justify-between text-xs text-muted-foreground">
+                            <span>{video.duration}</span>
+                            <span>{parseInt(video.viewCount).toLocaleString()} views</span>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+
+                {!youtubeLoading && meditationVideos.length === 0 && (
+                  <div className="text-center py-8">
+                    <Video className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
+                    <p className="text-muted-foreground">
+                      No meditation videos found
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      Try searching for specific meditation topics
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
       </Tabs>
+
+      {/* Video Player Modal */}
+      <SimpleVideoModal
+        video={selectedVideo}
+        isOpen={isVideoModalOpen}
+        onClose={() => {
+          setIsVideoModalOpen(false);
+          setSelectedVideo(null);
+        }}
+        onWatchLater={() => {}}
+        onFavorite={() => {}}
+        userMetadata={undefined}
+      />
     </div>
   );
 }
