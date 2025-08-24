@@ -171,7 +171,7 @@ const Index = () => {
   ];
 
   return (
-    <div className="h-[calc(100vh-3rem)] overflow-hidden bg-gradient-to-br from-background via-background/95 to-primary/5 relative">
+    <div className="h-full overflow-y-auto bg-gradient-to-br from-background via-background/95 to-primary/5 relative">
       {/* Living Background */}
       <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:50px_50px]" />
       <div 
@@ -187,8 +187,7 @@ const Index = () => {
         style={{ animation: 'consciousness-breathe 10s ease-in-out infinite' }}
       />
       
-      <div className="relative z-10 h-full overflow-y-auto">
-        <div className="container mx-auto px-4 py-12">
+      <div className="relative z-10 container mx-auto px-4 py-12">
         {/* Hero Section */}
         <div className="text-center mb-12 space-y-6">
           <div className="flex justify-center mb-6">
@@ -385,8 +384,7 @@ const Index = () => {
             </div>
           </div>
         </div>
-        </div>
-        </div>
+      </div>
 
     </div>
   );
