@@ -177,24 +177,57 @@ function AnimatedGeometry({ geometry, isSelected, onClick }: GeometryShapeProps)
   const meshRef = useRef<THREE.Group>(null);
   const materialRef = useRef<THREE.MeshStandardMaterial>(null);
   
-  useFrame(() => {
+  useFrame((state) => {
     if (meshRef.current) {
-      meshRef.current.rotation.x += 0.005;
-      meshRef.current.rotation.y += 0.01;
+      // Smooth, sacred rotation
+      meshRef.current.rotation.x += 0.003;
+      meshRef.current.rotation.y += 0.005;
       
       if (isSelected) {
-        meshRef.current.rotation.z += 0.02;
-        meshRef.current.scale.setScalar(1.2);
+        // Golden ratio based pulsing
+        const scale = 1 + Math.sin(state.clock.elapsedTime * 2) * 0.1;
+        meshRef.current.scale.setScalar(scale);
+        meshRef.current.rotation.z += 0.01;
       } else {
         meshRef.current.scale.setScalar(1);
       }
     }
     
     if (materialRef.current) {
-      materialRef.current.emissiveIntensity = isSelected ? 0.2 : 0.05;
-      materialRef.current.wireframe = isSelected;
+      if (isSelected) {
+        materialRef.current.emissiveIntensity = 0.3 + Math.sin(state.clock.elapsedTime * 3) * 0.1;
+      } else {
+        materialRef.current.emissiveIntensity = 0.1;
+      }
     }
   });
+
+  const renderGeometry = () => {
+    switch (geometry.id) {
+      case 'tetrahedron':
+        return <TetrahedronGeometry />;
+      case 'cube':
+        return <CubeGeometry />;
+      case 'octahedron':
+        return <OctahedronGeometry />;
+      case 'icosahedron':
+        return <IcosahedronGeometry />;
+      case 'dodecahedron':
+        return <DodecahedronGeometry />;
+      case 'circle':
+        return <CircleGeometry />;
+      case 'witness':
+        return <WitnessGeometry />;
+      case 'eros':
+        return <ErosGeometry />;
+      case 'butterfly':
+        return <ButterflyGeometry />;
+      case 'justice':
+        return <JusticeGeometry />;
+      default:
+        return <sphereGeometry args={[1, 32, 32]} />;
+    }
+  };
 
   return (
     <group
@@ -204,38 +237,45 @@ function AnimatedGeometry({ geometry, isSelected, onClick }: GeometryShapeProps)
       onPointerOver={() => document.body.style.cursor = 'pointer'}
       onPointerOut={() => document.body.style.cursor = 'auto'}
     >
-      <mesh>
-        {geometry.id === 'tetrahedron' && <tetrahedronGeometry />}
-        {geometry.id === 'cube' && <boxGeometry />}
-        {geometry.id === 'circle' && <circleGeometry args={[1, 32]} />}
-        {geometry.id === 'witness' && <sphereGeometry args={[0.8, 32, 32]} />}
-        {geometry.id === 'eros' && <ErosGeometry />}
-        {geometry.id === 'butterfly' && <ButterflyGeometry />}
-        {geometry.id === 'justice' && <JusticeGeometry />}
-        {geometry.id === 'octahedron' && <octahedronGeometry />}
-        {geometry.id === 'icosahedron' && <icosahedronGeometry />}
-        {geometry.id === 'dodecahedron' && <dodecahedronGeometry />}
+      <mesh castShadow receiveShadow>
+        {renderGeometry()}
         <meshStandardMaterial
           ref={materialRef}
           color={geometry.color}
           emissive={geometry.color}
-          emissiveIntensity={isSelected ? 0.2 : 0.05}
+          emissiveIntensity={isSelected ? 0.3 : 0.1}
           transparent
-          opacity={0.8}
-          wireframe={isSelected}
+          opacity={isSelected ? 0.9 : 0.8}
+          roughness={0.1}
+          metalness={0.3}
           side={THREE.DoubleSide}
         />
       </mesh>
 
-      {/* Element Label */}
+      {/* Enhanced wireframe overlay for selected */}
+      {isSelected && (
+        <mesh>
+          {renderGeometry()}
+          <meshBasicMaterial
+            color={geometry.color}
+            wireframe
+            transparent
+            opacity={0.4}
+          />
+        </mesh>
+      )}
+
+      {/* Element Label with better styling */}
       {geometry.element && (
-        <Html position={[0, -2, 0]} center>
+        <Html position={[0, -2.2, 0]} center>
           <div 
-            className="text-center font-semibold pointer-events-none"
+            className="text-center font-bold pointer-events-none px-2 py-1 rounded-md backdrop-blur-sm"
             style={{ 
               color: geometry.color,
-              fontSize: '12px',
-              textShadow: '0 0 4px rgba(0,0,0,0.8)'
+              fontSize: '14px',
+              textShadow: '0 0 8px rgba(0,0,0,0.9)',
+              background: `${geometry.color}20`,
+              border: `1px solid ${geometry.color}40`
             }}
           >
             {geometry.element}
@@ -243,17 +283,28 @@ function AnimatedGeometry({ geometry, isSelected, onClick }: GeometryShapeProps)
         </Html>
       )}
 
-      {/* Sacred ratio indicators */}
+      {/* Sacred ratio indicators with golden spiral */}
       {isSelected && (
         <group>
-          {/* Golden ratio ring */}
+          {/* Golden ratio rings */}
           <mesh rotation={[Math.PI / 2, 0, 0]}>
-            <ringGeometry args={[1.8, 2, 32]} />
+            <ringGeometry args={[1.8, 1.85, 64]} />
+            <meshStandardMaterial
+              color="#FFD700"
+              transparent
+              opacity={0.6}
+              emissive="#FFD700"
+              emissiveIntensity={0.2}
+            />
+          </mesh>
+          <mesh rotation={[Math.PI / 2, 0, 0]}>
+            <ringGeometry args={[2.2, 2.25, 64]} />
             <meshStandardMaterial
               color="#FFD700"
               transparent
               opacity={0.3}
-              side={THREE.DoubleSide}
+              emissive="#FFD700"
+              emissiveIntensity={0.1}
             />
           </mesh>
         </group>
@@ -262,20 +313,81 @@ function AnimatedGeometry({ geometry, isSelected, onClick }: GeometryShapeProps)
   );
 }
 
+// Enhanced Sacred Geometry Components
+function TetrahedronGeometry() {
+  return <tetrahedronGeometry args={[1, 0]} />;
+}
+
+function CubeGeometry() {
+  return <boxGeometry args={[1.4, 1.4, 1.4]} />;
+}
+
+function OctahedronGeometry() {
+  return <octahedronGeometry args={[1, 0]} />;
+}
+
+function IcosahedronGeometry() {
+  return <icosahedronGeometry args={[1, 0]} />;
+}
+
+function DodecahedronGeometry() {
+  return <dodecahedronGeometry args={[1, 0]} />;
+}
+
+function CircleGeometry() {
+  return (
+    <group>
+      {/* Multiple concentric circles for sacred symbolism */}
+      <mesh>
+        <ringGeometry args={[0.9, 1, 64]} />
+      </mesh>
+      <mesh>
+        <ringGeometry args={[0.6, 0.65, 64]} />
+      </mesh>
+      <mesh>
+        <circleGeometry args={[0.3, 64]} />
+      </mesh>
+    </group>
+  );
+}
+
+function WitnessGeometry() {
+  return (
+    <group>
+      {/* Central awareness sphere */}
+      <mesh>
+        <sphereGeometry args={[0.8, 32, 32]} />
+      </mesh>
+      {/* Consciousness field rings */}
+      <mesh rotation={[Math.PI / 2, 0, 0]}>
+        <ringGeometry args={[1.2, 1.25, 32]} />
+      </mesh>
+      <mesh rotation={[0, 0, Math.PI / 2]}>
+        <ringGeometry args={[1.2, 1.25, 32]} />
+      </mesh>
+      <mesh rotation={[Math.PI / 4, Math.PI / 4, 0]}>
+        <ringGeometry args={[1.2, 1.25, 32]} />
+      </mesh>
+    </group>
+  );
+}
+
 function ErosGeometry() {
   return (
     <group>
-      <mesh position={[0, 0, 0]}>
-        <sphereGeometry args={[0.6, 16, 16]} />
+      {/* Sacred heart form using spheres */}
+      <mesh position={[0, -0.2, 0]}>
+        <sphereGeometry args={[0.8, 16, 16]} />
       </mesh>
-      <mesh position={[0, 0.4, 0]}>
-        <sphereGeometry args={[0.3, 16, 16]} />
+      <mesh position={[-0.3, 0.3, 0]}>
+        <sphereGeometry args={[0.4, 16, 16]} />
       </mesh>
-      <mesh position={[-0.2, 0.4, 0]}>
-        <sphereGeometry args={[0.3, 16, 16]} />
+      <mesh position={[0.3, 0.3, 0]}>
+        <sphereGeometry args={[0.4, 16, 16]} />
       </mesh>
-      <mesh position={[0.2, 0.4, 0]}>
-        <sphereGeometry args={[0.3, 16, 16]} />
+      {/* Energy vortex */}
+      <mesh rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[1, 0.1, 8, 16]} />
       </mesh>
     </group>
   );
@@ -284,11 +396,22 @@ function ErosGeometry() {
 function ButterflyGeometry() {
   return (
     <group>
-      <mesh position={[-0.6, 0, 0]} rotation={[0, 0.5, 0]}>
-        <planeGeometry args={[1, 1]} />
+      {/* Sacred butterfly with golden ratio proportions */}
+      <mesh position={[-0.8, 0.3, 0]} rotation={[0, 0, 0.3]}>
+        <planeGeometry args={[1.2, 1.6]} />
       </mesh>
-      <mesh position={[0.6, 0, 0]} rotation={[0, -0.5, 0]}>
-        <planeGeometry args={[1, 1]} />
+      <mesh position={[0.8, 0.3, 0]} rotation={[0, 0, -0.3]}>
+        <planeGeometry args={[1.2, 1.6]} />
+      </mesh>
+      <mesh position={[-0.6, -0.3, 0]} rotation={[0, 0, -0.3]}>
+        <planeGeometry args={[0.8, 1]} />
+      </mesh>
+      <mesh position={[0.6, -0.3, 0]} rotation={[0, 0, 0.3]}>
+        <planeGeometry args={[0.8, 1]} />
+      </mesh>
+      {/* Body */}
+      <mesh position={[0, 0, 0]}>
+        <cylinderGeometry args={[0.05, 0.05, 2, 8]} />
       </mesh>
     </group>
   );
@@ -297,17 +420,27 @@ function ButterflyGeometry() {
 function JusticeGeometry() {
   return (
     <group>
+      {/* Sacred scales of justice */}
       <mesh position={[0, 0, 0]}>
-        <boxGeometry args={[0.1, 1, 0.1]} />
+        <cylinderGeometry args={[0.05, 0.05, 2, 8]} />
       </mesh>
-      <mesh position={[0, 0.5, 0]}>
-        <boxGeometry args={[1, 0.1, 0.1]} />
+      <mesh position={[0, 0.8, 0]}>
+        <cylinderGeometry args={[0.02, 0.02, 1.6, 8]} />
+        <meshStandardMaterial color="#C0C0C0" />
       </mesh>
-      <mesh position={[-0.5, 0.25, 0]}>
-        <boxGeometry args={[0.1, 0.5, 0.1]} />
+      {/* Scale plates */}
+      <mesh position={[-0.7, 0.6, 0]}>
+        <cylinderGeometry args={[0.3, 0.3, 0.05, 16]} />
       </mesh>
-      <mesh position={[0.5, 0.25, 0]}>
-        <boxGeometry args={[0.1, 0.5, 0.1]} />
+      <mesh position={[0.7, 0.6, 0]}>
+        <cylinderGeometry args={[0.3, 0.3, 0.05, 16]} />
+      </mesh>
+      {/* Chains */}
+      <mesh position={[-0.35, 0.7, 0]}>
+        <cylinderGeometry args={[0.01, 0.01, 0.3, 8]} />
+      </mesh>
+      <mesh position={[0.35, 0.7, 0]}>
+        <cylinderGeometry args={[0.01, 0.01, 0.3, 8]} />
       </mesh>
     </group>
   );
@@ -315,25 +448,40 @@ function JusticeGeometry() {
 
 function FlowerOfLife() {
   const positions: [number, number, number][] = [
-    [0, 0, -2], // Center
-    [1.5, 0, -2], [-1.5, 0, -2], // Horizontal
-    [0.75, 1.3, -2], [-0.75, 1.3, -2], // Top
-    [0.75, -1.3, -2], [-0.75, -1.3, -2] // Bottom
+    [0, 0, -4], // Center
+    [1.732, 0, -4], [-1.732, 0, -4], // Horizontal (√3 for perfect hexagon)
+    [0.866, 1.5, -4], [-0.866, 1.5, -4], // Top
+    [0.866, -1.5, -4], [-0.866, -1.5, -4], // Bottom
+    [2.598, 1.5, -4], [2.598, -1.5, -4], // Right
+    [-2.598, 1.5, -4], [-2.598, -1.5, -4], // Left
+    [1.732, 3, -4], [-1.732, 3, -4], // Far top
+    [1.732, -3, -4], [-1.732, -3, -4] // Far bottom
   ];
 
   return (
     <group>
       {positions.map((pos, i) => (
         <mesh key={i} position={pos}>
-          <ringGeometry args={[0.7, 0.75, 32]} />
+          <ringGeometry args={[0.95, 1, 64]} />
           <meshStandardMaterial
             color="#FFD700"
             transparent
-            opacity={0.4}
+            opacity={i === 0 ? 0.6 : 0.3}
+            emissive="#FFD700"
+            emissiveIntensity={i === 0 ? 0.2 : 0.1}
             side={THREE.DoubleSide}
           />
         </mesh>
       ))}
+      {/* Sacred center point */}
+      <mesh position={[0, 0, -3.9]}>
+        <sphereGeometry args={[0.1, 16, 16]} />
+        <meshStandardMaterial
+          color="#FFFFFF"
+          emissive="#FFFFFF"
+          emissiveIntensity={0.5}
+        />
+      </mesh>
     </group>
   );
 }
@@ -361,15 +509,37 @@ export default function SacredGeometry3D({ hideInCeremonies = false }: SacredGeo
       {/* 3D Canvas - Reduced height for better scrolling */}
       <div className="h-[70vh] relative">
         <Canvas
-          camera={{ position: [6, 4, 8], fov: 60 }}
-          style={{ background: 'radial-gradient(circle, #0f0f23 0%, #1a1a2e 100%)' }}
+          camera={{ position: [8, 6, 10], fov: 50 }}
+          style={{ background: 'radial-gradient(circle, #0a0a0f 0%, #1a1a2e 100%)' }}
+          shadows
+          gl={{ antialias: true, alpha: false }}
         >
           <Suspense fallback={null}>
-            {/* Lighting */}
-            <ambientLight intensity={0.3} />
-            <pointLight position={[10, 10, 10]} intensity={0.8} />
-            <pointLight position={[-10, -10, -10]} intensity={0.3} color="#9370DB" />
-            <spotLight position={[0, 5, 0]} intensity={0.5} color="#FFD700" />
+            {/* Enhanced Lighting Setup */}
+            <ambientLight intensity={0.4} color="#ffffff" />
+            <directionalLight 
+              position={[10, 10, 5]} 
+              intensity={1.2} 
+              color="#ffffff"
+              castShadow
+              shadow-mapSize-width={2048}
+              shadow-mapSize-height={2048}
+              shadow-camera-far={50}
+              shadow-camera-left={-10}
+              shadow-camera-right={10}
+              shadow-camera-top={10}
+              shadow-camera-bottom={-10}
+            />
+            <pointLight position={[-10, -10, -10]} intensity={0.6} color="#9370DB" />
+            <pointLight position={[10, -10, 10]} intensity={0.4} color="#FFD700" />
+            <spotLight 
+              position={[0, 15, 0]} 
+              intensity={0.8} 
+              color="#87CEEB"
+              angle={Math.PI / 3}
+              penumbra={0.2}
+              castShadow
+            />
             
             {/* Sacred Geometries */}
             {geometryData.map(geometry => (
@@ -381,18 +551,20 @@ export default function SacredGeometry3D({ hideInCeremonies = false }: SacredGeo
               />
             ))}
             
-            {/* Flower of Life Background */}
+            {/* Enhanced Flower of Life Background */}
             {showFlowerOfLife && <FlowerOfLife />}
             
             {/* Camera Controls */}
             <OrbitControls
-              enablePan={false}
+              enablePan={true}
               enableZoom={true}
               enableRotate={true}
-              minDistance={4}
-              maxDistance={15}
+              minDistance={6}
+              maxDistance={20}
               minPolarAngle={0}
               maxPolarAngle={Math.PI}
+              autoRotate={false}
+              autoRotateSpeed={0.5}
             />
           </Suspense>
         </Canvas>
