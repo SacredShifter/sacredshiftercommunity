@@ -134,12 +134,11 @@ All colors MUST be HSL.
 
   body::before {
     content: '';
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    min-height: 100vh;
-    height: 100%;
+    height: 100vh;
     pointer-events: none;
     z-index: -1;
     /* Geometric Portal Grid */
@@ -155,12 +154,11 @@ All colors MUST be HSL.
 
   body::after {
     content: '';
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    min-height: 100vh;
-    height: 100%;
+    height: 100vh;
     pointer-events: none;
     z-index: -1;
     /* Energy Particles */
@@ -181,9 +179,8 @@ All colors MUST be HSL.
     position: relative;
     z-index: 0;
     height: 100vh;
+    overflow: hidden;
     background: transparent;
-    transform: translateZ(0);
-    will-change: auto;
   }
 
   h1, h2, h3, h4, h5, h6 {
