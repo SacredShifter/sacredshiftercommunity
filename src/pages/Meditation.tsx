@@ -558,24 +558,60 @@ export default function Meditation() {
                           </div>
                         </div>
                       ) : (
-                        <div className="grid grid-cols-1 gap-2 max-h-32 overflow-y-auto">
-                          {meditationVideos.slice(0, 3).map((video) => (
-                            <div
-                              key={video.id}
-                              className="flex items-center gap-3 p-2 hover:bg-muted/50 rounded cursor-pointer"
-                              onClick={() => selectBackgroundAudio(video)}
-                            >
-                              <img
-                                src={video.thumbnail}
-                                alt={video.title}
-                                className="w-10 h-6 object-cover rounded"
-                              />
-                              <div className="flex-1 min-w-0">
-                                <p className="text-xs font-medium line-clamp-1">{video.title}</p>
-                                <p className="text-xs text-muted-foreground">{video.duration}</p>
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-2">
+                            <Input
+                              placeholder="Search for background music..."
+                              value={searchQuery}
+                              onChange={(e) => setSearchQuery(e.target.value)}
+                              onKeyDown={(e) => e.key === 'Enter' && handleVideoSearch()}
+                              className="flex-1"
+                            />
+                            <Button size="sm" onClick={handleVideoSearch} disabled={youtubeLoading}>
+                              <Search className="h-4 w-4" />
+                            </Button>
+                          </div>
+                          
+                          <div className="max-h-48 overflow-y-auto space-y-2 border rounded-lg p-2">
+                            {youtubeLoading ? (
+                              <div className="text-center py-4">
+                                <RefreshCw className="h-4 w-4 animate-spin mx-auto" />
+                                <p className="text-xs text-muted-foreground mt-2">Loading tracks...</p>
                               </div>
-                            </div>
-                          ))}
+                            ) : meditationVideos.length > 0 ? (
+                              meditationVideos.slice(0, 8).map((video) => (
+                                <div
+                                  key={video.id}
+                                  className="flex items-center gap-3 p-2 hover:bg-muted/50 rounded cursor-pointer transition-colors border border-transparent hover:border-primary/20"
+                                  onClick={() => selectBackgroundAudio(video)}
+                                >
+                                  <img
+                                    src={video.thumbnail}
+                                    alt={video.title}
+                                    className="w-12 h-8 object-cover rounded flex-shrink-0"
+                                  />
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-medium line-clamp-1">{video.title}</p>
+                                    <p className="text-xs text-muted-foreground">{video.duration}</p>
+                                  </div>
+                                  <Button size="sm" variant="ghost" className="px-2">
+                                    Select
+                                  </Button>
+                                </div>
+                              ))
+                            ) : (
+                              <div className="text-center py-4">
+                                <Video className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+                                <p className="text-xs text-muted-foreground">
+                                  Search for meditation music or tracks
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                          
+                          <p className="text-xs text-muted-foreground">
+                            💡 Tip: Search for "ambient", "nature sounds", "singing bowls", or "meditation music"
+                          </p>
                         </div>
                       )}
                     </div>
