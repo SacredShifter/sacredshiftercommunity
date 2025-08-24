@@ -267,7 +267,7 @@ export function AkashicConstellation() {
         className="mb-8 text-center"
       >
         <h1 className="text-4xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent mb-2">
-          ⟐ The Akashic Constellation ⟐
+          ⟐ Personal Codex ⟐
         </h1>
         <p className="text-muted-foreground">Your eternal wisdom organized by sacred archetypal resonance</p>
       </motion.div>

@@ -309,7 +309,7 @@ export function CollectiveAkashicConstellation() {
         className="mb-8 text-center"
       >
         <h1 className="text-4xl font-bold bg-gradient-to-r from-primary via-accent via-secondary to-primary bg-clip-text text-transparent mb-2">
-          ⟐ Collective Akashic Constellation ⟐
+          ⟐ Collective Codex ⟐
         </h1>
         <p className="text-muted-foreground">Humanity's shared wisdom organized by collective archetypal resonance</p>
         <div className="flex items-center justify-center gap-2 mt-2 text-sm text-muted-foreground">

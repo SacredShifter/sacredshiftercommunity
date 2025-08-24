@@ -39,7 +39,7 @@ const geometryData: GeometryData[] = [
     faces: 4,
     vertices: 4,
     edges: 6,
-    color: '#FF4500',
+    color: '#FF6B35',
     position: [-4, 2, 0],
   },
   {
@@ -66,7 +66,7 @@ const geometryData: GeometryData[] = [
     faces: 8,
     vertices: 6,
     edges: 12,
-    color: '#87CEEB',
+    color: '#00CED1',
     position: [0, 2, 0],
   },
   {
@@ -105,7 +105,7 @@ const geometryData: GeometryData[] = [
     faces: 1,
     vertices: 32,
     edges: 32,
-    color: '#FFFFFF',
+    color: '#FFD700',
     position: [-4, 0, 0],
     mantra: 'Circle of Source.',
   },
@@ -133,7 +133,7 @@ const geometryData: GeometryData[] = [
     faces: 0,
     vertices: 0,
     edges: 0,
-    color: '#FF007F',
+    color: '#FF1493',
     position: [0, 0, 0],
     mantra: 'Root of Desire ignites.',
   },
@@ -147,7 +147,7 @@ const geometryData: GeometryData[] = [
     faces: 2,
     vertices: 6,
     edges: 6,
-    color: '#FFD700',
+    color: '#FF8C00',
     position: [2, 0, 0],
     mantra: 'Metamorphosis through fire.',
   },
@@ -161,7 +161,7 @@ const geometryData: GeometryData[] = [
     faces: 2,
     vertices: 4,
     edges: 4,
-    color: '#C0C0C0',
+    color: '#E6E6FA',
     position: [4, 0, 0],
     mantra: 'Protector at my step.',
   }
@@ -175,7 +175,7 @@ interface GeometryShapeProps {
 
 function AnimatedGeometry({ geometry, isSelected, onClick }: GeometryShapeProps) {
   const meshRef = useRef<THREE.Group>(null);
-  const materialRef = useRef<THREE.MeshStandardMaterial>(null);
+  const materialRef = useRef<THREE.MeshPhysicalMaterial>(null);
   
   useFrame((state) => {
     if (meshRef.current) {
@@ -239,15 +239,18 @@ function AnimatedGeometry({ geometry, isSelected, onClick }: GeometryShapeProps)
     >
       <mesh castShadow receiveShadow>
         {renderGeometry()}
-        <meshStandardMaterial
+        <meshPhysicalMaterial
           ref={materialRef}
           color={geometry.color}
           emissive={geometry.color}
-          emissiveIntensity={isSelected ? 0.3 : 0.1}
+          emissiveIntensity={isSelected ? 0.4 : 0.15}
           transparent
-          opacity={isSelected ? 0.9 : 0.8}
-          roughness={0.1}
-          metalness={0.3}
+          opacity={isSelected ? 0.95 : 0.85}
+          roughness={0.2}
+          metalness={0.6}
+          clearcoat={0.8}
+          clearcoatRoughness={0.1}
+          transmission={0.1}
           side={THREE.DoubleSide}
         />
       </mesh>
