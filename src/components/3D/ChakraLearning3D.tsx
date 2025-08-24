@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { motion } from 'framer-motion';
 import * as THREE from 'three';
+import { safePosition, safeArgs } from './SafeGeometry';
 
 interface ChakraData {
   id: string;
@@ -126,18 +127,19 @@ const chakraData: ChakraData[] = [
 interface ChakraSphereProps {
   chakra: ChakraData;
   isSelected: boolean;
-  onClick: (chakra: ChakraData) => void;
+  onSelect: (id: string) => void;
 }
 
-function ChakraSphere({ chakra, isSelected, onClick }: ChakraSphereProps) {
+function ChakraSphere({ chakra, isSelected, onSelect }: ChakraSphereProps) {
   const meshRef = useRef<THREE.Mesh>(null);
+  const [hovered, setHovered] = useState(false);
   
   return (
-    <group position={chakra.position}>
+    <group position={safePosition(chakra.position)}>
       {/* Main Chakra Sphere */}
       <mesh
         ref={meshRef}
-        onClick={() => onClick(chakra)}
+        onClick={() => onSelect(chakra.id)}
         onPointerOver={() => document.body.style.cursor = 'pointer'}
         onPointerOut={() => document.body.style.cursor = 'auto'}
       >
@@ -253,7 +255,10 @@ export default function ChakraLearning3D() {
               key={chakra.id}
               chakra={chakra}
               isSelected={selectedChakra?.id === chakra.id}
-              onClick={handleChakraClick}
+              onSelect={(id) => {
+                const chakra = chakraData.find(c => c.id === id);
+                if (chakra) handleChakraClick(chakra);
+              }}
             />
           ))}
           
