@@ -5,13 +5,18 @@ import { useLiberationState } from '../context/LiberationContext';
 export const PostEffects: React.FC = () => {
   const { state } = useLiberationState();
   
-  // Add null checks and default values to prevent "Cannot read properties of undefined" errors
+  // Add comprehensive null checks and default values
   const comfortSettings = state?.context?.comfortSettings || {
     motionReduced: false,
     volumeLevel: 0.7,
     vignetteEnabled: true,
     fovClamped: false,
   };
+
+  // Only render if we have valid state
+  if (!state?.context) {
+    return null;
+  }
 
   return (
     <EffectComposer>
@@ -21,7 +26,7 @@ export const PostEffects: React.FC = () => {
         luminanceSmoothing={0.9}
         height={300}
       />
-      {comfortSettings.vignetteEnabled && (
+      {comfortSettings?.vignetteEnabled && (
         <Vignette
           offset={0.3}
           darkness={0.5}
