@@ -77,6 +77,12 @@ export function AuraPreferenceLearning() {
   };
 
   const groupedPreferences = preferences.reduce((acc, pref) => {
+    // Guard against null/undefined preferences
+    if (!pref || !pref.category) {
+      console.warn('Skipping invalid preference:', pref);
+      return acc;
+    }
+    
     if (!acc[pref.category]) {
       acc[pref.category] = [];
     }
