@@ -14,6 +14,7 @@ import { AuraModuleGenerationMonitor } from '@/components/AuraModuleGenerationMo
 import { AuraModuleGovernance } from '@/components/AuraModuleGovernance';
 import { AuraModuleDiscussion } from '@/components/AuraModuleDiscussion';
 import { AuraParticipationGovernance } from '@/components/AuraParticipationGovernance';
+import { AuraImplementationTracker } from '@/components/AuraImplementationTracker';
 import { useAura } from '@/aura/useAura';
 import { AuraJob } from '@/aura/schema';
 
@@ -41,8 +42,9 @@ export default function AuraAdmin() {
       </div>
 
       <Tabs defaultValue="console" className="w-full">
-        <TabsList className="grid w-full grid-cols-4 md:grid-cols-8">
+        <TabsList className="grid w-full grid-cols-4 md:grid-cols-9">
           <TabsTrigger value="console">Interface</TabsTrigger>
+          <TabsTrigger value="tracking">Tracking</TabsTrigger>
           <TabsTrigger value="modules">Modules</TabsTrigger>
           <TabsTrigger value="discussion">Collaborate</TabsTrigger>
           <TabsTrigger value="governance">Govern</TabsTrigger>
@@ -61,6 +63,10 @@ export default function AuraAdmin() {
               <FieldIntegrityMonitor />
             </div>
           </div>
+        </TabsContent>
+
+        <TabsContent value="tracking" className="space-y-6">
+          <AuraImplementationTracker />
         </TabsContent>
 
         <TabsContent value="modules" className="space-y-6">
