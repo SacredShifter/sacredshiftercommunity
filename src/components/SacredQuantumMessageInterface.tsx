@@ -282,14 +282,14 @@ export const SacredQuantumMessageInterface: React.FC<SacredQuantumMessageProps> 
 
   return (
     <motion.div 
-      className="h-full flex flex-col relative overflow-hidden"
+      className="h-full flex flex-col min-h-0 relative"
       animate={controls}
     >
       {/* Sacred Geometry Background */}
       {renderSacredGeometry()}
 
       {/* Header with Consciousness Indicators */}
-      <Card className="m-4 p-4 bg-background/80 backdrop-blur-md border-primary/20 relative z-10">
+      <div className="flex-shrink-0 p-4 bg-background/80 backdrop-blur-md border-b border-primary/20 relative z-10">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <Button
@@ -386,12 +386,12 @@ export const SacredQuantumMessageInterface: React.FC<SacredQuantumMessageProps> 
             </div>
           </div>
         </div>
-      </Card>
+      </div>
 
       {/* Messages Container with Consciousness-Responsive Physics */}
       <div 
         ref={messagesContainerRef}
-        className="flex-1 overflow-y-auto px-4 pb-4 relative z-10"
+        className="flex-1 min-h-0 overflow-y-auto px-4 py-4 relative z-10"
         style={{
           scrollBehavior: consciousnessState.energy > 0.7 ? 'auto' : 'smooth',
           scrollbarWidth: 'thin'
@@ -478,9 +478,9 @@ export const SacredQuantumMessageInterface: React.FC<SacredQuantumMessageProps> 
         </AnimatePresence>
       </div>
 
-      {/* Floating Sacred Input Pod */}
-      <div className="sticky bottom-0 p-4 bg-gradient-to-t from-background via-background/90 to-transparent relative z-20">
-        <Card className="p-4 bg-background/80 backdrop-blur-md border-primary/20">
+      {/* Sacred Input Pod */}
+      <div className="flex-shrink-0 p-4 bg-gradient-to-t from-background via-background/90 to-transparent relative z-20">
+        <div className="p-4 bg-background/80 backdrop-blur-md border border-primary/20 rounded-lg">
           <div className="flex items-end space-x-3">
             <div className="flex-1">
               <div className="flex items-center space-x-2 mb-3">
@@ -517,9 +517,6 @@ export const SacredQuantumMessageInterface: React.FC<SacredQuantumMessageProps> 
                   onChange={(e) => setNewMessage(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                   className="bg-background/20 border-primary/20 focus:border-primary/40"
-                  style={{
-                    animationDuration: `${60000 / consciousnessState.breathing}ms`
-                  }}
                 />
               </motion.div>
             </div>
@@ -540,7 +537,7 @@ export const SacredQuantumMessageInterface: React.FC<SacredQuantumMessageProps> 
               </Button>
             </motion.div>
           </div>
-        </Card>
+        </div>
 
         {/* Sacred Voice Interface */}
         <AnimatePresence>
