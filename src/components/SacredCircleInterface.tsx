@@ -375,6 +375,33 @@ export const SacredCircleInterface = ({
               <TabsTrigger value="filter" className="text-xs"><Filter className="h-3 w-3" /></TabsTrigger>
             </TabsList>
 
+            {/* Health Dashboard Tab */}
+            <TabsContent value="health" className="flex-1 flex flex-col mt-2">
+              <div className="flex-1">
+                <CircleHealthDashboard 
+                  circleId={circleId}
+                />
+              </div>
+            </TabsContent>
+
+            {/* Meditation Session Tab */}
+            <TabsContent value="meditation" className="flex-1 flex flex-col mt-2">
+              <div className="flex-1">
+                <CollectiveMeditationSession 
+                  circleId={circleId}
+                />
+              </div>
+            </TabsContent>
+
+            {/* Governance Tab */}
+            <TabsContent value="governance" className="flex-1 flex flex-col mt-2">
+              <div className="flex-1">
+                <CircleGovernanceSystem 
+                  circleId={circleId}
+                />
+              </div>
+            </TabsContent>
+
             <TabsContent value="modes" className="flex-1 flex flex-col mt-2">
               <div className="p-4">
                 <CircleMessageModeSelector
