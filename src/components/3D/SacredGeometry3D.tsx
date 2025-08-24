@@ -205,16 +205,16 @@ function AnimatedGeometry({ geometry, isSelected, onClick }: GeometryShapeProps)
       onPointerOut={() => document.body.style.cursor = 'auto'}
     >
       <mesh>
-        {geometry.id === 'tetrahedron' && <Tetrahedron />}
+        {geometry.id === 'tetrahedron' && <tetrahedronGeometry />}
         {geometry.id === 'cube' && <boxGeometry />}
         {geometry.id === 'circle' && <circleGeometry args={[1, 32]} />}
         {geometry.id === 'witness' && <sphereGeometry args={[0.8, 32, 32]} />}
-        {geometry.id === 'eros' && <shapeGeometry args={[new HeartShape()]} />}
+        {geometry.id === 'eros' && <ErosGeometry />}
         {geometry.id === 'butterfly' && <ButterflyGeometry />}
         {geometry.id === 'justice' && <JusticeGeometry />}
-        {geometry.id === 'octahedron' && <Octahedron />}
-        {geometry.id === 'icosahedron' && <Icosahedron />}
-        {geometry.id === 'dodecahedron' && <Dodecahedron />}
+        {geometry.id === 'octahedron' && <octahedronGeometry />}
+        {geometry.id === 'icosahedron' && <icosahedronGeometry />}
+        {geometry.id === 'dodecahedron' && <dodecahedronGeometry />}
         <meshStandardMaterial
           ref={materialRef}
           color={geometry.color}
@@ -262,18 +262,23 @@ function AnimatedGeometry({ geometry, isSelected, onClick }: GeometryShapeProps)
   );
 }
 
-class HeartShape extends THREE.Shape {
-  constructor() {
-    super();
-    const x = -0.5, y = -0.5;
-    this.moveTo(x + 0.5, y + 0.5);
-    this.bezierCurveTo(x + 0.5, y + 0.5, x + 0.4, y, x, y);
-    this.bezierCurveTo(x - 0.6, y, x - 0.6, y + 0.7, x - 0.6, y + 0.7);
-    this.bezierCurveTo(x - 0.6, y + 1.1, x - 0.3, y + 1.54, x + 0.5, y + 1.9);
-    this.bezierCurveTo(x + 1.2, y + 1.54, x + 1.6, y + 1.1, x + 1.6, y + 0.7);
-    this.bezierCurveTo(x + 1.6, y + 0.7, x + 1.6, y, x + 1.0, y);
-    this.bezierCurveTo(x + 0.7, y, x + 0.5, y + 0.5, x + 0.5, y + 0.5);
-  }
+function ErosGeometry() {
+  return (
+    <group>
+      <mesh position={[0, 0, 0]}>
+        <sphereGeometry args={[0.6, 16, 16]} />
+      </mesh>
+      <mesh position={[0, 0.4, 0]}>
+        <sphereGeometry args={[0.3, 16, 16]} />
+      </mesh>
+      <mesh position={[-0.2, 0.4, 0]}>
+        <sphereGeometry args={[0.3, 16, 16]} />
+      </mesh>
+      <mesh position={[0.2, 0.4, 0]}>
+        <sphereGeometry args={[0.3, 16, 16]} />
+      </mesh>
+    </group>
+  );
 }
 
 function ButterflyGeometry() {
