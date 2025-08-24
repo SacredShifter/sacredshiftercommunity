@@ -100,18 +100,38 @@ export const PathExperience: React.FC<PathExperienceProps> = ({ path, onComplete
             { id: "self", name: "Connection to Self", color: "amber", frequency: "396 Hz", icon: "🧘" },
             { id: "others", name: "Connection to Others", color: "rose", frequency: "528 Hz", icon: "👥" },
             { id: "nature", name: "Connection to Nature", color: "emerald", frequency: "639 Hz", icon: "🌿" },
-            { id: "spirit", name: "Connection to Spirit", color: "violet", frequency: "741 Hz", icon: "✨" }
+            { id: "spirit", name: "Connection to Spirit", color: "violet", frequency: "741 Hz", icon: "✨" },
+            { id: "community", name: "Connection to Community", color: "blue", frequency: "852 Hz", icon: "🏘️" },
+            { id: "technology", name: "Connection to Sacred Technology", color: "cyan", frequency: "963 Hz", icon: "🔗" }
           ]
         } as StepData,
         {
           type: "gather",
           question: "Choose three orbs that feel most essential to your being right now",
+          instruction: "Feel their resonance as you select them - notice how they call to different parts of your soul",
           maxSelection: 3
         } as StepData,
         {
+          type: "resonance_weaving",
+          question: "How do these connections dance together in your life?",
+          instruction: "Share your experiences with the connections you've chosen",
+          inputType: "textarea"
+        } as StepData,
+        {
+          type: "connection_mapping",
+          question: "Visualize the flow between your chosen connections",
+          instruction: "See how energy moves between these sacred aspects of your being"
+        } as StepData,
+        {
+          type: "sacred_commitment",
+          question: "What intention will you set to strengthen these connections?",
+          instruction: "Create a sacred commitment to nurture these resonances in your daily life",
+          inputType: "textarea"
+        } as StepData,
+        {
           type: "pattern",
-          instruction: "Watch as your chosen connections weave together into your unique pattern...",
-          duration: 30
+          instruction: "Watch as your chosen connections weave together into your unique pattern of resonance...",
+          duration: 45
         } as StepData
       ]
     }
@@ -340,24 +360,24 @@ export const PathExperience: React.FC<PathExperienceProps> = ({ path, onComplete
               </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
               {currentStepData.orbs?.map((orb) => (
                 <motion.div
                   key={orb.id}
                   whileHover={{ scale: 1.05, boxShadow: `0 10px 30px hsl(var(--${orb.color}) / 0.3)` }}
-                  className={`cursor-pointer p-6 rounded-lg border border-primary/20 hover:border-primary/40 transition-all duration-300 bg-gradient-to-br from-primary/5 to-transparent`}
+                  className={`cursor-pointer p-4 rounded-lg border border-primary/20 hover:border-primary/40 transition-all duration-300 bg-gradient-to-br from-primary/5 to-transparent`}
                   onClick={() => handleResponse('selectedOrb', orb.id)}
                 >
-                  <div className="text-center space-y-3">
-                    <div className="text-4xl">{orb.icon}</div>
-                    <h4 className="font-medium">{orb.name}</h4>
+                  <div className="text-center space-y-2">
+                    <div className="text-3xl">{orb.icon}</div>
+                    <h4 className="font-medium text-sm">{orb.name}</h4>
                     <p className="text-xs text-muted-foreground">{orb.frequency}</p>
                     <motion.div
-                      className={`w-12 h-12 mx-auto rounded-full bg-gradient-to-br from-${orb.color}-400/30 to-${orb.color}-600/30 border border-${orb.color}-400/50`}
+                      className={`w-8 h-8 mx-auto rounded-full bg-gradient-to-br from-${orb.color}-400/30 to-${orb.color}-600/30 border border-${orb.color}-400/50`}
                       animate={{ 
                         boxShadow: [
                           `0 0 0 0 hsl(var(--${orb.color}) / 0.3)`,
-                          `0 0 0 10px hsl(var(--${orb.color}) / 0)`,
+                          `0 0 0 8px hsl(var(--${orb.color}) / 0)`,
                         ] 
                       }}
                       transition={{ duration: 2, repeat: Infinity }}
@@ -378,6 +398,268 @@ export const PathExperience: React.FC<PathExperienceProps> = ({ path, onComplete
           </div>
         );
 
+      case "gather":
+        return (
+          <div className="space-y-6">
+            <div className="text-center space-y-2">
+              <h3 className="text-lg font-medium">{currentStepData.question}</h3>
+              <p className="text-sm text-muted-foreground italic">
+                {currentStepData.instruction}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+              {pathConfigs.connection.steps[0].orbs?.map((orb) => (
+                <motion.div
+                  key={orb.id}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className={`cursor-pointer p-4 rounded-lg border transition-all duration-300 ${
+                    responses.selectedConnections?.includes(orb.id)
+                      ? 'border-primary bg-primary/10'
+                      : 'border-primary/20 hover:border-primary/40 hover:bg-primary/5'
+                  }`}
+                  onClick={() => {
+                    const current = responses.selectedConnections || [];
+                    const newSelections = current.includes(orb.id)
+                      ? current.filter(id => id !== orb.id)
+                      : current.length < 3
+                        ? [...current, orb.id]
+                        : current;
+                    handleResponse('selectedConnections', newSelections);
+                  }}
+                >
+                  <div className="text-center space-y-2">
+                    <div className="text-3xl">{orb.icon}</div>
+                    <h4 className="font-medium text-sm">{orb.name}</h4>
+                    <p className="text-xs text-muted-foreground">{orb.frequency}</p>
+                    {responses.selectedConnections?.includes(orb.id) && (
+                      <div className="text-primary text-xs">✓ Selected</div>
+                    )}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            <div className="text-center text-sm text-muted-foreground">
+              Selected: {responses.selectedConnections?.length || 0} / 3
+            </div>
+
+            <div className="flex justify-center">
+              <Button 
+                onClick={nextStep}
+                disabled={!responses.selectedConnections || responses.selectedConnections.length !== 3}
+                className="bg-primary/10 hover:bg-primary/20 text-primary border border-primary/30"
+              >
+                Continue with These Connections
+              </Button>
+            </div>
+          </div>
+        );
+
+      case "resonance_weaving":
+        return (
+          <div className="space-y-6">
+            <div className="text-center space-y-4">
+              <div className="flex justify-center space-x-4">
+                {responses.selectedConnections?.map((connectionId: string) => {
+                  const orb = pathConfigs.connection.steps[0].orbs?.find(o => o.id === connectionId);
+                  return orb ? (
+                    <motion.div
+                      key={orb.id}
+                      className="flex flex-col items-center space-y-2"
+                      animate={{ 
+                        scale: [1, 1.1, 1],
+                        opacity: [0.7, 1, 0.7] 
+                      }}
+                      transition={{ 
+                        duration: 3,
+                        repeat: Infinity,
+                        delay: Math.random() * 2 
+                      }}
+                    >
+                      <div className="text-2xl">{orb.icon}</div>
+                      <div className="text-xs text-center font-medium">{orb.name}</div>
+                    </motion.div>
+                  ) : null;
+                })}
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium text-center">{currentStepData.question}</h3>
+              <p className="text-sm text-muted-foreground text-center italic">
+                {currentStepData.instruction}
+              </p>
+              
+              <Textarea
+                placeholder="I feel these connections dancing together when..."
+                className="min-h-32 bg-background/50 border-primary/20 focus:border-primary/50"
+                value={responses.resonanceWeaving || ''}
+                onChange={(e) => handleResponse('resonanceWeaving', e.target.value)}
+              />
+            </div>
+
+            <div className="flex justify-center">
+              <Button 
+                onClick={nextStep}
+                disabled={!responses.resonanceWeaving?.trim()}
+                className="bg-primary/10 hover:bg-primary/20 text-primary border border-primary/30"
+              >
+                Continue Weaving
+              </Button>
+            </div>
+          </div>
+        );
+
+      case "connection_mapping":
+        return (
+          <div className="space-y-6">
+            <div className="text-center space-y-2">
+              <h3 className="text-lg font-medium">{currentStepData.question}</h3>
+              <p className="text-sm text-muted-foreground italic">
+                {currentStepData.instruction}
+              </p>
+            </div>
+
+            <div className="relative h-64 bg-gradient-to-br from-primary/5 to-primary/10 rounded-lg p-8">
+              <svg className="w-full h-full">
+                {responses.selectedConnections?.map((connectionId: string, index: number) => {
+                  const orb = pathConfigs.connection.steps[0].orbs?.find(o => o.id === connectionId);
+                  const angle = (index * 120) * (Math.PI / 180);
+                  const radius = 80;
+                  const x = 50 + (radius * Math.cos(angle)) / 2;
+                  const y = 50 + (radius * Math.sin(angle)) / 2;
+                  
+                  return orb ? (
+                    <g key={orb.id}>
+                      <motion.circle
+                        cx={`${x}%`}
+                        cy={`${y}%`}
+                        r="20"
+                        fill={`hsl(var(--${orb.color}) / 0.3)`}
+                        stroke={`hsl(var(--${orb.color}))`}
+                        strokeWidth="2"
+                        animate={{
+                          r: [15, 25, 15],
+                          opacity: [0.6, 1, 0.6]
+                        }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          delay: index * 0.5
+                        }}
+                      />
+                      <text
+                        x={`${x}%`}
+                        y={`${y + 8}%`}
+                        textAnchor="middle"
+                        className="text-xs font-medium fill-current"
+                      >
+                        {orb.icon}
+                      </text>
+                    </g>
+                  ) : null;
+                })}
+                
+                {/* Connection lines */}
+                {responses.selectedConnections?.map((_, index: number) => {
+                  const nextIndex = (index + 1) % responses.selectedConnections.length;
+                  const angle1 = (index * 120) * (Math.PI / 180);
+                  const angle2 = (nextIndex * 120) * (Math.PI / 180);
+                  const radius = 80;
+                  const x1 = 50 + (radius * Math.cos(angle1)) / 2;
+                  const y1 = 50 + (radius * Math.sin(angle1)) / 2;
+                  const x2 = 50 + (radius * Math.cos(angle2)) / 2;
+                  const y2 = 50 + (radius * Math.sin(angle2)) / 2;
+                  
+                  return (
+                    <motion.line
+                      key={`line-${index}`}
+                      x1={`${x1}%`}
+                      y1={`${y1}%`}
+                      x2={`${x2}%`}
+                      y2={`${y2}%`}
+                      stroke="hsl(var(--primary))"
+                      strokeWidth="2"
+                      opacity="0.5"
+                      animate={{
+                        strokeDasharray: ["0 100", "100 0"],
+                        opacity: [0.3, 0.8, 0.3]
+                      }}
+                      transition={{
+                        duration: 3,
+                        repeat: Infinity,
+                        delay: index * 0.8
+                      }}
+                    />
+                  );
+                })}
+              </svg>
+            </div>
+
+            <div className="text-center">
+              <p className="text-sm text-muted-foreground">
+                Energy flows between your chosen connections, creating a unique resonance field
+              </p>
+            </div>
+
+            <div className="flex justify-center">
+              <Button 
+                onClick={nextStep}
+                className="bg-primary/10 hover:bg-primary/20 text-primary border border-primary/30"
+              >
+                Feel the Flow
+              </Button>
+            </div>
+          </div>
+        );
+
+      case "sacred_commitment":
+        return (
+          <div className="space-y-6">
+            <div className="text-center space-y-4">
+              <motion.div
+                className="w-16 h-16 mx-auto relative"
+                animate={{ 
+                  rotate: [0, 360],
+                  scale: [1, 1.2, 1]
+                }}
+                transition={{ 
+                  rotate: { duration: 8, repeat: Infinity, ease: "linear" },
+                  scale: { duration: 3, repeat: Infinity }
+                }}
+              >
+                <Heart className="w-full h-full text-primary" />
+              </motion.div>
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium text-center">{currentStepData.question}</h3>
+              <p className="text-sm text-muted-foreground text-center italic">
+                {currentStepData.instruction}
+              </p>
+              
+              <Textarea
+                placeholder="I commit to nurturing these connections by..."
+                className="min-h-32 bg-background/50 border-primary/20 focus:border-primary/50"
+                value={responses.sacredCommitment || ''}
+                onChange={(e) => handleResponse('sacredCommitment', e.target.value)}
+              />
+            </div>
+
+            <div className="flex justify-center">
+              <Button 
+                onClick={nextStep}
+                disabled={!responses.sacredCommitment?.trim()}
+                className="bg-primary/10 hover:bg-primary/20 text-primary border border-primary/30"
+              >
+                Seal This Commitment
+              </Button>
+            </div>
+          </div>
+        );
+
       case "contemplation":
       case "meditation":
       case "pattern":
@@ -392,6 +674,31 @@ export const PathExperience: React.FC<PathExperienceProps> = ({ path, onComplete
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/5 rounded-full" />
                 <div className="absolute inset-4 bg-gradient-to-br from-primary/15 to-transparent rounded-full" />
                 <IconComponent className="absolute inset-8 w-full h-full text-primary" />
+                
+                {/* Connection orbs orbiting around */}
+                {responses.selectedConnections?.map((connectionId: string, index: number) => {
+                  const orb = pathConfigs.connection.steps[0].orbs?.find(o => o.id === connectionId);
+                  return orb ? (
+                    <motion.div
+                      key={orb.id}
+                      className="absolute w-6 h-6 text-xs"
+                      animate={{
+                        rotate: 360,
+                        scale: [1, 1.2, 1]
+                      }}
+                      transition={{
+                        rotate: { duration: 10, repeat: Infinity, ease: "linear" },
+                        scale: { duration: 2, repeat: Infinity, delay: index * 0.5 }
+                      }}
+                      style={{
+                        top: `${20 + index * 20}%`,
+                        left: `${20 + index * 20}%`,
+                      }}
+                    >
+                      {orb.icon}
+                    </motion.div>
+                  ) : null;
+                })}
               </motion.div>
             </div>
 
@@ -400,6 +707,22 @@ export const PathExperience: React.FC<PathExperienceProps> = ({ path, onComplete
               <p className="text-muted-foreground italic">
                 {currentStepData.instruction}
               </p>
+              
+              {path === 'connection' && (
+                <div className="text-sm text-muted-foreground space-y-2">
+                  <p>Your sacred connections are weaving together...</p>
+                  <div className="flex justify-center space-x-2">
+                    {responses.selectedConnections?.map((connectionId: string) => {
+                      const orb = pathConfigs.connection.steps[0].orbs?.find(o => o.id === connectionId);
+                      return orb ? (
+                        <span key={orb.id} className="text-xs px-2 py-1 rounded bg-primary/10">
+                          {orb.name}
+                        </span>
+                      ) : null;
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
 
             <motion.div
