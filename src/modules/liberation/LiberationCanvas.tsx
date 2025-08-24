@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useMemo } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { useMachine } from '@xstate/react';
 import { liberationMachine } from './machine';
@@ -17,7 +17,10 @@ import { LoadingState } from '@/components/ui/loading-state';
 export default function GateOfLiberation() {
   const [state, send] = useMachine(liberationMachine);
   const expansionRef = useRef<ExpansionHandles>(null);
-  const sessionId = `lib_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  
+  // Use useMemo to prevent sessionId from changing on every render
+  const sessionId = useMemo(() => `lib_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`, []);
+  
   const { 
     currentSession, 
     loading, 

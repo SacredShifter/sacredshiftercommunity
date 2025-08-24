@@ -30,9 +30,13 @@ export const useLiberationProgress = (sessionId: string) => {
 
   // Load existing session
   const loadSession = async () => {
-    if (!user || !sessionId) return;
+    if (!user || !sessionId) {
+      console.log('Liberation Progress: No user or sessionId', { user: !!user, sessionId });
+      return;
+    }
 
     try {
+      console.log('Liberation Progress: Loading session', { userId: user.id, sessionId });
       setLoading(true);
       const { data, error } = await supabase
         .from('liberation_sessions' as any)
@@ -41,11 +45,15 @@ export const useLiberationProgress = (sessionId: string) => {
         .eq('session_id', sessionId)
         .maybeSingle();
 
+      console.log('Liberation Progress: Query result', { data, error });
+
       if (error && error.code !== 'PGRST116') {
+        console.error('Liberation Progress: Database error', error);
         throw error;
       }
 
       setCurrentSession(data as unknown as LiberationSession | null);
+      console.log('Liberation Progress: Session loaded', data);
     } catch (err) {
       console.error('Error loading liberation session:', err);
       setError(err instanceof Error ? err.message : 'Failed to load session');

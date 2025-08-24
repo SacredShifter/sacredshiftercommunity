@@ -7017,6 +7017,51 @@ export type Database = {
         }
         Relationships: []
       }
+      liberation_sessions: {
+        Row: {
+          arousal_level: number | null
+          comfort_settings: Json | null
+          completed_phases: string[] | null
+          created_at: string
+          current_scene: string
+          end_time: string | null
+          id: string
+          reflection_notes: string | null
+          session_id: string
+          start_time: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          arousal_level?: number | null
+          comfort_settings?: Json | null
+          completed_phases?: string[] | null
+          created_at?: string
+          current_scene?: string
+          end_time?: string | null
+          id?: string
+          reflection_notes?: string | null
+          session_id: string
+          start_time?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          arousal_level?: number | null
+          comfort_settings?: Json | null
+          completed_phases?: string[] | null
+          created_at?: string
+          current_scene?: string
+          end_time?: string | null
+          id?: string
+          reflection_notes?: string | null
+          session_id?: string
+          start_time?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       light_codes: {
         Row: {
           archetype: string | null
