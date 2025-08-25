@@ -1,0 +1,24 @@
+sequenceDiagram
+    participant Client
+    participant APG as Aura Privacy Gateway
+    participant Storage as Sacred Shifter Storage
+    participant KMS as Key Management Service
+    participant OpenRouter as OpenRouter (3rd Party)
+
+    Client->>+APG: AuraGatewayRequest (Full Context)
+    APG->>+KMS: Request User KEK
+    KMS-->>-APG: User KEK
+    APG->>APG: 1. Generate Session DEK<br>2. Encrypt (wrap) DEK with KEK
+    APG->>APG: 3. Split Prompt into Zone A & B<br>4. Redact PII from Zone A
+    APG->>APG: 5. Encrypt Zone B with Session DEK (Ascon-128)
+    APG->>+Storage: Store Encrypted Zone B & Wrapped DEK
+    Storage-->>-APG: Storage Confirmation (e.g., blob ID)
+    APG->>+OpenRouter: API Call with Zone A (Scrubbed Data)
+    OpenRouter-->>-APG: OpenRouterResponse
+    APG->>+Storage: Retrieve Encrypted Zone B & Wrapped DEK
+    Storage-->>-APG: Return Encrypted Zone B & Wrapped DEK
+    APG->>+KMS: Request to Decrypt (unwrap) DEK
+    KMS-->>-APG: Plaintext Session DEK
+    APG->>APG: Decrypt Zone B with Session DEK
+    APG->>APG: Recombine AI Response with decrypted Zone B Context
+    APG-->>-Client: AuraGatewayResponse (Rich, contextual response)
