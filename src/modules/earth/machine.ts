@@ -1,5 +1,9 @@
 import { createMachine, assign, setup } from 'xstate';
 
+export type BreathingMode = 'forest' | 'ocean' | 'atmosphere' | 'magnetic' | null;
+
+export type CelestialBody = 'sun' | 'moon' | null;
+
 export interface EarthContext {
   currentScene: string;
   isComfortable: boolean;
@@ -9,10 +13,16 @@ export interface EarthContext {
   breathSynced: boolean;
   sessionId: string;
   startTime: number;
+  breathingMode: BreathingMode;
+  celestialBody: CelestialBody;
+  celestialTime: number | null;
 }
 
 export type EarthEvent =
   | { type: 'START' }
+  | { type: 'SET_CELESTIAL_BODY'; body: CelestialBody }
+  | { type: 'TOGGLE_BREATH_SYNC' }
+  | { type: 'SET_CELESTIAL_TIME'; time: number }
   | { type: 'NEXT' }
   | { type: 'BACK' }
   | { type: 'PAUSE' }
@@ -22,7 +32,9 @@ export type EarthEvent =
   | { type: 'STEP_IN' }
   | { type: 'PULSE_SYNC' }
   | { type: 'BREATH_SYNC' }
-  | { type: 'AUDIO_PERMISSION'; granted: boolean };
+  | { type: 'AUDIO_PERMISSION'; granted: boolean }
+  | { type: 'BREATHE' }
+  | { type: 'SELECT_BREATHING_MODE'; mode: BreathingMode };
 
 export const earthMachine = setup({
   types: {
@@ -34,37 +46,6 @@ export const earthMachine = setup({
     pulseAligned: ({ context }) => context.pulseAligned,
     breathSynced: ({ context }) => context.breathSynced,
     audioGranted: ({ context }) => context.audioGranted,
-  },
-  actions: {
-    logMarker: ({ context, event }) => {
-      console.log(`Earth: ${event.type} at ${context.currentScene}`);
-    },
-    swapScene: assign({
-      currentScene: ({ context, event }) => {
-        const sceneMap: Record<string, string> = {
-          START: 'ground',
-          NEXT: getNextScene(context.currentScene),
-        };
-        return sceneMap[event.type] || context.currentScene;
-      },
-    }),
-    connectGround: assign({
-      groundConnected: () => true,
-    }),
-    alignPulse: assign({
-      pulseAligned: () => true,
-    }),
-    syncBreath: assign({
-      breathSynced: () => true,
-    }),
-    updateAudioGranted: assign({
-      audioGranted: ({ event }) => {
-        if (event.type === 'AUDIO_PERMISSION') {
-          return event.granted;
-        }
-        return false;
-      },
-    }),
   },
 }).createMachine({
   id: 'earth',
@@ -78,6 +59,17 @@ export const earthMachine = setup({
     breathSynced: false,
     sessionId: '',
     startTime: 0,
+    breathingMode: null,
+    celestialBody: null,
+    celestialTime: null,
+  },
+  on: {
+    SET_CELESTIAL_BODY: {
+      actions: 'setCelestialBody',
+    },
+    SET_CELESTIAL_TIME: {
+      actions: 'setCelestialTime',
+    },
   },
   states: {
     intro: {
@@ -106,8 +98,36 @@ export const earthMachine = setup({
           guard: 'groundConnected',
           actions: ['logMarker'],
         },
+        BREATHE: {
+          target: 'breathing',
+          actions: ['logMarker'],
+        },
         PAUSE: 'paused',
         ABORT: 'exit',
+      },
+    },
+    breathing: {
+      initial: 'animating',
+      states: {
+        animating: {
+          on: {
+            TOGGLE_BREATH_SYNC: 'syncing',
+          },
+        },
+        syncing: {
+          on: {
+            TOGGLE_BREATH_SYNC: 'animating',
+          },
+        },
+      },
+      on: {
+        SELECT_BREATHING_MODE: {
+          actions: 'setBreathingMode',
+        },
+        BACK: {
+          target: 'ground',
+          actions: ['logMarker'],
+        },
       },
     },
     pulse: {
@@ -170,6 +190,61 @@ export const earthMachine = setup({
     },
   },
   history: 'shallow',
+  actions: {
+    logMarker: ({ context, event }) => {
+      console.log(`Earth: ${event.type} at ${context.currentScene}`);
+    },
+    swapScene: assign({
+      currentScene: ({ context, event }) => {
+        const sceneMap: Record<string, string> = {
+          START: 'ground',
+          NEXT: getNextScene(context.currentScene),
+        };
+        return sceneMap[event.type] || context.currentScene;
+      },
+    }),
+    connectGround: assign({
+      groundConnected: () => true,
+    }),
+    alignPulse: assign({
+      pulseAligned: () => true,
+    }),
+    syncBreath: assign({
+      breathSynced: () => true,
+    }),
+    updateAudioGranted: assign({
+      audioGranted: ({ event }) => {
+        if (event.type === 'AUDIO_PERMISSION') {
+          return event.granted;
+        }
+        return false;
+      },
+    }),
+    setBreathingMode: assign({
+      breathingMode: ({ event }) => {
+        if (event.type === 'SELECT_BREATHING_MODE') {
+          return event.mode;
+        }
+        return null;
+      },
+    }),
+    setCelestialBody: assign({
+      celestialBody: ({ event }) => {
+        if (event.type === 'SET_CELESTIAL_BODY') {
+          return event.body;
+        }
+        return null;
+      },
+    }),
+    setCelestialTime: assign({
+      celestialTime: ({ event }) => {
+        if (event.type === 'SET_CELESTIAL_TIME') {
+          return event.time;
+        }
+        return null;
+      },
+    }),
+  },
 });
 
 function getNextScene(currentScene: string): string {
