@@ -5,7 +5,6 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -15,17 +14,49 @@ import (
 	"github.com/SacredShifter/sacredshiftercommunity/apg/pkg/openrouter"
 	"github.com/SacredShifter/sacredshiftercommunity/apg/pkg/processor"
 	"github.com/SacredShifter/sacredshiftercommunity/apg/pkg/types"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"go.uber.org/zap"
 )
+
+var (
+	requestsTotal = prometheus.NewCounter(
+		prometheus.CounterOpts{
+			Name: "apg_requests_total",
+			Help: "Total number of gateway requests.",
+		},
+	)
+	requestLatency = prometheus.NewHistogram(
+		prometheus.HistogramOpts{
+			Name:    "apg_request_latency_seconds",
+			Help:    "Latency of gateway requests.",
+			Buckets: prometheus.DefBuckets,
+		},
+	)
+	errorsTotal = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "apg_errors_total",
+			Help: "Total number of errors.",
+		},
+		[]string{"type"},
+	)
+)
+
+func init() {
+	prometheus.MustRegister(requestsTotal)
+	prometheus.MustRegister(requestLatency)
+	prometheus.MustRegister(errorsTotal)
+}
 
 // Server holds the dependencies for the gateway service.
 type Server struct {
 	kms      crypto.KMS
 	orClient *openrouter.Client
-	logger   *log.Logger
+	logger   *zap.Logger
 }
 
 // NewServer creates a new server with all its dependencies.
-func NewServer(logger *log.Logger, kms crypto.KMS, orClient *openrouter.Client) *Server {
+func NewServer(logger *zap.Logger, kms crypto.KMS, orClient *openrouter.Client) *Server {
 	return &Server{
 		kms:      kms,
 		orClient: orClient,
@@ -34,7 +65,17 @@ func NewServer(logger *log.Logger, kms crypto.KMS, orClient *openrouter.Client) 
 }
 
 func main() {
-	logger := log.New(os.Stdout, "APG: ", log.LstdFlags)
+	// Using zap's development logger for more verbose, human-readable output.
+	// In a real production environment, we would use zap.NewProduction().
+	logger, err := zap.NewDevelopment()
+	if err != nil {
+		log.Fatalf("can't initialize zap logger: %v", err)
+	}
+	defer func() {
+		if err := logger.Sync(); err != nil {
+			log.Printf("failed to sync logger: %v", err)
+		}
+	}()
 
 	// Get OpenRouter API key from environment variable.
 	apiKey := os.Getenv("OPENROUTER_API_KEY")
@@ -46,7 +87,7 @@ func main() {
 	kms := crypto.NewMockKMS() // Using mock KMS for now.
 	orClient, err := openrouter.NewClient(apiKey)
 	if err != nil {
-		logger.Fatalf("Failed to create OpenRouter client: %v", err)
+		logger.Fatal("Failed to create OpenRouter client", zap.Error(err))
 	}
 
 	// Create the server which holds our dependencies.
@@ -54,19 +95,26 @@ func main() {
 
 	// The handler function for our privacy gateway endpoint.
 	http.HandleFunc("/v1/gateway", server.gatewayHandler)
+	// Add the /metrics endpoint for Prometheus scraping.
+	http.Handle("/metrics", promhttp.Handler())
 
-	logger.Println("Starting Aura Privacy Gateway on :8080")
+	logger.Info("Starting Aura Privacy Gateway on :8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
-		logger.Fatalf("Failed to start server: %v", err)
+		logger.Fatal("Failed to start server", zap.Error(err))
 	}
 }
 
 // gatewayHandler orchestrates the entire APG request flow.
 func (s *Server) gatewayHandler(w http.ResponseWriter, r *http.Request) {
 	startTime := time.Now()
+	requestsTotal.Inc()
+	defer func() {
+		requestLatency.Observe(time.Since(startTime).Seconds())
+	}()
 
 	// 1. Basic request validation
 	if r.Method != http.MethodPost {
+		errorsTotal.WithLabelValues("bad_request").Inc()
 		http.Error(w, "Only POST method is allowed", http.StatusMethodNotAllowed)
 		return
 	}
@@ -74,17 +122,23 @@ func (s *Server) gatewayHandler(w http.ResponseWriter, r *http.Request) {
 	// 2. Decode the incoming request body
 	var request types.AuraGatewayRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		s.logger.Printf("ERROR: Failed to decode request body: %v", err)
+		s.logger.Error("Failed to decode request body", zap.Error(err))
+		errorsTotal.WithLabelValues("bad_request").Inc()
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
 	defer r.Body.Close()
-	s.logger.Printf("Received gateway request for user %s and model %s", request.UserID, request.RequestedModel)
+
+	// Redacted logging: UserID is Zone B (private), so it's not logged.
+	s.logger.Info("Received gateway request",
+		zap.String("requestedModel", request.RequestedModel),
+	)
 
 	// 3. Split the request into Zone A (public) and Zone B (private).
 	zoneARequest, zoneBPayload, err := processor.SplitAndScrub(&request)
 	if err != nil {
-		s.logger.Printf("ERROR: Failed to process request: %v", err)
+		s.logger.Error("Failed to process request", zap.Error(err))
+		errorsTotal.WithLabelValues("processing_error").Inc()
 		http.Error(w, "Failed to process request", http.StatusInternalServerError)
 		return
 	}
@@ -94,7 +148,8 @@ func (s *Server) gatewayHandler(w http.ResponseWriter, r *http.Request) {
 	const userKekID = "default-user-kek"
 	ciphertext, wrappedDEK, nonce, err := crypto.Encrypt(zoneBPayload, nil, s.kms, userKekID)
 	if err != nil {
-		s.logger.Printf("ERROR: Failed to encrypt Zone B data: %v", err)
+		s.logger.Error("Failed to encrypt Zone B data", zap.Error(err))
+		errorsTotal.WithLabelValues("encryption_error").Inc()
 		http.Error(w, "Failed to encrypt sensitive data", http.StatusInternalServerError)
 		return
 	}
@@ -107,7 +162,8 @@ func (s *Server) gatewayHandler(w http.ResponseWriter, r *http.Request) {
 	// 6. Call the external OpenRouter API with Zone A data.
 	orResp, err := s.orClient.Call(r.Context(), zoneARequest)
 	if err != nil {
-		s.logger.Printf("ERROR: Failed to call OpenRouter: %v", err)
+		s.logger.Error("Failed to call OpenRouter", zap.Error(err))
+		errorsTotal.WithLabelValues("provider_error").Inc()
 		http.Error(w, "Failed to communicate with AI provider", http.StatusBadGateway)
 		return
 	}
@@ -116,14 +172,16 @@ func (s *Server) gatewayHandler(w http.ResponseWriter, r *http.Request) {
 	// Here, we just use the variables from the encryption step.
 	decryptedPayload, err := crypto.Decrypt(ciphertext, wrappedDEK, nonce, nil, s.kms, userKekID)
 	if err != nil {
-		s.logger.Printf("ERROR: Failed to decrypt Zone B data: %v", err)
+		s.logger.Error("Failed to decrypt Zone B data", zap.Error(err))
+		errorsTotal.WithLabelValues("decryption_error").Inc()
 		http.Error(w, "Failed to decrypt sensitive data", http.StatusInternalServerError)
 		return
 	}
 
 	// Verify integrity: Check if decrypted data matches original.
 	if !bytes.Equal(decryptedPayload, zoneBPayload) {
-		s.logger.Printf("FATAL: Decrypted payload does not match original Zone B payload. Integrity check failed.")
+		s.logger.Fatal("Decrypted payload does not match original Zone B payload. Integrity check failed.")
+		errorsTotal.WithLabelValues("integrity_error").Inc()
 		http.Error(w, "Data integrity check failed", http.StatusInternalServerError)
 		return
 	}
@@ -136,7 +194,7 @@ func (s *Server) gatewayHandler(w http.ResponseWriter, r *http.Request) {
 
 	latency := time.Since(startTime).Milliseconds()
 	response := types.AuraGatewayResponse{
-		// A real implementation would generate and track a request ID.
+		// A real implementation would generate and track a request.
 		OriginalRequestID: "placeholder-request-id",
 		Content:           finalContent,
 		Usage:             orResp.Usage,
@@ -151,6 +209,7 @@ func (s *Server) gatewayHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(response); err != nil {
-		s.logger.Printf("ERROR: Failed to encode final response: %v", err)
+		s.logger.Error("Failed to encode final response", zap.Error(err))
+		errorsTotal.WithLabelValues("response_error").Inc()
 	}
 }

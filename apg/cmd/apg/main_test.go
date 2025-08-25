@@ -3,10 +3,8 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"log"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"testing"
 
 	"github.com/SacredShifter/sacredshiftercommunity/apg/pkg/crypto"
@@ -14,6 +12,7 @@ import (
 	"github.com/SacredShifter/sacredshiftercommunity/apg/pkg/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"go.uber.org/zap"
 )
 
 // TestGatewayHandler_EndToEnd performs an integration test of the gateway handler.
@@ -42,12 +41,13 @@ func TestGatewayHandler_EndToEnd(t *testing.T) {
 			},
 			Usage: types.Usage{PromptTokens: 10, CompletionTokens: 1, TotalTokens: 11},
 		}
-		json.NewEncoder(w).Encode(response)
+		err = json.NewEncoder(w).Encode(response)
+		require.NoError(t, err)
 	}))
 	defer mockOpenRouter.Close()
 
 	// 2. Set up the dependencies for our APG server.
-	logger := log.New(os.Stdout, "TEST-APG: ", log.LstdFlags)
+	logger := zap.NewNop() // Use zap.NewDevelopmentTestLogger(t) for debugging.
 	kms := crypto.NewMockKMS()
 	// Configure the OpenRouter client to talk to our mock server.
 	orClient, err := openrouter.NewClient("mock-api-key", mockOpenRouter.URL)
