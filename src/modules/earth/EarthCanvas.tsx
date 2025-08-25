@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { useMachine } from '@xstate/react';
 import { earthMachine } from './machine';
@@ -14,6 +14,10 @@ interface ReconnectionWithLivingEarthProps {
 
 export default function ReconnectionWithLivingEarth({ onExit }: ReconnectionWithLivingEarthProps) {
   const [state, send] = useMachine(earthMachine);
+
+  useEffect(() => {
+    send({ type: 'START' });
+  }, [send]);
 
   return (
     <ErrorBoundary name="ReconnectionWithLivingEarth">

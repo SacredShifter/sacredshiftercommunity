@@ -25,12 +25,12 @@ import TorusFieldDynamics3D from './TorusFieldDynamics3D';
 import LivingMandala3D from './LivingMandala3D';
 import MerkabaLightBody3D from './MerkabaLightBody3D';
 import KabbalahTreeOfLife3D from './KabbalahTreeOfLife3D';
-import GaiaBreathing3D from './GaiaBreathing3D';
 import SchumannResonance3D from './SchumannResonance3D';
 import SigillumDeiAemeth3D from './SigillumDeiAemeth3D';
 import BreathOfSource3D from './BreathOfSource3D';
 import ShiftCanvas from '../../modules/shift/scene/ShiftCanvas';
 import GateOfLiberation from '../../modules/liberation/LiberationCanvas';
+import { ReconnectionWithLivingEarth } from '@/modules/earth';
 
 const learningModules: LearningModule[] = [
   {
@@ -119,7 +119,7 @@ const learningModules: LearningModule[] = [
     duration: '15-20 min',
     tags: ['gaia', 'earth', 'breathing', 'ecology'],
     icon: <Heart className="h-5 w-5" />,
-    component: GaiaBreathing3D
+    component: ReconnectionWithLivingEarth
   },
   {
     id: 'schumann-resonance',
