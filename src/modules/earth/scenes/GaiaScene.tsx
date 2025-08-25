@@ -73,7 +73,13 @@ function Earth({ isBreathing, breathRate, breathingMode, onBreath, sunRef }: {
             dayTexture: { value: dayTexture },
             nightTexture: { value: nightTexture },
             sunPosition: { value: new THREE.Vector3() },
-            breathingMode: { value: breathingMode === 'forest' ? 1.0 : (breathingMode === 'ocean' ? 2.0 : 0.0) },
+            breathingMode: {
+              value:
+                breathingMode === 'forest' ? 1.0 :
+                breathingMode === 'ocean' ? 2.0 :
+                breathingMode === 'atmosphere' ? 3.0 :
+                breathingMode === 'magnetic' ? 4.0 : 0.0
+            },
             time: { value: 0.0 },
           }}
           vertexShader={`
@@ -110,13 +116,19 @@ function Earth({ isBreathing, breathRate, breathingMode, onBreath, sunRef }: {
               if (breathingMode > 0.5 && breathingMode < 1.5 && green > 0.1) { // Forest
                 glow = (sin(time * 2.0) * 0.5 + 0.5) * 0.5;
                 gl_FragColor = texColor + vec4(0.0, glow, 0.0, 1.0);
-              } else if (breathingMode > 1.5 && dayColor.b > (dayColor.r + dayColor.g)) { // Ocean
+              } else if (breathingMode > 1.5 && breathingMode < 2.5 && dayColor.b > (dayColor.r + dayColor.g)) { // Ocean
                 float moonX = 4.0 * cos(time * 0.5);
                 float moonZ = 4.0 * sin(time * 0.5);
                 vec3 moonPos = vec3(moonX, 0.0, moonZ);
                 float distToMoon = distance(vWorldPos, moonPos);
                 glow = (1.0 - smoothstep(2.0, 4.0, distToMoon)) * 0.5;
                 gl_FragColor = texColor + vec4(0.0, 0.0, glow, 1.0);
+              } else if (breathingMode > 2.5 && breathingMode < 3.5) { // Atmosphere
+                glow = (sin(time * 1.5) * 0.5 + 0.5) * 0.2;
+                gl_FragColor = texColor + vec4(glow, glow, glow, 1.0);
+              } else if (breathingMode > 3.5) { // Magnetic
+                glow = (sin(time * 2.5) * 0.5 + 0.5) * 0.3;
+                gl_FragColor = texColor + vec4(glow, 0.0, glow, 1.0);
               } else {
                 gl_FragColor = texColor;
               }

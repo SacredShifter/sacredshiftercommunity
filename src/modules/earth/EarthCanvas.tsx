@@ -22,7 +22,7 @@ export default function ReconnectionWithLivingEarth({ onExit }: ReconnectionWith
   return (
     <ErrorBoundary name="ReconnectionWithLivingEarth">
       <EarthProvider value={{ state, send, onExit }}>
-        <div className="fixed inset-0 bg-gradient-to-b from-green-900 to-brown-900">
+        <div className="fixed inset-0 bg-gradient-to-b from-green-900 to-brown-900 z-[100]">
           <Canvas
             dpr={[1, 2]}
             shadows
