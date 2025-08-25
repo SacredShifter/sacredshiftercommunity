@@ -1,0 +1,26 @@
+C4Context
+    title C4 Diagram for Aura Privacy Gateway (APG) - System Context & Containers
+
+    Person(user, "User", "A Sacred Shifter user.")
+
+    System_Ext(openrouter, "OpenRouter", "Third-party AI Model Aggregator.")
+
+    System_Boundary(ss_eco, "Sacred Shifter Ecosystem") {
+        System(client, "SS Client App", "The user's interface (Web/Mobile/Desktop).")
+        System_Boundary(apg_boundary, "Aura Privacy Gateway System") {
+            Container(apg, "APG Service", "Go", "Privacy proxy: splits, scrubs, encrypts, and recombines data.")
+            ContainerDb(storage, "Encrypted Blob Storage", "S3, GCS, or similar", "Temporarily stores AEAD-encrypted Zone B data blobs.")
+            ContainerDb(kms, "Key Management Service", "AWS KMS, Google Cloud KMS, or HSM", "Manages per-user Key Encryption Keys (KEKs).")
+        }
+    }
+
+    ' Relationships
+    Rel(user, client, "Interacts with the application")
+    Rel(client, apg, "Sends full-context AuraGatewayRequest", "TLS 1.3")
+    Rel(apg, client, "Returns rich, recombined AuraGatewayResponse", "TLS 1.3")
+
+    Rel(apg, openrouter, "Sends sanitized Zone A prompt", "TLS 1.3")
+    Rel(openrouter, apg, "Returns model output")
+
+    Rel(apg, storage, "Stores and retrieves encrypted Zone B data")
+    Rel(apg, kms, "Uses KEK to wrap/unwrap session DEKs")
