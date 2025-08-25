@@ -16,19 +16,21 @@ interface BreathingEarth {
   breathingMode: BreathingMode;
 }
 
-function Earth({ isBreathing, breathRate, breathingMode, onBreath }: {
+function Earth({ isBreathing, breathRate, breathingMode, onBreath, sunRef }: {
   isBreathing: boolean;
   breathRate: number;
   breathingMode: BreathingMode;
   onBreath: () => void;
+  sunRef: React.RefObject<THREE.DirectionalLight>;
 }) {
   const meshRef = useRef<THREE.Mesh>(null);
   const atmosphereRef = useRef<THREE.Mesh>(null);
   const cloudsRef = useRef<THREE.Mesh>(null);
 
-  const [earthTexture, cloudsTexture] = useTexture([
-    'https://www.solarsystemscope.com/textures/download/2k_earth_daymap.jpg',
-    'https://www.solarsystemscope.com/textures/download/2k_earth_clouds.jpg',
+  const [dayTexture, nightTexture, cloudsTexture] = useTexture([
+    'https://mikltjgbvxrxndtszorb.supabase.co/storage/v1/object/public/sacred-assets/uploads/2k_earth_daymap.jpg',
+    'https://mikltjgbvxrxndtszorb.supabase.co/storage/v1/object/public/sacred-assets/uploads/2k_earth_nightmap.jpg',
+    'https://mikltjgbvxrxndtszorb.supabase.co/storage/v1/object/public/sacred-assets/uploads/2k_earth_clouds.jpg',
   ]);
 
   useFrame((state) => {
@@ -42,6 +44,9 @@ function Earth({ isBreathing, breathRate, breathingMode, onBreath }: {
       }
       if (meshRef.current.material.uniforms) {
         meshRef.current.material.uniforms.time.value = time;
+        if (sunRef.current) {
+          meshRef.current.material.uniforms.sunPosition.value.copy(sunRef.current.position);
+        }
       }
     }
 
@@ -65,35 +70,47 @@ function Earth({ isBreathing, breathRate, breathingMode, onBreath }: {
         <sphereGeometry args={[1.5, 32, 32]} />
         <shaderMaterial
           uniforms={{
-            earthTexture: { value: earthTexture },
+            dayTexture: { value: dayTexture },
+            nightTexture: { value: nightTexture },
+            sunPosition: { value: new THREE.Vector3() },
             breathingMode: { value: breathingMode === 'forest' ? 1.0 : (breathingMode === 'ocean' ? 2.0 : 0.0) },
             time: { value: 0.0 },
           }}
           vertexShader={`
             varying vec2 vUv;
+            varying vec3 vNormal;
             varying vec3 vWorldPos;
             void main() {
               vUv = uv;
+              vNormal = normalize(normalMatrix * normal);
               vWorldPos = (modelMatrix * vec4(position, 1.0)).xyz;
               gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
             }
           `}
           fragmentShader={`
-            uniform sampler2D earthTexture;
+            uniform sampler2D dayTexture;
+            uniform sampler2D nightTexture;
+            uniform vec3 sunPosition;
             uniform float breathingMode;
             uniform float time;
             varying vec2 vUv;
+            varying vec3 vNormal;
             varying vec3 vWorldPos;
 
             void main() {
-              vec4 texColor = texture2D(earthTexture, vUv);
-              float green = texColor.g - (texColor.r + texColor.b) * 0.5;
+              vec3 lightDir = normalize(sunPosition - vWorldPos);
+              float light = max(dot(vNormal, lightDir), 0.0);
+              vec4 dayColor = texture2D(dayTexture, vUv);
+              vec4 nightColor = texture2D(nightTexture, vUv);
+              vec4 texColor = mix(nightColor, dayColor, light);
+
+              float green = dayColor.g - (dayColor.r + dayColor.b) * 0.5;
               float glow = 0.0;
 
               if (breathingMode > 0.5 && breathingMode < 1.5 && green > 0.1) { // Forest
                 glow = (sin(time * 2.0) * 0.5 + 0.5) * 0.5;
                 gl_FragColor = texColor + vec4(0.0, glow, 0.0, 1.0);
-              } else if (breathingMode > 1.5 && texColor.b > (texColor.r + texColor.g)) { // Ocean
+              } else if (breathingMode > 1.5 && dayColor.b > (dayColor.r + dayColor.g)) { // Ocean
                 float moonX = 4.0 * cos(time * 0.5);
                 float moonZ = 4.0 * sin(time * 0.5);
                 vec3 moonPos = vec3(moonX, 0.0, moonZ);
@@ -316,6 +333,7 @@ export default function GaiaScene() {
         isBreathing={isBreathing}
         breathRate={breathRate}
         breathingMode={state.context.breathingMode}
+        sunRef={sunRef}
         onBreath={() => {
           if (state.matches('breathing.syncing')) {
             const now = Date.now();
