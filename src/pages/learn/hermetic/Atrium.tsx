@@ -10,7 +10,7 @@ function Gateway({ to, label, x }: { to: string; label: string; x: number }){
         <meshStandardMaterial emissive="#8b5cf6" color="#1f2937" />
       </mesh>
       <Html center>
-        <Link className="px-3 py-1 bg-black/60 rounded" to={to}>{label}</Link>
+        <a href={to} className="px-3 py-1 bg-black/60 rounded text-white no-underline">{label}</a>
       </Html>
     </group>
   )

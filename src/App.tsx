@@ -35,9 +35,9 @@ import LearningModule3D from './components/3D/LearningModule3D';
 import Shift from './pages/Shift';
 import Meditation from './pages/Meditation';
 
-import HermeticAtrium from './pages/learn/hermetic/Atrium';
-import Mentalism from './pages/learn/hermetic/Mentalism';
-import Vibration from './pages/learn/hermetic/Vibration';
+import HermeticAtrium from './pages/learn/hermetic/Atrium.tsx';
+import Mentalism from './pages/learn/hermetic/Mentalism.tsx';
+import Vibration from './pages/learn/hermetic/Vibration.tsx';
 
 function App() {
   return (
