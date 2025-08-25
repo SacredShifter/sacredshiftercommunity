@@ -27,8 +27,8 @@ function Earth({ isBreathing, breathRate, breathingMode, onBreath }: {
   const cloudsRef = useRef<THREE.Mesh>(null);
 
   const [earthTexture, cloudsTexture] = useTexture([
-    'http://shadedrelief.com/natural3/ne3_data/8192/textures/2_no_clouds_8k.jpg',
-    'http://shadedrelief.com/natural3/ne3_data/8192/clouds/fair_clouds_8k.jpg',
+    'https://www.solarsystemscope.com/textures/download/2k_earth_daymap.jpg',
+    'https://www.solarsystemscope.com/textures/download/2k_earth_clouds.jpg',
   ]);
 
   useFrame((state) => {
@@ -62,7 +62,7 @@ function Earth({ isBreathing, breathRate, breathingMode, onBreath }: {
     <group>
       {/* Earth Core */}
       <mesh ref={meshRef} onClick={onBreath}>
-        <sphereGeometry args={[1.5, 64, 64]} />
+        <sphereGeometry args={[1.5, 32, 32]} />
         <shaderMaterial
           uniforms={{
             earthTexture: { value: earthTexture },
@@ -110,13 +110,13 @@ function Earth({ isBreathing, breathRate, breathingMode, onBreath }: {
 
       {/* Clouds */}
       <mesh ref={cloudsRef}>
-        <sphereGeometry args={[1.55, 64, 64]} />
+        <sphereGeometry args={[1.55, 32, 32]} />
         <meshStandardMaterial map={cloudsTexture} transparent opacity={0.4} />
       </mesh>
 
       {/* Atmosphere */}
       <mesh ref={atmosphereRef}>
-        <sphereGeometry args={[1.8, 64, 64]} />
+        <sphereGeometry args={[1.8, 32, 32]} />
         <meshStandardMaterial
           color="#87ceeb"
           transparent
@@ -126,7 +126,7 @@ function Earth({ isBreathing, breathRate, breathingMode, onBreath }: {
 
       {/* Atmospheric Glow */}
       <mesh scale={[1.05, 1.05, 1.05]}>
-        <sphereGeometry args={[1.8, 64, 64]} />
+        <sphereGeometry args={[1.8, 32, 32]} />
         <shaderMaterial
           uniforms={{
             glowColor: { value: new THREE.Color(0x87ceeb) },
@@ -168,7 +168,7 @@ function Aurora({ isActive }: { isActive: boolean }) {
 
   return (
     <mesh ref={auroraRef} scale={[1.1, 1.3, 1.1]}>
-      <sphereGeometry args={[1.8, 64, 64]} />
+      <sphereGeometry args={[1.8, 32, 32]} />
       <shaderMaterial
         uniforms={{
           time: { value: 0.0 },
