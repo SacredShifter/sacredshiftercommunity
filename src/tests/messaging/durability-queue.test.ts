@@ -18,22 +18,23 @@ vi.mock('@/integrations/supabase/client', () => ({
 }));
 
 // Mock SacredMesh to isolate the UnifiedMessagingService
-vi.mock('@/lib/sacredMesh', () => {
+vi.mock('@/lib/sacredMesh', async (importOriginal) => {
+  const original = await importOriginal<typeof import('@/lib/sacredMesh')>();
   const mockInstance = {
     initialize: vi.fn().mockResolvedValue(undefined),
     getStatus: vi.fn().mockResolvedValue({
       initialized: true,
       transports: { http: true, webrtc: false },
-      queue: { size: 0 },
+      queue: { size: 0, oldestAge: 0 },
     }),
     onMessage: vi.fn(),
     send: vi.fn().mockResolvedValue(undefined),
     disconnect: vi.fn().mockResolvedValue(undefined),
   };
+
   return {
-    SacredMesh: {
-      getInstance: vi.fn(() => mockInstance),
-    },
+    ...original,
+    SacredMesh: vi.fn(() => mockInstance),
   };
 });
 
