@@ -6,15 +6,13 @@ import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { useBreathOfSourceModule } from '@/hooks/useBreathOfSourceModule';
 import BreathOrb from '@/components/BreathOfSource3D/BreathOrb';
 import WheelVisualization from '@/components/BreathOfSource3D/WheelVisualization';
-import HUDInterface from '@/components/BreathOfSource3D/HUDInterface';
 import TrustSpeedControls from '@/components/BreathOfSource3D/TrustSpeedControls';
 import SovereigntyAnchor from '@/components/BreathOfSource3D/SovereigntyAnchor';
 import ReflectionPanel from '@/components/BreathOfSource3D/ReflectionPanel';
 import BreathAudio from '@/components/BreathOfSource3D/BreathAudio';
-import LessonContent from '@/components/BreathOfSource3D/LessonContent';
 import BiofeedbackDisplay from '@/components/BreathOfSource3D/BiofeedbackDisplay';
-import BreathCycleManager, { BreathPhase } from '@/components/BreathOfSource3D/BreathCycleManager';
-import BreathingGuidance from '@/components/BreathOfSource3D/BreathingGuidance';
+import BreathCycleManager, { BreathPhase, BREATH_PRESETS } from '@/components/BreathOfSource3D/BreathCycleManager';
+import UnifiedPracticeUI from '@/components/BreathOfSource3D/UnifiedPracticeUI';
 import * as THREE from 'three';
 
 // Sacred geometry background
@@ -111,7 +109,9 @@ function BreathScene({
   isBreathingActive, 
   currentBreathPhase, 
   cycleCount, 
-  getBreathPreset, 
+  getBreathPreset,
+  phaseTime,
+  phaseDuration,
   handlePhaseChange, 
   handleCycleComplete,
   context,
@@ -121,7 +121,9 @@ function BreathScene({
   currentBreathPhase: BreathPhase;
   cycleCount: number;
   getBreathPreset: () => 'basic' | 'liberation' | 'sovereignty';
-  handlePhaseChange: (phase: BreathPhase) => void;
+  phaseTime: number;
+  phaseDuration: number;
+  handlePhaseChange: (phase: BreathPhase, duration: number) => void;
   handleCycleComplete: () => void;
   context: any;
   currentLesson: number;
@@ -147,6 +149,8 @@ function BreathScene({
         currentPhase={currentBreathPhase}
         trustSpeed={context.trustSpeed}
         cycleCount={cycleCount}
+        phaseTime={phaseTime}
+        phaseDuration={phaseDuration}
       />
       
       {/* Wheel/Exit Metaphor Visualization */}
@@ -199,6 +203,8 @@ export default function BreathOfSource3D() {
   const [isBreathingActive, setIsBreathingActive] = React.useState(false);
   const [currentBreathPhase, setCurrentBreathPhase] = React.useState<BreathPhase>('inhale');
   const [cycleCount, setCycleCount] = React.useState(0);
+  const [phaseTime, setPhaseTime] = React.useState(0);
+  const [phaseDuration, setPhaseDuration] = React.useState(4);
 
   // Auto-start breathing for lessons 1-3
   React.useEffect(() => {
@@ -210,6 +216,17 @@ export default function BreathOfSource3D() {
     }
   }, [currentLesson]);
 
+  // Timer for breath phases
+  React.useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isBreathingActive) {
+      interval = setInterval(() => {
+        setPhaseTime(prev => prev + 0.05);
+      }, 50);
+    }
+    return () => clearInterval(interval);
+  }, [isBreathingActive]);
+
   // Get breath preset based on lesson
   const getBreathPreset = () => {
     if (currentLesson === 1) return 'basic';
@@ -218,8 +235,10 @@ export default function BreathOfSource3D() {
     return 'basic';
   };
 
-  const handlePhaseChange = (phase: BreathPhase) => {
+  const handlePhaseChange = (phase: BreathPhase, duration: number) => {
     setCurrentBreathPhase(phase);
+    setPhaseTime(0);
+    setPhaseDuration(duration);
   };
 
   const handleCycleComplete = () => {
@@ -229,6 +248,9 @@ export default function BreathOfSource3D() {
       return newCount;
     });
   };
+
+  const preset = getBreathPreset();
+  const targetCycles = BREATH_PRESETS[preset].targetCycles;
 
   return (
     <div className="relative w-full h-screen bg-silence overflow-hidden">
@@ -250,6 +272,8 @@ export default function BreathOfSource3D() {
               currentBreathPhase={currentBreathPhase}
               cycleCount={cycleCount}
               getBreathPreset={getBreathPreset}
+              phaseTime={phaseTime}
+              phaseDuration={phaseDuration}
               handlePhaseChange={handlePhaseChange}
               handleCycleComplete={handleCycleComplete}
               context={context}
@@ -265,54 +289,39 @@ export default function BreathOfSource3D() {
         isActive={currentLesson >= 1}
         currentPhase={context.breathPreset === 'liberation' ? 'inhale' : 'exhale'}
         trustSpeed={context.trustSpeed}
-        preset={context.breathPreset}
+        preset={preset}
       />
 
       {/* UI Overlays */}
       <div className="absolute inset-0 pointer-events-none z-10">
-        {/* Trust Speed Controls - Show prominently for L0 */}
-        {currentLesson === 0 && (
-          <div className="pointer-events-auto">
-            <TrustSpeedControls 
-              currentSpeed={context.trustSpeed}
-              onSpeedChange={setTrustSpeed}
-            />
-          </div>
-        )}
-
-        {/* Breathing Guidance - Prominent center display */}
-        {isBreathingActive && (
-          <BreathingGuidance
-            currentPhase={currentBreathPhase}
-            isActive={isBreathingActive}
-            preset={getBreathPreset()}
-            cycleCount={cycleCount}
-            targetCycles={currentLesson === 1 ? 5 : currentLesson === 2 ? 8 : currentLesson === 3 ? 10 : 0}
-          />
-        )}
-
-        {/* HUD Interface - Less prominent now */}
-        <div className="pointer-events-auto">
-          <HUDInterface 
+        {/* Unified UI Panel */}
+        <UnifiedPracticeUI
             currentLesson={currentLesson}
             lessonTitle={lessonTitle}
             lessonDescription={lessonDescription}
             isLessonComplete={isLessonComplete}
             cycleCount={cycleCount}
+            targetCycles={targetCycles}
+            currentPhase={currentBreathPhase}
+            phaseTime={phaseTime}
+            phaseDuration={phaseDuration}
+            trustSpeed={context.trustSpeed}
+            preset={preset}
             onStartLesson={startLesson}
             onCompleteLesson={completeLesson}
             onNextLesson={nextLesson}
             onPrevLesson={prevLesson}
-          />
-        </div>
+        />
 
-        {/* Lesson Content - Educational sidebar */}
-        <div className="pointer-events-auto">
-          <LessonContent 
-            currentLesson={currentLesson}
-            trustSpeed={context.trustSpeed}
-          />
-        </div>
+        {/* Trust Speed Controls - Show prominently for L0 */}
+        {currentLesson === 0 && (
+          <div className="pointer-events-auto">
+            <TrustSpeedControls
+              currentSpeed={context.trustSpeed}
+              onSpeedChange={setTrustSpeed}
+            />
+          </div>
+        )}
 
         {/* Sovereignty Anchors */}
         {context.sovereigntyAnchors && (

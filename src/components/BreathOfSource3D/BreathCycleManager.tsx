@@ -6,14 +6,23 @@ interface BreathCycleManagerProps {
   isActive: boolean;
   preset: 'liberation' | 'sovereignty' | 'basic';
   trustSpeed: 'gentle' | 'balanced' | 'bold';
-  onPhaseChange: (phase: BreathPhase) => void;
+  onPhaseChange: (phase: BreathPhase, duration: number) => void;
   onCycleComplete: () => void;
 }
 
-const breathPresets = {
-  basic: { inhale: 4, holdIn: 4, exhale: 4, holdOut: 4 },
-  liberation: { inhale: 4, holdIn: 1, exhale: 6, holdOut: 1 },
-  sovereignty: { inhale: 5, holdIn: 5, exhale: 8, holdOut: 5 }
+export const BREATH_PRESETS = {
+  basic: {
+    pattern: { inhale: 4, holdIn: 4, exhale: 4, holdOut: 4 },
+    targetCycles: 5,
+  },
+  liberation: {
+    pattern: { inhale: 4, holdIn: 1, exhale: 6, holdOut: 1 },
+    targetCycles: 8,
+  },
+  sovereignty: {
+    pattern: { inhale: 5, holdIn: 5, exhale: 8, holdOut: 5 },
+    targetCycles: 10,
+  },
 };
 
 export default function BreathCycleManager({
@@ -34,7 +43,7 @@ export default function BreathCycleManager({
   };
 
   const speedMultiplier = speedMultipliers[trustSpeed];
-  const pattern = breathPresets[preset];
+  const { pattern } = BREATH_PRESETS[preset];
 
   useEffect(() => {
     // Clear any existing timer first
@@ -65,11 +74,11 @@ export default function BreathCycleManager({
         }
         
         const phase = phases[currentPhaseIndex];
+        const durationSeconds = pattern[phase] * speedMultiplier;
         phaseRef.current = phase;
-        onPhaseChange(phase);
+        onPhaseChange(phase, durationSeconds);
         
-        const duration = pattern[phase] * 1000 * speedMultiplier;
-        console.log(`Starting ${phase} for ${duration}ms`);
+        console.log(`Starting ${phase} for ${durationSeconds}s`);
         
         timerRef.current = setTimeout(() => {
           currentPhaseIndex++;
@@ -80,7 +89,7 @@ export default function BreathCycleManager({
             currentPhaseIndex = 0;
           }
           nextPhase(); // Continue to next phase
-        }, duration);
+        }, durationSeconds * 1000);
       };
       
       nextPhase(); // Start the cycle
