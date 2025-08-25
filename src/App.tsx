@@ -35,6 +35,10 @@ import LearningModule3D from './components/3D/LearningModule3D';
 import Shift from './pages/Shift';
 import Meditation from './pages/Meditation';
 
+import HermeticAtrium from './pages/learn/hermetic/Atrium';
+import Mentalism from './pages/learn/hermetic/Mentalism';
+import Vibration from './pages/learn/hermetic/Vibration';
+
 function App() {
   return (
     <ProductionReadyErrorBoundary>
@@ -47,6 +51,9 @@ function App() {
           
           <Routes>
             <Route path="/auth" element={<Auth />} />
+            <Route path="/learn/hermetic" element={<HermeticAtrium />} />
+            <Route path="/learn/hermetic/mentalism" element={<Mentalism />} />
+            <Route path="/learn/hermetic/vibration" element={<Vibration />} />
             <Route
               element={
                 <ProtectedRoute>
