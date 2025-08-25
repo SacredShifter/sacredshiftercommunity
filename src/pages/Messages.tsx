@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useDirectMessages } from '@/hooks/useDirectMessages';
+import { useUnreadDms } from '@/hooks/useUnreadDms';
 import { useAuth } from '@/hooks/useAuth';
 import { usePersonalSignature } from '@/hooks/usePersonalSignature';
 import { Card } from '@/components/ui/card';
@@ -29,6 +30,7 @@ export default function Messages() {
   const { user } = useAuth();
   const { signature } = usePersonalSignature();
   const { conversations, messages, loading, fetchConversations, fetchMessages } = useDirectMessages();
+  const { data: unreadDms } = useUnreadDms();
 
   // Determine optimal view mode based on user signature
   const getOptimalViewMode = (signature: any): ViewMode => {
@@ -219,11 +221,18 @@ export default function Messages() {
                         <p className="font-medium truncate">
                           {conversation.other_participant?.display_name || 'Unknown User'}
                         </p>
-                        {conversation.last_message_at && (
-                          <span className="text-xs text-muted-foreground">
-                            {formatTime(conversation.last_message_at)}
-                          </span>
-                        )}
+                        <div className="flex items-center space-x-2">
+                          {unreadDms?.find(d => d.sender_id === conversation.other_participant?.id)?.unread_count > 0 && (
+                            <Badge variant="destructive" className="h-5 w-5 flex items-center justify-center p-0">
+                              {unreadDms.find(d => d.sender_id === conversation.other_participant?.id)?.unread_count}
+                            </Badge>
+                          )}
+                          {conversation.last_message_at && (
+                            <span className="text-xs text-muted-foreground">
+                              {formatTime(conversation.last_message_at)}
+                            </span>
+                          )}
+                        </div>
                       </div>
                       <p className="text-sm text-muted-foreground truncate">
                         {conversation.last_message?.content || 'Start a conversation...'}
