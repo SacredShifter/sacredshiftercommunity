@@ -98,7 +98,7 @@ export class UnifiedMessagingService {
       ...config
     };
 
-    this.sacredMesh = SacredMesh.getInstance();
+    this.sacredMesh = new SacredMesh();
     this.messageQueue = new DurableStore('message-queue');
     this.retryQueue = new DurableStore('retry-queue');
 

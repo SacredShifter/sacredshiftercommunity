@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useDirectMessages } from '@/hooks/useDirectMessages';
 import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
+import { useQueryClient } from '@tanstack/react-query';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -37,6 +39,7 @@ export const ClassicChatInterface: React.FC<ClassicChatProps> = ({
     conversations
   } = useDirectMessages();
   const { createSacredMessage, alchemizeMessage } = useSacredSigilEngine();
+  const queryClient = useQueryClient();
 
   // Get selected user from conversations
   const selectedUser = conversations.find(conv => 
@@ -72,6 +75,24 @@ export const ClassicChatInterface: React.FC<ClassicChatProps> = ({
   useEffect(() => {
     inputRef.current?.focus();
   }, [selectedUserId]);
+
+  // Mark conversation as read
+  useEffect(() => {
+    if (selectedUserId) {
+      const markAsRead = async () => {
+        try {
+          await supabase.rpc('mark_dm_conversation_as_read', {
+            p_sender_id: selectedUserId,
+          });
+          // Invalidate the unread counts to refetch
+          await queryClient.invalidateQueries({ queryKey: ['unreadDms'] });
+        } catch (error) {
+          console.error('Error marking conversation as read:', error);
+        }
+      };
+      markAsRead();
+    }
+  }, [selectedUserId, queryClient]);
 
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !selectedUserId) return;
