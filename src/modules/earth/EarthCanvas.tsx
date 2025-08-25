@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { useMachine } from '@xstate/react';
 import { earthMachine } from './machine';
 import { EarthProvider } from './context/EarthContext';
-import { SceneRouter } from './scenes/SceneRouter';
+import GaiaScene from './scenes/GaiaScene';
 import { HUD } from './ui/HUD';
 import { AudioEngine } from './audio/AudioEngine';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
@@ -14,6 +14,10 @@ interface ReconnectionWithLivingEarthProps {
 
 export default function ReconnectionWithLivingEarth({ onExit }: ReconnectionWithLivingEarthProps) {
   const [state, send] = useMachine(earthMachine);
+
+  useEffect(() => {
+    send({ type: 'START' });
+  }, [send]);
 
   return (
     <ErrorBoundary name="ReconnectionWithLivingEarth">
@@ -34,7 +38,7 @@ export default function ReconnectionWithLivingEarth({ onExit }: ReconnectionWith
               powerPreference: 'high-performance'
             }}
           >
-            <SceneRouter />
+            <GaiaScene />
           </Canvas>
           
           <HUD />
