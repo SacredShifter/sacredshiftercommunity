@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Send, Users, Settings, UserPlus, Hash, ArrowLeft, Crown, Shield, BookOpen, Maximize2, Minimize2, Minus, Heart, Brain, MessageSquare, Activity, Filter, Sparkles, Vote } from 'lucide-react';
+import { Send, Users, Settings, UserPlus, Hash, ArrowLeft, Crown, Shield, BookOpen, Maximize2, Minimize2, Minus, Heart, Brain, MessageSquare, Activity, Filter, Sparkles, Vote, Link2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -26,6 +26,9 @@ import { CollectiveMeditationSession } from '@/components/SacredCircle/Collectiv
 import { CircleVoiceMessage } from '@/components/SacredCircle/CircleVoiceMessage';
 import { CircleAstrologicalTiming } from '@/components/SacredCircle/CircleAstrologicalTiming';
 import { CircleGovernanceSystem } from '@/components/SacredCircle/CircleGovernanceSystem';
+import { ResourceGallery } from '@/components/ResonantResources/ResourceGallery';
+import { ResourceNominationForm } from '@/components/ResonantResources/ResourceNominationForm';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 type MessageMode = 'sacred' | 'quantum' | 'classic';
 
@@ -364,8 +367,9 @@ export const SacredCircleInterface = ({
         {/* Main Content */}
         <div className="flex-1 flex flex-col">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
-            <TabsList className="grid w-full grid-cols-8 mx-4 mt-2">
+            <TabsList className="grid w-full grid-cols-9 mx-4 mt-2">
               <TabsTrigger value="messages" className="text-xs">Messages</TabsTrigger>
+              <TabsTrigger value="resources" className="text-xs">Resources</TabsTrigger>
               <TabsTrigger value="health" className="text-xs"><Activity className="h-3 w-3" /></TabsTrigger>
               <TabsTrigger value="meditation" className="text-xs"><Sparkles className="h-3 w-3" /></TabsTrigger>
               <TabsTrigger value="governance" className="text-xs"><Vote className="h-3 w-3" /></TabsTrigger>
@@ -374,6 +378,32 @@ export const SacredCircleInterface = ({
               <TabsTrigger value="members" className="text-xs">Members</TabsTrigger>
               <TabsTrigger value="filter" className="text-xs"><Filter className="h-3 w-3" /></TabsTrigger>
             </TabsList>
+
+            <TabsContent value="resources" className="flex-1 flex flex-col mt-2 p-4 space-y-4">
+              <div className="flex justify-between items-center">
+                <div>
+                  <h3 className="text-lg font-medium">Resonant Resources</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Shared links, tools, and wisdom for the circle.
+                  </p>
+                </div>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button>
+                      <Link2 className="w-4 h-4 mr-2" />
+                      Share Resource
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Share a new resource</DialogTitle>
+                    </DialogHeader>
+                    <ResourceNominationForm circleId={circleId} />
+                  </DialogContent>
+                </Dialog>
+              </div>
+              <ResourceGallery circleId={circleId} />
+            </TabsContent>
 
             {/* Health Dashboard Tab */}
             <TabsContent value="health" className="flex-1 flex flex-col mt-2">
