@@ -11,6 +11,7 @@ interface BreathingGuidanceProps {
   preset: 'basic' | 'liberation' | 'sovereignty';
   cycleCount: number;
   targetCycles: number;
+  timeRemaining: number;
 }
 
 const phaseData = {
@@ -59,7 +60,8 @@ export default function BreathingGuidance({
   isActive,
   preset,
   cycleCount,
-  targetCycles
+  targetCycles,
+  timeRemaining,
 }: BreathingGuidanceProps) {
   const phase = phaseData[currentPhase];
   const progress = targetCycles > 0 ? Math.min((cycleCount / targetCycles) * 100, 100) : 0;
@@ -67,30 +69,35 @@ export default function BreathingGuidance({
   if (!isActive) return null;
 
   return (
-    <div className="absolute top-4 right-4 pointer-events-none z-30 w-80">{/* Simple fixed positioning */}
+    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-30 w-96 text-center">
       <AnimatePresence mode="wait">
         <motion.div
           key={currentPhase}
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.9, opacity: 0 }}
-          transition={{ duration: 0.2 }}
+          initial={{ scale: 0.9, opacity: 0, y: 20 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          exit={{ scale: 0.9, opacity: 0, y: -20 }}
+          transition={{ duration: 0.5, type: 'spring' }}
         >
-          <Card className={`
+          <div className="font-sacred text-7xl font-light text-white/80 mb-2">
+            {(timeRemaining / 1000).toFixed(1)}s
+          </div>
+          <Card
+            className={`
             ${phase.bgColor} ${phase.borderColor} border backdrop-blur-md
-            shadow-lg w-full
-          `}>
-            <CardContent className="p-3 space-y-2">{/* Compact padding */}
+            shadow-lg w-full inline-block
+          `}
+          >
+            <CardContent className="p-4 space-y-2">
               {/* Compact header */}
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-3">
                 <div className={`${phase.color} flex-shrink-0`}>
                   {phase.icon}
                 </div>
-                <div className="min-w-0 flex-1">
-                  <h3 className={`text-base font-sacred ${phase.color} leading-tight`}>
+                <div className="min-w-0 flex-1 text-left">
+                  <h3 className={`text-xl font-sacred ${phase.color} leading-tight`}>
                     {phase.label}
                   </h3>
-                  <p className="text-xs text-muted-foreground leading-tight truncate">
+                  <p className="text-sm text-muted-foreground leading-tight truncate">
                     {phase.description}
                   </p>
                 </div>

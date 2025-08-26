@@ -230,7 +230,7 @@ export default function LearningModule3D({ moduleId, onBack, className }: Learni
               </div>
             </div>
           }>
-            <ModuleComponent />
+            <ModuleComponent onExit={handleBack} />
           </Suspense>
         </ErrorBoundary>
       </div>

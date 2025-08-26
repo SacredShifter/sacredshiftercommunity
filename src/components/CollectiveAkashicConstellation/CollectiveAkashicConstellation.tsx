@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { useNavigate } from 'react-router-dom';
 import { useRegistryOfResonance } from '@/hooks/useRegistryOfResonance';
 import { CollectiveAkashicEntryModal } from './CollectiveAkashicEntryModal';
 import { format } from 'date-fns/format';
@@ -39,9 +40,11 @@ interface CollectiveConstellationNodeProps {
   onDelete: (id: string) => void;
   isSelected: boolean;
   onClick: () => void;
+  onMouseEnter: () => void;
+  onMouseLeave: () => void;
 }
 
-function CollectiveConstellationNode({ entry, position, onEdit, onDelete, isSelected, onClick }: CollectiveConstellationNodeProps) {
+function CollectiveConstellationNode({ entry, position, onEdit, onDelete, isSelected, onClick, onMouseEnter, onMouseLeave }: CollectiveConstellationNodeProps) {
   const category = COLLECTIVE_ARCHETYPAL_CATEGORIES[entry.entry_type] || COLLECTIVE_ARCHETYPAL_CATEGORIES['Consciousness Threads'];
   const Icon = category.icon;
 
@@ -57,6 +60,8 @@ function CollectiveConstellationNode({ entry, position, onEdit, onDelete, isSele
       animate={{ opacity: 1, scale: 1 }}
       whileHover={{ scale: 1.1 }}
       onClick={onClick}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
     >
       {/* Collective Sacred Geometry Aura */}
       <motion.div
@@ -195,6 +200,7 @@ function CollectiveConstellationNode({ entry, position, onEdit, onDelete, isSele
 }
 
 export function CollectiveAkashicConstellation() {
+  const navigate = useNavigate();
   const { entries, loading, createEntry, updateEntry, deleteEntry, fetchEntries } = useRegistryOfResonance();
   const [searchQuery, setSearchQuery] = useState('');
   const [archetypalFilter, setArchetypalFilter] = useState('all');
@@ -487,7 +493,9 @@ export function CollectiveAkashicConstellation() {
               onEdit={handleEditEntry}
               onDelete={deleteEntry}
               isSelected={hoveredEntry === entry.id}
-              onClick={() => setHoveredEntry(hoveredEntry === entry.id ? null : entry.id)}
+              onClick={() => navigate(`/resonance/entries/${entry.id}`)}
+              onMouseEnter={() => setHoveredEntry(entry.id)}
+              onMouseLeave={() => setHoveredEntry(null)}
             />
           ))}
           
@@ -512,6 +520,7 @@ export function CollectiveAkashicConstellation() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
+                onClick={() => navigate(`/resonance/entries/${entry.id}`)}
               >
                 <Card className="h-full hover:shadow-xl transition-all cursor-pointer group border border-border/50 hover:border-primary/30">
                   <CardHeader className="pb-3">

@@ -6,24 +6,49 @@ import { Button } from '@/components/ui/button'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDown, BookOpen } from 'lucide-react'
 
-const Pendulum = () => {
-  const groupRef = useRef<THREE.Group>(null!)
-  useFrame(({ clock }) => {
-    const t = clock.getElapsedTime()
-    const angle = Math.sin(t) * 0.8
-    if (groupRef.current) groupRef.current.rotation.z = angle
-  })
+const PendulumWave = ({ count = 15 }) => {
+  const pendulums = useMemo(() => {
+    const arr = [];
+    for (let i = 0; i < count; i++) {
+      const length = 2 + i * 0.15;
+      const period = 2 * Math.PI * Math.sqrt(length / 9.8);
+      arr.push({ length, period });
+    }
+    return arr;
+  }, [count]);
+
   return (
-    <group ref={groupRef} position={[0, 2.5, 0]}>
-      <mesh><sphereGeometry args={[0.05, 16, 16]} /><meshStandardMaterial color="white" /></mesh>
-      <Line points={[[0, 0, 0], [0, -2, 0]]} color="white" lineWidth={3} />
-      <mesh position={[0, -2.2, 0]}>
+    <group>
+      {pendulums.map((p, i) => (
+        <Pendulum key={i} length={p.length} period={p.period} position-z={(-count / 2 + i) * 0.5} />
+      ))}
+    </group>
+  );
+};
+
+const Pendulum = ({ length, period, ...props }: { length: number, period: number } & JSX.IntrinsicElements['group']) => {
+  const groupRef = useRef<THREE.Group>(null!);
+
+  useFrame(({ clock }) => {
+    const t = clock.getElapsedTime();
+    const angle = Math.sin(t * (2 * Math.PI / period)) * 0.8;
+    if (groupRef.current) groupRef.current.rotation.z = angle;
+  });
+
+  return (
+    <group ref={groupRef} {...props}>
+      <mesh position={[0, length, 0]}>
+        <sphereGeometry args={[0.05, 16, 16]} />
+        <meshStandardMaterial color="white" />
+      </mesh>
+      <Line points={[[0, 0, 0], [0, length, 0]]} color="white" lineWidth={3} />
+      <mesh position={[0, 0, 0]}>
         <sphereGeometry args={[0.3, 32, 32]} />
         <meshStandardMaterial color="white" emissive="purple" emissiveIntensity={2} />
       </mesh>
     </group>
-  )
-}
+  );
+};
 
 const SceneContent = () => {
   const lightRef = useRef<THREE.DirectionalLight>(null!)
@@ -36,7 +61,7 @@ const SceneContent = () => {
     <>
       <ambientLight intensity={0.2} />
       <directionalLight ref={lightRef} position={[5, 5, 5]} intensity={1.5} />
-      <Pendulum />
+      <PendulumWave />
     </>
   )
 }

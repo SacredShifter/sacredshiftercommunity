@@ -6,6 +6,7 @@ import { useLiberationState } from '../context/LiberationContext';
 import { cn } from '@/lib/utils';
 import { Legend } from './Legend';
 import { AccessibilityPanel } from './AccessibilityPanel';
+import { CosmogramInfo } from './CosmogramInfo';
 
 type Waypoint = {
   position: [number, number, number];
@@ -175,6 +176,8 @@ export const HUD: React.FC<HUDProps> = ({ waypoints, onWaypointClick }) => {
       {currentScene === 'expansion' && (
         <Legend waypoints={waypoints} onWaypointClick={onWaypointClick} />
       )}
+
+      {currentScene === 'intro' && <CosmogramInfo />}
 
       <AccessibilityPanel 
         isOpen={showAccessibility} 

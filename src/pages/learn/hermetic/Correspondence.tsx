@@ -1,6 +1,6 @@
 import React, { useMemo, useRef, useState } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { OrbitControls, Html, Line } from '@react-three/drei'
+import { OrbitControls, Html, Line, PerspectiveCamera } from '@react-three/drei'
 import * as THREE from 'three'
 import { Button } from '@/components/ui/button'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -57,7 +57,7 @@ const Scene = ({ progress, showPhi, showBranching }: { progress: number, showPhi
 
   return (
     <>
-      <perspectiveCamera ref={cameraRef} fov={60} />
+      <PerspectiveCamera ref={cameraRef} fov={60} makeDefault />
       {stages.map((stage, index) => (
         <group key={index} position={stage.position}>
           <mesh>

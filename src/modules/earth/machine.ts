@@ -1,7 +1,7 @@
 import { createMachine, assign, setup } from 'xstate';
 
 export type BreathingMode = 'forest' | 'ocean' | 'atmosphere' | 'magnetic' | null;
-export type CelestialBody = 'sun' | 'moon' | null;
+export type CelestialBody = 'sun' | 'moon' | 'mercury' | 'venus' | 'mars' | 'jupiter' | 'saturn' | 'uranus' | 'neptune' | null;
 
 export interface EarthContext {
   sessionId: string;
@@ -40,13 +40,14 @@ export const earthMachine = setup({
         return null;
       },
     }),
-    setCelestialTime: assign({
-      celestialTime: ({ event }) => {
-        if (event.type === 'SET_CELESTIAL_TIME') {
-          return event.time;
-        }
-        return null;
-      },
+    setCelestialTime: assign(({ event }) => {
+      if (event.type !== 'SET_CELESTIAL_TIME') return {};
+      const time = event.time;
+      const bodies: CelestialBody[] = ['sun', 'moon', 'mercury', 'venus', 'mars', 'jupiter', 'saturn', 'uranus', 'neptune'];
+      const section = 62.8 / bodies.length;
+      const index = Math.floor(time / section);
+      const celestialBody = bodies[index] || null;
+      return { celestialTime: time, celestialBody };
     }),
   },
 }).createMachine({
