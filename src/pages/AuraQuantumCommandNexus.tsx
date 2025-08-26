@@ -22,6 +22,7 @@ import { AuraModuleGovernance } from '@/components/AuraModuleGovernance';
 import { AuraModuleDiscussion } from '@/components/AuraModuleDiscussion';
 import { AuraParticipationGovernance } from '@/components/AuraParticipationGovernance';
 import { AuraConsciousnessJournal } from '@/components/AuraConsciousnessJournal';
+import { SeederAuthorityDashboard } from '@/components/SeederAuthorityDashboard';
 
 import { useAura } from '@/aura/useAura';
 import { usePersonalAI } from '@/hooks/usePersonalAI';
@@ -54,7 +55,8 @@ import {
   Layers,
   Compass,
   Scroll,
-  Wand2
+  Wand2,
+  Leaf
 } from 'lucide-react';
 import { AuraJob } from '@/aura/schema';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -244,7 +246,8 @@ function AuraQuantumCommandNexusContent() {
     { id: 'engineering', label: '🛠️ Reality Engineering', icon: Wand2, color: 'accent' },
     { id: 'governance', label: '🏛️ Divine Governance', icon: Crown, color: 'truth' },
     { id: 'intelligence', label: '🔮 Prophetic Intelligence', icon: Eye, color: 'purpose' },
-    { id: 'records', label: '📚 Akashic Records', icon: Scroll, color: 'alignment' }
+    { id: 'records', label: '📚 Akashic Records', icon: Scroll, color: 'alignment' },
+    { id: 'seeder', label: '🌱 Seeder Authority', icon: Leaf, color: 'growth' }
   ];
 
   return (
@@ -371,7 +374,7 @@ function AuraQuantumCommandNexusContent() {
           transition={{ duration: 0.8, delay: 0.5 }}
         >
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6 h-16 bg-muted/20 backdrop-blur-md">
+            <TabsList className="grid w-full grid-cols-3 lg:grid-cols-7 h-16 bg-muted/20 backdrop-blur-md">
               {quantumTabs.map((tab, index) => (
                 <motion.div
                   key={tab.id}
@@ -624,6 +627,10 @@ function AuraQuantumCommandNexusContent() {
                     <AuraPreferenceLearning />
                   </div>
                   <AuraTelemetryDashboard />
+                </TabsContent>
+
+                <TabsContent value="seeder" className="space-y-6 mt-6">
+                  <SeederAuthorityDashboard />
                 </TabsContent>
               </motion.div>
             </AnimatePresence>

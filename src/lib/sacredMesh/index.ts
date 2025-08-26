@@ -1,37 +1,32 @@
 // Sacred Mesh - Core Communication Abstraction Layer
 import { SacredMeshRouter } from './router';
 import { WebSocketTransport, MultipeerTransport, WiFiAwareTransport, MeshtasticTransport } from './transport';
-import { SacredMeshMessage, MeshConfig, ContactKeys, SacredMeshPacket } from './types';
+import { SacredMeshMessage, MeshConfig, SacredMeshPacket, KeyBundle } from './types';
 import { SacredMeshCrypto } from './crypto';
 import { PacketFormatter } from './packet';
+import { SacredKeyExchange, Contact } from './keyExchange';
 
 export class SacredMesh {
   private router: SacredMeshRouter;
   private crypto = SacredMeshCrypto.getInstance();
   private packetFormatter = new PacketFormatter();
+  private keyExchange = new SacredKeyExchange();
   private isInitialized = false;
-  private contactKeys = new Map<string, ContactKeys>();
-  private myIdentityKeys?: CryptoKeyPair;
   private counter = 0;
+  private messageHandlers: ((message: SacredMeshMessage, senderId: string) => void)[] = [];
 
   constructor(config?: Partial<MeshConfig>) {
     this.router = new SacredMeshRouter(config);
   }
 
-  // Initialize Sacred Mesh with identity keys
+  // Initialize Sacred Mesh
   async initialize(): Promise<void> {
     if (this.isInitialized) return;
 
     try {
-      // Generate or load identity keys
-      this.myIdentityKeys = await this.crypto.generateIdentityKeyPair();
-      
-      // Set up transport stack in priority order
+      await this.keyExchange.initialize();
       await this.setupTransports();
-      
-      // Set up message handling
       this.router.onMessage(this.handleIncomingMessage.bind(this));
-      
       this.isInitialized = true;
       console.log('🕸️ Sacred Mesh initialized successfully');
     } catch (error) {
@@ -67,79 +62,47 @@ export class SacredMesh {
   }
 
   // Public API: Send a Sacred Mesh message
-  async send(message: SacredMeshMessage, recipientId?: string): Promise<void> {
-    if (!this.isInitialized) {
-      throw new Error('Sacred Mesh not initialized');
-    }
+  async send(message: SacredMeshMessage, recipientId: string): Promise<void> {
+    if (!this.isInitialized) throw new Error('Sacred Mesh not initialized');
+
+    const contact = this.keyExchange.getContact(recipientId);
+    if (!contact?.sharedSecret) throw new Error(`No secure session with contact ${recipientId}`);
 
     try {
-      // Use proper key exchange when available, fallback to ephemeral for now
-      const tempKey = await this.crypto.generateEphemeralKeyPair();
-      const sharedKey = await this.crypto.deriveSharedSecret(tempKey.privateKey, tempKey.publicKey);
+      const { ciphertext, authTag, headerInfo } = await this.keyExchange.encryptMessage(recipientId, new TextEncoder().encode(JSON.stringify(message)));
       
-      // Create encrypted packet
       const packet = await this.packetFormatter.createPacket(
-        message,
+        { ciphertext, authTag },
         await this.getCurrentUserId(),
         this.counter++,
-        sharedKey
+        headerInfo
       );
 
-      // Serialize and send
       const serializedPacket = await this.packetFormatter.serializePacket(packet);
       await this.router.send(serializedPacket);
       
-      console.log('🕸️ Sacred Mesh message sent:', {
-        sigils: message.sigils,
-        intentStrength: message.intentStrength,
-        recipientId
-      });
+      console.log('🕸️ Sacred Mesh message sent securely');
     } catch (error) {
       console.error('🕸️ Failed to send Sacred Mesh message:', error);
       throw error;
     }
   }
 
-  // Get current user ID from auth
-  private async getCurrentUserId(): Promise<string> {
-    // This will be implemented to get the actual user ID
-    return crypto.randomUUID().substring(0, 8);
-  }
-
   // Public API: Register message handler
   onMessage(callback: (message: SacredMeshMessage, senderId: string) => void): void {
-    // This will be called by router.onMessage after decryption
     this.messageHandlers.push(callback);
   }
-
-  private messageHandlers: ((message: SacredMeshMessage, senderId: string) => void)[] = [];
 
   // Handle incoming encrypted messages
   private async handleIncomingMessage(packet: SacredMeshPacket): Promise<void> {
     try {
-      console.log('🕸️ Received encrypted message from:', packet.header.senderIdHash);
-      
-      // TODO: Implement proper decryption once we have proper key exchange
-      // For now, we'll extract the actual content from the packet
-      
-      // Call all registered message handlers with the actual decrypted message
-      this.messageHandlers.forEach(handler => {
-        try {
-          // Extract the message from the packet - this will be properly decrypted later
-          const message = {
-            sigils: ['received'], // Will extract from decrypted content
-            intentStrength: 0.7,
-            note: 'Message received via Sacred Mesh', // Will be actual decrypted content
-            ttl: 3600,
-            hopLimit: 5,
-            metadata: {} // Remove metadata reference since it doesn't exist on packet
-          };
-          
-          handler(message, packet.header.senderIdHash);
-        } catch (error) {
-          console.error('🕸️ Message handler error:', error);
-        }
-      });
+      const senderId = await this.getSenderIdFromHash(packet.header.senderIdHash);
+      if (!senderId) throw new Error('Could not identify sender from hash');
+
+      const decrypted = await this.keyExchange.decryptMessage(senderId, packet.payload.ciphertext, packet.payload.authTag, packet.header);
+      const message: SacredMeshMessage = JSON.parse(new TextDecoder().decode(decrypted));
+
+      this.messageHandlers.forEach(handler => handler(message, senderId));
       
       console.log('🕸️ Message delivered to', this.messageHandlers.length, 'handlers');
     } catch (error) {
@@ -148,16 +111,13 @@ export class SacredMesh {
   }
 
   // Add contact with key exchange
-  async addContact(contactId: string, publicKey: CryptoKey): Promise<string> {
-    const fingerprint = await this.crypto.createFingerprint(publicKey);
-    
-    this.contactKeys.set(contactId, {
-      identityKey: new Uint8Array(await crypto.subtle.exportKey('raw', publicKey)),
-      fingerprint
-    });
+  async addContact(contactId: string, keyBundle: KeyBundle): Promise<Contact> {
+    return this.keyExchange.addContact(contactId, keyBundle);
+  }
 
-    console.log('🕸️ Contact added:', contactId, 'fingerprint:', fingerprint);
-    return fingerprint;
+  // Generate key bundle for sharing
+  async generateKeyBundle(): Promise<KeyBundle> {
+    return this.keyExchange.generateKeyBundle();
   }
 
   // Get network status
@@ -173,7 +133,22 @@ export class SacredMesh {
     };
   }
 
-  // Platform detection helpers
+  // Helpers
+  private async getCurrentUserId(): Promise<string> {
+    // Placeholder
+    return 'me';
+  }
+
+  private async getSenderIdFromHash(hash: string): Promise<string | undefined> {
+    for (const contact of this.keyExchange.getAllContacts()) {
+      const contactHash = await this.crypto.hashSenderId(contact.id);
+      if (contactHash === hash) {
+        return contact.id;
+      }
+    }
+    return undefined;
+  }
+
   private getWebSocketUrl(): string {
     // TODO: Configure based on environment
     return 'wss://your-sacred-mesh-relay.com/ws';
@@ -191,7 +166,7 @@ export class SacredMesh {
   async disconnect(): Promise<void> {
     await this.router.disconnect();
     this.isInitialized = false;
-    this.contactKeys.clear();
+    this.keyExchange = new SacredKeyExchange(); // Reset key exchange state
     console.log('🕸️ Sacred Mesh disconnected');
   }
 }
@@ -201,4 +176,5 @@ export * from './types';
 export * from './crypto';
 export { PacketFormatter } from './packet';
 export { SacredMeshRouter } from './router';
+export { SacredKeyExchange } from './keyExchange';
 export { WebSocketTransport, MultipeerTransport, WiFiAwareTransport, MeshtasticTransport } from './transport';
