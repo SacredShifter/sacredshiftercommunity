@@ -357,7 +357,6 @@ export function useRegistryOfResonance() {
     }
 
     try {
-      // Check if user has already resonated
       const { data: existingVote } = await supabase
         .from('registry_entry_resonance')
         .select('id')
@@ -366,24 +365,39 @@ export function useRegistryOfResonance() {
         .maybeSingle();
 
       if (existingVote) {
-        // Remove resonance
         await supabase
           .from('registry_entry_resonance')
           .delete()
-          .eq('entry_id', entryId)
-          .eq('user_id', user.id);
+          .eq('id', existingVote.id);
         
         toast.success('Resonance removed');
         return false;
       } else {
-        // Add resonance
+        await supabase.from('registry_entry_resonance').insert({
+          entry_id: entryId,
+          user_id: user.id,
+        });
+
+        // Update resonance growth data
+        const { data: entry, error: fetchError } = await supabase
+          .from('registry_of_resonance')
+          .select('resonance_growth_data, resonance_count')
+          .eq('id', entryId)
+          .single();
+
+        if (fetchError) throw fetchError;
+
+        const currentGrowthData = (entry?.resonance_growth_data as any[]) || [];
+        const newGrowthData = [
+          ...currentGrowthData,
+          { timestamp: new Date().toISOString(), count: (entry.resonance_count || 0) + 1 },
+        ];
+
         await supabase
-          .from('registry_entry_resonance')
-          .insert({
-            entry_id: entryId,
-            user_id: user.id
-          });
-        
+          .from('registry_of_resonance')
+          .update({ resonance_growth_data: newGrowthData })
+          .eq('id', entryId);
+
         toast.success('Resonating with this entry!');
         return true;
       }
@@ -484,6 +498,88 @@ export function useRegistryOfResonance() {
     }
   }, [user]);
 
+  // Reflection notes functions
+  const getReflectionNotes = useCallback(async (entryId: string): Promise<any[]> => {
+    if (!user) return [];
+    try {
+      const { data, error } = await supabase
+        .from('reflection_notes')
+        .select('*')
+        .eq('entry_id', entryId)
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return data || [];
+    } catch (error) {
+      console.error('Error fetching reflection notes:', error);
+      return [];
+    }
+  }, [user]);
+
+  const addReflectionNote = useCallback(async (entryId: string, content: string): Promise<boolean> => {
+    if (!user) {
+      toast.error('You must be logged in to add a note');
+      return false;
+    }
+    try {
+      const { error } = await supabase
+        .from('reflection_notes')
+        .insert({
+          entry_id: entryId,
+          user_id: user.id,
+          content: content.trim(),
+        });
+      if (error) throw error;
+      toast.success('Reflection note added');
+      return true;
+    } catch (error) {
+      console.error('Error adding reflection note:', error);
+      toast.error('Failed to add reflection note');
+      return false;
+    }
+  }, [user]);
+
+  // Export entry as seed
+  const exportEntryAsSeed = useCallback(async (entryId: string) => {
+    try {
+      const { data: entry, error } = await supabase
+        .from('registry_of_resonance')
+        .select('*')
+        .eq('id', entryId)
+        .single();
+
+      if (error) throw error;
+      if (!entry) throw new Error('Entry not found');
+
+      const seedPacket = {
+        version: '1.0.0',
+        type: 'codex-seed',
+        provenance: 'Sacred Shifter Collective',
+        timestamp: new Date().toISOString(),
+        payload: {
+          ...entry,
+          // Remove sensitive or irrelevant data for export
+          user_id: undefined,
+          visibility_settings: undefined,
+        },
+      };
+
+      const blob = new Blob([JSON.stringify(seedPacket, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `codex-seed-${entry.id}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+    } catch (err) {
+      console.error('Error exporting entry as seed:', err);
+      toast.error('Failed to export entry as seed packet.');
+    }
+  }, []);
+
   // Share to circle function
   const shareToCircle = useCallback(async (entryId: string, circleId: string, message?: string): Promise<boolean> => {
     if (!user) {
@@ -543,5 +639,8 @@ export function useRegistryOfResonance() {
     addComment,
     deleteComment,
     shareToCircle,
+    getReflectionNotes,
+    addReflectionNote,
+    exportEntryAsSeed,
   };
 }
