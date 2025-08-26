@@ -238,6 +238,53 @@ export const useYouTubeAPI = () => {
     }
   }, []);
 
+  const getVideosFromPlaylistByTitle = useCallback(async (
+    playlistTitle: string,
+    maxResults: number = 25
+  ): Promise<YouTubeSearchResponse> => {
+    const cacheKey = `youtube-playlist-cache-${playlistTitle}`;
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      // 1. Get all playlists for the channel
+      // We fetch up to 50 playlists to have a good chance of finding the one we want.
+      const { playlists } = await getChannelPlaylists(SACRED_SHIFTER_CHANNEL_ID, undefined, 50);
+
+      // 2. Find the playlist by title
+      const targetPlaylist = playlists.find(
+        (p) => p.title.toLowerCase() === playlistTitle.toLowerCase()
+      );
+
+      if (!targetPlaylist) {
+        throw new Error(`Playlist with title "${playlistTitle}" not found.`);
+      }
+
+      // 3. Get videos from that playlist
+      const playlistVideos = await getPlaylistVideos(targetPlaylist.id, undefined, maxResults);
+
+      // 4. Cache the successful response
+      localStorage.setItem(cacheKey, JSON.stringify(playlistVideos));
+
+      return playlistVideos;
+
+    } catch (err) {
+      console.error("Failed to fetch from API, checking cache.", err);
+      const cachedData = localStorage.getItem(cacheKey);
+
+      if (cachedData) {
+        console.log("Serving from cache");
+        return JSON.parse(cachedData);
+      }
+
+      setError(err instanceof Error ? err.message : 'Failed to fetch videos from playlist by title');
+      return { videos: [], totalResults: 0 };
+    } finally {
+      setLoading(false);
+    }
+  }, [getChannelPlaylists, getPlaylistVideos]);
+
   const searchVideos = useCallback(async (
     query: string,
     pageToken?: string,
@@ -303,5 +350,6 @@ export const useYouTubeAPI = () => {
     getChannelPlaylists,
     getPlaylistVideos,
     searchVideos,
+    getVideosFromPlaylistByTitle,
   };
 };

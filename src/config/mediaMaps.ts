@@ -25,4 +25,8 @@ export const SHIFT_MODULE_CONFIG = {
   }
 } as const;
 
+export const MEDITATION_MODULE_CONFIG = {
+  playlistTitle: 'Sacred Shifter Journey Snippets',
+} as const;
+
 export type ChapterKey = keyof typeof COSMOGRAM.chapters;

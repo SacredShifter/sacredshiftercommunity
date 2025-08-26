@@ -35,6 +35,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { YouTubeVideo, YouTubePlaylist } from '@/types/youtube';
 import { SimpleVideoModal } from '@/components/YouTubeLibrary/SimpleVideoModal';
 import { GroupMeditationSession } from '@/components/GroupMeditationSession';
+import { MEDITATION_MODULE_CONFIG } from '@/config/mediaMaps';
 
 type MeditationType = 'breathing' | 'loving-kindness' | 'chakra' | 'mindfulness' | 'body-scan';
 type SessionState = 'idle' | 'active' | 'paused' | 'completed';
@@ -97,7 +98,7 @@ export default function Meditation() {
   const { user } = useAuth();
   const { toast } = useToast();
   const { circles, loading: circlesLoading } = useSacredCircles();
-  const { getChannelPlaylists, getPlaylistVideos, searchVideos, loading: youtubeLoading } = useYouTubeAPI();
+  const { getChannelPlaylists, getPlaylistVideos, searchVideos, getVideosFromPlaylistByTitle, loading: youtubeLoading, error: youtubeError } = useYouTubeAPI();
   
   // Solo meditation state
   const [selectedType, setSelectedType] = useState<MeditationType>('breathing');
@@ -177,37 +178,22 @@ export default function Meditation() {
 
   const loadMeditationContent = async () => {
     try {
-      // Load meditation playlists
-      const playlistsData = await getChannelPlaylists();
-      const meditationPlaylists = playlistsData.playlists.filter(playlist => 
-        playlist.title.toLowerCase().includes('meditation') ||
-        playlist.title.toLowerCase().includes('breathing') ||
-        playlist.title.toLowerCase().includes('mindfulness')
-      );
-      setMeditationPlaylists(meditationPlaylists);
-
-      // Search for meditation-related videos
-      const videosData = await searchVideos('meditation breathing mindfulness');
-      setMeditationVideos(videosData.videos.slice(0, 12)); // Limit to 12 videos
+      setMeditationPlaylists([]); // No longer fetching a list of playlists
+      const videosData = await getVideosFromPlaylistByTitle(MEDITATION_MODULE_CONFIG.playlistTitle, 25);
+      setMeditationVideos(videosData.videos);
     } catch (error) {
       console.error('Error loading meditation content:', error);
+      toast({
+        title: "Error",
+        description: "Could not load meditation videos. Please try again later.",
+        variant: "destructive",
+      });
     }
   };
 
   const handleVideoPlay = (video: YouTubeVideo) => {
     setSelectedVideo(video);
     setIsVideoModalOpen(true);
-  };
-
-  const handleVideoSearch = async () => {
-    if (searchQuery.trim()) {
-      try {
-        const videosData = await searchVideos(`${searchQuery} meditation`);
-        setMeditationVideos(videosData.videos.slice(0, 12));
-      } catch (error) {
-        console.error('Error searching videos:', error);
-      }
-    }
   };
 
   const loadChannelPlaylists = async (customChannelId?: string) => {
@@ -686,19 +672,6 @@ export default function Meditation() {
                           </div>
                         ) : (
                           <div className="space-y-3">
-                            <div className="flex items-center gap-2">
-                              <Input
-                                placeholder="Search for background music..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                onKeyDown={(e) => e.key === 'Enter' && handleVideoSearch()}
-                                className="flex-1"
-                              />
-                              <Button size="sm" onClick={handleVideoSearch} disabled={youtubeLoading} className="hover-scale">
-                                <Search className="h-4 w-4" />
-                              </Button>
-                            </div>
-                            
                             <div className="max-h-48 overflow-y-auto space-y-2 border rounded-lg p-2">
                               {youtubeLoading ? (
                                 <div className="text-center py-4">
@@ -706,7 +679,7 @@ export default function Meditation() {
                                   <p className="text-xs text-muted-foreground mt-2">Loading tracks...</p>
                                 </div>
                               ) : meditationVideos.length > 0 ? (
-                                meditationVideos.slice(0, 8).map((video, index) => (
+                                meditationVideos.map((video, index) => (
                                   <div
                                     key={video.id}
                                     className="flex items-center gap-3 p-2 hover:bg-muted/50 rounded cursor-pointer transition-colors border border-transparent hover:border-primary/20 hover-scale animate-fade-in"
@@ -727,18 +700,29 @@ export default function Meditation() {
                                     </Button>
                                   </div>
                                 ))
+                              ) : youtubeError && meditationVideos.length === 0 ? (
+                                <div className="text-center py-4">
+                                  <Video className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+                                  <p className="text-xs text-muted-foreground">
+                                    Failed to load tracks.
+                                  </p>
+                                   <Button onClick={loadMeditationContent} variant="link" size="sm">
+                                    <RefreshCw className="h-3 w-3 mr-1" />
+                                    Retry
+                                  </Button>
+                                </div>
                               ) : (
                                 <div className="text-center py-4">
                                   <Video className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
                                   <p className="text-xs text-muted-foreground">
-                                    Search for meditation music or tracks
+                                    No background tracks available.
                                   </p>
                                 </div>
                               )}
                             </div>
                             
                             <p className="text-xs text-muted-foreground">
-                              💡 Tip: Search for "ambient", "nature sounds", "singing bowls", or "meditation music"
+                              💡 Select a track from the Sacred Shifter Journey Snippets playlist to accompany your meditation.
                             </p>
                           </div>
                         )}
@@ -990,57 +974,6 @@ export default function Meditation() {
           <TabsContent value="guided" className="space-y-4 animate-fade-in">
             {/* ... keep existing guided videos content ... */}
             <div className="space-y-4">
-              <div className="flex items-center gap-4">
-                <div className="flex-1">
-                  <Input
-                    placeholder="Search meditation videos..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleVideoSearch()}
-                  />
-                </div>
-                <Button onClick={handleVideoSearch} disabled={youtubeLoading} className="hover-scale">
-                  <Search className="h-4 w-4 mr-2" />
-                  Search
-                </Button>
-              </div>
-
-              {meditationPlaylists.length > 0 && (
-                <Card className="hover-scale">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <List className="h-5 w-5 text-primary" />
-                      Meditation Playlists
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {meditationPlaylists.map((playlist, index) => (
-                        <Card 
-                          key={playlist.id} 
-                          className="cursor-pointer hover:shadow-md transition-shadow hover-scale animate-fade-in"
-                          style={{ animationDelay: `${index * 100}ms` }}
-                        >
-                          <CardContent className="p-4">
-                            <div className="aspect-video mb-3 rounded overflow-hidden">
-                              <img 
-                                src={playlist.thumbnail} 
-                                alt={playlist.title}
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                            <h3 className="font-medium text-sm mb-2 line-clamp-2">{playlist.title}</h3>
-                            <p className="text-xs text-muted-foreground">
-                              {playlist.itemCount} videos
-                            </p>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-
               <Card className="hover-scale">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -1092,14 +1025,27 @@ export default function Meditation() {
                     </div>
                   )}
 
-                  {!youtubeLoading && meditationVideos.length === 0 && (
+                  {youtubeError && meditationVideos.length === 0 && (
+                    <div className="text-center py-8 animate-fade-in">
+                      <Video className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
+                      <p className="text-muted-foreground">
+                        Failed to load meditation videos.
+                      </p>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        {youtubeError}
+                      </p>
+                      <Button onClick={loadMeditationContent}>
+                        <RefreshCw className="h-4 w-4 mr-2" />
+                        Retry
+                      </Button>
+                    </div>
+                  )}
+
+                  {!youtubeLoading && !youtubeError && meditationVideos.length === 0 && (
                     <div className="text-center py-8 animate-fade-in">
                       <Video className="h-12 w-12 mx-auto text-muted-foreground mb-3 animate-pulse" />
                       <p className="text-muted-foreground">
-                        No meditation videos found
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        Try searching for specific meditation topics
+                        No meditation videos found in the playlist.
                       </p>
                     </div>
                   )}
