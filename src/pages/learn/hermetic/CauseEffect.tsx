@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react'
 import { Canvas } from '@react-three/fiber'
-import { Sphere, Line } from '@react-three/drei'
+import { Line } from '@react-three/drei'
 import * as THREE from 'three'
 import { Button } from '@/components/ui/button'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -38,9 +38,10 @@ const CausalGraph = () => {
   return (
     <group>
       {nodes.map(node => (
-        <Sphere key={node.id} position={node.position} args={[0.4, 32, 32]} onClick={() => handleNodeClick(node.id)}>
+        <mesh key={node.id} position={node.position} onClick={() => handleNodeClick(node.id)}>
+          <sphereGeometry args={[0.4, 32, 32]} />
           <meshStandardMaterial color={activeNodes.has(node.id) ? 'purple' : 'white'} emissive={activeNodes.has(node.id) ? 'purple' : 'black'} emissiveIntensity={activeNodes.has(node.id) ? 2 : 0} />
-        </Sphere>
+        </mesh>
       ))}
       {edges.map(([startId, endId], i) => {
         const start = nodeMap.get(startId)?.position;

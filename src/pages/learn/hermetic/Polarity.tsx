@@ -6,46 +6,63 @@ import { Button } from '@/components/ui/button'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDown, BookOpen } from 'lucide-react'
 
-const PolarityObject = ({ value }: { value: number }) => {
-  const meshRef = useRef<THREE.Mesh>(null!)
-  const [hovered, setHovered] = useState(false)
-
-  const { geometry, materialProps } = useMemo(() => {
-    const isYin = value < 0.5
-    return {
-      geometry: isYin ? new THREE.TorusGeometry(1, 0.3, 16, 50) : new THREE.IcosahedronGeometry(1, 1),
-      materialProps: {
-        color: isYin ? '#f0f0ff' : '#101010',
-        emissive: isYin ? '#4080ff' : '#ff4040',
-        emissiveIntensity: hovered ? 1 : 0.5,
-        metalness: 0.8,
-        roughness: isYin ? 0.4 : 0.8,
-        transparent: true,
-        opacity: 0.9
-      }
-    }
-  }, [value, hovered])
+const PolarityScene = ({ value }: { value: number }) => {
+  const hotRef = useRef<THREE.Mesh>(null!);
+  const coldRef = useRef<THREE.Mesh>(null!);
 
   useFrame(() => {
-    if (meshRef.current) {
-      meshRef.current.rotation.x += 0.005
-      meshRef.current.rotation.y += 0.005
-      meshRef.current.scale.lerp(new THREE.Vector3(hovered ? 1.2 : 1, hovered ? 1.2 : 1, hovered ? 1.2 : 1), 0.1)
+    if (hotRef.current && coldRef.current) {
+      hotRef.current.rotation.y += 0.01;
+      coldRef.current.rotation.y -= 0.01;
+
+      // Position
+      hotRef.current.position.x = THREE.MathUtils.lerp(0, 2, value);
+      coldRef.current.position.x = THREE.MathUtils.lerp(0, -2, 1 - value);
+
+      // Material properties
+      const hotMaterial = hotRef.current.material as THREE.MeshStandardMaterial;
+      const coldMaterial = coldRef.current.material as THREE.MeshStandardMaterial;
+
+      hotMaterial.emissiveIntensity = THREE.MathUtils.lerp(0.1, 2, value);
+      coldMaterial.emissiveIntensity = THREE.MathUtils.lerp(0.1, 2, 1 - value);
+
+      hotMaterial.opacity = THREE.MathUtils.lerp(0.2, 1, value);
+      coldMaterial.opacity = THREE.MathUtils.lerp(0.2, 1, 1 - value);
     }
-  })
+  });
 
   return (
-    <mesh ref={meshRef} geometry={geometry} onPointerOver={() => setHovered(true)} onPointerOut={() => setHovered(false)}>
-      <meshStandardMaterial {...materialProps} />
-    </mesh>
-  )
-}
+    <group>
+      <mesh ref={hotRef}>
+        <icosahedronGeometry args={[1, 1]} />
+        <meshStandardMaterial
+          color="#ff4040"
+          emissive="#ff4040"
+          metalness={0.8}
+          roughness={0.2}
+          transparent
+        />
+      </mesh>
+      <mesh ref={coldRef}>
+        <icosahedronGeometry args={[1, 1]} />
+        <meshStandardMaterial
+          color="#4080ff"
+          emissive="#4080ff"
+          metalness={0.8}
+          roughness={0.8}
+          transparent
+        />
+      </mesh>
+    </group>
+  );
+};
+
 
 const SceneContent = ({ value }: { value: number }) => (
   <>
     <ambientLight intensity={0.6} />
     <directionalLight position={[1, 2, 3]} intensity={1.5} />
-    <PolarityObject value={value} />
+    <PolarityScene value={value} />
   </>
 )
 

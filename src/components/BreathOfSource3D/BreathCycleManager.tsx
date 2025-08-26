@@ -8,6 +8,7 @@ interface BreathCycleManagerProps {
   trustSpeed: 'gentle' | 'balanced' | 'bold';
   onPhaseChange: (phase: BreathPhase) => void;
   onCycleComplete: () => void;
+  onTimeUpdate: (time: number) => void;
 }
 
 const breathPresets = {
@@ -21,89 +22,70 @@ export default function BreathCycleManager({
   preset,
   trustSpeed,
   onPhaseChange,
-  onCycleComplete
+  onCycleComplete,
+  onTimeUpdate,
 }: BreathCycleManagerProps) {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const phaseRef = useRef<BreathPhase>('inhale');
-  const cycleStartRef = useRef<number>(0);
 
   const speedMultipliers = {
     gentle: 1.5,
     balanced: 1.0,
-    bold: 0.7
+    bold: 0.7,
   };
 
   const speedMultiplier = speedMultipliers[trustSpeed];
   const pattern = breathPresets[preset];
 
   useEffect(() => {
-    // Clear any existing timer first
     if (timerRef.current) {
-      clearTimeout(timerRef.current);
+      clearInterval(timerRef.current);
       timerRef.current = null;
     }
 
     if (!isActive) {
+      onTimeUpdate(0);
       return;
     }
 
-    // Reset phase to inhale when starting
     phaseRef.current = 'inhale';
+    let currentPhaseIndex = 0;
+    const phases: BreathPhase[] = ['inhale', 'holdIn', 'exhale', 'holdOut'];
 
-    const runBreathCycle = () => {
-      const phases: BreathPhase[] = ['inhale', 'holdIn', 'exhale', 'holdOut'];
-      let currentPhaseIndex = 0;
-      
-      const nextPhase = () => {
-        // Double check if still active
-        if (!isActive) {
-          if (timerRef.current) {
-            clearTimeout(timerRef.current);
-            timerRef.current = null;
-          }
-          return;
-        }
-        
-        const phase = phases[currentPhaseIndex];
-        phaseRef.current = phase;
-        onPhaseChange(phase);
-        
-        const duration = pattern[phase] * 1000 * speedMultiplier;
-        console.log(`Starting ${phase} for ${duration}ms`);
-        
-        timerRef.current = setTimeout(() => {
+    const nextPhase = () => {
+      const phase = phases[currentPhaseIndex];
+      phaseRef.current = phase;
+      onPhaseChange(phase);
+
+      const duration = pattern[phase] * 1000 * speedMultiplier;
+      let remainingTime = duration;
+
+      timerRef.current = setInterval(() => {
+        remainingTime -= 100;
+        onTimeUpdate(remainingTime);
+
+        if (remainingTime <= 0) {
+          if (timerRef.current) clearInterval(timerRef.current);
+
           currentPhaseIndex++;
-          
           if (currentPhaseIndex >= phases.length) {
-            // Cycle complete
             onCycleComplete();
             currentPhaseIndex = 0;
           }
-          nextPhase(); // Continue to next phase
-        }, duration);
-      };
-      
-      nextPhase(); // Start the cycle
+          nextPhase();
+        }
+      }, 100);
     };
 
-    runBreathCycle();
+    nextPhase();
 
     return () => {
       if (timerRef.current) {
-        clearTimeout(timerRef.current);
+        clearInterval(timerRef.current);
         timerRef.current = null;
       }
     };
-  }, [isActive]); // Remove dependencies that cause re-renders
+  }, [isActive, preset, trustSpeed]);
 
-  // Handle preset/speed changes without restarting the entire cycle
-  useEffect(() => {
-    // Only log the change, don't restart the cycle
-    if (isActive) {
-      console.log(`Breath settings updated: ${preset} at ${trustSpeed} speed`);
-    }
-  }, [preset, trustSpeed]);
-
-  // This component doesn't render anything visible
   return null;
 }

@@ -1,6 +1,7 @@
 import React, { Suspense, useRef, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, PerspectiveCamera, Environment } from '@react-three/drei';
+import { OrbitControls, PerspectiveCamera, Environment, Stars } from '@react-three/drei';
+import { EffectComposer, Bloom, GodRays } from '@react-three/postprocessing';
 import { Loader2 } from 'lucide-react';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { useBreathOfSourceModule } from '@/hooks/useBreathOfSourceModule';
@@ -17,53 +18,6 @@ import BreathCycleManager, { BreathPhase } from '@/components/BreathOfSource3D/B
 import BreathingGuidance from '@/components/BreathOfSource3D/BreathingGuidance';
 import * as THREE from 'three';
 
-// Sacred geometry background
-function SacredBackground() {
-  const meshRef = useRef<THREE.Mesh>(null);
-  
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.z = Math.sin(state.clock.elapsedTime * 0.1) * 0.02;
-    }
-  });
-
-  return (
-    <mesh ref={meshRef} position={[0, 0, -10]} scale={[20, 20, 1]}>
-      <planeGeometry args={[1, 1, 32, 32]} />
-      <shaderMaterial
-        transparent
-        uniforms={{
-          uTime: { value: 0 },
-          uOpacity: { value: 0.1 }
-        }}
-        vertexShader={`
-          varying vec2 vUv;
-          void main() {
-            vUv = uv;
-            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-          }
-        `}
-        fragmentShader={`
-          uniform float uTime;
-          uniform float uOpacity;
-          varying vec2 vUv;
-          
-          void main() {
-            vec2 center = vec2(0.5, 0.5);
-            float dist = distance(vUv, center);
-            
-            // Sacred geometry patterns
-            float pattern = sin(dist * 20.0 - uTime) * 0.5 + 0.5;
-            pattern *= sin(vUv.x * 10.0) * sin(vUv.y * 10.0);
-            
-            vec3 color = vec3(0.4, 0.7, 1.0) * pattern;
-            gl_FragColor = vec4(color, uOpacity * pattern);
-          }
-        `}
-      />
-    </mesh>
-  );
-}
 
 // Dynamic lighting system
 function DynamicLighting({ breathPhase, trustSpeed }: { breathPhase: string; trustSpeed: string }) {
@@ -114,6 +68,7 @@ function BreathScene({
   getBreathPreset,
   handlePhaseChange, 
   handleCycleComplete,
+  handleTimeUpdate,
   context,
   currentLesson 
 }: {
@@ -123,6 +78,7 @@ function BreathScene({
   getBreathPreset: () => 'basic' | 'liberation' | 'sovereignty';
   handlePhaseChange: (phase: BreathPhase) => void;
   handleCycleComplete: () => void;
+  handleTimeUpdate: (time: number) => void;
   context: any;
   currentLesson: number;
 }) {
@@ -136,10 +92,11 @@ function BreathScene({
         trustSpeed={context.trustSpeed}
         onPhaseChange={handlePhaseChange}
         onCycleComplete={handleCycleComplete}
+        onTimeUpdate={handleTimeUpdate}
       />
       
       <DynamicLighting breathPhase={currentBreathPhase} trustSpeed={context.trustSpeed} />
-      <SacredBackground />
+      <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
       
       {/* Central Breath Orb with real breathing data */}
       <BreathOrb 
@@ -199,6 +156,7 @@ export default function BreathOfSource3D() {
   const [isBreathingActive, setIsBreathingActive] = React.useState(false);
   const [currentBreathPhase, setCurrentBreathPhase] = React.useState<BreathPhase>('inhale');
   const [cycleCount, setCycleCount] = React.useState(0);
+  const [timeRemaining, setTimeRemaining] = React.useState(0);
 
   // Auto-start breathing for lessons 1-3
   React.useEffect(() => {
@@ -252,9 +210,13 @@ export default function BreathOfSource3D() {
               getBreathPreset={getBreathPreset}
               handlePhaseChange={handlePhaseChange}
               handleCycleComplete={handleCycleComplete}
+              handleTimeUpdate={setTimeRemaining}
               context={context}
               currentLesson={currentLesson}
             />
+            <EffectComposer>
+              <Bloom intensity={0.5} luminanceThreshold={0.2} luminanceSmoothing={0.9} height={300} />
+            </EffectComposer>
           </ErrorBoundary>
         </Suspense>
         <Environment preset="night" />
@@ -288,6 +250,7 @@ export default function BreathOfSource3D() {
             preset={getBreathPreset()}
             cycleCount={cycleCount}
             targetCycles={currentLesson === 1 ? 5 : currentLesson === 2 ? 8 : currentLesson === 3 ? 10 : 0}
+            timeRemaining={timeRemaining}
           />
         )}
 

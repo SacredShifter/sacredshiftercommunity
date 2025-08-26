@@ -31,21 +31,26 @@ function Particles({ amp, freq }: { amp: number, freq: number }){
   const pointsRef = useRef<THREE.Points>(null!)
 
   const [geometry, material] = useMemo(() => {
-    const g = new THREE.BufferGeometry()
-    const N = 1500
-    const pos = new Float32Array(N*3)
-    for(let i=0;i<N;i++){
-      pos[i*3+0]=(Math.random()-0.5)*3
-      pos[i*3+1]=(Math.random()-0.5)*3
-      pos[i*3+2]=(Math.random()-0.5)*3
+    const g = new THREE.BufferGeometry();
+    const count = 100;
+    const size = 4;
+    const pos = new Float32Array(count * count * 3);
+    for (let i = 0; i < count; i++) {
+      for (let j = 0; j < count; j++) {
+        const index = (i * count + j) * 3;
+        pos[index] = (i / count - 0.5) * size;
+        pos[index + 1] = (j / count - 0.5) * size;
+        pos[index + 2] = 0;
+      }
     }
-    g.setAttribute('position', new THREE.BufferAttribute(pos,3))
+    g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
     const m = new THREE.ShaderMaterial({
       uniforms: { u_time: { value: 0 }, u_amp: { value: amp }, u_freq: { value: freq } },
-      vertexShader, fragmentShader,
-    })
-    return [g, m]
-  }, [])
+      vertexShader,
+      fragmentShader,
+    });
+    return [g, m];
+  }, [amp, freq]);
 
   useFrame(({clock})=>{
     if (material) {

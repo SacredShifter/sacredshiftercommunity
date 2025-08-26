@@ -1,6 +1,5 @@
 import React, { useRef, useState, useMemo } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { Torus, TorusKnot } from '@react-three/drei'
 import * as THREE from 'three'
 import { Button } from '@/components/ui/button'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -30,15 +29,18 @@ const GenderScene = ({ will, receptivity }: { will: number, receptivity: number 
 
   return (
     <group>
-      <Torus ref={masculineRef} args={[1.5, 0.05, 16, 100]} position={[-0.5, 0, 0]}>
+      <mesh ref={masculineRef} position={[-0.5, 0, 0]}>
+        <torusGeometry args={[1.5, 0.05, 16, 100]} />
         <meshStandardMaterial color="skyblue" emissive="blue" emissiveIntensity={will * 2} wireframe />
-      </Torus>
-      <Torus ref={feminineRef} args={[1.5, 0.05, 16, 100]} position={[0.5, 0, 0]}>
+      </mesh>
+      <mesh ref={feminineRef} position={[0.5, 0, 0]}>
+        <torusGeometry args={[1.5, 0.05, 16, 100]} />
         <meshStandardMaterial color="pink" emissive="red" emissiveIntensity={receptivity * 2} wireframe />
-      </Torus>
-      <TorusKnot ref={creationRef} args={[0.5, 0.1, 100, 16]} scale={0}>
-          <meshStandardMaterial color="white" emissive="purple" emissiveIntensity={coherence > 0.95 ? 2 : 0} />
-      </TorusKnot>
+      </mesh>
+      <mesh ref={creationRef} scale={0}>
+        <torusKnotGeometry args={[0.5, 0.1, 100, 16]} />
+        <meshStandardMaterial color="white" emissive="purple" emissiveIntensity={coherence > 0.95 ? 2 : 0} />
+      </mesh>
     </group>
   );
 };
