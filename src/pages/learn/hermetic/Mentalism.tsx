@@ -2,38 +2,72 @@ import { Canvas, useFrame } from '@react-three/fiber'
 import { useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 
+const vertexShader = `
+  uniform float u_time;
+  uniform float u_coherence;
+  attribute float pindex;
+
+  void main() {
+    vec3 pos = position;
+    float s = 0.02 * (1.0 - u_coherence);
+    // The original logic displaced on X, but Y looks more like a 'lattice'
+    pos.y += sin(u_time + pindex) * s;
+
+    vec4 modelViewPosition = modelViewMatrix * vec4(pos, 1.0);
+    gl_Position = projectionMatrix * modelViewPosition;
+    gl_PointSize = 2.0;
+  }
+`
+
+const fragmentShader = `
+  void main() {
+    gl_FragColor = vec4(0.576, 0.772, 0.992, 1.0); // #93c5fd
+  }
+`
+
 function Lattice({ coherence }: { coherence: number }){
-  const ref = useRef<THREE.Points>(null)
-  const geom = useMemo(() => {
+  const pointsRef = useRef<THREE.Points>(null!)
+
+  // Memoize geometry and material to prevent recreation on every render
+  const [geometry, material] = useMemo(() => {
     const g = new THREE.BufferGeometry()
     const N = 2000
     const pos = new Float32Array(N*3)
-    for(let i=0;i<N;i++){
+    const pindex = new Float32Array(N)
+
+    for(let i=0; i<N; i++){
       const r = 1.2 + Math.random()*0.2
       const t = Math.random()*Math.PI*2
       const p = Math.acos(2*Math.random()-1)
       pos[i*3+0] = r*Math.sin(p)*Math.cos(t)
       pos[i*3+1] = r*Math.sin(p)*Math.sin(t)
       pos[i*3+2] = r*Math.cos(p)
+      pindex[i] = i
     }
     g.setAttribute('position', new THREE.BufferAttribute(pos,3))
-    return g
+    g.setAttribute('pindex', new THREE.BufferAttribute(pindex, 1))
+
+    const m = new THREE.ShaderMaterial({
+      uniforms: {
+        u_time: { value: 0 },
+        u_coherence: { value: 0.5 },
+      },
+      vertexShader,
+      fragmentShader,
+    })
+
+    return [g, m]
   },[])
+
   useFrame(({clock})=>{
-    const t = clock.getElapsedTime()
-    const s = 0.02*(1-coherence)
-    if(ref.current){
-      const pos = ref.current.geometry.attributes.position as THREE.BufferAttribute
-      for(let i=0;i<pos.count;i++){
-        pos.setX(i, pos.getX(i) + (Math.sin(t+i)*s))
-      }
-      pos.needsUpdate = true
+    if(material){
+      material.uniforms.u_time.value = clock.getElapsedTime()
+      material.uniforms.u_coherence.value = coherence
     }
   })
+
   return (
-    <points ref={ref} geometry={geom}>
-      <pointsMaterial size={0.02} color="#93c5fd" />
-    </points>
+    <points ref={pointsRef} geometry={geometry} material={material} />
   )
 }
 
