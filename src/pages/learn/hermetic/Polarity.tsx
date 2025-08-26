@@ -5,32 +5,46 @@ import * as THREE from 'three'
 
 const PolarityObject = ({ value }: { value: number }) => {
   const meshRef = useRef<THREE.Mesh>(null!)
+  const [hovered, setHovered] = useState(false)
 
-  const { color, opacity, roughness, wireframe } = useMemo(() => {
-    if (value < 0.33) { // Ice
-      return { color: new THREE.Color("#aaddff"), opacity: 1, roughness: 0.8, wireframe: false }
-    } else if (value < 0.66) { // Water
-      return { color: new THREE.Color("#88aaff"), opacity: 0.6, roughness: 0.1, wireframe: false }
-    } else { // Vapor
-      return { color: new THREE.Color("#ffffff"), opacity: 0.2, roughness: 0.5, wireframe: true }
+  const { geometry, materialProps } = useMemo(() => {
+    const isYin = value < 0.5
+    return {
+      geometry: isYin ?
+        new THREE.TorusGeometry(1, 0.3, 16, 50) :
+        new THREE.IcosahedronGeometry(1, 2),
+      materialProps: {
+        color: isYin ? '#f0f0ff' : '#101010',
+        emissive: isYin ? '#4080ff' : '#ff4040',
+        emissiveIntensity: hovered ? 1 : 0.5,
+        metalness: 0.8,
+        roughness: isYin ? 0.4 : 0.8,
+        transparent: true,
+        opacity: 0.9
+      }
     }
-  }, [value])
+  }, [value, hovered])
 
   useFrame(() => {
     if (meshRef.current) {
-      const material = meshRef.current.material as THREE.MeshStandardMaterial
-      material.color.lerp(color, 0.1)
-      material.opacity = THREE.MathUtils.lerp(material.opacity, opacity, 0.1)
-      material.roughness = THREE.MathUtils.lerp(material.roughness, roughness, 0.1)
-      material.wireframe = wireframe
+      meshRef.current.rotation.x += 0.005
       meshRef.current.rotation.y += 0.005
+      meshRef.current.scale.lerp(
+        new THREE.Vector3(hovered ? 1.2 : 1, hovered ? 1.2 : 1, hovered ? 1.2 : 1),
+        0.1
+      )
     }
   })
 
   return (
-    <Box ref={meshRef} args={[2, 2, 2]}>
-      <meshStandardMaterial transparent />
-    </Box>
+    <mesh
+      ref={meshRef}
+      geometry={geometry}
+      onPointerOver={() => setHovered(true)}
+      onPointerOut={() => setHovered(false)}
+    >
+      <meshStandardMaterial {...materialProps} />
+    </mesh>
   )
 }
 
