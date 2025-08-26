@@ -56,14 +56,6 @@ function App() {
           
           <Routes>
             <Route path="/auth" element={<Auth />} />
-            <Route path="/learn/hermetic" element={<HermeticAtrium />} />
-            <Route path="/learn/hermetic/mentalism" element={<Mentalism />} />
-            <Route path="/learn/hermetic/vibration" element={<Vibration />} />
-            <Route path="/learn/hermetic/correspondence" element={<Correspondence />} />
-            <Route path="/learn/hermetic/polarity" element={<Polarity />} />
-            <Route path="/learn/hermetic/rhythm" element={<Rhythm />} />
-            <Route path="/learn/hermetic/cause-effect" element={<CauseEffect />} />
-            <Route path="/learn/hermetic/gender" element={<Gender />} />
             <Route
               element={
                 <ProtectedRoute>
@@ -73,6 +65,14 @@ function App() {
                 </ProtectedRoute>
               }
             >
+                <Route path="/learn/hermetic" element={<HermeticAtrium />} />
+                <Route path="/learn/hermetic/mentalism" element={<Mentalism />} />
+                <Route path="/learn/hermetic/vibration" element={<Vibration />} />
+                <Route path="/learn/hermetic/correspondence" element={<Correspondence />} />
+                <Route path="/learn/hermetic/polarity" element={<Polarity />} />
+                <Route path="/learn/hermetic/rhythm" element={<Rhythm />} />
+                <Route path="/learn/hermetic/cause-effect" element={<CauseEffect />} />
+                <Route path="/learn/hermetic/gender" element={<Gender />} />
                 <Route path="/" element={<Index />} />
                 <Route path="/feed" element={<Feed />} />
                 <Route path="/messages" element={<Messages />} />
