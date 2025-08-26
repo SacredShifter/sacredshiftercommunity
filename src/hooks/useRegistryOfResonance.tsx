@@ -32,6 +32,7 @@ export interface RegistryEntry {
   content_type?: string | null;
   engagement_metrics?: any;
   resonance_count?: number;
+  resonance_growth_data?: any;
 }
 
 export interface RegistryCategory {
@@ -136,25 +137,18 @@ export function useRegistryOfResonance() {
 
   const updateEntry = useCallback(async (id: string, updates: Partial<RegistryEntry>) => {
     try {
-      console.log('updateEntry called with:', { id, updates });
-      
-      // Filter to only include registry_of_resonance table columns
       const validColumns = [
         'title', 'content', 'resonance_rating', 'resonance_signature', 'tags', 'entry_type',
         'access_level', 'is_verified', 'is_pinned', 'category_id', 'image_url', 'image_alt_text',
         'author_name', 'author_bio', 'publication_date', 'reading_time_minutes',
         'word_count', 'source_citation', 'inspiration_source', 'visibility_settings',
-        'content_type', 'engagement_metrics', 'resonance_count'
+        'content_type', 'engagement_metrics', 'resonance_count', 'quick_abstract'
       ];
       
       const validUpdates = Object.fromEntries(
         Object.entries(updates).filter(([key]) => validColumns.includes(key))
       );
 
-      console.log('validUpdates after filtering:', validUpdates);
-
-      // Ensure we only update the specific entry we want
-      console.log('About to call supabase update with:', { table: 'registry_of_resonance', validUpdates, id });
       const { data, error } = await supabase
         .from('registry_of_resonance')
         .update(validUpdates)
@@ -162,8 +156,6 @@ export function useRegistryOfResonance() {
         .select()
         .single();
       
-      console.log('Supabase update result:', { data, error });
-
       if (error) throw error;
 
       setEntries(prev => prev.map(entry => entry.id === id ? { ...entry, ...data } : entry));
@@ -206,7 +198,6 @@ export function useRegistryOfResonance() {
   }, [entries, updateEntry]);
 
   const generateResonanceSignature = useCallback((content: string, title: string) => {
-    // Simple hash-based signature generator
     const combined = title + content;
     let hash = 0;
     for (let i = 0; i < combined.length; i++) {
@@ -219,7 +210,6 @@ export function useRegistryOfResonance() {
 
   const fetchCategories = useCallback(async () => {
     try {
-      // For now, create mock categories until the table is properly synced
       setCategories([
         { id: '1', name: 'Consciousness', description: 'States and experiences of consciousness', parent_id: null, path: 'consciousness', level: 0 },
         { id: '2', name: 'Technology', description: 'AI, synthetic intelligence, and digital sovereignty', parent_id: null, path: 'technology', level: 0 },
@@ -243,21 +233,12 @@ export function useRegistryOfResonance() {
       toast.error('You must be logged in to upload images');
       return null;
     }
-
     try {
       const fileExt = file.name.split('.').pop();
       const fileName = `${user.id}/${Date.now()}.${fileExt}`;
-      
-      const { data, error } = await supabase.storage
-        .from('registry-images')
-        .upload(fileName, file);
-
+      const { data, error } = await supabase.storage.from('registry-images').upload(fileName, file);
       if (error) throw error;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('registry-images')
-        .getPublicUrl(fileName);
-
+      const { data: { publicUrl } } = supabase.storage.from('registry-images').getPublicUrl(fileName);
       return publicUrl;
     } catch (err) {
       console.error('Error uploading image:', err);
@@ -268,50 +249,27 @@ export function useRegistryOfResonance() {
 
   const deleteImage = useCallback(async (imageUrl: string) => {
     try {
-      // Extract file path from URL
       const urlParts = imageUrl.split('/');
       const fileName = urlParts[urlParts.length - 1];
-      const filePath = urlParts.slice(-2).join('/'); // user_id/filename
-
-      const { error } = await supabase.storage
-        .from('registry-images')
-        .remove([filePath]);
-
+      const filePath = urlParts.slice(-2).join('/');
+      const { error } = await supabase.storage.from('registry-images').remove([filePath]);
       if (error) throw error;
     } catch (err) {
       console.error('Error deleting image:', err);
     }
   }, []);
 
-  const incrementEngagement = useCallback(async (entryId: string, type: 'views' | 'shares' | 'bookmarks') => {
+  const incrementEngagement = useCallback(async (entryId: string, type: 'views' | 'shares') => {
     try {
-      console.log('incrementEngagement called with:', { entryId, type });
-      
-      // Get current entry
       const { data: entry, error: fetchError } = await supabase
         .from('registry_of_resonance')
         .select('engagement_metrics')
         .eq('id', entryId)
         .single();
-
       if (fetchError) throw fetchError;
-
-      const currentMetrics = entry?.engagement_metrics as Record<string, number> || { views: 0, shares: 0, bookmarks: 0 };
-      const updatedMetrics = {
-        views: currentMetrics.views || 0,
-        shares: currentMetrics.shares || 0,
-        bookmarks: currentMetrics.bookmarks || 0,
-        [type]: (currentMetrics[type] || 0) + 1
-      };
-
-      console.log('incrementEngagement update:', { engagement_metrics: updatedMetrics });
-
-      const { error } = await supabase
-        .from('registry_of_resonance')
-        .update({ engagement_metrics: updatedMetrics })
-        .eq('id', entryId);
-
-      if (error) throw error;
+      const currentMetrics = entry?.engagement_metrics as Record<string, number> || { views: 0, shares: 0 };
+      const updatedMetrics = { ...currentMetrics, [type]: (currentMetrics[type] || 0) + 1 };
+      await supabase.from('registry_of_resonance').update({ engagement_metrics: updatedMetrics }).eq('id', entryId);
     } catch (err) {
       console.error('Error updating engagement:', err);
     }
@@ -319,7 +277,6 @@ export function useRegistryOfResonance() {
 
   const shareEntry = useCallback(async (entry: RegistryEntry) => {
     await incrementEngagement(entry.id, 'shares');
-    
     if (navigator.share && entry.access_level === 'Public') {
       try {
         await navigator.share({
@@ -328,62 +285,37 @@ export function useRegistryOfResonance() {
           url: window.location.href,
         });
       } catch (error) {
-        // Fallback to clipboard
         await navigator.clipboard.writeText(window.location.href);
         toast.success('Link copied to clipboard');
       }
     } else {
-      // Copy to clipboard
       const text = `${entry.title}\n\n${entry.content}\n\nResonance Rating: ${entry.resonance_rating}/100`;
       await navigator.clipboard.writeText(text);
       toast.success('Entry copied to clipboard');
     }
   }, [incrementEngagement]);
 
-  const calculateWordCount = useCallback((content: string) => {
-    return content.trim().split(/\s+/).length;
-  }, []);
+  const calculateWordCount = useCallback((content: string) => content.trim().split(/\s+/).length, []);
+  const calculateReadingTime = useCallback((wordCount: number) => Math.ceil(wordCount / 200), []);
 
-  const calculateReadingTime = useCallback((wordCount: number) => {
-    // Average reading speed: 200 words per minute
-    return Math.ceil(wordCount / 200);
-  }, []);
-
-  // Resonance voting functions
   const toggleResonance = useCallback(async (entryId: string): Promise<boolean> => {
     if (!user) {
       toast.error('You must be logged in to resonate with entries');
       return false;
     }
-
     try {
-      // Check if user has already resonated
-      const { data: existingVote } = await supabase
-        .from('registry_entry_resonance')
-        .select('id')
-        .eq('entry_id', entryId)
-        .eq('user_id', user.id)
-        .maybeSingle();
-
+      const { data: existingVote } = await supabase.from('registry_entry_resonance').select('id').eq('entry_id', entryId).eq('user_id', user.id).maybeSingle();
       if (existingVote) {
-        // Remove resonance
-        await supabase
-          .from('registry_entry_resonance')
-          .delete()
-          .eq('entry_id', entryId)
-          .eq('user_id', user.id);
-        
+        await supabase.from('registry_entry_resonance').delete().eq('id', existingVote.id);
         toast.success('Resonance removed');
         return false;
       } else {
-        // Add resonance
-        await supabase
-          .from('registry_entry_resonance')
-          .insert({
-            entry_id: entryId,
-            user_id: user.id
-          });
-        
+        await supabase.from('registry_entry_resonance').insert({ entry_id: entryId, user_id: user.id });
+        const { data: entry, error: fetchError } = await supabase.from('registry_of_resonance').select('resonance_growth_data, resonance_count').eq('id', entryId).single();
+        if (fetchError) throw fetchError;
+        const currentGrowthData = (entry?.resonance_growth_data as any[]) || [];
+        const newGrowthData = [...currentGrowthData, { timestamp: new Date().toISOString(), count: (entry.resonance_count || 0) + 1 }];
+        await supabase.from('registry_of_resonance').update({ resonance_growth_data: newGrowthData }).eq('id', entryId);
         toast.success('Resonating with this entry!');
         return true;
       }
@@ -396,38 +328,17 @@ export function useRegistryOfResonance() {
 
   const getUserResonanceStatus = useCallback(async (entryId: string): Promise<boolean> => {
     if (!user) return false;
-
     try {
-      const { data } = await supabase
-        .from('registry_entry_resonance')
-        .select('id')
-        .eq('entry_id', entryId)
-        .eq('user_id', user.id)
-        .maybeSingle();
-      
+      const { data } = await supabase.from('registry_entry_resonance').select('id').eq('entry_id', entryId).eq('user_id', user.id).maybeSingle();
       return !!data;
     } catch (error) {
       return false;
     }
   }, [user]);
 
-  // Comments functions
   const getComments = useCallback(async (entryId: string): Promise<any[]> => {
     try {
-      const { data, error } = await supabase
-        .from('registry_entry_comments')
-        .select(`
-          id,
-          content,
-          created_at,
-          updated_at,
-          is_anonymous,
-          parent_comment_id,
-          user_id
-        `)
-        .eq('entry_id', entryId)
-        .order('created_at', { ascending: false });
-
+      const { data, error } = await supabase.from('registry_entry_comments').select('id, content, created_at, updated_at, is_anonymous, parent_comment_id, user_id').eq('entry_id', entryId).order('created_at', { ascending: false });
       if (error) throw error;
       return data || [];
     } catch (error) {
@@ -441,19 +352,9 @@ export function useRegistryOfResonance() {
       toast.error('You must be logged in to comment');
       return false;
     }
-
     try {
-      const { error } = await supabase
-        .from('registry_entry_comments')
-        .insert({
-          entry_id: entryId,
-          user_id: user.id,
-          content: content.trim(),
-          parent_comment_id: parentCommentId || null
-        });
-
+      const { error } = await supabase.from('registry_entry_comments').insert({ entry_id: entryId, user_id: user.id, content: content.trim(), parent_comment_id: parentCommentId || null });
       if (error) throw error;
-      
       toast.success('Comment added successfully');
       return true;
     } catch (error) {
@@ -465,16 +366,9 @@ export function useRegistryOfResonance() {
 
   const deleteComment = useCallback(async (commentId: string): Promise<boolean> => {
     if (!user) return false;
-
     try {
-      const { error } = await supabase
-        .from('registry_entry_comments')
-        .delete()
-        .eq('id', commentId)
-        .eq('user_id', user.id);
-
+      const { error } = await supabase.from('registry_entry_comments').delete().eq('id', commentId).eq('user_id', user.id);
       if (error) throw error;
-      
       toast.success('Comment deleted');
       return true;
     } catch (error) {
@@ -484,37 +378,115 @@ export function useRegistryOfResonance() {
     }
   }, [user]);
 
-  // Share to circle function
+  const getReflectionNotes = useCallback(async (entryId: string): Promise<any[]> => {
+    if (!user) return [];
+    try {
+      const { data, error } = await supabase.from('reflection_notes').select('*').eq('entry_id', entryId).eq('user_id', user.id).order('created_at', { ascending: false });
+      if (error) throw error;
+      return data || [];
+    } catch (error) {
+      console.error('Error fetching reflection notes:', error);
+      return [];
+    }
+  }, [user]);
+
+  const addReflectionNote = useCallback(async (entryId: string, content: string): Promise<boolean> => {
+    if (!user) {
+      toast.error('You must be logged in to add a note');
+      return false;
+    }
+    try {
+      const { error } = await supabase.from('reflection_notes').insert({ entry_id: entryId, user_id: user.id, content: content.trim() });
+      if (error) throw error;
+      toast.success('Reflection note added');
+      return true;
+    } catch (error) {
+      console.error('Error adding reflection note:', error);
+      toast.error('Failed to add reflection note');
+      return false;
+    }
+  }, [user]);
+
+  const exportEntryAsSeed = useCallback(async (entryId: string) => {
+    try {
+      const { data: entry, error } = await supabase.from('registry_of_resonance').select('*').eq('id', entryId).single();
+      if (error) throw error;
+      if (!entry) throw new Error('Entry not found');
+      const seedPacket = {
+        version: '1.0.0',
+        type: 'codex-seed',
+        provenance: 'Sacred Shifter Collective',
+        timestamp: new Date().toISOString(),
+        payload: { ...entry, user_id: undefined, visibility_settings: undefined },
+      };
+      const blob = new Blob([JSON.stringify(seedPacket, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `codex-seed-${entry.id}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Error exporting entry as seed:', err);
+      toast.error('Failed to export entry as seed packet.');
+    }
+  }, []);
+
+  const getBookmarkStatus = useCallback(async (entryId: string): Promise<boolean> => {
+    if (!user) return false;
+    const { data } = await supabase.from('user_bookmarks').select('entry_id').eq('entry_id', entryId).eq('user_id', user.id).maybeSingle();
+    return !!data;
+  }, [user]);
+
+  const toggleBookmark = useCallback(async (entryId: string): Promise<boolean> => {
+    if (!user) {
+      toast.error('You must be logged in to bookmark entries.');
+      return false;
+    }
+    const isBookmarked = await getBookmarkStatus(entryId);
+    if (isBookmarked) {
+      await supabase.from('user_bookmarks').delete().eq('entry_id', entryId).eq('user_id', user.id);
+      toast.success('Bookmark removed.');
+      return false;
+    } else {
+      await supabase.from('user_bookmarks').insert({ entry_id: entryId, user_id: user.id });
+      toast.success('Bookmarked to Personal Codex.');
+      return true;
+    }
+  }, [user, getBookmarkStatus]);
+
+  const getNextPreviousEntries = useCallback(async (currentEntryId: string) => {
+    const { data: currentEntry, error: currentError } = await supabase.from('registry_of_resonance').select('created_at').eq('id', currentEntryId).single();
+    if (currentError || !currentEntry) {
+      console.error('Could not fetch current entry for navigation', currentError);
+      return { nextId: null, prevId: null };
+    }
+    const createdAt = currentEntry.created_at;
+    const [nextRes, prevRes] = await Promise.all([
+      supabase.from('registry_of_resonance').select('id').order('created_at', { ascending: true }).gt('created_at', createdAt).limit(1).single(),
+      supabase.from('registry_of_resonance').select('id').order('created_at', { ascending: false }).lt('created_at', createdAt).limit(1).single(),
+    ]);
+    return {
+      nextId: nextRes.data?.id || null,
+      prevId: prevRes.data?.id || null,
+    };
+  }, []);
+
   const shareToCircle = useCallback(async (entryId: string, circleId: string, message?: string): Promise<boolean> => {
     if (!user) {
       toast.error('You must be logged in to share entries');
       return false;
     }
-
     try {
-      console.log('Sharing to circle:', { entryId, circleId, userId: user.id, message });
-      
-      const { data, error } = await supabase
-        .from('registry_entry_shares')
-        .insert({
-          entry_id: entryId,
-          user_id: user.id,
-          circle_id: circleId,
-          message: message || null
-        })
-        .select();
-
-      if (error) {
-        console.error('Supabase error:', error);
-        throw error;
-      }
-      
-      console.log('Share successful:', data);
+      const { data, error } = await supabase.from('registry_entry_shares').insert({ entry_id: entryId, user_id: user.id, circle_id: circleId, message: message || null }).select();
+      if (error) throw error;
       toast.success('Entry shared to circle successfully');
       return true;
     } catch (error) {
       console.error('Error sharing to circle:', error);
-      toast.error(`Failed to share entry: ${error.message || error}`);
+      toast.error(`Failed to share entry: ${error.message || 'An unexpected error occurred'}`);
       return false;
     }
   }, [user]);
@@ -543,5 +515,11 @@ export function useRegistryOfResonance() {
     addComment,
     deleteComment,
     shareToCircle,
+    getReflectionNotes,
+    addReflectionNote,
+    exportEntryAsSeed,
+    getBookmarkStatus,
+    toggleBookmark,
+    getNextPreviousEntries,
   };
 }

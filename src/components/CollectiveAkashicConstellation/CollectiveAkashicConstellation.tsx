@@ -209,7 +209,7 @@ export function CollectiveAkashicConstellation() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [hoveredEntry, setHoveredEntry] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<'constellation' | 'grid'>('constellation');
+  const [viewMode, setViewMode] = useState<'constellation' | 'grid'>('grid');
   const [activeTab, setActiveTab] = useState('collective');
 
   const handleTabChange = (value: string) => {
