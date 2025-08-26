@@ -2,9 +2,9 @@ import { Canvas } from '@react-three/fiber'
 import { OrbitControls, Html } from '@react-three/drei'
 import { Link } from 'react-router-dom'
 
-function Gateway({ to, label, x }: { to: string; label: string; x: number }){
+function Gateway({ to, label, position }: { to: string; label: string; position: [number, number, number] }){
   return (
-    <group position={[x,0,0]}>
+    <group position={position}>
       <mesh>
         <sphereGeometry args={[0.8, 32, 32]} />
         <meshStandardMaterial emissive="#8b5cf6" color="#1f2937" />
@@ -17,16 +17,31 @@ function Gateway({ to, label, x }: { to: string; label: string; x: number }){
 }
 
 export default function HermeticAtrium(){
+  const principles = [
+    { key: 'mentalism', label: 'Mentalism' },
+    { key: 'correspondence', label: 'Correspondence' },
+    { key: 'vibration', label: 'Vibration' },
+    { key: 'polarity', label: 'Polarity' },
+    { key: 'rhythm', label: 'Rhythm' },
+    { key: 'cause-effect', label: 'Cause & Effect' },
+    { key: 'gender', label: 'Gender' },
+  ];
+
+  const radius = 3.5;
+
   return (
     <div className="w-screen h-screen">
-      <Canvas camera={{ position: [0,2,6], fov: 60 }}>
+      <Canvas camera={{ position: [0, 2, 8], fov: 60 }}>
         <color attach="background" args={["#0b0c10"]} />
         <ambientLight intensity={0.5} />
-        <directionalLight position={[3,5,2]} intensity={1.2} />
-        <Gateway to="/learn/hermetic/mentalism" label="Mentalism" x={-2.2} />
-        <Gateway to="/learn/hermetic/correspondence" label="Correspondence" x={0} />
-        <Gateway to="/learn/hermetic/vibration" label="Vibration" x={2.2} />
-        <OrbitControls enablePan={false} />
+        <directionalLight position={[3, 5, 2]} intensity={1.2} />
+        {principles.map((p, i) => {
+          const angle = (i / principles.length) * 2 * Math.PI;
+          const x = radius * Math.cos(angle);
+          const z = radius * Math.sin(angle);
+          return <Gateway key={p.key} to={`/learn/hermetic/${p.key}`} label={p.label} position={[x, 0, z]} />;
+        })}
+        <OrbitControls enablePan={false} maxDistance={12} minDistance={3} />
       </Canvas>
     </div>
   )
