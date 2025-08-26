@@ -36,7 +36,7 @@ const Scene = ({ progress }: { progress: number }) => {
 
   return (
     <>
-      <perspectiveCamera ref={cameraRef} makeDefault fov={60} />
+      <perspectiveCamera ref={cameraRef} fov={60} />
       {stages.map((stage, index) => (
         <mesh key={index} position={stage.position}>
           <sphereGeometry args={[0.5, 16, 16]} />

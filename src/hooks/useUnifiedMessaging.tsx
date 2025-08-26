@@ -55,7 +55,7 @@ export const useUnifiedMessaging = ({
       setConnectionStatus(status);
 
       // Update queue stats
-      const stats = service.getQueueStats();
+      const stats = await service.getQueueStats();
       setQueueStats(stats);
 
       console.log('🌟 Unified Messaging hook initialized');
@@ -94,7 +94,7 @@ export const useUnifiedMessaging = ({
       const message = await messagingService.sendMessage(content, context, options);
       
       // Update stats after sending
-      const stats = messagingService.getQueueStats();
+      const stats = await messagingService.getQueueStats();
       setQueueStats(stats);
       
       // Show delivery method notification
@@ -184,7 +184,7 @@ export const useUnifiedMessaging = ({
       const status = messagingService.getConnectionStatus();
       setConnectionStatus(status);
       
-      const stats = messagingService.getQueueStats();
+      const stats = await messagingService.getQueueStats();
       setQueueStats(stats);
     } catch (err) {
       console.error('🌟 Failed to refresh status:', err);

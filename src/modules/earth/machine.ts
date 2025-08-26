@@ -35,13 +35,13 @@ export const earthMachine = setup({
   },
   on: {
     SET_CELESTIAL_BODY: {
-      actions: 'setCelestialBody',
+      actions: ['setCelestialBody'],
     },
     SET_CELESTIAL_TIME: {
-      actions: 'setCelestialTime',
+      actions: ['setCelestialTime'],
     },
     SELECT_BREATHING_MODE: {
-      actions: 'setBreathingMode',
+      actions: ['setBreathingMode'],
     },
   },
   states: {

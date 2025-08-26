@@ -42,10 +42,11 @@ function Earth({ isBreathing, breathRate, breathingMode, onBreath, sunRef }: {
         const scale = 1 + breathCycle;
         meshRef.current.scale.setScalar(scale);
       }
-      if (meshRef.current.material.uniforms) {
-        meshRef.current.material.uniforms.time.value = time;
+      const material = meshRef.current.material as any;
+      if (material.uniforms) {
+        material.uniforms.time.value = time;
         if (sunRef.current) {
-          meshRef.current.material.uniforms.sunPosition.value.copy(sunRef.current.position);
+          material.uniforms.sunPosition.value.copy(sunRef.current.position);
         }
       }
     }
@@ -189,7 +190,10 @@ function Aurora({ isActive }: { isActive: boolean }) {
 
   useFrame(({ clock }) => {
     if (auroraRef.current && isActive) {
-      auroraRef.current.material.uniforms.time.value = clock.getElapsedTime();
+      const material = auroraRef.current.material as any;
+      if (material.uniforms) {
+        material.uniforms.time.value = clock.getElapsedTime();
+      }
     }
   });
 
