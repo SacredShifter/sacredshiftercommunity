@@ -93,7 +93,44 @@ describe('useRegistryOfResonance', () => {
     expect(supabase.from).toHaveBeenCalledWith('reflection_notes');
   });
 
-  // TODO: Add more tests for other functions
-  // - toggleResonance (checking for resonance_growth_data update)
-  // - exportEntryAsSeed
+  it('should toggle a bookmark on and off', async () => {
+    const { result } = renderHook(() => useRegistryOfResonance());
+    const entryId = 'test-entry-id';
+
+    // Mock the initial status check (not bookmarked)
+    (supabase.from as vi.Mock).mockReturnValueOnce({
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      maybeSingle: vi.fn().mockResolvedValue({ data: null }),
+    });
+    // Mock the insert call
+    const insertMock = vi.fn().mockResolvedValue({ error: null });
+    (supabase.from as vi.Mock).mockReturnValueOnce({ insert: insertMock });
+
+    let newStatus;
+    await act(async () => {
+      newStatus = await result.current.toggleBookmark(entryId);
+    });
+    expect(newStatus).toBe(true);
+    expect(insertMock).toHaveBeenCalledWith({ entry_id: entryId, user_id: mockUser.id });
+
+    // Mock the second status check (is bookmarked)
+    (supabase.from as vi.Mock).mockReturnValueOnce({
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      maybeSingle: vi.fn().mockResolvedValue({ data: { entry_id: entryId } }),
+    });
+    // Mock the delete call
+    (supabase.from as vi.Mock).mockReturnValueOnce({
+      delete: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(), // Supports chained .eq()
+    });
+
+    await act(async () => {
+      newStatus = await result.current.toggleBookmark(entryId);
+    });
+    expect(newStatus).toBe(false);
+    expect(supabase.from('user_bookmarks').delete().eq).toHaveBeenCalledWith('entry_id', entryId);
+    expect(supabase.from('user_bookmarks').delete().eq().eq).toHaveBeenCalledWith('user_id', mockUser.id);
+  });
 });

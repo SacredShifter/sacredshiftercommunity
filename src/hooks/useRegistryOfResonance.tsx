@@ -580,6 +580,73 @@ export function useRegistryOfResonance() {
     }
   }, []);
 
+  // Bookmarking functions
+  const getBookmarkStatus = useCallback(async (entryId: string): Promise<boolean> => {
+    if (!user) return false;
+    const { data } = await supabase
+      .from('user_bookmarks')
+      .select('entry_id')
+      .eq('entry_id', entryId)
+      .eq('user_id', user.id)
+      .maybeSingle();
+    return !!data;
+  }, [user]);
+
+  const toggleBookmark = useCallback(async (entryId: string): Promise<boolean> => {
+    if (!user) {
+      toast.error('You must be logged in to bookmark entries.');
+      return false;
+    }
+    const isBookmarked = await getBookmarkStatus(entryId);
+    if (isBookmarked) {
+      await supabase.from('user_bookmarks').delete().eq('entry_id', entryId).eq('user_id', user.id);
+      toast.success('Bookmark removed.');
+      return false;
+    } else {
+      await supabase.from('user_bookmarks').insert({ entry_id: entryId, user_id: user.id });
+      toast.success('Bookmarked to Personal Codex.');
+      return true;
+    }
+  }, [user, getBookmarkStatus]);
+
+  // Navigation function
+  const getNextPreviousEntries = useCallback(async (currentEntryId: string) => {
+    const { data: currentEntry, error: currentError } = await supabase
+      .from('registry_of_resonance')
+      .select('created_at')
+      .eq('id', currentEntryId)
+      .single();
+
+    if (currentError || !currentEntry) {
+      console.error('Could not fetch current entry for navigation', currentError);
+      return { nextId: null, prevId: null };
+    }
+
+    const createdAt = currentEntry.created_at;
+
+    const [nextRes, prevRes] = await Promise.all([
+      supabase
+        .from('registry_of_resonance')
+        .select('id')
+        .order('created_at', { ascending: true })
+        .gt('created_at', createdAt)
+        .limit(1)
+        .single(),
+      supabase
+        .from('registry_of_resonance')
+        .select('id')
+        .order('created_at', { ascending: false })
+        .lt('created_at', createdAt)
+        .limit(1)
+        .single(),
+    ]);
+
+    return {
+      nextId: nextRes.data?.id || null,
+      prevId: prevRes.data?.id || null,
+    };
+  }, []);
+
   // Share to circle function
   const shareToCircle = useCallback(async (entryId: string, circleId: string, message?: string): Promise<boolean> => {
     if (!user) {
@@ -642,5 +709,8 @@ export function useRegistryOfResonance() {
     getReflectionNotes,
     addReflectionNote,
     exportEntryAsSeed,
+    getBookmarkStatus,
+    toggleBookmark,
+    getNextPreviousEntries,
   };
 }

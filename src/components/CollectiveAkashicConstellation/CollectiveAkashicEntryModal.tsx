@@ -35,6 +35,8 @@ interface CollectiveAkashicEntryModalProps {
 export function CollectiveAkashicEntryModal({ isOpen, onClose, onSubmit, initialData }: CollectiveAkashicEntryModalProps) {
   const [formData, setFormData] = useState({
     title: '',
+    author_name: '',
+    author_bio: '',
     content: '',
     entry_type: 'Consciousness Threads',
     access_level: 'Public',
@@ -66,6 +68,8 @@ export function CollectiveAkashicEntryModal({ isOpen, onClose, onSubmit, initial
     if (initialData) {
       setFormData({
         title: initialData.title || '',
+        author_name: initialData.author_name || '',
+        author_bio: initialData.author_bio || '',
         content: initialData.content || '',
         entry_type: initialData.entry_type || 'Consciousness Threads',
         access_level: initialData.access_level || 'Public',
@@ -76,6 +80,8 @@ export function CollectiveAkashicEntryModal({ isOpen, onClose, onSubmit, initial
     } else {
       setFormData({
         title: '',
+        author_name: '',
+        author_bio: '',
         content: '',
         entry_type: 'Consciousness Threads',
         access_level: 'Public',
@@ -166,6 +172,30 @@ export function CollectiveAkashicEntryModal({ isOpen, onClose, onSubmit, initial
               required
               className="bg-background/50"
             />
+          </div>
+
+          {/* Author Details */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="author_name">Author Name</Label>
+              <Input
+                id="author_name"
+                value={formData.author_name}
+                onChange={(e) => setFormData(prev => ({ ...prev, author_name: e.target.value }))}
+                placeholder="Your name or alias"
+                className="bg-background/50"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="author_bio">Author Bio</Label>
+              <Input
+                id="author_bio"
+                value={formData.author_bio}
+                onChange={(e) => setFormData(prev => ({ ...prev, author_bio: e.target.value }))}
+                placeholder="A short bio"
+                className="bg-background/50"
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

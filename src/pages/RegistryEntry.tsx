@@ -16,10 +16,23 @@ import {
   Bookmark,
   Download,
   Share2,
-  ShieldCheck
+  ShieldCheck,
+  Edit,
+  Trash
 } from 'lucide-react';
 import { toast } from 'sonner';
 import ReactMarkdown from 'react-markdown';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import ResonanceChart from '@/components/Codex/ResonanceChart';
 import TagCloud from '@/components/Codex/TagCloud';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -27,6 +40,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import PublicDiscussion from '@/components/Codex/PublicDiscussion';
 import ReflectionNotes from '@/components/Codex/ReflectionNotes';
 import FontSizeToggle from '@/components/FontSizeToggle';
+import { ShareToCircleModal } from '@/components/RegistryOfResonance/ShareToCircleModal';
 
 interface RegistryEntry {
   id: string;
@@ -62,7 +76,11 @@ export default function RegistryEntry() {
     getUserResonanceStatus,
     incrementEngagement,
     exportEntryAsSeed,
-    shareToCircle
+    shareToCircle,
+    deleteEntry,
+    getNextPreviousEntries,
+    toggleBookmark,
+    getBookmarkStatus
   } = useRegistryOfResonance();
   
   const [entry, setEntry] = useState<RegistryEntry | null>(null);
@@ -71,6 +89,8 @@ export default function RegistryEntry() {
   const [hasResonated, setHasResonated] = useState(false);
   const [resonanceCount, setResonanceCount] = useState(0);
   const [isEchoModalOpen, setEchoModalOpen] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [navIds, setNavIds] = useState<{ nextId: string | null, prevId: string | null }>({ nextId: null, prevId: null });
 
   useEffect(() => {
     if (!id) {
@@ -78,7 +98,7 @@ export default function RegistryEntry() {
       return;
     }
 
-    const fetchEntry = async () => {
+    const fetchAllData = async () => {
       try {
         setLoading(true);
         const { data: entryData, error: entryError } = await supabase
@@ -94,9 +114,17 @@ export default function RegistryEntry() {
         setResonanceCount(entryData.resonance_count || 0);
 
         if (user) {
-          const userResonance = await getUserResonanceStatus(id);
+          const [userResonance, userBookmark] = await Promise.all([
+            getUserResonanceStatus(id),
+            getBookmarkStatus(id)
+          ]);
           setHasResonated(userResonance);
+          setIsBookmarked(userBookmark);
         }
+
+        const navData = await getNextPreviousEntries(id);
+        setNavIds(navData);
+
       } catch (err) {
         console.error('Error fetching registry entry:', err);
         setError(err instanceof Error ? err.message : 'Failed to fetch entry');
@@ -105,8 +133,8 @@ export default function RegistryEntry() {
       }
     };
 
-    fetchEntry();
-  }, [id, navigate, user, getUserResonanceStatus]);
+    fetchAllData();
+  }, [id, navigate, user, getUserResonanceStatus, getBookmarkStatus, getNextPreviousEntries]);
 
   const handleResonance = async () => {
     if (!id || !user) return;
@@ -115,10 +143,10 @@ export default function RegistryEntry() {
     setResonanceCount(prev => resonating ? prev + 1 : prev - 1);
   };
 
-  const handleBookmark = () => {
-    if (!id) return;
-    incrementEngagement(id, 'bookmarks');
-    toast.success('Bookmarked to your Personal Codex!');
+  const handleBookmark = async () => {
+    if (!id || !user) return;
+    const newStatus = await toggleBookmark(id);
+    setIsBookmarked(newStatus);
   };
 
   const handleSeed = () => {
@@ -154,7 +182,23 @@ export default function RegistryEntry() {
           <Button variant="ghost" onClick={() => navigate('/registry')} className="gap-2 hover:bg-primary/10"><ArrowLeft className="h-4 w-4" />Back to Registry</Button>
           <div className="flex-1" />
           <FontSizeToggle />
-          <div className="w-64">{/* <Input placeholder="Quick search..." /> */}</div>
+          {user?.id === entry?.user_id && (
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" onClick={() => navigate(`/registry/${id}/edit`)}><Edit className="h-4 w-4 mr-2" />Edit</Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="destructive" size="sm"><Trash className="h-4 w-4 mr-2" />Delete</Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader><AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle><AlertDialogDescription>This action cannot be undone. This will permanently delete this registry entry.</AlertDialogDescription></AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={async () => { await deleteEntry(id as string); navigate('/registry'); }}>Continue</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          )}
         </div>
       </header>
 
@@ -163,16 +207,24 @@ export default function RegistryEntry() {
           <Button variant="outline" size="sm" onClick={handleResonance} className={`gap-2 ${hasResonated ? 'text-primary border-primary/50' : ''}`} title="Resonate"><Sparkles className={`h-4 w-4 ${hasResonated ? 'fill-current' : ''}`} /><span>{resonanceCount}</span></Button>
           <Button variant="outline" size="sm" onClick={handleEcho} className="gap-2" title="Echo"><Share2 className="h-4 w-4" /></Button>
           <Button variant="outline" size="sm" onClick={handleSeed} className="gap-2" title="Seed"><Download className="h-4 w-4" /></Button>
-          <Button variant="outline" size="sm" onClick={handleBookmark} className="gap-2" title="Bookmark"><Bookmark className="h-4 w-4" /></Button>
+          <Button variant="outline" size="sm" onClick={handleBookmark} className="gap-2" title="Bookmark"><Bookmark className={`h-4 w-4 ${isBookmarked ? 'fill-current text-primary' : ''}`} /></Button>
         </div>
+
+        {isEchoModalOpen && entry && (
+          <ShareToCircleModal
+            entry={entry}
+            open={isEchoModalOpen}
+            onClose={() => setEchoModalOpen(false)}
+          />
+        )}
 
         <Card className={`backdrop-blur-xl border-white/20 overflow-hidden transition-all duration-500 ${entry.resonance_count && entry.resonance_count > 10 ? 'shadow-lg shadow-primary/20' : ''}`}>
           <CardContent className="p-0">
             <div className="p-8 bg-gradient-to-r from-primary/10 via-accent/5 to-secondary/10 border-b border-white/10">
               <div className="flex items-center justify-between mb-4">
-                <Button variant="ghost" size="icon" disabled><ArrowLeft className="h-4 w-4" /></Button>
+                <Button variant="ghost" size="icon" onClick={() => navigate(`/registry/${navIds.prevId}`)} disabled={!navIds.prevId}><ArrowLeft className="h-4 w-4" /></Button>
                 <div className="flex-1 text-center"><h1 className="text-3xl font-bold text-foreground leading-tight">{entry.title}</h1></div>
-                <Button variant="ghost" size="icon" disabled><ArrowLeft className="h-4 w-4 transform rotate-180" /></Button>
+                <Button variant="ghost" size="icon" onClick={() => navigate(`/registry/${navIds.nextId}`)} disabled={!navIds.nextId}><ArrowLeft className="h-4 w-4 transform rotate-180" /></Button>
               </div>
               <div className="flex items-start justify-between">
                 <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
