@@ -88,15 +88,6 @@ const Index = () => {
       keywords: ['3D modules', 'interactive learning', 'sacred geometry']
     },
     {
-      title: 'Hermetic Principles',
-      description: 'An interactive 3D journey into the 7 Hermetic Principles. Experience the laws of the universe.',
-      icon: Brain,
-      path: '/learn/hermetic',
-      gradient: 'from-purple-500 to-indigo-600',
-      glow: 'shadow-purple-500/30',
-      keywords: ['hermeticism', '3D learning', 'universal laws']
-    },
-    {
       title: 'Sacred Feed',
       description: 'Your personalized stream of consciousness transformation content',
       icon: Rss,

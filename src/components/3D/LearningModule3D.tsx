@@ -31,8 +31,20 @@ import BreathOfSource3D from './BreathOfSource3D';
 import ShiftCanvas from '../../modules/shift/scene/ShiftCanvas';
 import GateOfLiberation from '../../modules/liberation/LiberationCanvas';
 import { ReconnectionWithLivingEarth } from '@/modules/earth';
+import HermeticPrinciplesModule from '@/pages/learn/hermetic/HermeticPrinciplesModule';
 
 const learningModules: LearningModule[] = [
+  {
+    id: 'hermetic-principles',
+    title: 'The 7 Hermetic Principles',
+    description: 'An interactive 3D journey into the universal laws of Mentalism, Correspondence, Vibration, Polarity, Rhythm, Cause & Effect, and Gender.',
+    category: 'Universal Laws',
+    difficulty: 'intermediate',
+    duration: '20-30 min',
+    tags: ['hermeticism', 'kybalion', 'universal laws', '3d'],
+    icon: <Brain className="h-5 w-5" />,
+    component: HermeticPrinciplesModule
+  },
   {
     id: 'breath-of-source',
     title: 'Breath of Source Mastery',

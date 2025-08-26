@@ -35,14 +35,6 @@ import LearningModule3D from './components/3D/LearningModule3D';
 import Shift from './pages/Shift';
 import Meditation from './pages/Meditation';
 
-import HermeticAtrium from './pages/learn/hermetic/Atrium.tsx';
-import Mentalism from './pages/learn/hermetic/Mentalism.tsx';
-import Vibration from './pages/learn/hermetic/Vibration.tsx';
-import Correspondence from './pages/learn/hermetic/Correspondence.tsx';
-import Polarity from './pages/learn/hermetic/Polarity.tsx';
-import Rhythm from './pages/learn/hermetic/Rhythm.tsx';
-import CauseEffect from './pages/learn/hermetic/CauseEffect.tsx';
-import Gender from './pages/learn/hermetic/Gender.tsx';
 
 function App() {
   return (
@@ -52,7 +44,7 @@ function App() {
         <TooltipProvider>
           <Toaster />
           <Sonner />
-        <div className="min-h-screen relative w-full">
+        <div className="min-h-screen relative w-full bg-black">
           
           <Routes>
             <Route path="/auth" element={<Auth />} />
@@ -65,14 +57,6 @@ function App() {
                 </ProtectedRoute>
               }
             >
-                <Route path="/learn/hermetic" element={<HermeticAtrium />} />
-                <Route path="/learn/hermetic/mentalism" element={<Mentalism />} />
-                <Route path="/learn/hermetic/vibration" element={<Vibration />} />
-                <Route path="/learn/hermetic/correspondence" element={<Correspondence />} />
-                <Route path="/learn/hermetic/polarity" element={<Polarity />} />
-                <Route path="/learn/hermetic/rhythm" element={<Rhythm />} />
-                <Route path="/learn/hermetic/cause-effect" element={<CauseEffect />} />
-                <Route path="/learn/hermetic/gender" element={<Gender />} />
                 <Route path="/" element={<Index />} />
                 <Route path="/feed" element={<Feed />} />
                 <Route path="/messages" element={<Messages />} />
