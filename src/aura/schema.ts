@@ -57,7 +57,24 @@ export type AuraCommand =
         }> 
       } 
     }
+  | {
+      kind: 'codex.tag';
+      level: 1;
+      payload: {
+        entry_id: string;
+        tags_to_add?: string[];
+        tags_to_remove?: string[];
+      }
+    }
   // Level 2 - Requires confirmation
+  | {
+      kind: 'codex.verify';
+      level: 2;
+      payload: {
+        entry_id: string;
+        verification_status: 'verified' | 'disputed' | 'pending';
+      }
+    }
   | { 
       kind: 'site.page.create'; 
       level: 2; 
@@ -123,6 +140,38 @@ export type AuraCommand =
         };
       };
     }
+  | {
+      kind: 'remediate';
+      level: 2;
+      payload: {
+        failed_job_id: string;
+        remediation_strategy: 'retry' | 'rollback';
+      }
+    }
+  | {
+      kind: 'seed.generate';
+      level: 2;
+      payload: {
+        type: 'knowledge_seed' | 'resonance_tag' | 'starter_kit' | 'fractal_prompt';
+        context: any;
+      }
+    }
+  | {
+      kind: 'seed.distribute';
+      level: 2;
+      payload: {
+        seed_id: string;
+        channel: 'user' | 'mesh' | 'external';
+        recipient_id: string;
+      }
+    }
+  | {
+      kind: 'seed.track';
+      level: 1; // Tracking is a safe read-only operation
+      payload: {
+        seed_id: string;
+      }
+    }
   // Level 3 - Owner approval required
   | { 
       kind: 'site.style.apply'; 
@@ -137,6 +186,14 @@ export type AuraCommand =
       payload: { 
         sql: string 
       } 
+    }
+  | {
+      kind: 'module.delete';
+      level: 3;
+      payload: {
+        module_name: string;
+        hard_delete: boolean;
+      }
     };
 
 export interface AuraJob {

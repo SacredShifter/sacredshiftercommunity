@@ -194,34 +194,68 @@ export const useSacredCircles = () => {
     }
   }, [user, sendUnifiedMessage, isInitialized]);
 
+  const requestToJoinCircle = useCallback(async (circleId: string) => {
+    const { error } = await supabase.functions.invoke('request-to-join-circle', {
+      body: { circle_id: circleId }
+    });
+    if (error) throw new Error(error.message);
+  }, []);
+
+  const inviteToCircle = useCallback(async (circleId: string, inviteeId: string) => {
+    const { error } = await supabase.functions.invoke('invite-to-circle', {
+      body: { circle_id: circleId, invitee_id: inviteeId }
+    });
+    if (error) throw new Error(error.message);
+  }, []);
+
+  const acceptInvitation = useCallback(async (invitationId: string) => {
+    const { error } = await supabase.functions.invoke('accept-invitation', {
+      body: { invitation_id: invitationId }
+    });
+    if (error) throw new Error(error.message);
+    fetchCircles(); // Refresh circles to show new membership
+  }, [fetchCircles]);
+
+  const rejectInvitation = useCallback(async (invitationId: string) => {
+    const { error } = await supabase.functions.invoke('reject-invitation', {
+      body: { invitation_id: invitationId }
+    });
+    if (error) throw new Error(error.message);
+  }, []);
+
   // Join a Sacred Circle
   const joinCircle = useCallback(async (circleId: string) => {
     if (!user) throw new Error('User not authenticated');
 
-    try {
-      const { error } = await supabase
-        .from('circle_group_members')
-        .insert({
-          group_id: circleId,
-          user_id: user.id,
-          role: 'member'
-        });
+    const circle = circles.find(c => c.id === circleId);
+    if (!circle) throw new Error('Circle not found');
 
-      // If it's a duplicate key error, the user is already a member
-      if (error && error.code === '23505') {
-        console.log('User is already a member of this circle');
-        return; // Silent success - they're already in
+    if (circle.is_private) {
+      await requestToJoinCircle(circleId);
+    } else {
+      try {
+        const { error } = await supabase
+          .from('circle_group_members')
+          .insert({
+            group_id: circleId,
+            user_id: user.id,
+            role: 'member'
+          });
+
+        if (error && error.code === '23505') {
+          console.log('User is already a member of this circle');
+          return;
+        }
+
+        if (error) throw error;
+
+        fetchCircles();
+      } catch (err) {
+        console.error('Error joining circle:', err);
+        throw new Error('Failed to join Sacred Circle');
       }
-
-      if (error) throw error;
-      
-      // Refresh circles data
-      fetchCircles();
-    } catch (err) {
-      console.error('Error joining circle:', err);
-      throw new Error('Failed to join Sacred Circle');
     }
-  }, [user, fetchCircles]);
+  }, [user, circles, fetchCircles, requestToJoinCircle]);
 
   // Leave a Sacred Circle
   const leaveCircle = useCallback(async (circleId: string) => {
@@ -344,6 +378,10 @@ export const useSacredCircles = () => {
     sendMessage,
     joinCircle,
     leaveCircle,
-    createCircle
+    createCircle,
+    requestToJoinCircle,
+    inviteToCircle,
+    acceptInvitation,
+    rejectInvitation
   };
 };

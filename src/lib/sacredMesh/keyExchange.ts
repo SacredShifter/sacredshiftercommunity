@@ -135,11 +135,38 @@ export class SacredKeyExchange {
     return combinedKey;
   }
 
-  // Combine multiple shared secrets into a root key
+  // Combine multiple shared secrets into a root key using HKDF
   private async combineSharedSecrets(secrets: CryptoKey[]): Promise<CryptoKey> {
-    // For simplicity, we'll use the first secret as the combined key
-    // In a real implementation, you'd properly combine them with KDF
-    return secrets[0];
+    // Concatenate all secret keys into a single buffer
+    const buffers = await Promise.all(secrets.map(key => crypto.subtle.exportKey('raw', key)));
+    const combinedBuffer = new Uint8Array(buffers.reduce((acc, val) => acc + val.byteLength, 0));
+    let offset = 0;
+    for (const buffer of buffers) {
+      combinedBuffer.set(new Uint8Array(buffer), offset);
+      offset += buffer.byteLength;
+    }
+
+    // Use HKDF to derive a strong root key
+    const importedKey = await crypto.subtle.importKey(
+      'raw',
+      combinedBuffer,
+      { name: 'HKDF' },
+      false,
+      ['deriveKey']
+    );
+
+    return await crypto.subtle.deriveKey(
+      {
+        name: 'HKDF',
+        salt: new Uint8Array(), // No salt for this step
+        info: new TextEncoder().encode('SacredMesh-RootKey'),
+        hash: 'SHA-256'
+      },
+      importedKey,
+      { name: 'AES-GCM', length: 256 },
+      true, // Key should be extractable for ratchet
+      ['encrypt', 'decrypt']
+    );
   }
 
   // Initialize Double Ratchet for forward secrecy

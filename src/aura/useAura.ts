@@ -109,20 +109,33 @@ export function useAura() {
   }, [toast]);
 
   const confirmJob = useCallback(async (jobId: string) => {
+    const job = jobs.find(j => j.id === jobId);
+    if (!job) {
+      toast({ title: "Job not found", variant: "destructive" });
+      return;
+    }
+
+    const highRiskCommands = ['module.delete', 'schema.migration'];
+    const isHighRisk = highRiskCommands.includes(job.command.kind);
+
     try {
-      const { error } = await supabase
-        .from('aura_jobs')
-        .update({ 
-          status: 'confirmed',
-          confirmed_at: new Date().toISOString()
-        })
-        .eq('id', jobId);
+      if (isHighRisk) {
+        const { error } = await supabase.functions.invoke('confirm-high-risk-job', {
+          body: { job_id: jobId }
+        });
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from('aura_jobs')
+          .update({
+            status: 'confirmed',
+            confirmed_at: new Date().toISOString()
+          })
+          .eq('id', jobId);
 
-      if (error) throw error;
+        if (error) throw error;
 
-      // Execute the confirmed job
-      const job = jobs.find(j => j.id === jobId);
-      if (job) {
+        // Execute the confirmed job
         const { error: execError } = await supabase.functions.invoke('aura-dispatcher', {
           body: { command: job.command, job_id: jobId }
         });
