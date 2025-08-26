@@ -8,7 +8,7 @@ export const useUnreadDms = () => {
   const fetchUnreadDms = async () => {
     if (!user) return [];
 
-    const { data, error } = await supabase.rpc('get_unread_dm_counts');
+    const { data, error } = await supabase.rpc('get_unread_dm_counts' as any);
 
     if (error) {
       console.error('Error fetching unread DM counts:', error);

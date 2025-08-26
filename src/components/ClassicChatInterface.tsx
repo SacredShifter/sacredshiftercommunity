@@ -81,7 +81,7 @@ export const ClassicChatInterface: React.FC<ClassicChatProps> = ({
     if (selectedUserId) {
       const markAsRead = async () => {
         try {
-          await supabase.rpc('mark_dm_conversation_as_read', {
+          await supabase.rpc('mark_dm_conversation_as_read' as any, {
             p_sender_id: selectedUserId,
           });
           // Invalidate the unread counts to refetch

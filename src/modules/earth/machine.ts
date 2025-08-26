@@ -23,6 +23,32 @@ export const earthMachine = setup({
     context: {} as EarthContext,
     events: {} as EarthEvent,
   },
+  actions: {
+    setBreathingMode: assign({
+      breathingMode: ({ event }) => {
+        if (event.type === 'SELECT_BREATHING_MODE') {
+          return event.mode;
+        }
+        return null;
+      },
+    }),
+    setCelestialBody: assign({
+      celestialBody: ({ event }) => {
+        if (event.type === 'SET_CELESTIAL_BODY') {
+          return event.body;
+        }
+        return null;
+      },
+    }),
+    setCelestialTime: assign({
+      celestialTime: ({ event }) => {
+        if (event.type === 'SET_CELESTIAL_TIME') {
+          return event.time;
+        }
+        return null;
+      },
+    }),
+  },
 }).createMachine({
   id: 'earth',
   initial: 'intro',
@@ -35,13 +61,13 @@ export const earthMachine = setup({
   },
   on: {
     SET_CELESTIAL_BODY: {
-      actions: ['setCelestialBody'],
+      actions: 'setCelestialBody',
     },
     SET_CELESTIAL_TIME: {
-      actions: ['setCelestialTime'],
+      actions: 'setCelestialTime',
     },
     SELECT_BREATHING_MODE: {
-      actions: ['setBreathingMode'],
+      actions: 'setBreathingMode',
     },
   },
   states: {
@@ -69,31 +95,5 @@ export const earthMachine = setup({
         },
       },
     },
-  },
-  actions: {
-    setBreathingMode: assign({
-      breathingMode: ({ event }) => {
-        if (event.type === 'SELECT_BREATHING_MODE') {
-          return event.mode;
-        }
-        return null;
-      },
-    }),
-    setCelestialBody: assign({
-      celestialBody: ({ event }) => {
-        if (event.type === 'SET_CELESTIAL_BODY') {
-          return event.body;
-        }
-        return null;
-      },
-    }),
-    setCelestialTime: assign({
-      celestialTime: ({ event }) => {
-        if (event.type === 'SET_CELESTIAL_TIME') {
-          return event.time;
-        }
-        return null;
-      },
-    }),
   },
 });

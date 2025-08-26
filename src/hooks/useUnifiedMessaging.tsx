@@ -56,7 +56,12 @@ export const useUnifiedMessaging = ({
 
       // Update queue stats
       const stats = await service.getQueueStats();
-      setQueueStats(stats);
+      setQueueStats({ 
+        messageQueue: stats.messageQueue, 
+        retryQueue: stats.retryQueue, 
+        totalPending: stats.totalPending,
+        batchQueue: 0 // Default value
+      });
 
       console.log('🌟 Unified Messaging hook initialized');
       
@@ -95,7 +100,12 @@ export const useUnifiedMessaging = ({
       
       // Update stats after sending
       const stats = await messagingService.getQueueStats();
-      setQueueStats(stats);
+      setQueueStats({ 
+        messageQueue: stats.messageQueue, 
+        retryQueue: stats.retryQueue, 
+        totalPending: stats.totalPending,
+        batchQueue: 0 // Default value
+      });
       
       // Show delivery method notification
       if (enableNotifications && message.deliveryMethod === 'mesh') {
@@ -185,7 +195,12 @@ export const useUnifiedMessaging = ({
       setConnectionStatus(status);
       
       const stats = await messagingService.getQueueStats();
-      setQueueStats(stats);
+      setQueueStats({ 
+        messageQueue: stats.messageQueue, 
+        retryQueue: stats.retryQueue, 
+        totalPending: stats.totalPending,
+        batchQueue: 0 // Default value
+      });
     } catch (err) {
       console.error('🌟 Failed to refresh status:', err);
     }

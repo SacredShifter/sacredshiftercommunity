@@ -222,9 +222,9 @@ export default function Messages() {
                           {conversation.other_participant?.display_name || 'Unknown User'}
                         </p>
                         <div className="flex items-center space-x-2">
-                          {unreadDms?.find(d => d.sender_id === conversation.other_participant?.id)?.unread_count > 0 && (
+                          {(unreadDms as any)?.find?.((d: any) => d.sender_id === conversation.other_participant?.id)?.unread_count > 0 && (
                             <Badge variant="destructive" className="h-5 w-5 flex items-center justify-center p-0">
-                              {unreadDms.find(d => d.sender_id === conversation.other_participant?.id)?.unread_count}
+                              {(unreadDms as any)?.find?.((d: any) => d.sender_id === conversation.other_participant?.id)?.unread_count}
                             </Badge>
                           )}
                           {conversation.last_message_at && (
