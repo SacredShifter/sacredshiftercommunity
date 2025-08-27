@@ -3,6 +3,7 @@ import React, { useRef } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { OrbitControls, Html, Sphere, Box, Torus, Octahedron, Tetrahedron } from '@react-three/drei'
 import * as THREE from 'three'
+import { Slogan } from '@/components/ui/Slogan'
 
 // Principle-specific gateway components
 function MentalismGateway({ position }: { position: [number, number, number] }) {
@@ -244,6 +245,7 @@ export default function HermeticAtrium(){
 
   return (
     <div className="w-screen h-screen relative">
+      <Slogan variant="watermark" />
       <Canvas camera={{ position: [0, 2, 8], fov: 60 }}>
         <color attach="background" args={["hsl(var(--background))"]} />
         <ambientLight intensity={0.3} />

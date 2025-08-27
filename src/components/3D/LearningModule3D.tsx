@@ -320,6 +320,7 @@ export default function LearningModule3D({ moduleId, onBack, className }: Learni
                 </Button>
               </CardContent>
             </Card>
+            </TooltipWrapper>
           </motion.div>
         ))}
       </div>

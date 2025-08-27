@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { SacredGrove } from "@/components/SacredGrove/SacredGrove";
 import LearningModule3D from "@/components/3D/LearningModule3D";
 import ProtectedRoute from '@/components/ProtectedRoute';
+import { Slogan } from '@/components/ui/Slogan';
 
 export default function Grove() {
   const [searchParams] = useSearchParams();
@@ -16,6 +17,7 @@ export default function Grove() {
   return (
     <ProtectedRoute>
       <div className="h-full">
+        <Slogan variant="watermark" />
         {tab === '3d-modules' ? (
           <LearningModule3D />
         ) : (

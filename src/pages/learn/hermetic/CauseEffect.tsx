@@ -5,6 +5,7 @@ import * as THREE from 'three'
 import { Button } from '@/components/ui/button'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDown, BookOpen } from 'lucide-react'
+import { Slogan } from '@/components/ui/Slogan'
 
 const nodes = [
   { id: 'A', position: new THREE.Vector3(-3, 2, 0) }, { id: 'B', position: new THREE.Vector3(-1, 0, 0) },
@@ -65,6 +66,7 @@ export default function CauseEffect() {
   const [showInfo, setShowInfo] = useState(false)
   return (
     <div className="w-screen h-screen relative">
+      <Slogan variant="watermark" />
       <Canvas camera={{ position: [0, 0, 8] }}>
         <color attach="background" args={["#0b0c10"]} />
         <SceneContent />

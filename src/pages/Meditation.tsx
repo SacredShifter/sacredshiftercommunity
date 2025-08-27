@@ -36,6 +36,7 @@ import { YouTubeVideo, YouTubePlaylist } from '@/types/youtube';
 import { SimpleVideoModal } from '@/components/YouTubeLibrary/SimpleVideoModal';
 import { GroupMeditationSession } from '@/components/GroupMeditationSession';
 import { MEDITATION_MODULE_CONFIG } from '@/config/mediaMaps';
+import { Slogan } from '@/components/ui/Slogan';
 
 type MeditationType = 'breathing' | 'loving-kindness' | 'chakra' | 'mindfulness' | 'body-scan';
 type SessionState = 'idle' | 'active' | 'paused' | 'completed';
@@ -486,6 +487,7 @@ export default function Meditation() {
         />
       )}
 
+      <Slogan variant="watermark" />
       <div className="h-full overflow-y-auto p-4 space-y-6 animate-fade-in">
         <div className="flex items-center justify-between">
           <div>

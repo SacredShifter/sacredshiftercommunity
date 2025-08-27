@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Loader2, ArrowLeft, Brain, Zap, GitBranch, Waves, Repeat, Contrast, Atom } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { Slogan } from '@/components/ui/Slogan';
 
 // Lazy load the individual principle components
 const Mentalism = React.lazy(() => import('./Mentalism'));
@@ -52,6 +53,7 @@ export default function HermeticPrinciplesModule() {
 
   return (
     <div className="p-6 space-y-6 h-full overflow-y-auto bg-black">
+      <Slogan variant="watermark" />
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
