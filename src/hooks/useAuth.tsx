@@ -81,13 +81,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 const finalRole = isAdmin ? 'admin' : 'user';
                 setUserRole(finalRole);
                 
-                // Add debugging
-                console.log('Role fetch result:', {
+                logger.debug('Role fetch result', {
+                  component: 'AuthProvider',
+                  function: 'onAuthStateChange',
                   userId: session.user.id,
-                  roles: roles,
-                  isAdmin,
-                  finalRole,
-                  timestamp: new Date().toISOString()
+                  metadata: {
+                    roles: roles?.map(r => r.role),
+                    isAdmin,
+                    finalRole,
+                  }
                 });
                 
                 logger.debug('User roles fetched successfully', {
@@ -167,13 +169,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               const finalRole = isAdmin ? 'admin' : 'user';
               setUserRole(finalRole);
               
-              // Add debugging for initial load
-              console.log('Initial role fetch result:', {
+              logger.debug('Initial role fetch result', {
+                component: 'AuthProvider',
+                function: 'getSession',
                 userId: session.user.id,
-                roles: roles,
-                isAdmin,
-                finalRole,
-                timestamp: new Date().toISOString()
+                metadata: {
+                  roles: roles?.map(r => r.role),
+                  isAdmin,
+                  finalRole,
+                }
               });
             }
           } catch (error) {
@@ -197,9 +201,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const signUp = async (email: string, password: string) => {
-    console.log('🚀 useAuth signUp called with:', email);
-    const redirectUrl = `${window.location.origin}/`;
-    console.log('🔗 Redirect URL:', redirectUrl);
+    logger.info('Starting user sign up', { component: 'useAuth', function: 'signUp', metadata: { email } });
+    const redirectUrl = `${window.location.origin}/auth/confirm`;
+    logger.debug('Using redirect URL for email confirmation', { component: 'useAuth', function: 'signUp', metadata: { redirectUrl } });
     
     try {
       const { error } = await supabase.auth.signUp({
@@ -209,10 +213,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           emailRedirectTo: redirectUrl
         }
       });
-      console.log('✅ Supabase signUp response:', { error: error?.message || 'success' });
+
+      if (error) {
+        logger.error('Supabase signUp failed', { component: 'useAuth', function: 'signUp' }, error);
+      } else {
+        logger.info('Supabase signUp successful, confirmation email sent', { component: 'useAuth', function: 'signUp', metadata: { email } });
+      }
+
       return { error };
     } catch (err) {
-      console.error('❌ Supabase signUp error:', err);
+      logger.error('Unhandled exception in signUp', { component: 'useAuth', function: 'signUp' }, err as Error);
       return { error: err };
     }
   };

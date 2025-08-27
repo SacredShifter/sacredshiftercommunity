@@ -1,3 +1,7 @@
+-- WARNING: This trigger contains a hardcoded URL to a Supabase function.
+-- If you migrate this project to a new Supabase instance or change the project URL,
+-- you will need to manually update the URL in the `handle_new_community_feedback` function below.
+
 -- Create a function to be called by the trigger
 CREATE OR REPLACE FUNCTION handle_new_community_feedback()
 RETURNS TRIGGER AS $$

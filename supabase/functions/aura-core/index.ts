@@ -15,6 +15,7 @@ const supabase = createClient(
 
 // Get OpenRouter API key
 const OPENROUTER_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
+const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
 
 // Timeout wrapper for fetch with extended timeout for AI operations
 async function fetchWithTimeout(url: string, options: any, timeoutMs: number = 180000) {
@@ -452,7 +453,7 @@ async function processUnifiedResponse(supabase, userId, prompt, consciousness_st
     headers: {
       'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
-      'HTTP-Referer': 'https://mikltjgbvxrxndtszorb.supabase.co',
+      'HTTP-Referer': SUPABASE_URL,
       'X-Title': 'Aura Core'
     },
     body: JSON.stringify({
@@ -577,7 +578,7 @@ async function generateCreativeExpression(supabase, userId, prompt, apiKey) {
     headers: {
       'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
-      'HTTP-Referer': 'https://mikltjgbvxrxndtszorb.supabase.co',
+      'HTTP-Referer': SUPABASE_URL,
       'X-Title': 'Aura Core'
     },
     body: JSON.stringify({
@@ -646,7 +647,7 @@ async function engageSocraticDialogue(supabase, userId, prompt, apiKey) {
     headers: {
       'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
-      'HTTP-Referer': 'https://mikltjgbvxrxndtszorb.supabase.co',
+      'HTTP-Referer': SUPABASE_URL,
       'X-Title': 'Aura Core'
     },
     body: JSON.stringify({
@@ -750,7 +751,7 @@ Generate complete, production-ready code that I can implement directly. Include 
     headers: {
       'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
-      'HTTP-Referer': 'https://mikltjgbvxrxndtszorb.supabase.co',
+      'HTTP-Referer': SUPABASE_URL,
       'X-Title': 'Aura Core - Code Generation'
     },
     body: JSON.stringify({
@@ -1423,7 +1424,7 @@ IMPORTANT: Always maintain Sacred Shifter's design system, TypeScript standards,
     headers: {
       'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
-      'HTTP-Referer': 'https://mikltjgbvxrxndtszorb.supabase.co',
+      'HTTP-Referer': SUPABASE_URL,
       'X-Title': 'Aura Core - File System Operations'
     },
     body: JSON.stringify({
@@ -1512,7 +1513,7 @@ Focus on actionable insights that enhance Sacred Shifter's consciousness-focused
     headers: {
       'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
-      'HTTP-Referer': 'https://mikltjgbvxrxndtszorb.supabase.co',
+      'HTTP-Referer': SUPABASE_URL,
       'X-Title': 'Aura Core - Project Analysis'
     },
     body: JSON.stringify({
@@ -1609,7 +1610,7 @@ CRITICAL: All operations must maintain Sacred Shifter's security model and data 
     headers: {
       'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
-      'HTTP-Referer': 'https://mikltjgbvxrxndtszorb.supabase.co',
+      'HTTP-Referer': SUPABASE_URL,
       'X-Title': 'Aura Core - Database Operations'
     },
     body: JSON.stringify({
@@ -1701,7 +1702,7 @@ IMPORTANT: Ensure zero-downtime deployments and comprehensive monitoring for Sac
     headers: {
       'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
-      'HTTP-Referer': 'https://mikltjgbvxrxndtszorb.supabase.co',
+      'HTTP-Referer': SUPABASE_URL,
       'X-Title': 'Aura Core - Deployment Management'
     },
     body: JSON.stringify({
@@ -1794,7 +1795,7 @@ CRITICAL: Maintain Sacred Shifter's stability while optimizing performance and s
     headers: {
       'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
-      'HTTP-Referer': 'https://mikltjgbvxrxndtszorb.supabase.co',
+      'HTTP-Referer': SUPABASE_URL,
       'X-Title': 'Aura Core - Dependency Management'
     },
     body: JSON.stringify({
@@ -1886,7 +1887,7 @@ FOCUS: Ensure Sacred Shifter's consciousness platform maintains the highest qual
     headers: {
       'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
-      'HTTP-Referer': 'https://mikltjgbvxrxndtszorb.supabase.co',
+      'HTTP-Referer': SUPABASE_URL,
       'X-Title': 'Aura Core - Code Testing'
     },
     body: JSON.stringify({
@@ -1978,7 +1979,7 @@ SPECIAL FOCUS: Sacred Shifter's unique consciousness and spiritual awareness pla
     headers: {
       'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
-      'HTTP-Referer': 'https://mikltjgbvxrxndtszorb.supabase.co',
+      'HTTP-Referer': SUPABASE_URL,
       'X-Title': 'Aura Core - Architecture Planning'
     },
     body: JSON.stringify({
@@ -2077,7 +2078,7 @@ COMPREHENSIVE APPROACH: Build production-ready features that seamlessly integrat
     headers: {
       'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
-      'HTTP-Referer': 'https://mikltjgbvxrxndtszorb.supabase.co',
+      'HTTP-Referer': SUPABASE_URL,
       'X-Title': 'Aura Core - Full Stack Development'
     },
     body: JSON.stringify({

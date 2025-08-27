@@ -7,6 +7,25 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { AuraPlatformProvider } from "@/contexts/AuraPlatformContext";
 import App from './App.tsx';
 import './index.css';
+import * as Sentry from "@sentry/react";
+
+// Sentry Initialization
+if (!import.meta.env.DEV) {
+  Sentry.init({
+    dsn: import.meta.env.VITE_SENTRY_DSN,
+    integrations: [
+      Sentry.browserTracingIntegration(),
+      Sentry.replayIntegration(),
+    ],
+    // Performance Monitoring
+    tracesSampleRate: 1.0, //  Capture 100% of the transactions
+    // Set 'tracePropagationTargets' to control for which URLs distributed tracing should be enabled
+    tracePropagationTargets: ["localhost", /^https:\/\/yourserver\.io\/api/],
+    // Session Replay
+    replaysSessionSampleRate: 0.1, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
+    replaysOnErrorSampleRate: 1.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
+  });
+}
 
 // Capacitor Mobile Support
 import { Capacitor } from '@capacitor/core';
@@ -26,22 +45,24 @@ const queryClient = new QueryClient({
   }
 });
 
+import { logger } from './lib/logger';
+
 // Initialize mobile-specific features
 if (Capacitor.isNativePlatform()) {
-  console.log('🌟 Sacred Shifter Community - Running on native mobile platform');
+  logger.info('Sacred Shifter Community - Running on native mobile platform', { component: 'main' });
   
   // Add mobile-specific initialization here
   document.addEventListener('deviceready', () => {
-    console.log('📱 Mobile device ready - Sacred consciousness activated');
+    logger.info('Mobile device ready - Sacred consciousness activated', { component: 'main' });
   });
   
   // Handle app state changes for consciousness preservation
   document.addEventListener('pause', () => {
-    console.log('🧘‍♀️ App paused - Consciousness state preserved');
+    logger.info('App paused - Consciousness state preserved', { component: 'main' });
   });
   
   document.addEventListener('resume', () => {
-    console.log('✨ App resumed - Consciousness state restored');
+    logger.info('App resumed - Consciousness state restored', { component: 'main' });
   });
 }
 

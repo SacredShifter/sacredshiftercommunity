@@ -149,7 +149,7 @@ const Auth = () => {
         <CardHeader className="space-y-1 text-center p-4 md:p-6">
           <div className="flex justify-center mb-3 md:mb-4">
             <img 
-              src="https://mikltjgbvxrxndtszorb.supabase.co/storage/v1/object/public/sacred-assets/uploads/Logo-MainSacredShifter-removebg-preview%20(1).png" 
+              src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/sacred-assets/uploads/Logo-MainSacredShifter-removebg-preview%20(1).png`}
               alt="Sacred Shifter" 
               className="h-24 sm:h-32 md:h-36 w-auto invert"
             />

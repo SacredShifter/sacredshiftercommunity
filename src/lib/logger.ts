@@ -2,6 +2,7 @@
  * Production-ready unified logging system for Sacred Shifter
  * Replaces all console.* calls with structured logging
  */
+import * as Sentry from "@sentry/react";
 
 export interface LogContext {
   component?: string;
@@ -94,21 +95,26 @@ class Logger {
   }
 
   private async sendToLoggingService(entry: LogEntry): Promise<void> {
-    // TODO: Integrate with external logging service (Sentry, LogRocket, etc.)
-    // For now, store in localStorage for debugging
-    try {
-      const logs = JSON.parse(localStorage.getItem('ss_logs') || '[]');
-      logs.push(entry);
-      
-      // Keep only last 100 entries
-      if (logs.length > 100) {
-        logs.splice(0, logs.length - 100);
+    if (import.meta.env.VITE_SENTRY_DSN) {
+      const sentryLevel = entry.level === 'debug' ? 'debug' :
+                          entry.level === 'info' ? 'info' :
+                          entry.level === 'warn' ? 'warning' :
+                          'error';
+
+      const error = new Error(entry.message);
+      error.stack = entry.stack;
+
+      if (entry.level === 'error' || entry.level === 'fatal') {
+        Sentry.captureException(error, {
+            extra: entry.context,
+            level: sentryLevel,
+        });
+      } else {
+        Sentry.captureMessage(entry.message, {
+            extra: entry.context,
+            level: sentryLevel,
+        });
       }
-      
-      localStorage.setItem('ss_logs', JSON.stringify(logs));
-    } catch (error) {
-      // Fallback to console if localStorage fails
-      console.error('Failed to store log entry:', error);
     }
   }
 

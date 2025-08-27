@@ -28,7 +28,7 @@ export const MainLayout = () => {
                 <SidebarTrigger className="mr-2 md:mr-4" />
                 <div className="flex flex-col">
                   <img
-                    src="https://mikltjgbvxrxndtszorb.supabase.co/storage/v1/object/public/sacred-assets/uploads/Logo-MainSacredShifter-removebg-preview%20(1).png"
+                    src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/sacred-assets/uploads/Logo-MainSacredShifter-removebg-preview%20(1).png`}
                     alt="Sacred Shifter"
                     className="h-6 md:h-8 w-auto object-contain aspect-auto max-w-none filter invert brightness-0 contrast-100 opacity-90"
                   />
