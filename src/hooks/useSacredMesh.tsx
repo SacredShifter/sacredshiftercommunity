@@ -87,7 +87,7 @@ export const useSacredMesh = ({ config, autoConnect = true }: UseSacredMeshProps
       throw new Error('Sacred Mesh not initialized');
     }
 
-    return await mesh.addContact(contactId, publicKey);
+    return await mesh.addContact(contactId, publicKey as any);
   }, [mesh]);
 
   // Refresh status

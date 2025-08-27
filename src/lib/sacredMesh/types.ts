@@ -6,11 +6,13 @@ export interface SacredMeshMessage {
   groupId?: string;
   ttl: number; // seconds
   hopLimit: number;
+  ciphertext?: Uint8Array;
 }
 
 export interface SacredMeshPacket {
   header: PacketHeader;
   body: EncryptedBody;
+  payload?: SacredMeshMessage;
 }
 
 export interface PacketHeader {

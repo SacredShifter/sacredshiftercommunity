@@ -90,8 +90,8 @@ export default function RegistryEntry() {
         if (entryError) throw entryError;
         if (!entryData) throw new Error('Entry not found');
 
-        setEntry(entryData);
-        setResonanceCount(entryData.resonance_count || 0);
+        setEntry(entryData as any);
+        setResonanceCount((entryData as any).resonance_count || 0);
 
         if (user) {
           const userResonance = await getUserResonanceStatus(id);
@@ -194,7 +194,7 @@ export default function RegistryEntry() {
             </div>
             <div className="p-8">
               <div className="prose prose-lg max-w-none prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-code:text-foreground prose-pre:bg-muted prose-pre:border prose-pre:border-border">
-                <ReactMarkdown components={{blockquote: ({ node, ...props }) => {const textContent = node?.children[0]?.children[0]?.value || ''; if (textContent.startsWith('!')) { const newChildren = React.Children.map(props.children, child => { if (React.isValidElement(child) && child.props.children) { const newChildProps = { ...child.props, children: typeof child.props.children === 'string' ? child.props.children.substring(1) : child.props.children, }; if (Array.isArray(newChildProps.children)) { newChildProps.children[0] = newChildProps.children[0].substring(1); } return React.cloneElement(child, newChildProps); } return child; }); return (<div className="my-6 p-4 border-l-4 border-accent text-lg font-semibold text-accent-foreground bg-accent/10 rounded-r-lg">{newChildren}</div>); } return <blockquote className="border-l-4 border-muted-foreground/20 pl-4 italic my-4" {...props} />;},}}>{entry.content}</ReactMarkdown>
+                <ReactMarkdown components={{blockquote: ({ node, ...props }) => {const textContent = (node as any)?.children?.[0]?.children?.[0]?.value || ''; if (textContent.startsWith('!')) { const newChildren = React.Children.map(props.children, child => { if (React.isValidElement(child) && child.props.children) { const newChildProps = { ...child.props, children: typeof child.props.children === 'string' ? child.props.children.substring(1) : child.props.children, }; if (Array.isArray(newChildProps.children)) { newChildProps.children[0] = newChildProps.children[0].substring(1); } return React.cloneElement(child, newChildProps); } return child; }); return (<div className="my-6 p-4 border-l-4 border-accent text-lg font-semibold text-accent-foreground bg-accent/10 rounded-r-lg">{newChildren}</div>); } return <blockquote className="border-l-4 border-muted-foreground/20 pl-4 italic my-4" {...props} />;},}}>{entry.content}</ReactMarkdown>
               </div>
             </div>
           </CardContent>

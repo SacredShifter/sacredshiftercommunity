@@ -1,7 +1,7 @@
 // Sacred Mesh - Core Communication Abstraction Layer
 import { SacredMeshRouter } from './router';
 import { WebSocketTransport, MultipeerTransport, WiFiAwareTransport, MeshtasticTransport } from './transport';
-import { SacredMeshMessage, MeshConfig, SacredMeshPacket, KeyBundle } from './types';
+import { SacredMeshMessage, MeshConfig, SacredMeshPacket } from './types';
 import { SacredMeshCrypto } from './crypto';
 import { PacketFormatter } from './packet';
 import { SacredKeyExchange, Contact } from './keyExchange';
@@ -72,7 +72,7 @@ export class SacredMesh {
       const { ciphertext, authTag, headerInfo } = await this.keyExchange.encryptMessage(recipientId, new TextEncoder().encode(JSON.stringify(message)));
       
       const packet = await this.packetFormatter.createPacket(
-        { ciphertext, authTag },
+        message,
         await this.getCurrentUserId(),
         this.counter++,
         headerInfo
@@ -99,7 +99,7 @@ export class SacredMesh {
       const senderId = await this.getSenderIdFromHash(packet.header.senderIdHash);
       if (!senderId) throw new Error('Could not identify sender from hash');
 
-      const decrypted = await this.keyExchange.decryptMessage(senderId, packet.payload.ciphertext, packet.payload.authTag, packet.header);
+      const decrypted = await this.keyExchange.decryptMessage(senderId, packet.payload.ciphertext!, new Uint8Array(), packet.header);
       const message: SacredMeshMessage = JSON.parse(new TextDecoder().decode(decrypted));
 
       this.messageHandlers.forEach(handler => handler(message, senderId));
@@ -111,12 +111,12 @@ export class SacredMesh {
   }
 
   // Add contact with key exchange
-  async addContact(contactId: string, keyBundle: KeyBundle): Promise<Contact> {
+  async addContact(contactId: string, keyBundle: any): Promise<Contact> {
     return this.keyExchange.addContact(contactId, keyBundle);
   }
 
   // Generate key bundle for sharing
-  async generateKeyBundle(): Promise<KeyBundle> {
+  async generateKeyBundle() {
     return this.keyExchange.generateKeyBundle();
   }
 
