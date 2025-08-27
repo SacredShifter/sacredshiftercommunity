@@ -1,0 +1,49 @@
+.aura-reflection-post {
+    position: relative;
+    border: 1px solid;
+    border-image-slice: 1;
+    border-width: 1px;
+    border-image-source: linear-gradient(to right, #8a2be2, #ff00ff);
+    background: linear-gradient(135deg, rgba(138, 43, 226, 0.05), rgba(255, 0, 255, 0.05));
+    box-shadow: 0 0 15px rgba(138, 43, 226, 0.2);
+    overflow: hidden; /* To keep watermark contained */
+}
+
+.aura-reflection-post:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05), transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.aura-sigil-watermark {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    width: 50px;
+    height: 50px;
+    background-image: url('/src/assets/sacred-shifter-logo.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    opacity: 0.05;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.aura-reflection-badge {
+    background-color: rgba(138, 43, 226, 0.2);
+    color: #e0b0ff;
+    border: 1px solid rgba(224, 176, 255, 0.5);
+    font-weight: bold;
+}
+
+/* Ensure content is above the watermark and pseudo-elements */
+.aura-reflection-post > * {
+    position: relative;
+    z-index: 2;
+}

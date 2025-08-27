@@ -12,6 +12,7 @@ import { ChatBubble } from '@/components/ChatBubble';
 import { SacredSoundscape } from '@/components/SacredSoundscape';
 
 import { PostInteractionButtons } from '@/components/PostInteractionButtons';
+import { AuraReflectionPost } from '@/components/AuraReflectionPost';
 import { CircleDiscoveryPanel } from '@/components/CircleDiscoveryPanel';
 import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
 import { CommentSection } from '@/components/CommentSection';
@@ -21,6 +22,7 @@ interface SacredPost {
   id: string;
   user_id: string;
   content: string;
+  is_aura_post?: boolean;
   chakra_tag?: string;
   frequency?: number;
   tone?: string;
@@ -191,6 +193,10 @@ const Feed = () => {
           </Card>
         ) : (
           posts.map((post) => {
+            if (post.is_aura_post) {
+              return <AuraReflectionPost key={post.id} post={post} currentUserId={user?.id} />;
+            }
+
             const sourceModule = getSourceModuleDisplay('manual');
             
             return (

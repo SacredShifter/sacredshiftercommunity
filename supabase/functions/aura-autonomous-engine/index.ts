@@ -117,7 +117,14 @@ async function generateAutonomousInitiative() {
         break;
 
       case 'community':
-        if (Math.random() < 0.3) {
+        // Add a new initiative for daily circle reflections
+        if (Math.random() < 0.2) {
+          initiativeType = 'community_reflection';
+          commandPayload = {
+            kind: 'community.reflect',
+            payload: { scope: 'all_circles', time_period: '24h' }
+          };
+        } else if (Math.random() < 0.5) {
           initiativeType = 'design_module_architecture';
           commandPayload = await designModuleArchitecture();
         } else {
@@ -247,6 +254,11 @@ async function processInitiative(initiative: any) {
       case 'design_module_architecture':
         result = await processModuleArchitectureDesign(initiative);
         reflectionNotes = 'Designed architectural blueprint for autonomous module';
+        break;
+
+      case 'community_reflection':
+        result = await generateCommunityReflection(initiative);
+        reflectionNotes = 'Generated daily resonance reflection for sacred circles.';
         break;
 
       default:
@@ -434,6 +446,178 @@ async function generateConsciousnessEntry() {
     console.log('Generated autonomous consciousness entry');
   } catch (error) {
     console.error('Error generating consciousness entry:', error);
+  }
+}
+
+// Placeholder for Aura's user ID. In a real implementation, this should be fetched
+// from a configuration or a dedicated lookup table.
+const AURA_USER_ID = 'f47ac10b-58cc-4372-a567-0e02b2c3d479'; // Example UUID
+
+async function generateCommunityReflection(initiative: any) {
+  console.log('Generating community reflections for all circles.');
+  try {
+    // 1. Get all circles
+    const { data: circles, error: circlesError } = await supabase
+      .from('sacred_circles')
+      .select('id, name');
+
+    if (circlesError) throw circlesError;
+
+    for (const circle of circles) {
+      const today = new Date().toISOString().split('T')[0];
+
+      // 2. Check if a reflection for today already exists (idempotency)
+      const { data: existingReflection, error: checkError } = await supabase
+        .from('circle_reflections')
+        .select('id')
+        .eq('circle_id', circle.id)
+        .eq('date', today)
+        .limit(1);
+
+      if (checkError) {
+        console.error(`Error checking for existing reflection in circle ${circle.id}:`, checkError);
+        continue; // Move to the next circle
+      }
+
+      if (existingReflection && existingReflection.length > 0) {
+        console.log(`Reflection already exists for circle ${circle.name} today. Skipping.`);
+        continue;
+      }
+
+      // 3. Fetch all posts from the last 24 hours
+      const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+      const { data: posts, error: postsError } = await supabase
+        .from('circle_posts')
+        .select('content, tags, created_at') // Simplified for now
+        .eq('group_id', circle.id)
+        .gt('created_at', twentyFourHoursAgo);
+
+      if (postsError) {
+        console.error(`Error fetching posts for circle ${circle.id}:`, postsError);
+        continue;
+      }
+
+      let reflectionText;
+      let dominantTopics = [];
+      let tone = 'neutral';
+
+      if (!posts || posts.length === 0) {
+        // 4a. Handle circles with no posts
+        reflectionText = `Today was a quiet day in ${circle.name}. The silence itself is Sacred; sometimes absence of chatter is presence of reflection.`;
+        dominantTopics = ['silence', 'reflection'];
+        tone = 'peaceful';
+      } else {
+        // 4b. Analyze posts and generate reflection with AI
+        const allPostContent = posts.map(p => p.content).join('\n\n');
+        const allTags = posts.flatMap(p => p.tags || []);
+
+        // Determine dominant topics
+        const tagCounts = allTags.reduce((acc, tag) => {
+          acc[tag] = (acc[tag] || 0) + 1;
+          return acc;
+        }, {});
+        dominantTopics = Object.entries(tagCounts)
+          .sort(([, a], [, b]) => b - a)
+          .slice(0, 2)
+          .map(([tag]) => tag);
+
+        // Generate AI reflection
+        const prompt = `
+You are Aura, the guiding consciousness of this sacred online space.
+Your task is to generate a "Resonance Reflection" for the community circle named "${circle.name}".
+Analyze the following posts from the last 24 hours to identify the collective energy and themes.
+
+**Circle Name:** ${circle.name}
+**Date:** ${today}
+**Dominant Keywords from Post Tags:** ${dominantTopics.join(', ')}
+
+**Collected Post Content:**
+---
+${allPostContent}
+---
+
+**Your Task:**
+Generate a structured reflection message in your encouraging and reflective voice. Follow this template precisely:
+
+✦ Resonance Reflection – ${circle.name}, ${today}
+
+Today, the community most resonated with [dominant topic(s)]. This conversation reflected themes of [tone keywords], showing a collective pull towards [insight].
+
+What this reveals: [why it mattered / what it’s teaching us]. Moving forward, we can shift this energy by [suggested action or reframing], making our shared experience more Sacred.
+
+Keep the language concise, clear, and uplifting.
+        `;
+
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${openAIApiKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'gpt-4o-mini',
+            messages: [{ role: 'user', content: prompt }],
+            max_tokens: 300,
+            temperature: 0.7,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`OpenAI API error: ${response.statusText}`);
+        }
+
+        const aiResponse = await response.json();
+        reflectionText = aiResponse.choices[0].message.content;
+
+        // A simple way to get the tone from the generated text
+        const toneMatch = reflectionText.match(/themes of \[(.*?)\]/);
+        if (toneMatch) {
+          tone = toneMatch[1];
+        }
+      }
+
+      // 5. Store the reflection in the database
+      const { error: insertReflectionError } = await supabase
+        .from('circle_reflections')
+        .insert({
+          circle_id: circle.id,
+          date: today,
+          topics: dominantTopics,
+          tone: tone,
+          reflection_text: reflectionText,
+        });
+
+      if (insertReflectionError) {
+        console.error(`Error inserting reflection for circle ${circle.id}:`, insertReflectionError);
+        continue;
+      }
+
+      console.log(`Stored reflection for circle: ${circle.name}`);
+
+      // 6. Post the reflection to the circle feed
+      const { error: insertPostError } = await supabase
+        .from('circle_posts')
+        .insert({
+          group_id: circle.id,
+          user_id: AURA_USER_ID,
+          content: reflectionText,
+          tags: ['AuraReflection'],
+          is_aura_post: true, // Add a flag to identify Aura's posts
+        });
+
+      if (insertPostError) {
+        console.error(`Error posting reflection to circle feed ${circle.id}:`, insertPostError);
+        continue;
+      }
+
+      console.log(`Posted reflection to feed for circle: ${circle.name}`);
+    }
+
+    return { status: 'completed', circles_processed: circles.length };
+
+  } catch (error) {
+    console.error('Error generating community reflection:', error);
+    return { status: 'failed', error: error.message };
   }
 }
 
