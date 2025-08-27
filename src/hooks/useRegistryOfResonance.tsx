@@ -501,17 +501,114 @@ export function useRegistryOfResonance() {
     }
   }, [user]);
 
+  // Bookmark functions
+  const addBookmark = useCallback(async (entryId: string): Promise<boolean> => {
+    if (!user) {
+      toast.error('You must be logged in to bookmark entries');
+      return false;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('user_bookmarks')
+        .insert({
+          user_id: user.id,
+          entry_id: entryId,
+          entry_type: 'collective_codex'
+        });
+
+      if (error) throw error;
+      
+      // Also increment the bookmark metric
+      await incrementEngagement(entryId, 'bookmarks');
+      
+      toast.success('Added to your Personal Codex!');
+      return true;
+    } catch (error) {
+      console.error('Error adding bookmark:', error);
+      toast.error('Failed to bookmark entry');
+      return false;
+    }
+  }, [user, incrementEngagement]);
+
+  const removeBookmark = useCallback(async (entryId: string): Promise<boolean> => {
+    if (!user) return false;
+
+    try {
+      const { error } = await supabase
+        .from('user_bookmarks')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('entry_id', entryId);
+
+      if (error) throw error;
+      
+      toast.success('Removed from your Personal Codex');
+      return true;
+    } catch (error) {
+      console.error('Error removing bookmark:', error);
+      toast.error('Failed to remove bookmark');
+      return false;
+    }
+  }, [user]);
+
+  const isBookmarked = useCallback(async (entryId: string): Promise<boolean> => {
+    if (!user) return false;
+
+    try {
+      const { data, error } = await supabase
+        .from('user_bookmarks')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('entry_id', entryId)
+        .maybeSingle();
+
+      if (error) throw error;
+      return !!data;
+    } catch (error) {
+      console.error('Error checking bookmark status:', error);
+      return false;
+    }
+  }, [user]);
+
+  const getUserBookmarks = useCallback(async (): Promise<RegistryEntry[]> => {
+    if (!user) return [];
+
+    try {
+      const { data, error } = await supabase
+        .from('user_bookmarks')
+        .select(`
+          entry_id,
+          created_at,
+          registry_of_resonance (*)
+        `)
+        .eq('user_id', user.id)
+        .eq('entry_type', 'collective_codex')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      
+      return (data || [])
+        .map(bookmark => (bookmark as any).registry_of_resonance)
+        .filter(entry => entry !== null);
+    } catch (error) {
+      console.error('Error fetching bookmarks:', error);
+      return [];
+    }
+  }, [user]);
+
   // Reflection notes functions
   const getReflectionNotes = useCallback(async (entryId: string): Promise<any[]> => {
     if (!user) return [];
+    
     try {
-      // Cast to any to bypass type checking for missing table
-      const { data, error } = await (supabase as any)
-        .from('registry_of_resonance')
+      const { data, error } = await supabase
+        .from('reflection_notes')
         .select('*')
-        .eq('id', entryId)
+        .eq('entry_id', entryId)
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
+        
       if (error) throw error;
       return data || [];
     } catch (error) {
@@ -525,21 +622,62 @@ export function useRegistryOfResonance() {
       toast.error('You must be logged in to add a note');
       return false;
     }
+    
     try {
-      // Cast to any to bypass type checking for missing table
-      const { error } = await (supabase as any)
-        .from('registry_of_resonance')
+      const { error } = await supabase
+        .from('reflection_notes')
         .insert({
-          id: entryId,
+          entry_id: entryId,
           user_id: user.id,
-          notes: content.trim(),
+          content: content.trim(),
         });
+        
       if (error) throw error;
       toast.success('Reflection note added');
       return true;
     } catch (error) {
       console.error('Error adding reflection note:', error);
       toast.error('Failed to add reflection note');
+      return false;
+    }
+  }, [user]);
+
+  const updateReflectionNote = useCallback(async (noteId: string, content: string): Promise<boolean> => {
+    if (!user) return false;
+
+    try {
+      const { error } = await supabase
+        .from('reflection_notes')
+        .update({ content: content.trim() })
+        .eq('id', noteId)
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+      toast.success('Reflection note updated');
+      return true;
+    } catch (error) {
+      console.error('Error updating reflection note:', error);
+      toast.error('Failed to update reflection note');
+      return false;
+    }
+  }, [user]);
+
+  const deleteReflectionNote = useCallback(async (noteId: string): Promise<boolean> => {
+    if (!user) return false;
+
+    try {
+      const { error } = await supabase
+        .from('reflection_notes')
+        .delete()
+        .eq('id', noteId)
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+      toast.success('Reflection note deleted');
+      return true;
+    } catch (error) {
+      console.error('Error deleting reflection note:', error);
+      toast.error('Failed to delete reflection note');
       return false;
     }
   }, [user]);
@@ -644,8 +782,16 @@ export function useRegistryOfResonance() {
     addComment,
     deleteComment,
     shareToCircle,
+    // Bookmark functions
+    addBookmark,
+    removeBookmark,
+    isBookmarked,
+    getUserBookmarks,
+    // Reflection notes functions
     getReflectionNotes,
     addReflectionNote,
+    updateReflectionNote,
+    deleteReflectionNote,
     exportEntryAsSeed,
   };
 }

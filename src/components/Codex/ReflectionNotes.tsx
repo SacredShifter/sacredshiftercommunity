@@ -12,11 +12,13 @@ interface ReflectionNotesProps {
 
 const ReflectionNotes: React.FC<ReflectionNotesProps> = ({ entryId }) => {
   const { user } = useAuth();
-  const { addReflectionNote, getReflectionNotes } = useRegistryOfResonance();
+  const { addReflectionNote, getReflectionNotes, updateReflectionNote, deleteReflectionNote } = useRegistryOfResonance();
   const [notes, setNotes] = useState<any[]>([]);
   const [newNote, setNewNote] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
+  const [editingContent, setEditingContent] = useState('');
 
   const fetchNotes = useCallback(async () => {
     if (!user) return;
@@ -41,6 +43,34 @@ const ReflectionNotes: React.FC<ReflectionNotesProps> = ({ entryId }) => {
       await fetchNotes(); // Refresh notes list
     }
     setIsSubmitting(false);
+  };
+
+  const handleEdit = (note: any) => {
+    setEditingNoteId(note.id);
+    setEditingContent(note.content);
+  };
+
+  const handleUpdateNote = async () => {
+    if (!editingNoteId || !editingContent.trim()) return;
+
+    const success = await updateReflectionNote(editingNoteId, editingContent);
+    if (success) {
+      setEditingNoteId(null);
+      setEditingContent('');
+      await fetchNotes();
+    }
+  };
+
+  const handleDeleteNote = async (noteId: string) => {
+    const success = await deleteReflectionNote(noteId);
+    if (success) {
+      await fetchNotes();
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingNoteId(null);
+    setEditingContent('');
   };
 
   if (!user) {
@@ -74,10 +104,32 @@ const ReflectionNotes: React.FC<ReflectionNotesProps> = ({ entryId }) => {
           notes.map((note) => (
             <Card key={note.id} className="bg-background/50">
               <CardContent className="p-4">
-                <p className="text-foreground/90">{note.content}</p>
-                <p className="text-xs text-muted-foreground mt-2">
-                  {formatDistanceToNow(new Date(note.created_at), { addSuffix: true })}
-                </p>
+                {editingNoteId === note.id ? (
+                  <div className="space-y-4">
+                    <Textarea
+                      value={editingContent}
+                      onChange={(e) => setEditingContent(e.target.value)}
+                      rows={3}
+                    />
+                    <div className="flex gap-2">
+                      <Button size="sm" onClick={handleUpdateNote}>Save</Button>
+                      <Button size="sm" variant="outline" onClick={handleCancelEdit}>Cancel</Button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <p className="text-foreground/90">{note.content}</p>
+                    <div className="flex items-center justify-between mt-2">
+                      <p className="text-xs text-muted-foreground">
+                        {formatDistanceToNow(new Date(note.created_at), { addSuffix: true })}
+                      </p>
+                      <div className="flex gap-1">
+                        <Button size="sm" variant="ghost" onClick={() => handleEdit(note)}>Edit</Button>
+                        <Button size="sm" variant="ghost" onClick={() => handleDeleteNote(note.id)}>Delete</Button>
+                      </div>
+                    </div>
+                  </>
+                )}
               </CardContent>
             </Card>
           ))

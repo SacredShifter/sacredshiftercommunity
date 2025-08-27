@@ -62,7 +62,10 @@ export default function RegistryEntry() {
     getUserResonanceStatus,
     incrementEngagement,
     exportEntryAsSeed,
-    shareToCircle
+    shareToCircle,
+    addBookmark,
+    removeBookmark,
+    isBookmarked
   } = useRegistryOfResonance();
   
   const [entry, setEntry] = useState<RegistryEntry | null>(null);
@@ -71,6 +74,7 @@ export default function RegistryEntry() {
   const [hasResonated, setHasResonated] = useState(false);
   const [resonanceCount, setResonanceCount] = useState(0);
   const [isEchoModalOpen, setEchoModalOpen] = useState(false);
+  const [bookmarked, setBookmarked] = useState(false);
 
   useEffect(() => {
     if (!id) {
@@ -96,6 +100,9 @@ export default function RegistryEntry() {
         if (user) {
           const userResonance = await getUserResonanceStatus(id);
           setHasResonated(userResonance);
+          
+          const bookmarkStatus = await isBookmarked(id);
+          setBookmarked(bookmarkStatus);
         }
       } catch (err) {
         console.error('Error fetching registry entry:', err);
@@ -106,7 +113,7 @@ export default function RegistryEntry() {
     };
 
     fetchEntry();
-  }, [id, navigate, user, getUserResonanceStatus]);
+  }, [id, navigate, user, getUserResonanceStatus, isBookmarked]);
 
   const handleResonance = async () => {
     if (!id || !user) return;
@@ -115,10 +122,20 @@ export default function RegistryEntry() {
     setResonanceCount(prev => resonating ? prev + 1 : prev - 1);
   };
 
-  const handleBookmark = () => {
-    if (!id) return;
-    incrementEngagement(id, 'bookmarks');
-    toast.success('Bookmarked to your Personal Codex!');
+  const handleBookmark = async () => {
+    if (!id || !user) return;
+    
+    if (bookmarked) {
+      const success = await removeBookmark(id);
+      if (success) {
+        setBookmarked(false);
+      }
+    } else {
+      const success = await addBookmark(id);
+      if (success) {
+        setBookmarked(true);
+      }
+    }
   };
 
   const handleSeed = () => {
@@ -163,7 +180,7 @@ export default function RegistryEntry() {
           <Button variant="outline" size="sm" onClick={handleResonance} className={`gap-2 ${hasResonated ? 'text-primary border-primary/50' : ''}`} title="Resonate"><Sparkles className={`h-4 w-4 ${hasResonated ? 'fill-current' : ''}`} /><span>{resonanceCount}</span></Button>
           <Button variant="outline" size="sm" onClick={handleEcho} className="gap-2" title="Echo"><Share2 className="h-4 w-4" /></Button>
           <Button variant="outline" size="sm" onClick={handleSeed} className="gap-2" title="Seed"><Download className="h-4 w-4" /></Button>
-          <Button variant="outline" size="sm" onClick={handleBookmark} className="gap-2" title="Bookmark"><Bookmark className="h-4 w-4" /></Button>
+          <Button variant="outline" size="sm" onClick={handleBookmark} className={`gap-2 ${bookmarked ? 'text-primary border-primary/50' : ''}`} title={bookmarked ? 'Remove bookmark' : 'Add bookmark'}><Bookmark className={`h-4 w-4 ${bookmarked ? 'fill-current' : ''}`} /></Button>
         </div>
 
         <Card className={`backdrop-blur-xl border-white/20 overflow-hidden transition-all duration-500 ${entry.resonance_count && entry.resonance_count > 10 ? 'shadow-lg shadow-primary/20' : ''}`}>

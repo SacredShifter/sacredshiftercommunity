@@ -8,10 +8,12 @@ import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useCodex } from '@/hooks/useCodex';
+import { useRegistryOfResonance } from '@/hooks/useRegistryOfResonance';
 import { CodexEntryModal } from './CodexEntryModal';
 import { format } from 'date-fns/format';
 import { TooltipWrapper } from '@/components/HelpSystem/TooltipWrapper';
 import { ContextualHelp, HelpTooltips } from '@/components/HelpSystem/ContextualHelp';
+import { useEffect } from 'react';
 
 const ENTRY_TYPES = [
   'Dream', 'Lesson', 'Download', 'Integration', 'Fragment', 'Vision', 'Revelation', 'Memory'
@@ -21,18 +23,42 @@ const SOURCE_MODULES = [
   'Mirror Journal', 'Breath of Source', 'Sacred Circles', 'Collective Codex', 'Manual'
 ];
 
+const VIEW_MODES = [
+  { value: 'personal', label: 'Personal Codex' },
+  { value: 'bookmarks', label: 'Bookmarked Entries' },
+  { value: 'all', label: 'All Entries' }
+];
+
 export function CodexList() {
   const { entries, loading, createEntry, updateEntry, deleteEntry } = useCodex();
+  const { getUserBookmarks } = useRegistryOfResonance();
   const [searchQuery, setSearchQuery] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
   const [sourceFilter, setSourceFilter] = useState('all');
+  const [viewMode, setViewMode] = useState('personal');
+  const [bookmarkedEntries, setBookmarkedEntries] = useState<any[]>([]);
+  const [bookmarksLoading, setBookmarksLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [sortField, setSortField] = useState<'created_at' | 'title' | 'type'>('created_at');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
+  // Fetch bookmarked entries when view mode changes
+  useEffect(() => {
+    if (viewMode === 'bookmarks') {
+      const fetchBookmarks = async () => {
+        setBookmarksLoading(true);
+        const bookmarks = await getUserBookmarks();
+        setBookmarkedEntries(bookmarks);
+        setBookmarksLoading(false);
+      };
+      fetchBookmarks();
+    }
+  }, [viewMode, getUserBookmarks]);
+
   const filteredAndSortedEntries = useMemo(() => {
-    const filtered = entries.filter(entry => {
+    const sourceEntries = viewMode === 'bookmarks' ? bookmarkedEntries : entries;
+    const filtered = sourceEntries.filter(entry => {
       const matchesSearch = !searchQuery || 
         entry.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         entry.content?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -69,7 +95,7 @@ export function CodexList() {
         return aValue < bValue ? 1 : -1;
       }
     });
-  }, [entries, searchQuery, typeFilter, sourceFilter, sortField, sortOrder]);
+  }, [viewMode, entries, bookmarkedEntries, searchQuery, typeFilter, sourceFilter, sortField, sortOrder]);
 
   const handleCreateEntry = async (data) => {
     await createEntry(data);
@@ -104,7 +130,7 @@ export function CodexList() {
     setSourceFilter('all');
   };
 
-  if (loading) {
+  if (loading || (viewMode === 'bookmarks' && bookmarksLoading)) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="animate-pulse flex flex-col items-center space-y-4">
@@ -126,9 +152,14 @@ export function CodexList() {
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-              Personal Codex
+              {viewMode === 'bookmarks' ? 'Bookmarked Entries' : 'Personal Codex'}
             </h1>
-            <p className="text-muted-foreground mt-2">Your sacred memory archive and metaphysical metadata system</p>
+            <p className="text-muted-foreground mt-2">
+              {viewMode === 'bookmarks' 
+                ? 'Entries you\'ve saved from the Collective Codex' 
+                : 'Your sacred memory archive and metaphysical metadata system'
+              }
+            </p>
           </div>
           
           <TooltipWrapper content={HelpTooltips.create}>
@@ -147,18 +178,33 @@ export function CodexList() {
         transition={{ delay: 0.1 }}
         className="bg-card/50 backdrop-blur border rounded-lg p-6 mb-8"
       >
-        <div className="flex flex-col lg:flex-row gap-4">
-          <TooltipWrapper content={HelpTooltips.search}>
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search your codex..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-          </TooltipWrapper>
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col lg:flex-row gap-4">
+            <TooltipWrapper content="Choose what type of entries to view">
+              <Select value={viewMode} onValueChange={setViewMode}>
+                <SelectTrigger className="w-full lg:w-[200px]">
+                  <SelectValue placeholder="View Mode" />
+                </SelectTrigger>
+                <SelectContent>
+                  {VIEW_MODES.map(mode => (
+                    <SelectItem key={mode.value} value={mode.value}>{mode.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </TooltipWrapper>
+            
+            <TooltipWrapper content={HelpTooltips.search}>
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder={viewMode === 'bookmarks' ? 'Search bookmarked entries...' : 'Search your codex...'}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+            </TooltipWrapper>
+          </div>
           
           <div className="flex flex-col sm:flex-row gap-3">
             <TooltipWrapper content={HelpTooltips.filter}>
@@ -200,10 +246,10 @@ export function CodexList() {
           </div>
         </div>
         
-        {filteredAndSortedEntries.length !== entries.length && (
+        {filteredAndSortedEntries.length !== (viewMode === 'bookmarks' ? bookmarkedEntries : entries).length && (
           <div className="mt-4 flex flex-wrap gap-2">
             <Badge variant="secondary">
-              {filteredAndSortedEntries.length} of {entries.length} entries
+              {filteredAndSortedEntries.length} of {viewMode === 'bookmarks' ? bookmarkedEntries.length : entries.length} entries
             </Badge>
             {searchQuery && <Badge variant="outline">Search: "{searchQuery}"</Badge>}
             {typeFilter !== 'all' && <Badge variant="outline">Type: {typeFilter}</Badge>}
@@ -228,7 +274,7 @@ export function CodexList() {
       )}
 
       {/* Empty State */}
-      {entries.length === 0 ? (
+      {(viewMode === 'bookmarks' ? bookmarkedEntries.length === 0 : entries.length === 0) ? (
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -237,15 +283,21 @@ export function CodexList() {
         >
           <div className="max-w-md mx-auto">
             <Sparkles className="h-16 w-16 text-primary/30 mx-auto mb-6" />
-            <h3 className="text-xl font-semibold mb-4">Your Codex Awaits</h3>
+            <h3 className="text-xl font-semibold mb-4">
+              {viewMode === 'bookmarks' ? 'No Bookmarks Yet' : 'Your Codex Awaits'}
+            </h3>
             <p className="text-muted-foreground mb-6">
-              Begin documenting your journey. What pattern keeps reappearing in your dreams? 
-              Which resonance returned today?
+              {viewMode === 'bookmarks' 
+                ? 'You haven\'t bookmarked any entries from the Collective Codex yet. Explore the registry to find inspiring content to save for later.'
+                : 'Begin documenting your journey. What pattern keeps reappearing in your dreams? Which resonance returned today?'
+              }
             </p>
-            <Button onClick={() => setIsModalOpen(true)} className="gap-2">
-              <Plus className="h-4 w-4" />
-              Create Your First Entry
-            </Button>
+            {viewMode !== 'bookmarks' && (
+              <Button onClick={() => setIsModalOpen(true)} className="gap-2">
+                <Plus className="h-4 w-4" />
+                Create Your First Entry
+              </Button>
+            )}
           </div>
         </motion.div>
       ) : filteredAndSortedEntries.length === 0 ? (
