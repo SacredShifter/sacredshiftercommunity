@@ -514,7 +514,7 @@ export function useRegistryOfResonance() {
         .insert({
           user_id: user.id,
           entry_id: entryId,
-          entry_type: 'collective_codex'
+          entry_type: 'registry_entry'
         });
 
       if (error) throw error;
@@ -583,7 +583,7 @@ export function useRegistryOfResonance() {
           registry_of_resonance (*)
         `)
         .eq('user_id', user.id)
-        .eq('entry_type', 'collective_codex')
+        .eq('entry_type', 'registry_entry')
         .order('created_at', { ascending: false });
 
       if (error) throw error;

@@ -9238,6 +9238,41 @@ export type Database = {
           },
         ]
       }
+      reflection_notes: {
+        Row: {
+          content: string
+          created_at: string
+          entry_id: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          entry_id: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          entry_id?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reflection_notes_entry_id_fkey"
+            columns: ["entry_id"]
+            isOneToOne: false
+            referencedRelation: "registry_of_resonance"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reflections: {
         Row: {
           created_at: string | null
@@ -9429,8 +9464,10 @@ export type Database = {
           is_pinned: boolean | null
           is_verified: boolean | null
           publication_date: string | null
+          quick_abstract: string | null
           reading_time_minutes: number | null
           resonance_count: number | null
+          resonance_growth_data: Json | null
           resonance_rating: number
           resonance_signature: string | null
           source_citation: string | null
@@ -9462,8 +9499,10 @@ export type Database = {
           is_pinned?: boolean | null
           is_verified?: boolean | null
           publication_date?: string | null
+          quick_abstract?: string | null
           reading_time_minutes?: number | null
           resonance_count?: number | null
+          resonance_growth_data?: Json | null
           resonance_rating?: number
           resonance_signature?: string | null
           source_citation?: string | null
@@ -9495,8 +9534,10 @@ export type Database = {
           is_pinned?: boolean | null
           is_verified?: boolean | null
           publication_date?: string | null
+          quick_abstract?: string | null
           reading_time_minutes?: number | null
           resonance_count?: number | null
+          resonance_growth_data?: Json | null
           resonance_rating?: number
           resonance_signature?: string | null
           source_citation?: string | null
@@ -13956,6 +13997,38 @@ export type Database = {
         }
         Relationships: []
       }
+      user_bookmarks: {
+        Row: {
+          created_at: string | null
+          entry_id: string
+          entry_type: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          entry_id: string
+          entry_type?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          entry_id?: string
+          entry_type?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_bookmarks_entry_id_fkey"
+            columns: ["entry_id"]
+            isOneToOne: false
+            referencedRelation: "registry_of_resonance"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_chakra_activations: {
         Row: {
           activation_type: string
@@ -16528,6 +16601,13 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
+      get_unread_dm_counts: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          sender_id: string
+          unread_count: number
+        }[]
+      }
       get_unread_message_count: {
         Args: Record<PropertyKey, never> | { user_id_param: string }
         Returns: number
@@ -16729,6 +16809,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
+      mark_dm_conversation_as_read: {
+        Args: { p_sender_id: string }
+        Returns: undefined
+      }
       path: {
         Args: { "": unknown }
         Returns: unknown
@@ -16793,7 +16877,7 @@ export type Database = {
         Args:
           | { tbl_oid: unknown; use_typmod?: boolean }
           | { use_typmod?: boolean }
-        Returns: string
+        Returns: number
       }
       postgis_addbbox: {
         Args: { "": unknown }
