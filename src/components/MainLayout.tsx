@@ -30,7 +30,7 @@ export const MainLayout = () => {
                   <img
                     src="https://mikltjgbvxrxndtszorb.supabase.co/storage/v1/object/public/sacred-assets/uploads/Logo-MainSacredShifter-removebg-preview%20(1).png"
                     alt="Sacred Shifter"
-                    className="h-6 md:h-8 w-auto filter invert brightness-0 contrast-100 opacity-90"
+                    className="h-6 md:h-8 w-auto object-contain aspect-auto max-w-none filter invert brightness-0 contrast-100 opacity-90"
                   />
                   <Slogan />
                 </div>
