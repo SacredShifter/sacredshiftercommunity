@@ -11,6 +11,7 @@ import { useAkashicConstellation } from '@/hooks/useAkashicConstellation';
 import { AkashicEntryModal } from './AkashicEntryModal';
 import { format } from 'date-fns/format';
 import { TooltipWrapper } from '@/components/HelpSystem/TooltipWrapper';
+import { Slogan } from '@/components/ui/Slogan';
 
 // Sacred Archetypal Organization System
 const ARCHETYPAL_CATEGORIES = {
@@ -260,6 +261,7 @@ export function AkashicConstellation() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-full">
+      <Slogan variant="watermark" />
       {/* Sacred Header */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}

@@ -587,7 +587,7 @@ export const SacredCircleInterface = ({
                         placeholder={
                           messageMode === 'sacred' ? "Share your sacred message..." :
                           messageMode === 'quantum' ? "Express your quantum awareness..." :
-                          "Type your message..."
+                          "Shift what you share, make it Sacred."
                         }
                         className="pr-10 resize-none bg-background/80 border-muted"
                         disabled={!user}

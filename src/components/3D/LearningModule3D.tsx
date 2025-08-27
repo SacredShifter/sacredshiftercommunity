@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Brain, Loader2, Box, Eye, Heart, Shield, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { TooltipWrapper } from '../HelpSystem/TooltipWrapper';
 import ChakraLearning3D from './ChakraLearning3D';
 import SacredGeometry3D from './SacredGeometry3D';
 
@@ -261,12 +262,13 @@ export default function LearningModule3D({ moduleId, onBack, className }: Learni
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
           >
-            <Card 
-              className="group cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 border-2 border-transparent hover:border-primary/20"
-              onClick={() => handleModuleSelect(module)}
-            >
-              <CardHeader className="space-y-3">
-                <div className="flex items-center justify-between">
+            <TooltipWrapper content="Shift learning into lived wisdom.">
+              <Card
+                className="group cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 border-2 border-transparent hover:border-primary/20"
+                onClick={() => handleModuleSelect(module)}
+              >
+                <CardHeader className="space-y-3">
+                  <div className="flex items-center justify-between">
                   <div className="p-2 rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
                     {module.icon}
                   </div>

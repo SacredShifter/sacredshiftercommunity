@@ -79,6 +79,7 @@ export function CodexEntryCard({ entry, onEdit, onDelete, compact = false }: Cod
                     </Badge>
                   )}
                 </div>
+                <p className="text-xs italic text-muted-foreground mt-1">Make it Sacred</p>
               </div>
               
               <DropdownMenu>

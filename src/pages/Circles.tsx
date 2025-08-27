@@ -10,6 +10,7 @@ import { Search, Plus, Users, Lock, Globe, Filter, TrendingUp, Clock, Star } fro
 import { CreateCircleModal } from '@/components/CreateCircleModal';
 import { SacredCircleInterface } from '@/components/SacredCircleInterface';
 import { useToast } from '@/hooks/use-toast';
+import { Slogan } from '@/components/ui/Slogan';
 
 interface FilterOption {
   id: string;
@@ -122,6 +123,7 @@ const Circles = () => {
 
   return (
     <div className="h-full overflow-y-auto p-4">
+      <Slogan variant="watermark" />
       <div className="max-w-7xl mx-auto space-y-4 md:space-y-6">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">

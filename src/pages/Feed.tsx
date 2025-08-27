@@ -15,6 +15,7 @@ import { PostInteractionButtons } from '@/components/PostInteractionButtons';
 import { CircleDiscoveryPanel } from '@/components/CircleDiscoveryPanel';
 import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
 import { CommentSection } from '@/components/CommentSection';
+import { Slogan } from '@/components/ui/Slogan';
 const sacredShifterLogo = 'https://mikltjgbvxrxndtszorb.supabase.co/storage/v1/object/public/sacred-assets/uploads/Logo-MainSacredShifter-removebg-preview%20(1).png';
 
 interface SacredPost {
@@ -127,6 +128,7 @@ const Feed = () => {
 
   return (
     <div className="h-full overflow-y-auto">
+      <Slogan variant="watermark" />
       {/* Header */}
       <div className="sticky top-0 z-10 bg-background/20 backdrop-blur-md border-b border-white/10 -mt-4 sm:-mt-6 md:-mt-8 mb-4 sm:mb-6 md:mb-8">
         <div className="max-w-2xl mx-auto px-4 py-4">

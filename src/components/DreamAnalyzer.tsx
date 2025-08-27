@@ -358,6 +358,7 @@ ${latentPatterns.map(pattern => `• ${pattern}`).join('\n')}
                       <div className="text-center py-8">
                         <RefreshCw className="w-8 h-8 animate-spin mx-auto text-purple-500 mb-2" />
                         <p className="text-sm text-muted-foreground">Connecting to the collective unconscious...</p>
+                        <p className="text-sm italic text-muted-foreground mt-2">Shift the dream into sacred meaning.</p>
                       </div>
                     )}
 

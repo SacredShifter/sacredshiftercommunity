@@ -602,6 +602,9 @@ const BreathOfSource: React.FC<{ autoOpen?: boolean }> = ({ autoOpen = false }) 
                 className="fixed inset-0 z-50 bg-background/95 backdrop-blur-md"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-blue-900/20 to-indigo-900/20" />
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <p className="text-[10vw] font-bold text-white/5 -rotate-45">Every breath is Sacred.</p>
+                </div>
                 
                 {/* Fullscreen Header */}
                 <div className="relative z-10 flex items-center justify-between p-4 border-b border-border/30">

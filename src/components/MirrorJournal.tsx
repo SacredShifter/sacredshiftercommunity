@@ -26,6 +26,7 @@ import { useMirrorJournal, MirrorJournalEntry } from '@/hooks/useMirrorJournal';
 import { useAuth } from '@/hooks/useAuth';
 import { useUnifiedMessaging } from '@/hooks/useUnifiedMessaging';
 import { DreamAnalyzer } from '@/components/DreamAnalyzer';
+import { Slogan } from './ui/Slogan';
 
 const poeticPrompts = [
   "What did your soul whisper today?",
@@ -208,6 +209,7 @@ export const MirrorJournal: React.FC<MirrorJournalProps> = ({ className }) => {
 
   return (
     <div className={`min-h-screen bg-transparent ${className}`}>
+      <Slogan variant="watermark" />
       <div className="max-w-4xl mx-auto p-4 space-y-6">
         {/* Header */}
         <motion.div
@@ -355,7 +357,7 @@ export const MirrorJournal: React.FC<MirrorJournalProps> = ({ className }) => {
                     </div>
                   </div>
 
-                  <div className="flex gap-2 pt-2">
+                  <div className="flex items-center gap-4 pt-2">
                     <Button onClick={handleSave} className="flex-1">
                       <Save className="w-4 h-4 mr-2" />
                       Save Entry
@@ -363,6 +365,9 @@ export const MirrorJournal: React.FC<MirrorJournalProps> = ({ className }) => {
                     <Button variant="outline" onClick={handleCancel}>
                       Cancel
                     </Button>
+                    <p className="text-xs italic text-muted-foreground whitespace-nowrap">
+                      Shift your experience
+                    </p>
                   </div>
                 </CardContent>
               </Card>
