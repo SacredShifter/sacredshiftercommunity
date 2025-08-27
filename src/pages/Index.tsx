@@ -201,7 +201,7 @@ const Index = () => {
         <div className="text-center mb-12 space-y-6">
           <div className="flex justify-center mb-6">
             <img
-              src="https://mikltjgbvxrxndtszorb.supabase.co/storage/v1/object/public/sacred-assets/uploads/Logo-MainSacredShifter-removebg-preview%20(1).png"
+              src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/sacred-assets/uploads/Logo-MainSacredShifter-removebg-preview%20(1).png`}
               alt="Sacred Shifter"
               className="h-16 md:h-20 w-auto filter invert brightness-0 contrast-100"
             />

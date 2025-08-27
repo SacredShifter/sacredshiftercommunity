@@ -16,7 +16,7 @@ import { CircleDiscoveryPanel } from '@/components/CircleDiscoveryPanel';
 import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
 import { CommentSection } from '@/components/CommentSection';
 import { Slogan } from '@/components/ui/Slogan';
-const sacredShifterLogo = 'https://mikltjgbvxrxndtszorb.supabase.co/storage/v1/object/public/sacred-assets/uploads/Logo-MainSacredShifter-removebg-preview%20(1).png';
+const sacredShifterLogo = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/sacred-assets/uploads/Logo-MainSacredShifter-removebg-preview%20(1).png`;
 
 interface SacredPost {
   id: string;

@@ -28,9 +28,9 @@ function Earth({ isBreathing, breathRate, breathingMode, onBreath, sunRef }: {
   const cloudsRef = useRef<THREE.Mesh>(null);
 
   const [dayTexture, nightTexture, cloudsTexture] = useTexture([
-    'https://mikltjgbvxrxndtszorb.supabase.co/storage/v1/object/public/sacred-assets/uploads/2k_earth_daymap.jpg',
-    'https://mikltjgbvxrxndtszorb.supabase.co/storage/v1/object/public/sacred-assets/uploads/2k_earth_nightmap.jpg',
-    'https://mikltjgbvxrxndtszorb.supabase.co/storage/v1/object/public/sacred-assets/uploads/2k_earth_clouds.jpg',
+    `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/sacred-assets/uploads/2k_earth_daymap.jpg`,
+    `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/sacred-assets/uploads/2k_earth_nightmap.jpg`,
+    `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/sacred-assets/uploads/2k_earth_clouds.jpg`,
   ]);
 
   useFrame((state) => {

@@ -39,13 +39,18 @@ export function useSpaceWeather() {
         ...(endDate && { endDate })
       });
 
-      const { data: response, error: supabaseError } = await supabase.functions.invoke(
+      const { data: spaceWeatherData, error: supabaseError } = await supabase.functions.invoke(
         'nasa-space-weather',
         {
-          method: 'GET',
+          method: 'POST', // Use POST to send a body
           headers: {
             'Content-Type': 'application/json',
           },
+          body: JSON.stringify({
+            type: eventType,
+            ...(startDate && { startDate }),
+            ...(endDate && { endDate })
+          }),
         }
       );
 
@@ -53,19 +58,6 @@ export function useSpaceWeather() {
         throw new Error(supabaseError.message);
       }
 
-      // Make request with query parameters  
-      const urlWithParams = `https://mikltjgbvxrxndtszorb.supabase.co/functions/v1/nasa-space-weather?${params}`;
-      const directResponse = await fetch(urlWithParams, {
-        headers: {
-          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1pa2x0amdidnhyeG5kdHN6b3JiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM2NDI3MDksImV4cCI6MjA1OTIxODcwOX0.f4QfhZzSZJ92AjCfbkEMrrmzJrWI617H-FyjJKJ8_70',
-        }
-      });
-
-      if (!directResponse.ok) {
-        throw new Error(`Space weather API error: ${directResponse.status}`);
-      }
-
-      const spaceWeatherData = await directResponse.json();
       setData(spaceWeatherData);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';

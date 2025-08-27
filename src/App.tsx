@@ -26,6 +26,7 @@ import AkashicConstellationPage from "./pages/AkashicConstellation";
 import Guidebook from "./pages/Guidebook";
 import Support from "./pages/Support";
 import Auth from "./pages/Auth";
+import AuthConfirm from "./pages/AuthConfirm";
 import NotFound from "./pages/NotFound";
 import AuraQuantumCommandNexus from '@/pages/AuraQuantumCommandNexus';
 import ConstellationMapper from "./pages/ConstellationMapper";
@@ -48,6 +49,7 @@ function App() {
           
           <Routes>
             <Route path="/auth" element={<Auth />} />
+            <Route path="/auth/confirm" element={<AuthConfirm />} />
             <Route
               element={
                 <ProtectedRoute>
