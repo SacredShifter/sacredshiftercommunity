@@ -106,12 +106,12 @@ class Logger {
 
       if (entry.level === 'error' || entry.level === 'fatal') {
         Sentry.captureException(error, {
-            extra: entry.context,
+            extra: entry.context as Record<string, any>,
             level: sentryLevel,
         });
       } else {
         Sentry.captureMessage(entry.message, {
-            extra: entry.context,
+            extra: entry.context as Record<string, any>,
             level: sentryLevel,
         });
       }
