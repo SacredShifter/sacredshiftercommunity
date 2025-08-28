@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import BreathingVisualization from './BreathingVisualization';
-import LovingKindnessVisualization from './LovingKindnessVisualization';
-import ChakraVisualization from './ChakraVisualization';
-import MindfulnessVisualization from './MindfulnessVisualization';
-import BodyScanVisualization from './BodyScanVisualization';
+import SimpleMeditationVisual from './SimpleMeditationVisual';
+// Temporarily using simplified visuals to avoid Three.js errors
+// import LovingKindnessVisualization from './LovingKindnessVisualization';
+// import ChakraVisualization from './ChakraVisualization';
+// import MindfulnessVisualization from './MindfulnessVisualization';
+// import BodyScanVisualization from './BodyScanVisualization';
 
 type MeditationType = 'breathing' | 'loving-kindness' | 'chakra' | 'mindfulness' | 'body-scan';
 
@@ -136,56 +138,40 @@ export default function MeditationVisualizationManager({
   }, [isActive, type, sessionProgress]);
 
   const renderVisualization = () => {
-    switch (type) {
-      case 'breathing':
-        return (
-          <BreathingVisualization
-            isActive={isActive}
-            phase={breathPhase}
-            progress={breathProgress}
-            intensity={0.6}
-          />
-        );
-      
-      case 'loving-kindness':
-        return (
-          <LovingKindnessVisualization
-            isActive={isActive}
-            stage={kindnessStage}
-            progress={sessionProgress / 100}
-          />
-        );
-      
-      case 'chakra':
-        return (
-          <ChakraVisualization
-            isActive={isActive}
-            currentChakra={currentChakra}
-            progress={sessionProgress / 100}
-          />
-        );
-      
-      case 'mindfulness':
-        return (
-          <MindfulnessVisualization
-            isActive={isActive}
-            thoughtCount={thoughtCount}
-            awareness={awareness}
-          />
-        );
-      
-      case 'body-scan':
-        return (
-          <BodyScanVisualization
-            isActive={isActive}
-            currentBodyPart={currentBodyPart}
-            scanProgress={scanProgress}
-            relaxationLevel={relaxationLevel}
-          />
-        );
-      
-      default:
-        return null;
+    // Try the breathing visualization first, fallback to simple visual for others
+    try {
+      switch (type) {
+        case 'breathing':
+          return (
+            <BreathingVisualization
+              isActive={isActive}
+              phase={breathPhase}
+              progress={breathProgress}
+              intensity={0.6}
+            />
+          );
+        
+        default:
+          // Use simplified visuals for other meditation types
+          return (
+            <SimpleMeditationVisual
+              type={type}
+              isActive={isActive}
+              phase={undefined}
+              progress={sessionProgress}
+            />
+          );
+      }
+    } catch (error) {
+      console.error('Visualization error:', error);
+      // Fallback to simple visual
+      return (
+        <SimpleMeditationVisual
+          type={type}
+          isActive={isActive}
+          progress={sessionProgress}
+        />
+      );
     }
   };
 

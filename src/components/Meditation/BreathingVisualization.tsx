@@ -1,6 +1,5 @@
-import React, { useRef, useMemo } from 'react';
+import React, { useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Sphere, Ring, Text } from '@react-three/drei';
 import * as THREE from 'three';
 
 interface BreathingVisualizationProps {
@@ -37,7 +36,8 @@ function BreathOrb({ isActive, phase, progress, intensity = 0.5 }: BreathingVisu
     }
     
     // Smooth scaling animation
-    meshRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 0.05);
+    const scale = new THREE.Vector3(targetScale, targetScale, targetScale);
+    meshRef.current.scale.lerp(scale, 0.05);
     glowRef.current.scale.lerp(new THREE.Vector3(targetScale * 1.2, targetScale * 1.2, targetScale * 1.2), 0.03);
     
     // Gentle rotation
@@ -62,19 +62,22 @@ function BreathOrb({ isActive, phase, progress, intensity = 0.5 }: BreathingVisu
   return (
     <group>
       {/* Glow effect */}
-      <Sphere ref={glowRef} args={[1.2, 32, 32]} position={[0, 0, 0]}>
+      <mesh ref={glowRef} position={[0, 0, 0]}>
+        <sphereGeometry args={[1.2, 32, 32]} />
         <meshBasicMaterial transparent opacity={0.2} color="#4facfe" />
-      </Sphere>
+      </mesh>
       
       {/* Main orb */}
-      <Sphere ref={meshRef} args={[1, 32, 32]} position={[0, 0, 0]}>
+      <mesh ref={meshRef} position={[0, 0, 0]}>
+        <sphereGeometry args={[1, 32, 32]} />
         <meshBasicMaterial color="#4facfe" transparent opacity={0.8} />
-      </Sphere>
+      </mesh>
       
       {/* Inner light */}
-      <Sphere args={[0.7, 16, 16]} position={[0, 0, 0]}>
+      <mesh position={[0, 0, 0]}>
+        <sphereGeometry args={[0.7, 16, 16]} />
         <meshBasicMaterial color="#ffffff" transparent opacity={0.3} />
-      </Sphere>
+      </mesh>
     </group>
   );
 }
@@ -98,25 +101,25 @@ function BreathingRings({ isActive, phase, progress }: Omit<BreathingVisualizati
   return (
     <group ref={ringsRef}>
       {[...Array(3)].map((_, i) => (
-        <Ring
+        <mesh
           key={i}
-          args={[1.5 + i * 0.3, 1.7 + i * 0.3, 32]}
           position={[0, 0, -0.1 - i * 0.05]}
           rotation={[0, 0, i * Math.PI / 3]}
         >
+          <ringGeometry args={[1.5 + i * 0.3, 1.7 + i * 0.3, 32]} />
           <meshBasicMaterial 
             color={i === 0 ? "#4facfe" : i === 1 ? "#00f2fe" : "#d299c2"} 
             transparent 
             opacity={0.4 - i * 0.1} 
           />
-        </Ring>
+        </mesh>
       ))}
     </group>
   );
 }
 
 function PhaseText({ phase }: { phase: string }) {
-  const textColor = useMemo(() => {
+  const textColor = React.useMemo(() => {
     switch (phase) {
       case 'inhale': return '#4facfe';
       case 'hold1': return '#d299c2';
@@ -127,15 +130,10 @@ function PhaseText({ phase }: { phase: string }) {
   }, [phase]);
   
   return (
-    <Text
-      position={[0, -2.5, 0]}
-      fontSize={0.3}
-      color={textColor}
-      anchorX="center"
-      anchorY="middle"
-    >
-      {phase.toUpperCase()}
-    </Text>
+    <mesh position={[0, -2.5, 0]}>
+      <planeGeometry args={[2, 0.5]} />
+      <meshBasicMaterial color={textColor} transparent opacity={0.8} />
+    </mesh>
   );
 }
 
