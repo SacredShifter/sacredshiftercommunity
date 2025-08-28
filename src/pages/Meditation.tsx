@@ -37,6 +37,7 @@ import { SimpleVideoModal } from '@/components/YouTubeLibrary/SimpleVideoModal';
 import { GroupMeditationSession } from '@/components/GroupMeditationSession';
 import { MEDITATION_MODULE_CONFIG } from '@/config/mediaMaps';
 import { Slogan } from '@/components/ui/Slogan';
+import MeditationVisualizationManager from '@/components/Meditation/MeditationVisualizationManager';
 
 type MeditationType = 'breathing' | 'loving-kindness' | 'chakra' | 'mindfulness' | 'body-scan';
 type SessionState = 'idle' | 'active' | 'paused' | 'completed';
@@ -527,9 +528,9 @@ export default function Meditation() {
 
           {/* Solo Meditation Tab */}
           <TabsContent value="solo" className="space-y-4 animate-fade-in">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Meditation Selection */}
-              <Card className="lg:col-span-2 hover-scale">
+              <Card className="hover-scale">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Moon className="h-5 w-5 text-primary" />
@@ -762,6 +763,24 @@ export default function Meditation() {
                       </div>
                     </div>
                   )}
+                </CardContent>
+              </Card>
+
+              {/* Meditation Visualization */}
+              <Card className="hover-scale">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Sparkles className="h-5 w-5 text-primary" />
+                    Live Visualization
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <MeditationVisualizationManager
+                    type={selectedType}
+                    isActive={sessionState === 'active'}
+                    sessionProgress={sessionProgress}
+                    duration={duration[0]}
+                  />
                 </CardContent>
               </Card>
 
